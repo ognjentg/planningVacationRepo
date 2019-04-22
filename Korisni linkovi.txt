@@ -1,0 +1,7 @@
+
+https://fontawesome.com/icons?d=gallery - Ikonice
+https://docs.dhtmlx.com/scheduler/index.html - DHTMLX Scheduler
+https://docs.webix.com/ - Webix dokumentacija
+https://snippet.webix.com/basic - Brzi webix snippeti za testiranje
+
+https://stackoverflow.com/questions/49982137/how-to-use-vs-code-as-merge-and-diff-tool-in-sourcetree

@@ -1,0 +1,17 @@
+Da bi radio kontroler kod kojeg klasa modela ima Active polje potrebno je odraditi sljedeće:
+
+- Staviti da klasa modela implementira interfejs HasActive
+
+- U klasi modela kod anotacije za getActive, dodati nullable=false i insertable=false ako već nije dodano
+
+- Repozitorijum pored JpaRepository<T,ID> treba da još nasljeđuje HasActiveRepository<T,ID>
+
+- Klasa kontrolera umjesto GenericController<T,ID> treba da nasljeđuje GenericHasActiveController<T,ID>
+
+Šta GenericHasActiveController radi:
+
+- getAll metoda vraća samo one koji su trenutno aktivni
+- findOne metoda vraća objekat samo ako je on aktivan
+- insert radi isto kao i kod običnog generičkog kontrolera
+- update radi samo ako je objekat trenutno aktivan
+- delete setuje flag active umjesto da fizički briše
