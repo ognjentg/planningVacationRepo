@@ -1,13 +1,14 @@
 package com.telegroupltd.planning_vacation_app.model;
 
 import javax.persistence.*;
+import java.time.Year;
 import java.util.Objects;
 
 @Entity
 @Table(name = "religion_leave", schema = "planning_vacation_db", catalog = "")
 public class ReligionLeave {
     private Integer id;
-    private Object year;
+    private Year year;
     private Integer numberOfDaysUsed;
     private Integer userId;
     private Byte active;
@@ -24,11 +25,11 @@ public class ReligionLeave {
 
     @Basic
     @Column(name = "year", nullable = false)
-    public Object getYear() {
+    public Year getYear() {
         return year;
     }
 
-    public void setYear(Object year) {
+    public void setYear(Year year) {
         this.year = year;
     }
 
