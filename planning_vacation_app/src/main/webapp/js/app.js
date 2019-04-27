@@ -56,7 +56,8 @@ var init = function () {
     webix.ajax("hub/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-                showLogin();
+               showLogin();
+              // showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
             }
         },
         success: function (text, data, xhr) {
@@ -319,8 +320,27 @@ showAboutDialog = function () {
         }, 0);
     }
 };
+
+
+var showLogin = function () {
+    var login = webix.copy(loginLayout);
+    webix.ui(login, panel);
+    panel = $$("login");
+};
+
+
+//TO DO
+var loginLayout = {
+
+};
+
+//TO DO
+var login = function () {
+
+};
+
+
 //main call
 window.onload = function () {
     init();
 };
-

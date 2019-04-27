@@ -11,6 +11,8 @@ public class Company {
     private Integer id;
     private String name;
     private Byte active;
+    private String pin;
+    private byte[] logo;
 
     @Id
     @Column(name = "id", nullable = false)
@@ -55,5 +57,25 @@ public class Company {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, active);
+    }
+
+    @Basic
+    @Column(name = "pin", nullable = false, length = 4)
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
+    }
+
+    @Basic
+    @Column(name = "logo", nullable = false)
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
     }
 }

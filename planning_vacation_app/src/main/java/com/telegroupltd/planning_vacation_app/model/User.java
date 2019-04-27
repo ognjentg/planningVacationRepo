@@ -4,6 +4,7 @@ package com.telegroupltd.planning_vacation_app.model;
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +18,14 @@ public class User implements HasActive {
     private String email;
     private Integer userGroupId;
     private Byte active;
+    private Byte pauseFlag;
+    private Date startDate;
+    private String firstName;
+    private String lastName;
+    private String salt;
+    private Byte receiveMail;
+    private Integer sectorId;
+    private byte[] photo;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -106,5 +115,85 @@ public class User implements HasActive {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, password, email, userGroupId, companyId, active);
+    }
+
+    @Basic
+    @Column(name = "pause_flag", nullable = false)
+    public Byte getPauseFlag() {
+        return pauseFlag;
+    }
+
+    public void setPauseFlag(Byte pauseFlag) {
+        this.pauseFlag = pauseFlag;
+    }
+
+    @Basic
+    @Column(name = "start_date", nullable = false)
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    @Basic
+    @Column(name = "first_name", nullable = false, length = 128)
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    @Basic
+    @Column(name = "last_name", nullable = false, length = 128)
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Basic
+    @Column(name = "salt", nullable = false, length = 45)
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
+    @Basic
+    @Column(name = "receive_mail", nullable = false)
+    public Byte getReceiveMail() {
+        return receiveMail;
+    }
+
+    public void setReceiveMail(Byte receiveMail) {
+        this.receiveMail = receiveMail;
+    }
+
+    @Basic
+    @Column(name = "sector_id", nullable = true)
+    public Integer getSectorId() {
+        return sectorId;
+    }
+
+    public void setSectorId(Integer sectorId) {
+        this.sectorId = sectorId;
+    }
+
+    @Basic
+    @Column(name = "photo", nullable = false)
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
     }
 }
