@@ -8,13 +8,18 @@ var menuState = MENU_STATES.COLLAPSED;
 //menu configuration - EDITABLE
 
 var localMenuData = [
-    {id: "template", value: "Template", icon: "code"}
+    {id: "template", value: "Template", icon: "code"},
+    {id: "sector", value: "Sector", icon: "code"}
 ];
 
 var menuActions = function (id) {
     switch (id) {
-        case "faculty":
+        case "template":
             templateView.selectPanel();
+            break;
+
+        case "sector":
+            sectorView.selectPanel();
             break;
     }
 };
@@ -56,8 +61,8 @@ var init = function () {
     webix.ajax("hub/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-               showLogin();
-              // showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
+              // showLogin();
+              showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
             }
         },
         success: function (text, data, xhr) {
@@ -162,7 +167,7 @@ var showApp = function () {
     var main = webix.copy(mainLayout);
     mainApp = webix.ui(main, panel);
     panel = $$("app");
-    // $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
+    //$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
 
     webix.ui({
         id: "menu-collapse",
