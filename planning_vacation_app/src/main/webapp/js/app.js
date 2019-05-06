@@ -8,13 +8,18 @@ var menuState = MENU_STATES.COLLAPSED;
 //menu configuration - EDITABLE
 
 var localMenuData = [
-    {id: "template", value: "Template", icon: "code"}
+    {id: "template", value: "Template", icon: "code"},
+    {id: "sector", value: "Sector", icon: "code"}
 ];
 
 var menuActions = function (id) {
     switch (id) {
-        case "faculty":
+        case "template":
             templateView.selectPanel();
+            break;
+
+        case "sector":
+            sectorView.selectPanel();
             break;
     }
 };
@@ -163,7 +168,7 @@ var showApp = function () {
     var main = webix.copy(mainLayout);
     mainApp = webix.ui(main, panel);
     panel = $$("app");
-    // $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
+    //$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
 
     webix.ui({
         id: "menu-collapse",
