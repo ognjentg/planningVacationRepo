@@ -339,16 +339,32 @@ var showLogin = function () {
 
 var loginLayout = {
     id: "loginPanel",
-    rows: [{}, {
+    css:"loginLayoutBackground",
+    rows: [{
+        height:30,
+        css:"loginLayoutBackground"
+    }, {
         view: "template",
         height: 100,
-        css: "loginLogo",
-        template: '<img src="img/telegroup-logo-inside.png"/>'
+        css: "loginLayoutBackground",
+        template: '<img src="img/telegroup-logo.png"/>'
+    },{
+        height:30,
+        css:"orangeBackground",
+    },{
+        height:10,
+        css:"loginLayoutBackground",
+    },{
+        height:30,
+        css:"orangeBackground"
+    },{
+        height:10
     }, {
         cols: [{}, //1st column
             {
                 view: "form",
                 id: "loginForm",
+                css:"loginForm",
                 width: 500,
                 elements: [{
                     view: "text",
@@ -357,12 +373,8 @@ var loginLayout = {
                     name: "korisnickoIme",
                     label: "Korisničko ime",
                     invalidMessage:"Niste unijeli korisničko ime.",
-                    on:{
-                        'onEnter':function () {
-                            webix.UIManager.setFocus($$('password'));
-                        }
-                    },
-                    labelWidth: 150
+                    labelWidth: 150,
+                    height:35
                 }, {
                     view: "text",
                     name: "lozinka",
@@ -371,12 +383,8 @@ var loginLayout = {
                     type: "password",
                     label: "Lozinka",
                     invalidMessage:"Niste unijeli lozinku.",
-                    on:{
-                      'onEnter':function () {
-                          webix.UIManager.setFocus($$('company'));
-                      }
-                    },
-                    labelWidth: 150
+                    labelWidth: 150,
+                    height:35
                 },  {
                     view: "text",
                     id:"company",
@@ -385,11 +393,7 @@ var loginLayout = {
                     label: "Kompanija",
                     invalidMessage:"Niste unijeli kompaniju.",
                     labelWidth: 150,
-                    on:{
-                        'onEnter':function(){
-                            webix.UIManager.setFocus($$('company'));
-                        }
-                    }
+                    height:35
                 },
                     {
                     margin: 5,
@@ -399,14 +403,15 @@ var loginLayout = {
                         value: "Prijavi se",
                         type: "form",
                         click: "login",
-                        width: 150
+                        width: 150,
+                        height:35
                     }]
                 }]
             },
             //2nd column
             {}
         ]
-    }, {}]
+    }, {},{}]
 };
 
 //TO DO
