@@ -53,10 +53,21 @@
 .loginLogo{
 	border:none;
 	text-align:center;
+	background-color: #e17d20;
 }
 
 .loginBar{
 	background: linear-gradient(25deg,#29ced4,#3498db) !important;
+}
+
+.loginLayoutBackground{
+	border:none;
+	text-align:center;
+	background: linear-gradient(25deg,#29ced4,#3498db) !important;
+}
+
+.orangeBackground{
+	background-color: #ff7129;
 }
 
 .loginForm{
@@ -70,7 +81,7 @@
 }
 
 .mainToolbar{
-	background: linear-gradient(25deg,#29ced4,#3498db) !important;
+
 	box-shadow: 2px 2px 2px black;
 }
 
