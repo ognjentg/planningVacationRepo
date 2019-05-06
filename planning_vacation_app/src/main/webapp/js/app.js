@@ -56,15 +56,16 @@ var init = function () {
     webix.ajax("hub/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-               showLogin();
-              // showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
+              showLogin();
+              //showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
             }
         },
         success: function (text, data, xhr) {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    showApp();
+                   // showApp();
+                    showLogin();
                 }
             }
         }
@@ -325,20 +326,116 @@ showAboutDialog = function () {
 var showLogin = function () {
     var login = webix.copy(loginLayout);
     webix.ui(login, panel);
-    panel = $$("login");
+    panel = $$("loginPanel");
 };
 
 
 //TO DO
-var loginLayout = {
 
+var loginLayout = {
+    id: "loginPanel",
+    rows: [{}, {
+        view: "template",
+        height: 100,
+        css: "loginLogo",
+        template: '<img src="img/telegroup-logo-inside.png"/>'
+    }, {
+        cols: [{}, //1st column
+            {
+                view: "form",
+                id: "loginForm",
+                width: 500,
+                elements: [{
+                    view: "text",
+                    required:true,
+                    id: "username",
+                    name: "korisnickoIme",
+                    label: "Korisničko ime",
+                    invalidMessage:"Niste unijeli korisničko ime.",
+                    on:{
+                        'onEnter':function () {
+                            webix.UIManager.setFocus($$('password'));
+                        }
+                    },
+                    labelWidth: 150
+                }, {
+                    view: "text",
+                    name: "lozinka",
+                    id:"password",
+                    required:true,
+                    type: "password",
+                    label: "Lozinka",
+                    invalidMessage:"Niste unijeli lozinku.",
+                    on:{
+                      'onEnter':function () {
+                          webix.UIManager.setFocus($$('company'));
+                      }
+                    },
+                    labelWidth: 150
+                },  {
+                    view: "text",
+                    id:"company",
+                    name: "kompanija",
+                    required:true,
+                    label: "Kompanija",
+                    invalidMessage:"Niste unijeli kompaniju.",
+                    labelWidth: 150,
+                    on:{
+                        'onEnter':function(){
+                            webix.UIManager.setFocus($$('company'));
+                        }
+                    }
+                },
+                    {
+                    margin: 5,
+                    cols: [{}, {
+                        id: "login",
+                        view: "button",
+                        value: "Prijavi se",
+                        type: "form",
+                        click: "login",
+                        width: 150
+                    }]
+                }]
+            },
+            //2nd column
+            {}
+        ]
+    }, {}]
 };
 
 //TO DO
 var login = function () {
+    if($$("loginForm").validate()) {
+        webix.ajax().post("login", $$("loginForm").getValues(), {
+            error: function (text, data, xhr) {
+                showApp();
+                return;
+                // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
+                // TO DO kad se uradi login na bekendu, alert ce biti premjesten ovdje negdje,
+                // za sad ovako.
 
+                util.messages.showErrorMessage("Neuspješna prijava!");
+            },
+            success: function (text, data, xhr) {
+                if (data.json() != null && data.json().id != null) {
+                    userData = data.json();
+                    showApp();
+                } else {
+                    util.messages.showErrorMessage("Neuspješna prijava!");
+                }
+            }
+        });
+    }
+    else {
+        webix.alert({
+            title:"Neuspješna prijava! ",
+            text:"Korisničko ime, lozinka ili kompanija nisu korektni!",
+            type:"alert-error"}).then(function () {
+            alert(2);
+        });
+    }
 };
-
 
 //main call
 window.onload = function () {
