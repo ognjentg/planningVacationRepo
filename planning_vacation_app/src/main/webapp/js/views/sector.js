@@ -1,3 +1,6 @@
+var sectorName =  {};
+var sectorEmployees = {};
+
 var sectorView =  {
 
             panel: {
@@ -9,21 +12,23 @@ var sectorView =  {
                     padding:12,
                     rows: [
                         {
-                            view:"label",
-                            label:"Sektor za vandredne situacije"
-                        },
-                        {
-                            view:"combo",
-                            label: "Odabir sektora   ",
-                            labelWidth:110,
-                            value:"One",
-                            options:["One", "Two", "Three"], //popuniti combo box sektorima
-                            width:270
+                            view: "select",
+                            id: "combo",
+                            width:270,
+                            label:"Odabir sektora",
+                            labelWidth:100,
+                            options:["One", "Two"]//sectorEmployees //izvrsiti ubacivanje svih sektora *opcija dozvoljena samo diretkoru
                         },
                         //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika
                         {
                             view:"label",
-                            label: "Nikolina Govedarica",  //ispraviti nakon popunjavanja combo box-a
+                            id:"name",
+                            label: "Sektor za vandredne situacije" //sectorName.name
+                        },
+                        //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika  *izbaciti donju komponentu u slucaju da je ulogovan rukovodioc sektora
+                        {
+                            view:"label",
+                            label: "Nikolina Govedarica",  //ispraviti nakon popunjavanja combo box-a, pa selektovati rukovodica sektora
                             inputWidth:300, align:"left",
                             font:"150px"
                         },
@@ -34,22 +39,32 @@ var sectorView =  {
                             {
                                 view:"button",
                                 id:"addBtn",
-                                value:"Dodaj zaposlenog",
+                                label:"Dodaj zaposlenog",
+                                type: "iconButton",
+                                autowidth: true,
                                 width:150,
+                                icon: "plus-circle",
                                 click: "sectorView.showDialog"
                             },
                             {
                                 view:"button",
                                 id:"editBtn",
-                                value:"Izmijeni zaposlenog",
+                                label:"Izmijeni zaposlenog",
+                                type: "iconButton",
+                                autowidth: true,
                                 width:150,
+                                icon: "pencil",
                                 click: "sectorView.showEditDialog"
                             },
                             {
                                 view:"button",
                                 id:"delBtn",
-                                value:"Obrisi zaposlenog",
-                                width:150, click: "sectorView.showDeleteDialog"
+                                label:"Obriši zaposlenog",
+                                type: "iconButton",
+                                autowidth: true,
+                                width:150,
+                                icon: "trash",
+                                click: "sectorView.showDeleteDialog"
                              },]
                     },
                     {
@@ -70,7 +85,7 @@ var sectorView =  {
                                 id:1, firstName:"Nikola", lastName:"Nikolic", eMail:"Dzoni@mail.com"
                             }
                         ],
-                        width: 1000,
+                        width: 1400,
                         resizeColumns:true,
                         resizeRows:true,
                         onContext:{},
@@ -89,7 +104,7 @@ var sectorView =  {
                             },
                             {
                                 id: "photo",
-                                header: "Slika", //izbaciti nakon popunjavanja podacima
+                                header: "Slika", //cisto da se zna sta se treba nalaziti u koloni *izbaciti nakon popunjavanja podacima
                                 editable: false,
                                 width:160,
                             },
@@ -134,7 +149,7 @@ var sectorView =  {
                 cols: [{
                     view: "label",
                     width: 400,
-                    label: "<span class='webix_icon fa-graduation-cap'><\/span> Dodavanje zaposlenog"
+                    label: "<span class='webix_icon fas fa-user'><\/span> Dodavanje zaposlenog"
                 }, {}, {
                     view: "icon",
                     icon: "close",
@@ -191,11 +206,17 @@ var sectorView =  {
                         hotkey: "enter",
                         width: 250,
                         id: "saveEmployee",
-                        type: "form",
-                        value: "Sačuvaj",
+                        type: "iconButton",
+                        label: "Sačuvaj",
+                        icon: "save",
                         click: "sectorView.save",
                     },
-                        {    view: 'button', value: 'Otkaži', width: 230,
+                        {
+                            view: 'button',
+                            label: 'Otkaži',
+                            type: "iconButton",
+                            icon: "close",
+                            width: 230,
 
                             click: function () {
                                 util.dismissDialog('addEmployeeDialog');
@@ -212,6 +233,13 @@ var sectorView =  {
         if (createForm.validate()) {
             var newItem = createForm.getValues();
             $$("sectorDT").add(newItem);
+          //  connection.sendAjax("POST", "user", function (text, data, xhr) {
+            //    var record = data.json();
+                util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
+              /*  $$("sectorDT").add(record);
+            }, function () {
+                util.messages.showErrorMessage("Došlo je do greške prilikom kreiranja zapisa o zaposlenom.");
+            }, newItem);*/
             util.dismissDialog('addEmployeeDialog');
         }   else {
             webix.alert({
@@ -290,12 +318,17 @@ var sectorView =  {
                             hotkey: "enter",
                             width: 250,
                             id: "saveEmployee",
-                            type: "form",
-                            value: "Sačuvaj",
+                            type: "iconButton",
+                            label: "Sačuvaj",
+                            icon: "save",
                             click: "sectorView.saveEdited",
                         },
-                            {    view: 'button', value: 'Otkaži', width: 230,
-
+                            {
+                                view: 'button',
+                                type: "iconButton",
+                                label: "Otkaži",
+                                icon: "close",
+                                width: 230,
                                 click: function () {
                                     util.dismissDialog('editEmployeeDialog');
                                 }}]
@@ -318,6 +351,8 @@ var sectorView =  {
         var panelCopy = webix.copy(this.panel);
 
         $$("main").addView(webix.copy(panelCopy));
+
+        this.preloadDependencies();
         sectorView.createDatatableContextMenu(); // dodavanje izmjene i brisanja na kontekstni meni
         //connection.attachAjaxEvents('sectorDT', 'KOLONA');
     },
@@ -325,15 +360,15 @@ var sectorView =  {
         var editForm = $$("editEmployeeForm");
         if (editForm.validate()) {
             var newItem = editForm.getValues();
-           /* connection.sendAjax("PUT", "sector/" + newItem.id, function (text, data, xhr) {
+           /* connection.sendAjax("PUT", "user/" + newItem.id, function (text, data, xhr) {
                 if (text === "Success") {
-                    util.messages.showMessage("Podaci o sektoru su uspješno promijenjeni.");
+                    util.messages.showMessage("Podaci zaposlenom u sektoru su uspješno promijenjeni.");
                     $$("sectorDT").updateItem(newItem.id, newItem); // updateItem osvjezava vrijednosti za odabrani red po id-u
                 }
                 else
-                    util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o sektoru.");
+                    util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
             }, function () {
-                util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o sektoru.");
+                util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
             }, newItem);*/
             util.dismissDialog('editEmployeeDialog');
         }  else {
@@ -360,12 +395,24 @@ var sectorView =  {
             width: 500,
             text: "Da li ste sigurni da želite obrisati zaposlenog?",
             callback: function (okPressed) {
-                if (okPressed) { // Korisnik potvrdio brisanje
-                    $$("sectorDT").remove($$("sectorDT").getSelectedId());
+                if (okPressed) // Korisnik potvrdio brisanje
+                {
+                    var id = $$("sectorDT").getSelectedId();
+                 //   connection.sendAjax("DELETE", "user/" + id, function () {
+                        $$("sectorDT").remove(id);
+                        util.messages.showMessage("Zaposleni u sektoru uspješno obrisan.");
+                   /* }, function () {
+                        util.messages.showErrorMessage("Došlo je do greške pri brisanju fakulteta.");
+                    })*/
                 }
             }
         };
-        webix.confirm(delBox);
+
+        var object = $$("sectorDT").getSelectedItem();
+        if(object != null)
+        {
+            webix.confirm(delBox);
+        }
     },
     createDatatableContextMenu: function () {
         webix.ui({
@@ -401,6 +448,16 @@ var sectorView =  {
                 }
             }
         });
+    },
+    preloadDependencies: function () {
+        var name = 'name';
+        sectorName[name] = 'Ime sektora';
+     //   alert(sectorName.name);
+        var firstName = "firstName";
+        var lastName = "lastName";
+        var eMail = "eMail";
+        var photo = "photo";
+//        sectorEmployees[firstName, lastName, eMail, photo] = '';
+     //   sectorEmployees =  ["Prvi sektor", "Drugi sektor"];
     }
-
 }
