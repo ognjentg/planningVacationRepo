@@ -261,7 +261,7 @@ var sectorView =  {
                 cols: [{
                     view: "label",
                     width: 400,
-                    label: "<span class='webix_icon fa-graduation-cap'><\/span> Izmjena zaposlenog"
+                    label: "<span class='webix_icon fas fa-user'><\/span> Izmjena zaposlenog"
                 }, {}, {
                     view: "icon",
                     icon: "close",
@@ -450,8 +450,14 @@ var sectorView =  {
         });
     },
     preloadDependencies: function () {
-        var name = 'name';
-        sectorName[name] = 'Ime sektora';
+        $$("combo").attachEvent("onChange", function(newv, oldv){
+            webix.message("Value changed from: "+oldv+" to: "+newv);
+            //ubaciti metodu koja ce vracati zaposlene samo za taj sektor
+        });
+
+        $$("name").setValue("Ime sektora");
+       // var name = 'name';
+     //   sectorName[name] = 'Ime sektora';
      //   alert(sectorName.name);
         var firstName = "firstName";
         var lastName = "lastName";
