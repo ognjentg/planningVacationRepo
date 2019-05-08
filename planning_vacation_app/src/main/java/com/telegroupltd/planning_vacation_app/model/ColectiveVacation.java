@@ -1,12 +1,14 @@
 package com.telegroupltd.planning_vacation_app.model;
 
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "colective_vacation", schema = "planning_vacation_db", catalog = "")
-public class ColectiveVacation {
+public class ColectiveVacation implements HasActive {
     private Integer id;
     private Date dateFrom;
     private Date dateTo;
