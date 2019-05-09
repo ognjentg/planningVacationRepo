@@ -9,7 +9,8 @@ var menuState = MENU_STATES.COLLAPSED;
 
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
-    {id: "sector", value: "Sector", icon: "code"}
+    {id: "sector", value: "Sector", icon: "code"},
+    {id: "profile", value: "Profile", icon: "code"}
 ];
 
 var menuActions = function (id) {
@@ -20,6 +21,10 @@ var menuActions = function (id) {
 
         case "sector":
             sectorView.selectPanel();
+            break;
+
+        case "profile":
+            profileView.selectPanel();
             break;
     }
 };

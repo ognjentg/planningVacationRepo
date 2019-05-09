@@ -17,7 +17,7 @@ var scriptsToLoad = [
     {
         "section": "views",
         "path": "js/views/",
-        "files": ["template", "sector"] // ADD VIEWS HERE
+        "files": ["template", "sector", "user"] // ADD VIEWS HERE
     },
     {
         "section": "core",
