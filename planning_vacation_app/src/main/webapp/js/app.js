@@ -10,7 +10,6 @@ var menuState = MENU_STATES.COLLAPSED;
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sector", icon: "code"},
-    {id: "profile", value: "Profile", icon: "code"},
     {id:"usergroup",value:"Korisnicke grupe",icon:"list"}
 ];
 
@@ -24,9 +23,6 @@ var menuActions = function (id) {
             sectorView.selectPanel();
             break;
 
-        case "profile":
-            profileView.selectPanel();
-            break;
         case "usergroup":
             usergroupView.selectPanel();
             break;
@@ -38,7 +34,9 @@ var settingsMenu=[
     {$template: "Separator"},
     {id: "2", value: "Promjena lozinke", icon: "lock"},
     {$template: "Separator"},
-    {id: "3", value: "Odjava", icon: "sign-out"}
+    {id: "3", value: "Profil", icon: "user"},
+    {$template: "Separator"},
+    {id: "4", value: "Odjava", icon: "sign-out"}
     ];
 
 var settingsMenuActions=function (id) {
@@ -50,6 +48,9 @@ var settingsMenuActions=function (id) {
             util.messages.showMessage("TODO");
             break;
         case "3":
+            profileView.showProfileDialog();
+            break;
+        case "4":
             logout();
             break;
     }

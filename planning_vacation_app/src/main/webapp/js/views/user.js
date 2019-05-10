@@ -1,5 +1,5 @@
 var profileView = {
-    getPanel: function() {
+    /*getPanel: function() {
         return {
             id: "profileView",
             adjust: true,
@@ -98,6 +98,149 @@ var profileView = {
 
     selectPanel: function () {
         util.selectPanel(this.getPanel());
+    },*/
+
+    profileDialog: {
+        view: "popup",
+        id: "profileDialog",
+        name: "profileDialog",
+        position: "center",
+        modal: true,
+        body: {
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [
+                        {
+                            view: "label",
+                            width: 400,
+                            label: "<span class='webix_icon fas fa-user'></span> Profil"
+                        },
+                        {},
+                        {
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            click: "util.dismissDialog('profileDialog')"
+                        }
+                    ]
+                },
+                {
+                    view: "form",
+                    id: "profileForm",
+                    width: 500,
+                    elementsConfig: {
+                        labelWidth: 140,
+                        bottomPadding: 18
+                    },
+                    elements: [
+                        {
+                            view: "text",
+                            required: true,
+                            id: "username",
+                            name: "username",
+                            label: "Korisničko ime",
+                            invalidMessage: "Niste unijeli korisničko ime.",
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            required: true,
+                            id: "firstName",
+                            name: "firstName",
+                            label: "Ime",
+                            invalidMessage: "Niste unijeli ime.",
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            required: true,
+                            id: "lastName",
+                            name: "lastName",
+                            label: "Prezime",
+                            invalidMessage: "Niste unijeli prezime.",
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            id: "email",
+                            name: "email",
+                            label: "E-mail adresa",
+                            required: true,
+                            invalidMessage: "Niste unijeli e-mail adresu",
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "checkbox",
+                            id: "notifications",
+                            name: "notifications",
+                            label: "Da li želite da primate obavještenja na e-mail?",
+                            labelWidth: 320,
+                            height: 35
+                        },
+                        {
+                            cols: [
+                                {
+                                    view: "uploader",
+                                    id: "photoUploader",
+                                    name: "photoUploader",
+                                    value: "Odaberi sliku",
+                                    link: "photo",
+                                    datatype: "json",
+                                    // upload: "metoda za upload slike"
+                                    multiple: false,
+                                    autosend: false,
+                                    accept: "image/png, image/jpg, image/jpeg",
+                                    width: 150
+                                },
+                                {
+                                    view: "list",
+                                    id: "photo",
+                                    type: "uploader",
+                                    autoheight: true,
+                                    borderless: true
+                                }
+                            ]
+                        },
+                        {
+                            cols: [
+                                {
+                                    view: "button",
+                                    id: "saveProfileButton",
+                                    name: "saveProfileButton",
+                                    hotkey: "enter",
+                                    label: "Sačuvaj",
+                                    type: "iconButton",
+                                    icon: "save",
+                                    click: "profileView.save"
+                                },
+                                {
+                                    view: "button",
+                                    hotkey: "esc",
+                                    label: "Otkaži",
+                                    type: "iconButton",
+                                    icon: "close",
+                                    click: function () {
+                                        util.dismissDialog("profileDialog")
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    showProfileDialog: function() {
+        webix.ui(webix.copy(profileView.profileDialog));
+        setTimeout(function() {
+            $$("profileDialog").show();
+        }, 0);
     },
 
     save: function () {
