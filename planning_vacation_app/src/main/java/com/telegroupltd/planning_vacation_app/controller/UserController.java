@@ -6,6 +6,7 @@ import com.telegroupltd.planning_vacation_app.controller.genericController.Gener
 import com.telegroupltd.planning_vacation_app.model.User;
 //import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.Notification;
 import com.telegroupltd.planning_vacation_app.util.UserLoginInformation;
 import com.telegroupltd.planning_vacation_app.util.Util;
@@ -32,7 +33,8 @@ public class UserController extends GenericController<User, Integer> {
 
     @PersistenceContext
     private EntityManager entityManager;
-
+    @Autowired
+    protected UserBean userBean;
 
     @Value("1")
     private Integer superAdmin;
@@ -47,8 +49,13 @@ public class UserController extends GenericController<User, Integer> {
     @Value("6")
     private Integer worker;
 
+
     @Value("Postoji korisnik sa ovim korisnickim imenom.")
     private String badRequestUsernameExists;
+    @Value("${badRequest.validateEmail}")
+    private String badRequestValidateEmail;
+
+
 
     @Autowired
     public UserController(UserRepository userRepository/*, CompanyRepository companyRepository*/){
@@ -60,7 +67,61 @@ public class UserController extends GenericController<User, Integer> {
 //Implementirati metode: login, logout, ...
 
 
+    @Override
+    public @ResponseBody
+    List<User> getAll() {
+        List<User> users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1));
+        for(User user : users){
+            user.setPassword("");
+            user.setSalt("");
+        }
+        return users;
+    }
+
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public @ResponseBody
+    User login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
+        User user = userRepository.login(userLoginInformation);
+        if (user == null) {
+            throw new ForbiddenException("Forbidden");
+        } else {
+            userBean.setUser(user);
+            userBean.setLoggedIn(true);
+            return userBean.getUser();
+        }
+    }
+
 /*
+//validacija duzina unesenih informacija za update!
+    @Override
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String update(@PathVariable Integer id, @RequestBody User user) throws BadRequestException {
+        if(userBean.getUser().getId().equals(id)){
+            if (Validator.stringMaxLength(user.getFirstName(), 100)) {
+                if (Validator.stringMaxLength(user.getLastName(), 100)) {
+                    if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
+                        User userTemp = userRepository.findById(id).orElse(null);
+                        User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
+
+                        userTemp.setFirstName(user.getFirstName());
+                        userTemp.setLastName(user.getLastName());
+                        userTemp.setPhoto(user.getPhoto());
+                        logUpdateAction(user, oldUser);
+
+                        return "Success";
+                    }
+                    throw new BadRequestException(badRequestBinaryLength.replace("{tekst}", "slike"));
+                }
+                throw new BadRequestException(badRequestStringMaxLength.replace("{tekst}", "prezimena").replace("{broj}", String.valueOf(100)));
+            }
+            throw new BadRequestException(badRequestStringMaxLength.replace("{tekst}", "imena").replace("{broj}", String.valueOf(100)));
+        }
+        throw new BadRequestException(badRequestUpdate);
+    }
+*/
 
     @Override
     @RequestMapping(method = RequestMethod.POST)
@@ -75,26 +136,8 @@ public class UserController extends GenericController<User, Integer> {
                 String newPassword=Util.randomPassword();
                 String username=Util.generateUsername(user.getEmail());
 
-                if(user.getUserGroupId()!=superAdmin) {   //Ako nije superadmin, imace e-mail na koji ce dobiti username i password
-                        newUser.setEmail(user.getEmail());
-
-                        User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
-                        if (userWithUsername == null) {
-                            newUser.setUsername(username);  //stavicemo prvi dio iz e-mail-a I dodati neki random dio ->metoda
-                            newUser.setPassword(Util.hashPassword(salt + newPassword));  //generisacemo ranodm sifru  i random salt  ->metode
-                        } else {
-                            throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
-                        }
-                }else {
-                        newUser.setEmail(null);
-                        newUser.setUsername(user.getUsername());  //stavicemo prvi dio iz e-mail-a I dodati neki random dio ->metoda
-                        newUser.setPassword(user.getPassword());
-                }
-
-                newUser.setSalt(salt);   //generisacemo random salt
                 newUser.setFirstName(null);
                 newUser.setLastName(null);
-
                 if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
                     newUser.setPauseFlag(user.getPauseFlag());
                     newUser.setStartDate(user.getStartDate());
@@ -104,13 +147,31 @@ public class UserController extends GenericController<User, Integer> {
                     newUser.setStartDate(null);
                     newUser.setReceiveMail((byte) 0);
                 }
-                newUser.setSectorId(user.getSectorId());
+                newUser.setSectorId(null);  //It is sector manager's job
                 newUser.setPhoto(null);
                 newUser.setUserGroupId(user.getUserGroupId());
                 if(user.getUserGroupId()!=superAdmin) {
                     newUser.setCompanyId(user.getCompanyId());
                 }else newUser.setCompanyId(null);
                 newUser.setActive((byte) 1);
+
+                if(user.getUserGroupId()!=superAdmin) {   //Ako nije superadmin, imace e-mail na koji ce dobiti username i password
+                    newUser.setEmail(user.getEmail());
+
+                    User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
+                    if (userWithUsername == null) {
+                        newUser.setUsername(username);
+                        newUser.setPassword(Util.hashPassword(salt + newPassword));
+                        newUser.setSalt(salt);
+                    } else {
+                        throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
+                    }
+                }
+                //Superadmin will be added from workbench.
+
+
+
+
                 if(repo.saveAndFlush(newUser) != null){
                     entityManager.refresh(newUser);
                     logCreateAction(newUser);
@@ -127,29 +188,7 @@ public class UserController extends GenericController<User, Integer> {
     }
 
 
-    @Override
-    public @ResponseBody
-    List<User> getAll() {
-        List<User> users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1));
-        for(User user : users){
-            user.setPassword("");
-            user.setSalt("");
-        }
-        return users;
-    }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public @ResponseBody
-    User login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
-        User user = userRepository.login(userLoginInformation);
-        if (user == null) {
-            throw new ForbiddenException("Forbidden");
-        } else {
-            userBean.setUser(user);
-            userBean.setLoggedIn(true);
-            return userBean.getUser();
-        }
-    }
 
     @RequestMapping(value = "/logedInFirstTime", method = RequestMethod.POST)
     public @ResponseBody
@@ -178,6 +217,6 @@ public class UserController extends GenericController<User, Integer> {
 
 
 
-*/
+
 
 }
