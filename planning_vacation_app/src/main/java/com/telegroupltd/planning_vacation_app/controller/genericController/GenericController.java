@@ -4,6 +4,7 @@ package com.telegroupltd.planning_vacation_app.controller.genericController;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericLogger.GenericLogger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,14 @@ public class GenericController<T, ID extends Serializable> extends GenericLogger
     @PersistenceContext
     private EntityManager entityManager;
 
+    @Value("Dodavanje nije moguće.")
+    private String badRequestInsert;
 
+    @Value("Ažuriranje nije moguće.")
+    private String badRequestUpdate;
+
+    @Value("Brisanje nije moguće.")
+    private String badRequestDelete;
 
     public GenericController(JpaRepository<T, ID> repo) {
         this.repo = repo;

@@ -10,6 +10,7 @@ import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.Notification;
 import com.telegroupltd.planning_vacation_app.util.UserLoginInformation;
 import com.telegroupltd.planning_vacation_app.util.Util;
+import com.telegroupltd.planning_vacation_app.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -54,8 +57,18 @@ public class UserController extends GenericController<User, Integer> {
     private String badRequestUsernameExists;
     @Value("${badRequest.validateEmail}")
     private String badRequestValidateEmail;
-
-
+    @Value("Duzina {tekst} prelazi maksimalnu duzinu od {broj} karaktera.")
+    private String badRequestStringMaxLength;
+    @Value("Veličina {tekst} prelazi maksimalnu veličinu.")
+    private String badRequestBinaryLength;
+    @Value("Ažuriranje nije moguće.")
+    private String badRequestUpdate;
+    @Value("Dodavanje nije moguće.")
+    private String badRequestInsert;
+    @Value("Brisanje nije moguće.")
+    private String badRequestDelete;
+    @Value("4294967295")
+    private Long longblobLength;
 
     @Autowired
     public UserController(UserRepository userRepository/*, CompanyRepository companyRepository*/){
@@ -63,8 +76,8 @@ public class UserController extends GenericController<User, Integer> {
     this.userRepository=userRepository;
    // this.companyRepository=companyRepository;
 }
-//Override metoda: insert, update, delete, getAll(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
-//Implementirati metode: login, logout, ...
+//Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
+//Implementirati metode: login*, logout*, ...
 
 
     @Override
@@ -87,13 +100,25 @@ public class UserController extends GenericController<User, Integer> {
             throw new ForbiddenException("Forbidden");
         } else {
             userBean.setUser(user);
-            userBean.setLoggedIn(true);
+          //  userBean.setLoggedIn(true);
             return userBean.getUser();
         }
     }
 
-/*
-//validacija duzina unesenih informacija za update!
+    @SuppressWarnings("SameReturnValue")
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public @ResponseBody
+    String logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        return "Success";
+    }
+
+
+
     @Override
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -103,11 +128,14 @@ public class UserController extends GenericController<User, Integer> {
             if (Validator.stringMaxLength(user.getFirstName(), 100)) {
                 if (Validator.stringMaxLength(user.getLastName(), 100)) {
                     if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
+
                         User userTemp = userRepository.findById(id).orElse(null);
                         User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
 
                         userTemp.setFirstName(user.getFirstName());
                         userTemp.setLastName(user.getLastName());
+                        userTemp.setUsername(user.getUsername());
+                        userTemp.setReceiveMail(user.getReceiveMail());
                         userTemp.setPhoto(user.getPhoto());
                         logUpdateAction(user, oldUser);
 
@@ -121,7 +149,8 @@ public class UserController extends GenericController<User, Integer> {
         }
         throw new BadRequestException(badRequestUpdate);
     }
-*/
+
+
 
     @Override
     @RequestMapping(method = RequestMethod.POST)
@@ -161,7 +190,7 @@ public class UserController extends GenericController<User, Integer> {
                     User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
                     if (userWithUsername == null) {
                         newUser.setUsername(username);
-                        newUser.setPassword(Util.hashPassword(salt + newPassword));
+                        newUser.setPassword(Util.hashPasswordSalt(newPassword,salt));
                         newUser.setSalt(salt);
                     } else {
                         throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
@@ -169,54 +198,19 @@ public class UserController extends GenericController<User, Integer> {
                 }
                 //Superadmin will be added from workbench.
 
-
-
-
                 if(repo.saveAndFlush(newUser) != null){
                     entityManager.refresh(newUser);
                     logCreateAction(newUser);
                     if(user.getUserGroupId()!=superAdmin) {
-                        Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
+                  //      Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                          }
                     return newUser;
                 }
                 throw new BadRequestException(badRequestInsert);
             }
             throw new BadRequestException(badRequestValidateEmail);
-        ////}
-       //// throw new BadRequestException(badRequestEmailExists);
+        //}
+       // throw new BadRequestException(badRequestEmailExists);
     }
-
-
-
-
-    @RequestMapping(value = "/logedInFirstTime", method = RequestMethod.POST)
-    public @ResponseBody
-    String logedInFirstTime(@RequestBody User newUser) throws BadRequestException {
-
-        User user = entityManager.find(User.class, newUser.getId());
-
-        user.setUsername(newUser.getUsername());
-        user.setPassword(Util.hashPassword(newUser.getPassword()));
-
-        user.setFirstName(newUser.getFirstName());
-        user.setLastName(newUser.getLastName());
-
-        newUser.setReceiveMail(newUser.getReceiveMail());
-        user.setPhoto(newUser.getPhoto());
-
-        user.setActive((byte) 1);
-
-        if (repo.saveAndFlush(user) != null) {
-            return "Success";
         }
-        throw new BadRequestException(badRequestRegistration);
-    }
-
-        }
-
-
-
-
-
 }
