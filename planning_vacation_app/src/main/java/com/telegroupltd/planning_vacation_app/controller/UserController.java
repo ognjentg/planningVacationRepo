@@ -213,4 +213,4 @@ public class UserController extends GenericController<User, Integer> {
        // throw new BadRequestException(badRequestEmailExists);
     }
         }
-}
+
