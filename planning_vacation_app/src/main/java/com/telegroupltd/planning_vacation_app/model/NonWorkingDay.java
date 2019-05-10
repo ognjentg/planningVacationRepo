@@ -1,12 +1,14 @@
 package com.telegroupltd.planning_vacation_app.model;
 
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.Objects;
 
 @Entity
 @Table(name = "non_working_day", schema = "planning_vacation_db", catalog = "")
-public class NonWorkingDay {
+public class NonWorkingDay implements HasActive {
     private Integer id;
     private Date day;
     private Integer companyId;

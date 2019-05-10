@@ -1,5 +1,7 @@
 package com.telegroupltd.planning_vacation_app.model;
 
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,7 +9,7 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
-public class Constraints {
+public class Constraints implements HasActive {
     private Integer id;
     private Integer maxVacationDays;
     private Integer vacationPeriodLength;
