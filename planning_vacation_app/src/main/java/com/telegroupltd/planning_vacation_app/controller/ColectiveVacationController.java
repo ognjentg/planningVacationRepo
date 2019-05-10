@@ -1,7 +1,8 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
-import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
+import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
+import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.ColectiveVacation;
 import com.telegroupltd.planning_vacation_app.repository.ColectiveVacationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 
+
 @RequestMapping(value = "/colective_vacation")
 @Controller
 @Scope("request")
-public class ColectiveVacationController extends GenericController<ColectiveVacation, Integer> {
+public class ColectiveVacationController extends GenericHasActiveController<ColectiveVacation, Integer> {
     private final ColectiveVacationRepository colectiveVacationRepository;
 
     @Value("${badRequest.insert}")
@@ -25,56 +27,34 @@ public class ColectiveVacationController extends GenericController<ColectiveVaca
     @Value("${badRequest.update}")
     private String badRequestUpdate;
 
-    @Value("${badRequest.delete}")
-    private String badRequestDelete;
-
     @Autowired
-    public ColectiveVacationController(ColectiveVacationRepository colectiveVacationRepository){
+    public ColectiveVacationController(ColectiveVacationRepository colectiveVacationRepository) {
         super(colectiveVacationRepository);
         this.colectiveVacationRepository = colectiveVacationRepository;
     }
-/*
+
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @Override
     public @ResponseBody
-    ColectiveVacation insert(@RequestBody ColectiveVacation colectiveVacation) throws BadRequestException{
-        if(repo.saveAndFlush(colectiveVacation) != null){
-            logCreateAction(colectiveVacation);
-            return colectiveVacation;
-        }
-        else
+    ColectiveVacation insert(@RequestBody ColectiveVacation colectiveVacation) throws BadRequestException {
+        if (repo.saveAndFlush(colectiveVacation) == null)
             throw new BadRequestException(badRequestInsert);
+        //If date_from is older than date_to
+        if(colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
+            throw new BadRequestException(badRequestInsert);
+        logCreateAction(colectiveVacation);
+        return colectiveVacation;
     }
 
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Override
     public @ResponseBody
-    String update(@PathVariable Integer id, @RequestBody ColectiveVacation colectiveVacation) throws BadRequestException{
-        ColectiveVacation oldObject = cloner.deepClone(repo.findById(id).orElse(null));
-        if(repo.saveAndFlush(colectiveVacation) != null){
-            logUpdateAction(colectiveVacation, oldObject);
-            return "Success";
-        }
-        else
+    String update(@PathVariable Integer id, @RequestBody ColectiveVacation colectiveVacation) throws BadRequestException, ForbiddenException {
+        if(colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
             throw new BadRequestException(badRequestUpdate);
+        return super.update(id, colectiveVacation);
     }
-
-    @Override
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE)
-    public @ResponseBody
-    String delete(@PathVariable Integer id) throws BadRequestException{
-        ColectiveVacation colectiveVacation = repo.findById(id).orElse(null);
-        if(colectiveVacation != null){
-            colectiveVacation.setActive((byte) 0);
-            repo.saveAndFlush(colectiveVacation);
-            logDeleteAction(colectiveVacation);
-            return "Success";
-        }
-        else
-            throw new BadRequestException(badRequestDelete);
-    }
-    */
 }
