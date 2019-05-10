@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-@RequestMapping(value = "/leave_request")
+@RequestMapping(value = "sector")
 @Controller
 @Scope("request")
 public class SectorController extends GenericController<Sector, Integer> {
@@ -24,7 +24,7 @@ public class SectorController extends GenericController<Sector, Integer> {
     private EntityManager entityManager;
 
     @Autowired
-    public UserController(SectorRepository sectorRepository/*, CompanyRepository companyRepository*/){
+    public SectorController(SectorRepository sectorRepository/*, CompanyRepository companyRepository*/){
         super(sectorRepository);
         this.sectorRepository=sectorRepository;
         // this.companyRepository=companyRepository;

@@ -1,13 +1,13 @@
 package com.telegroupltd.planning_vacation_app.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Sector {
+@Table(name = "sector")
+public class Sector implements HasActive {
     private Integer id;
     private String name;
     private Integer maxAbsentPeople;
