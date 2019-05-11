@@ -39,10 +39,10 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     @Override
     public @ResponseBody
     ColectiveVacation insert(@RequestBody ColectiveVacation colectiveVacation) throws BadRequestException {
-        if (repo.saveAndFlush(colectiveVacation) == null)
-            throw new BadRequestException(badRequestInsert);
-        //If date_from is older than date_to
+        //Check if date_from is after or equal to date_to
         if(colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
+            throw new BadRequestException(badRequestInsert);
+        if (repo.saveAndFlush(colectiveVacation) == null)
             throw new BadRequestException(badRequestInsert);
         logCreateAction(colectiveVacation);
         return colectiveVacation;

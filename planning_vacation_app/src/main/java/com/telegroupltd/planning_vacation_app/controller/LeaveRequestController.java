@@ -1,7 +1,7 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
-import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
+import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
@@ -25,57 +25,36 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Value("${badRequest.update}")
     private String badRequestUpdate;
 
-    @Value("${badRequest.delete}")
-    private String badRequestDelete;
-
     @Autowired
     public LeaveRequestController(LeaveRequestRepository leaveRequestRepository) {
         super(leaveRequestRepository);
         this.leaveRequestRepository = leaveRequestRepository;
     }
-/*
+
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @Override
     public @ResponseBody
     LeaveRequest insert(@RequestBody LeaveRequest leaveRequest) throws BadRequestException{
-        if(repo.saveAndFlush(leaveRequest) != null){
-            logCreateAction(leaveRequest);
-            return leaveRequest;
-        }
-        else
+        //Check if category length is equal or greater than 45
+        if(leaveRequest.getCategory().length() >= 45)
             throw new BadRequestException(badRequestInsert);
+        if(repo.saveAndFlush(leaveRequest) == null)
+            throw new BadRequestException(badRequestInsert);
+        logCreateAction(leaveRequest);
+        return leaveRequest;
     }
 
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Override
     public @ResponseBody
-    String update(@PathVariable Integer id, @RequestBody LeaveRequest leaveRequest) throws BadRequestException{
-        LeaveRequest oldObject = cloner.deepClone(repo.findById(id).orElse(null));
-        if(repo.saveAndFlush(leaveRequest) != null){
-            logUpdateAction(leaveRequest, oldObject);
-            return "Success";
-        }
-        else
-            throw new BadRequestException(badRequestUpdate);
+    String update(@PathVariable Integer id, @RequestBody LeaveRequest leaveRequest) throws BadRequestException, ForbiddenException {
+        if(leaveRequest.getCategory().length() >= 45)
+            throw new BadRequestException(badRequestInsert);
+        return super.update(id, leaveRequest);
     }
 
-    @Override
-    @RequestMapping(value = {"/{id}"}, method = RequestMethod.DELETE)
-    public @ResponseBody
-    String delete(@PathVariable Integer id) throws BadRequestException {
-        LeaveRequest leaveRequest = leaveRequestRepository.findById(id).orElse(null);
-        if(leaveRequest != null){
-            leaveRequest.setActive((byte) 0);
-            repo.saveAndFlush(leaveRequest);
-            logDeleteAction(leaveRequest);
-            return "Success";
-        }
-        else
-            throw new BadRequestException(badRequestDelete);
-    }
-    */
 }
 
