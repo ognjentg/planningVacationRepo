@@ -10,7 +10,8 @@ var menuState = MENU_STATES.COLLAPSED;
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sector", icon: "code"},
-    {id:"usergroup",value:"Korisnicke grupe",icon:"list"}
+    {id:"usergroup",value:"Korisnicke grupe",icon:"list"},
+    {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
 ];
 
 var menuActions = function (id) {
@@ -25,6 +26,10 @@ var menuActions = function (id) {
 
         case "usergroup":
             usergroupView.selectPanel();
+            break;
+
+        case "company":
+            companyView.selectPanel();
             break;
     }
 };

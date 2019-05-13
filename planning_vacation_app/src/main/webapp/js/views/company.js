@@ -1,0 +1,986 @@
+// var users = ["admin", "superadmin"];
+
+var user = true ? "superadmin" : "admin";
+
+// dummy data
+var companies = [
+    {id: 1, companyLogo: "Mtel", name: "Mtel", pin: "1111"},
+    {id: 2, companyLogo: "Telenor", name: "Telenor", pin: "1141"},
+    {id: 3, companyLogo: "Vip", name: "Vip", pin: "1211"},
+    {id: 4, companyLogo: "Telecom", name: "Telecom", pin: "1112"},
+    {id: 5, companyLogo: "AT&T", name: "AT&T", pin: "1741"},
+    {id: 6, companyLogo: "AOL", name: "AOL", pin: "1161"},
+    {id: 7, companyLogo: "T Com", name: "T Com", pin: "1171"},
+    {id: 8, companyLogo: "Plus", name: "Verizon", pin: "1771"},
+    {id: 9, companyLogo: "France telecom", name: "France telecom", pin: "1551"},
+    {id: 10, companyLogo: "Plus", name: "Telefónica S.A.", pin: "1771"},
+    {id: 11, companyLogo: "Plus", name: "Vodafone Group plc", pin: "1771"},
+    {id: 12, companyLogo: "Plus", name: "China Mobile", pin: "1771"},
+    {id: 13, companyLogo: "Plus", name: "Orange S.A.", pin: "1771"},
+    {id: 14, companyLogo: "Plus", name: "Verizon Wireless", pin: "1771"},
+    {id: 15, companyLogo: "Plus", name: "TIM S.p.A", pin: "1771"},
+    {id: 16, companyLogo: "Plus", name: "Mobile TeleSystems", pin: "1771"},
+    {id: 17, companyLogo: "Plus", name: "Deutsche Telekom AG", pin: "1771"},
+    {id: 18, companyLogo: "Plus", name: "Manx Telecom", pin: "1771"},
+    {id: 19, companyLogo: "Plus", name: "Sure Mobile", pin: "1771"},
+    {id: 20, companyLogo: "Swisscom", name: "Swisscom", pin: "1341"},
+    {id: 21, companyLogo: "Plus", name: "Andorra Telecom", pin: "1771"},
+    {id: 22, companyLogo: "Plus", name: "Magenta Telekom", pin: "1771"},
+    {id: 23, companyLogo: "Plus", name: "Proximus", pin: "1771"},
+    {id: 24, companyLogo: "Plus", name: "T-Mobile", pin: "1771"},
+    {id: 25, companyLogo: "Plus", name: "Monaco Telecom", pin: "1771"},
+    {id: 26, companyLogo: "Plus", name: "O2", pin: "1771"},
+    {id: 27, companyLogo: "Plus", name: "Movistar", pin: "1771"},
+    {id: 28, companyLogo: "Plus", name: "San Marino Telecom ", pin: "1771"},
+    {id: 29, companyLogo: "Plus", name: "MegaFon", pin: "1771"},
+    {id: 30, companyLogo: "Swisscom", name: "Play", pin: "1341"},
+    {id: 31, companyLogo: "Plus", name: "S Telecom ", pin: "1771"},
+    {id: 32, companyLogo: "Plus", name: "Telecom ", pin: "1771"},
+    {id: 33, companyLogo: "Plus", name: " Telecom ", pin: "1771"},
+];
+
+var companyView = {
+    panel: {
+        type: "space",
+        id: "companyPanel",
+        css: "companyPanelToolbar",
+        adjust: true,
+        rows: [{
+            view: "toolbar",
+            padding: 10,
+            css: "companyPanelToolbarTop",
+            cols: [
+                {
+                    view: "label",
+                    width: 140,
+                    height: 70,
+                    css: "companyPanelToolbar",
+                    template: "<span class='fa fa-briefcase'></span> Kompanije"
+                }, {}, {}, {},
+
+                {
+                    css: "companies-counter",
+                    rows: [
+                        {
+                            view: "template",
+                            id: "t1",
+                            css: "companies-counter",
+                        },
+                        {
+                            view: "label",
+                            label: "broj kompanija",
+                            type: "header",
+                            css: "companies-counter"
+                        },
+
+                    ]
+
+
+                },
+                {
+                    css: "admin-counter",
+                    rows: [
+                        {
+                            view: "template",
+                            id: "t2",
+                            css: "admin-counter",
+                        },
+                        {
+                            view: "label",
+                            label: "broj administratora",
+                            type: "header",
+                            css: "admin-counter"
+                        },
+
+                    ]
+
+
+                },
+                {
+                    css: "employee-counter",
+                    rows: [
+                        {view: "template", id: "t3", css: "employee-counter",},
+                        {view: "label", label: "broj zaposlenih", type: "header", css: "employee-counter"},
+
+                    ]
+
+
+                },
+
+                // {
+                //     view: "template",
+                //     id: "t1",
+                //     width: 200,
+                //     text: "broj kompanija",
+                //     css: "companies-counter",
+                //
+                // },
+
+                {
+                    id: "btn",
+                    view: "button",
+                    type: "iconButton",
+                    label: " Analitikka  ",
+                    icon: "fas fa-line-chart",
+                    css: "companyButton",
+                    autowidth: true
+                }
+            ]
+        }, {
+            view: "toolbar",
+            css: "companyPanelToolbar",
+            paddingX: 5,
+            paddingY: 5,
+            height: 60,
+
+
+            cols: [
+                {
+                    id: "addCompanyBtn",
+                    view: "button",
+                    type: "iconButton",
+                    label: "Dodajte kompaniju",
+                    icon: "plus-circle",
+                    click: 'companyView.showAddDialog',
+                    css: "companyButton",
+                    autowidth: true
+                },
+                {
+                    view: "button",
+                    type: "iconButton",
+                    icon: "external-link",
+                    label: "Arhivirajte",
+                    width: 100, css: "companyButton",
+                    on: {
+                        onItemClick: function (id) {
+                            webix.toPDF(webix.$$("companyDT"));
+
+                        }
+                    }
+                },
+                {
+                    view: "button",
+                    type: "iconButton",
+                    icon: "fas fa-print",
+                    label: "Stampajte",
+                    width: 100,
+                    css: "companyButton",
+                    click: function (id) {
+                        console.log("print data");
+                        webix.print($$("companyDT"), {fit: "page"});
+                    }
+                },
+                {
+                    view: "button",
+                    type: "iconButton",
+                    icon: "fa fa-refresh",
+                    label: "Osvjezite",
+                    width: 100,
+                    css: "companyButton",
+                    click: function () {
+                        webix.extend($$("companyDT"), webix.ProgressBar);
+                        console.log("refresh data");
+                        var table = webix.$$("companyDT");
+                        table.clearAll();
+                        table.showProgress();
+                        webix.delay(function () {
+                            table.parse(companies);
+                            table.hideProgress();
+                        }, null, null, 300);
+
+                    }
+                },
+
+            ]
+        }, {
+            id: "companyDT",
+            view: "datatable",
+            css: "companyDatatable",
+            margin: 10,
+            editable: true,
+            editaction: "dblclick",
+            multiselect: false,
+            resizeColumn: true,
+            resizeRow: true,
+            onContext: {},
+            pager: "pagerA",
+            data: companies,
+
+            columns: [{
+                id: "id",
+                hidden: true,
+                fillspace: true,
+                height: 35,
+
+            }, {id: "id", header: "#", width: 50},
+                {
+                    id: "companyLogo",
+                    width: 400,
+                    header: {text: "Logo", css: "wrap-line"},
+                    template: "<img src='data:image/jpg;base64,#companyLogo#'/>"
+
+                }, {
+                    id: "name",
+                    fillspace: true,
+                    editor: "text",
+                    sort: "string",
+                    header: [
+                        "Naziv kompanije", {
+                            content: "textFilter", value: ""
+                        }
+                    ]
+                },
+
+                {
+                    id: "delete",
+                    header: "&nbsp;",
+                    width: 35,
+                    template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                },
+                {
+                    id: "edit",
+                    header: "&nbsp;",
+                    width: 35,
+                    template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
+                },
+                {
+                    id: "view",
+                    header: "&nbsp;",
+                    width: 35,
+                    template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa fa-eye'></span>"
+                }
+
+            ],
+            select: "row",
+            navigation: true,
+            url: "company",
+            on: {
+
+                onAfterContextMenu: function (item) {
+                    this.select(item.row);
+                }
+            },
+            onClick: {
+                webix_icon: function (e, id) {
+                    console.log(id["column"]);
+                    var action = id["column"];
+                    if (action === "delete" && user === "admin") {
+                        alert("Niste autorizovani da izbrisete kompaniju!");
+                    }
+                    if (action === "delete" && user === "superadmin") {
+                        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                        delBox.callback = function (result) {
+                            if (result == 1) {
+
+                                animateValue($$("t1"), 0, companies.length, 1000);
+
+
+                            }
+                        };
+                        webix.confirm(delBox);
+                    }
+                    if (action === "edit") {
+                        companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
+
+                    }
+                    if (action === "view") {
+                        companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));
+
+                    }
+
+                }
+            },
+
+        },
+            {
+                view: "toolbar",
+                css: "highlighted_header header6",
+                paddingX: 5,
+                paddingY: 5,
+                height: 40,
+                cols: [{
+                    view: "pager", id: "pagerA",
+                    template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
+                    size: 20,
+                    height: 35,
+                    group: 5,
+                    animate: {
+                        direction: "top"
+                    },
+                }
+                ]
+            }
+        ],
+
+    },
+
+    selectPanel: function () {
+        $$("main").removeView(rightPanel);
+        rightPanel = "companyPanel";
+
+        var panelCopy = webix.copy(this.panel);
+
+        $$("main").addView(webix.copy(panelCopy));
+
+        if (user === "admin") {
+
+            $$("addCompanyBtn").hide();
+
+
+            var table = webix.$$("companyDT");
+
+            table.clearAll();
+
+            companies = companies.slice(0, 1);
+
+            table.parse(companies);
+
+            animateValue($$("t1"), 0, companies.length, 100);
+            animateValue($$("t2"), 0, companies.length * 2, 100);
+            animateValue($$("t3"), 0, companies.length * 150, 100);
+
+        } else {
+            animateValue($$("t1"), 0, companies.length, 1000);
+            animateValue($$("t2"), 0, companies.length * 2, 900);
+            animateValue($$("t3"), 0, companies.length * 5, 900);
+
+        }
+
+
+        webix.protoUI({
+            name: "fadeInWindow",
+            $init: function () {
+                this.$ready.push(function () {
+                    this.attachEvent("onShow", function () {
+                        this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                    })
+                    this.attachEvent("onHide", function () {
+                        this.$view.style.display = "block";
+                        this.$view.className += " animated fadeOutUpBig";
+                    })
+                });
+            }
+        }, webix.ui.window);
+
+        webix.ui({
+            view: "contextmenu",
+            id: "companyContextMenu",
+            width: 200,
+            data: [{
+                id: "1",
+                value: "Izmijenite",
+                icon: "pencil-square-o"
+            }, {
+                $template: "Separator"
+            }, {
+                id: "2",
+                value: "Obrišite",
+                icon: "trash"
+            }],
+            master: $$("companyDT"),
+            on: {
+                onItemClick: function (id) {
+                    var context = this.getContext();
+                    switch (id) {
+                        case "1":
+                            companyView.showChangeCompanyDialog($$("companyDT").getItem(context.id.row));
+                            break;
+                        case "2":
+                            if (user === "admin") {
+                                alert("Niste autorizovani da izbrisete kompaniju!");
+                                break;
+                            }
+                            var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                            delBox.callback = function (result) {
+                                if (result == 1) {
+                                    var item = $$("companyDT").getItem(context.id.row);
+                                    $$("companyDT").detachEvent("onBeforeDelete");
+
+                                }
+                            };
+                            webix.confirm(delBox);
+                            break;
+                    }
+                }
+            }
+        })
+    },
+
+    addDialog: {
+        view: "fadeInWindow",
+        id: "addCompanyDialog",
+        move: true,
+        position: "center",
+        body: {
+            id: "addCompanyInside",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-briefcase'></span> Dodavanje kompanije",
+                    width: 400,
+                    height: 50
+                }, {}, {
+                    hotkey: 'esc',
+                    view: "icon",
+                    icon: "close",
+                    align: "right",
+                    click: function () {
+                        this.getTopParentView().hide();
+                    },
+                }]
+            }, {
+                view: "form",
+                id: "addCompanyForm",
+                width: 660,
+                height: 150,
+                elementsConfig: {
+                    labelWidth: 200,
+                    bottomPadding: 20
+                },
+                elements: [{
+                    view: "text",
+                    id: "name",
+                    name: "name",
+                    label: "Naziv:",
+                    invalidMessage: "Unesite naziv kompanije!",
+                    required: true
+                }, {
+                    view: "text",
+                    id: "pin",
+                    invalidMessage: "Unesite validan PIN!",
+                    name: "pin",
+                    type: "password",
+                    editable: true,
+                    stringResult: true,
+                    label: "PIN kompanije:",
+                    required: true
+
+
+                },
+
+                    {
+                        margin: 5,
+                        cols: [{}, {
+                            id: "saveCompany",
+                            view: "button",
+                            value: "Dodajte",
+                            type: "form",
+                            align: "right",
+                            click: "companyView.save",
+                            hotkey: "enter",
+                            width: 150
+                        }, {
+
+                            id: "cancelCompany",
+                            view: "button",
+                            value: "Otkazite",
+                            type: "danger",
+                            align: "right",
+                            click: function () {
+                                this.getTopParentView().hide();
+                            },
+                            hotkey: "esc",
+                            width: 150
+
+                        }]
+                    }
+                ],
+                rules: {
+                    "name": function (value) {
+                        if (!value) {
+                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            return false;
+                        } else if (value.length > 100) {
+                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    "pin": function (value) {
+                        if (!value) {
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Morate unijeti PIN!';
+                            return false;
+
+                        } else if (isNaN(value)) {
+                            console.log(isNaN(value));
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Nisu dozvoljeni drugi karakteri osim numerickih!';
+                            return false;
+
+                        } else if (value.length < 4) {
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti manji od 4!';
+                            console.log("less then od 4");
+                            return false;
+
+                        } else if (value.length > 4) {
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti veci od 4!';
+                            console.log("greater than 4");
+                            return false;
+
+                        } else {
+                            console.log("success");
+                            return true;
+                        }
+
+                    }
+
+
+                }
+            }]
+        }
+    },
+
+    showAddDialog: function () {
+
+        webix.ui(webix.copy(companyView.addDialog)).show();
+        webix.UIManager.setFocus("name");
+
+    },
+
+    save: function () {
+        var form = $$("addCompanyForm");
+        var logo = $$("companyLogoList");
+
+        var validation = form.validate();
+        if (validation) {
+            var newCompany = {
+                name: form.getValues().name,
+
+            };
+            $$("companyDT").add(newCompany);
+            util.dismissDialog('addCompanyDialog');
+        }
+    }
+
+    ,
+    changeCompanyDialog: {
+        view: "fadeInWindow",
+        id: "changeCompanyDialog",
+        modal: true,
+        position: "center",
+
+        body: {
+            id: "changeCompanyInside",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-briefcase'></span> Izmjena kompanije",
+                    width: 400
+                }, {}, {
+                    hotkey: 'esc',
+                    view: "icon",
+                    icon: "close",
+                    align: "right",
+                    click: function () {
+                        this.getTopParentView().hide();
+                    },
+                }]
+            }, {
+                view: "form",
+                id: "changeCompanyForm",
+                width: 600,
+                elementsConfig: {
+                    labelWidth: 200,
+                    bottomPadding: 18
+                },
+                elements: [
+                    {
+                        view: "text",
+                        id: "name",
+                        name: "name",
+                        label: "Naziv:",
+                        invalidMessage: "Unesite naziv kompanije!",
+                        required: true
+                    },
+                    {
+                        view: "text",
+                        id: "pin",
+                        invalidMessage: "Unesite validan PIN!",
+                        name: "pin",
+                        type: "password",
+                        editable: true,
+                        stringResult: true,
+                        label: "PIN kompanije:",
+                        required: true
+
+
+                    },
+
+
+                    {
+                        margin: 5,
+                        cols: [{}, {
+                            id: "changeCompany",
+                            view: "button",
+                            value: "Sačuvajte izmjene",
+                            type: "form",
+                            click: "companyView.saveChangedCompany",
+                            hotkey: "enter",
+                            width: 150
+                        }]
+                    }],
+                rules: {
+                    "name": function (value) {
+                        if (!value) {
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            return false;
+                        } else if (value.length > 100) {
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    },
+                    "pin": function (value) {
+                        if (!value) {
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Morate unijeti PIN!';
+                            return false;
+
+                        } else if (isNaN(value)) {
+                            console.log(isNaN(value));
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Nisu dozvoljeni drugi karakteri osim numerickih!';
+                            return false;
+
+                        } else if (value.length < 4) {
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti manji od 4!';
+                            console.log("less then od 4");
+                            return false;
+
+                        } else if (value.length > 4) {
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti veci od 4!';
+                            console.log("greater than 4");
+                            return false;
+
+                        } else {
+                            console.log("success");
+                            return true;
+                        }
+
+                    }
+
+
+                }
+            }]
+        }
+    },
+
+
+    adminChangeCompanyDialog: {
+        view: "fadeInWindow",
+        id: "adminChangeCompanyDialog",
+        modal: true,
+        position: "center",
+
+        body: {
+            id: "adminChangeCompanyInside",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-briefcase'></span> Izmjena kompanije",
+                    width: 400
+                }, {}, {
+                    hotkey: 'esc',
+                    view: "icon",
+                    icon: "close",
+                    align: "right",
+                    click: function () {
+                        this.getTopParentView().hide();
+                    },
+                }]
+            }, {
+                view: "form",
+                id: "adminChangeCompanyForm",
+                width: 600,
+                elementsConfig: {
+                    labelWidth: 200,
+                    bottomPadding: 18
+                },
+                elements: [
+                    {
+                        view: "text",
+                        id: "name",
+                        name: "name",
+                        label: "Naziv:",
+                        invalidMessage: "Unesite naziv kompanije!",
+                        required: true
+                    },
+
+
+                    {
+                        height: 50,
+                        cols: [
+                            {
+                                view: "label",
+                                width: 200,
+                                bottomPadding: 20,
+                                leftPadding: 3,
+                                required: true,
+                                label: "Logo kompanije: <span style='color:#e32'>*</span>"
+                            },
+                            {
+                                view: "list",
+                                name: "companyLogoList",
+                                rules: {
+                                    content: webix.rules.isNotEmpty
+                                },
+                                scroll: false,
+                                id: "companyLogoList",
+                                width: 290,
+                                type: {
+                                    height: "auto"
+                                },
+                                css: "relative image-upload",
+                                template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+                                onClick: {
+                                    'delete-file': function (e, id) {
+                                        this.remove(id);
+                                        return false;
+                                    }
+                                }
+                            }, {},
+
+                        ],
+
+                    }, {},
+                    {
+                        view: "uploader",
+                        id: "photoUploader",
+                        width: 110,
+                        height: 60,
+                        css: "upload-logo",
+                        template: "<span class='webix fa fa-upload' />Dodajte logo</span>",
+                        on: {
+                            onBeforeFileAdd: function (upload) {
+                                var type = upload.type.toLowerCase();
+                                if (type != "jpg" && type != "png" != "jpeg") {
+                                    util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!")
+                                    return false;
+                                }
+                                var file = upload.file;
+                                var reader = new FileReader();
+                                reader.onload = function (event) {
+                                    var img = new Image();
+                                    img.onload = function (ev) {
+                                        if (img.width === 220 && img.height === 50) {
+                                            var newDocument = {
+                                                name: file['name'],
+                                                content: event.target.result.split("base64,")[1],
+                                            };
+                                            $$("companyLogoList").clearAll();
+                                            $$("companyLogoList").add(newDocument);
+                                        } else {
+                                            util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!")
+                                        }
+                                    };
+                                    img.src = event.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                                return false;
+                            }
+                        }
+                    },
+                    {
+                        margin: 5,
+                        cols: [{}, {
+                            id: "changeCompany",
+                            view: "button",
+                            value: "Sačuvajte izmjene",
+                            type: "form",
+                            click: "companyView.saveChangedCompany",
+                            hotkey: "enter",
+                            width: 150
+                        }]
+                    }],
+                rules: {
+                    "name": function (value) {
+                        if (!value) {
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            return false;
+                        } else if (value.length > 100) {
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+
+                }
+            }]
+        }
+    },
+
+    showCompanyDialog: {
+        view: "popup",
+        id: "showCompanyDialog",
+        modal: true,
+        position: "center",
+        drag: "true",
+
+        body: {
+            id: "showCompanyInside",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-briefcase'></span> Pregled kompanije",
+                    width: 400
+                }, {}, {
+                    hotkey: 'esc',
+                    view: "icon",
+                    icon: "close",
+                    align: "right",
+                    click: "util.dismissDialog('showCompanyDialog');"
+                }]
+            }, {
+                view: "form",
+                id: "showCompanyForm",
+                width: 600,
+                elementsConfig: {
+                    labelWidth: 200,
+                    bottomPadding: 18
+                },
+                elements: [
+                    {
+                        view: "text",
+                        id: "name",
+                        name: "name",
+                        label: "Naziv:",
+                        editable: false,
+
+                    },
+                    {
+                        view: "text",
+                        id: "pin",
+                        name: "pin",
+                        type: "password",
+                        editable: false,
+                        stringResult: true,
+                        label: "PIN kompanije:",
+
+
+                    },
+
+
+                    {
+                        margin: 5,
+                        cols: [{}, {
+                            id: "showCompany",
+                            view: "button",
+                            value: "Zatvorite",
+                            type: "form",
+                            click: "util.dismissDialog('showCompanyDialog');",
+                            hotkey: "enter",
+                            width: 150
+                        }]
+                    }],
+
+            }]
+        }
+    },
+
+
+    showChangeCompanyDialog: function (company) {
+        if (user === "admin") {
+            webix.ui(webix.copy(companyView.adminChangeCompanyDialog));
+            var form = $$("adminChangeCompanyForm");
+
+            form.elements.name.setValue(company.name);
+
+
+            setTimeout(function () {
+                $$("adminChangeCompanyDialog").show();
+                webix.UIManager.setFocus("name");
+                var newDocument = {
+                    name: company.name,
+
+                };
+                $$("changeCompanyLogoList").clearAll();
+                $$("changeCompanyLogoList").add(newDocument);
+            }, 0);
+        } else {
+            webix.ui(webix.copy(companyView.changeCompanyDialog));
+            var form = $$("changeCompanyForm");
+
+            form.elements.name.setValue(company.name);
+            form.elements.pin.setValue(company.pin);
+
+
+            setTimeout(function () {
+                $$("changeCompanyDialog").show();
+                webix.UIManager.setFocus("name");
+                var newDocument = {
+                    name: company.name,
+                    pin: company.pin
+                };
+
+            }, 0);
+
+        }
+    },
+
+
+    showShowCompanyDialog: function (company) {
+
+        webix.ui(webix.copy(companyView.showCompanyDialog));
+        var form = $$("showCompanyForm");
+
+        form.elements.name.setValue(company.name);
+        form.elements.pin.setValue(company.pin);
+
+        setTimeout(function () {
+            $$("showCompanyDialog").show();
+            webix.UIManager.setFocus("name");
+            var newDocument = {
+                name: company.name,
+                pin: company.pin
+            };
+
+        }, 0);
+    },
+
+
+    saveChangedCompany: function () {
+
+        if (user === "admin") {
+            var form = $$("adminChangeCompanyForm");
+        } else {
+            var form = $$("changeCompanyForm");
+        }
+
+
+        var validation = form.validate();
+        if (validation) {
+            var newCompany = {
+                id: form.getValues().id,
+                name: form.getValues().name,
+                pin: form.getValues().pin,
+
+            };
+
+
+            util.dismissDialog('changeCompanyDialog');
+        }
+
+    }
+
+
+};
+
+function animateValue(id, start, end, duration) {
+    console.log("counter start");
+    var range = end - start;
+    var current = start;
+    var increment = end > start ? 1 : -1;
+    var stepTime = Math.abs(Math.floor(duration / range));
+    var timer = setInterval(function () {
+        current += increment;
+        id.setHTML(`<p>${current}</p>`);
+        if (current == end) {
+            clearInterval(timer);
+        }
+    }, stepTime);
+}

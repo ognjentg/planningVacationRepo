@@ -306,3 +306,195 @@ element.style {
 	border-left: 0;
 	border-right: 0;
 }
+
+
+/*style for modal addCompany*/
+.webix_win_head {
+	height: 0;
+}
+
+.addCompanyDialog {
+	height: 150px;
+}
+/*datatable*/
+.webix_column > div.webix_cell_select, .webix_column > div.webix_column_select, .webix_column > div.webix_row_select {
+	color: #fff;
+	background: #27ae60;
+}
+#datatable1557446099989 .webix_cell {
+	height: 34px;
+	line-height: 34px;
+	white-space: normal;
+}
+.highlighted_header.header6{
+	background-color: #fbfbfb !important;
+}
+.companyPanelToolbar{
+	padding: 0px 0px;
+	background: #ffffff !important;
+	color: black !important;
+	margin-left: 0;
+}
+.companyPanelToolbarTop{
+	background: #ffffff !important;
+	margin-left: 0 !important ;
+	margin-right: 0 !important ;
+}
+.myButton {
+	background-color: #268fd5;
+}
+/*.webix_img_btn_abs{*/
+/*color: #871414;*/
+/*background-color: #268fd5 !important;*/
+/*}*/
+.webix_view{
+	color: black;
+}
+
+.companyButton {
+	background-color: #268fd5  !important;
+	border-radius: 6px;
+	height: 100%;
+	width: 100%;
+	cursor: pointer;
+	color: #fff;
+	font-size: 13px;
+	padding: auto 6px;
+	/*font-family: 'Open Sans',Tahoma;*/
+
+}
+.webix_img_btn_abs  {
+
+	border: 1px solid #268fd5  !important;
+
+	/**/
+}
+
+.companies-counter{
+	font-size:30px !important;
+	/*display: grid !important;*/
+	align-items: center !important;
+	text-align: center;
+	justify-content: center !important;
+	color: white !important;
+	background-color: #e74a3b; !important;
+	width: 200px !important;
+	border-radius: 5px;
+
+
+}
+.companies-counter .webix_el_label {
+	background-color: #e74a3b; !important;
+	font-size: 12px !important;
+	height: 12px;
+}
+.companies-counter p {
+	color: white;
+	margin-top: 0px;
+	overflow: visible;
+	text-align: center !important;
+}
+.companies-counter webix_template {
+	background-color: #e74a3b;!important;
+}
+.admin-counter{
+	font-size:30px !important;
+	/*display: grid !important;*/
+	align-items: center !important;
+	text-align: center;
+	justify-content: center !important;
+	color: white !important;
+	background-color: #fea11d; !important;
+	width: 200px !important;
+	border-radius: 5px;
+
+
+}
+
+.admin-counter .webix_el_label {
+	background-color: #fea11d; !important;
+	font-size: 12px !important;
+	height: 12px;
+}
+.admin-counter p {
+	color: white;
+	margin-top: 0px;
+	overflow: visible;
+	text-align: center !important;
+}
+.admin-counter webix_template {
+	background-color: #e74a3b;!important;
+}
+
+
+.employee-counter{
+	font-size:30px !important;
+	/*display: grid !important;*/
+	align-items: center !important;
+	text-align: center;
+	justify-content: center !important;
+	color: white !important;
+	background-color: #4ca74f; !important;
+	width: 200px !important;
+	border-radius: 5px;
+
+
+}
+
+.employee-counter .webix_el_label {
+	background-color: #4ca74f; !important;
+	font-size: 12px !important;
+	height: 12px;
+}
+.employee-counter p {
+	color: white;
+	margin-top: 0px;
+	overflow: visible;
+	text-align: center !important;
+}
+.employee-counter webix_template {
+	background-color: #e74a3b;!important;
+}
+
+.companyDatatable .webix_cell {
+	height: 30px !important;
+}
+.fa-refresh {
+	-webkit-transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.webix_el_box :hover .fa-refresh {
+	-webkit-transform: rotate(360deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.fa-print {
+	-webkit-transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.webix_el_box :hover .fa-print {
+	-webkit-transform: rotate(360deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.fa-external-link {
+	-webkit-transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.webix_el_box :hover .fa-external-link {
+	-webkit-transform: rotate(360deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.fa-plus-circle {
+	-webkit-transform: rotate(0deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+.webix_el_box :hover .fa-plus-circle {
+	-webkit-transform: rotate(360deg);
+	-webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+
+
+.upload-logo {
+	border: 1px dashed grey !important;
+	border-radius: 4px !important;
+	width: 50% !important;
+}
