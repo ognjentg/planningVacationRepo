@@ -1,11 +1,13 @@
 package com.telegroupltd.planning_vacation_app.model;
 
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "sick_leave_status", schema = "planning_vacation_db", catalog = "")
-public class SickLeaveStatus {
+public class SickLeaveStatus implements HasActive {
     private Integer id;
     private String key;
     private String name;
