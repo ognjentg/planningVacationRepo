@@ -1,9 +1,9 @@
 package com.telegroupltd.planning_vacation_app.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import com.telegroupltd.planning_vacation_app.common.HasActive;
+import com.telegroupltd.planning_vacation_app.repository.genericRepository.HasActiveRepository;
+
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
