@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Integer>, HasActiveRepository<User,Integer>, UserRepositoryCustom {
     List<User> getAllByCompanyIdAndActive(Integer companyId, byte active);
-
+    List<User> getAllByCompanyIdAndSectorIdAndActive(Integer companyId, Integer sectorId, byte b);
     User getByUsernameAndCompanyId(String username, Integer companyId);
+
+
 }

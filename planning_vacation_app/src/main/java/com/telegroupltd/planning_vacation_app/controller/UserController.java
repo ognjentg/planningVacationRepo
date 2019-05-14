@@ -4,7 +4,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestExcept
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
 import com.telegroupltd.planning_vacation_app.model.User;
-//import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
+import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.Notification;
@@ -32,12 +32,10 @@ import java.util.List;
 public class UserController extends GenericController<User, Integer> {
 
     private final UserRepository userRepository;
-   // private final CompanyRepository companyRepository;
+    private final CompanyRepository companyRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
-    @Autowired
-    protected UserBean userBean;
 
     @Value("1")
     private Integer superAdmin;
@@ -71,10 +69,10 @@ public class UserController extends GenericController<User, Integer> {
     private Long longblobLength;
 
     @Autowired
-    public UserController(UserRepository userRepository/*, CompanyRepository companyRepository*/){
+    public UserController(UserRepository userRepository, CompanyRepository companyRepository){
     super(userRepository);
     this.userRepository=userRepository;
-   // this.companyRepository=companyRepository;
+    this.companyRepository=companyRepository;
 }
 //Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
 //Implementirati metode: login*, logout*, ...
@@ -83,7 +81,25 @@ public class UserController extends GenericController<User, Integer> {
     @Override
     public @ResponseBody
     List<User> getAll() {
-        List<User> users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1));
+        List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte)1));  //List<T> getAllByActiveIs(Byte active);
+
+        if(superAdmin == userBean.getUser().getUserGroupId()) {
+            users.stream().filter(u -> admin == u.getUserGroupId()); //od aktivnih usera, filtriram sve admine kompanija
+            return users;
+        }
+
+        users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte)1)));
+        if(admin == userBean.getUser().getUserGroupId())
+            users.stream().filter(u->superAdmin != u.getUserGroupId() && admin != u.getUserGroupId());
+        else if(director == userBean.getUser().getUserGroupId())
+            users.stream().filter(u-> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId() && director != u.getUserGroupId());
+        else if(secretary == userBean.getUser().getUserGroupId())
+            users.stream().filter(u->sectorManager == u.getUserGroupId() && worker == u.getUserGroupId());
+        else if(sectorManager== userBean.getUser().getUserGroupId()) {
+            users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte)1)));
+            users.stream().filter(u-> worker != u.getUserGroupId());
+        }
+
         for(User user : users){
             user.setPassword("");
             user.setSalt("");
@@ -201,7 +217,7 @@ public class UserController extends GenericController<User, Integer> {
                     entityManager.refresh(newUser);
                     logCreateAction(newUser);
                     if(user.getUserGroupId()!=superAdmin) {
-                  //      Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
+                        Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                          }
                     return newUser;
                 }
