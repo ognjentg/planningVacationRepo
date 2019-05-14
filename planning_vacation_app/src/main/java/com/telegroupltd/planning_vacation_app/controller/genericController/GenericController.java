@@ -51,7 +51,7 @@ public class GenericController<T, ID extends Serializable> extends GenericLogger
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public T findById(@PathVariable("id") ID id) throws ForbiddenException {
+    public T findById(@PathVariable("id") ID id)  throws BadRequestException,ForbiddenException {
         return repo.findById(id).orElse(null);
     }
 

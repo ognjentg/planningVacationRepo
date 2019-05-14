@@ -9,8 +9,8 @@ var menuState = MENU_STATES.COLLAPSED;
 
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
-    {id: "sector", value: "Sector", icon: "code"},
-    {id:"usergroup",value:"Korisnicke grupe",icon:"list"},
+    {id: "sector", value: "Sektor", icon: "code"},
+    {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
 ];
 
@@ -34,6 +34,119 @@ var menuActions = function (id) {
     }
 };
 
+var menuSuperAdmin = [
+    {
+        id: "company",
+        value: "Kompanije",
+        icon: "briefcase"
+    },
+    {
+        id: "usergroup",
+        value: "Admini kompanija",
+        icon: "briefcase"
+    }
+];
+
+var menuAdmin=[
+     {
+            id: "company",
+            value: "Kompanija",
+            icon: "briefcase"
+      },
+/*     {
+            id: "constrains",
+            value: "Ogranicenja kompanije",
+            icon: "briefcase"
+      },*/
+     {
+           id: "usergroup",
+           value: "Zaposleni",
+           icon: "briefcase"
+      }
+ /*    {
+           id: "collectiveVacation",
+           value: "Kolektivni godišnji odmor",
+           icon: "briefcase"
+      }*/
+];
+
+var menuDirector=[
+  /*   {
+            id: "requests",
+            value: "Zahtjevi",
+            icon: "briefcase"
+      },
+     {
+           id: "statistics",
+           value: "Statistika",
+           icon: "briefcase"
+      }
+     {
+            id: "constrains",
+            value: "Ogranicenja kompanije",
+            icon: "briefcase"
+      },*/
+     {
+           id: "usergroup",
+           value: "Zaposleni",
+           icon: "briefcase"
+      }
+ /*    {
+           id: "collectiveVacation",
+           value: "Kolektivni godišnji odmor",
+           icon: "briefcase"
+      }*/
+];
+
+var menuSecretary=[
+/*     {
+            id: "calendar",
+             value: "Kalendar",
+             icon: "briefcase"
+     },
+     {
+            id: "requests",
+            value: "Zahtjevi",
+            icon: "briefcase"
+      },
+     {
+           id: "statistics",
+           value: "Statistika",
+           icon: "briefcase"
+      }
+     {
+            id: "constrains",
+            value: "Ogranicenja kompanije",
+            icon: "briefcase"
+      },*/
+     {
+           id: "usergroup",
+           value: "Zaposleni",
+           icon: "briefcase"
+      }
+ /*    {
+           id: "collectiveVacation",
+           value: "Kolektivni godišnji odmor",
+           icon: "briefcase"
+      },
+      {
+            id: "sickLeave",
+            value: "Bolovanja",
+            icon: "briefcase"
+       }*/
+];
+
+var menuSectorManager=[
+     {
+           id: "sector",
+           value: "Sektor",
+           icon: "briefcase"
+      }
+];
+
+var menuWorker=[
+
+];
 var settingsMenu=[
     {id: "1", value: "O programu", icon: "info-circle"},
     {$template: "Separator"},
@@ -66,6 +179,7 @@ var panel = {id: "empty"};
 var rightPanel = null;
 
 var userData = null;
+var companyData = null;
 
 var init = function () {
     if (!webix.env.touch && webix.ui.scrollSize) webix.CustomScroll.init();
@@ -77,7 +191,7 @@ var init = function () {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
               showLogin();
-              //showApp();  //Teodora:  odkomentarisite 60,a zakomentarisite 59 , da vidite template...
+              //showApp();
             }
         },
         success: function (text, data, xhr) {
@@ -184,6 +298,33 @@ var showApp = function () {
     mainApp = webix.ui(main, panel);
     panel = $$("app");
     //$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
+
+    //**************
+    var localMenuData = null;
+    if(userData!=null)
+    {
+    switch (userData.userGroupId) {
+        case 1:
+            localMenuData = webix.copy(menuSuperAdmin);
+            break;
+        case 2:
+            localMenuData = webix.copy(menuAdmin);
+            break;
+        case 3:
+            localMenuData = webix.copy(menuDirector);
+            break;
+        case 4:
+            localMenuData = webix.copy(menuSecretary);
+            break;
+        case 5:
+            localMenuData = webix.copy(menuSectorManager);
+            break;
+        case 6:
+            localMenuData = webix.copy(menuWorker);
+            break;
+    }}
+
+  //***************
 
     webix.ui({
         id: "menu-collapse",
@@ -349,121 +490,6 @@ var showLogin = function () {
     panel = $$("loginPanel");
 };
 
-/*
-//TO DO
-
-var loginLayout = {
-    id: "loginPanel",
-    css:"loginLayoutBackground",
-    rows: [{
-        height:30,
-        css:"loginLayoutBackground"
-    }, {
-        view: "template",
-        height: 100,
-        css: "loginLayoutBackground",
-        template: '<img src="img/telegroup-logo.png"/>'
-    },{
-        height:30,
-        css:"orangeBackground",
-    },{
-        height:10,
-        css:"loginLayoutBackground",
-    },{
-        height:30,
-        css:"orangeBackground"
-    },{
-        height:10
-    }, {
-        cols: [{}, //1st column
-            {
-                view: "form",
-                id: "loginForm",
-                css:"loginForm",
-                width: 500,
-                elements: [{
-                    view: "text",
-                    required:true,
-                    id: "username",
-                    name: "korisnickoIme",
-                    label: "Korisničko ime",
-                    invalidMessage:"Niste unijeli korisničko ime.",
-                    labelWidth: 150,
-                    height:35
-                }, {
-                    view: "text",
-                    name: "lozinka",
-                    id:"password",
-                    required:true,
-                    type: "password",
-                    label: "Lozinka",
-                    invalidMessage:"Niste unijeli lozinku.",
-                    labelWidth: 150,
-                    height:35
-                },  {
-                    view: "text",
-                    id:"company",
-                    name: "kompanija",
-                    required:true,
-                    label: "Kompanija",
-                    invalidMessage:"Niste unijeli kompaniju.",
-                    labelWidth: 150,
-                    height:35
-                },
-                    {
-                    margin: 5,
-                    cols: [{}, {
-                        id: "login",
-                        view: "button",
-                        value: "Prijavi se",
-                        type: "form",
-                        click: "login",
-                        width: 150,
-                        height:35
-                    }]
-                }]
-            },
-            //2nd column
-            {}
-        ]
-    }, {},{}]
-};
-
-//TO DO
-var login = function () {
-    if($$("loginForm").validate()) {
-        webix.ajax().post("login", $$("loginForm").getValues(), {
-            error: function (text, data, xhr) {
-                showApp();
-                return;
-                // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
-                // TO DO kad se uradi login na bekendu, alert ce biti premjesten ovdje negdje,
-                // za sad ovako.
-
-                util.messages.showErrorMessage("Neuspješna prijava!");
-            },
-            success: function (text, data, xhr) {
-                if (data.json() != null && data.json().id != null) {
-                    userData = data.json();
-                    showApp();
-                } else {
-                    util.messages.showErrorMessage("Neuspješna prijava!");
-                }
-            }
-        });
-    }
-    else {
-        webix.alert({
-            title:"Neuspješna prijava! ",
-            text:"Korisničko ime, lozinka ili kompanija nisu korektni!",
-            type:"alert-error"}).then(function () {
-            alert(2);
-        });
-    }
-};
-*/
-
-
 var loginLayout = {
     id: "loginPanel",
     css:"loginLayoutBackground",
@@ -568,12 +594,36 @@ console.log($$("loginForm").getValues());
                 util.messages.showErrorMessage("1");
             },
             success: function (text, data, xhr) {
-                util.messages.showErrorMessage("2");
+                //util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
-                    //showApp();
+                    console.log(user);
+
+///*********************
+
+                    if (userData.userGroupId == 1) {
+                        companyData = null;
+                        showApp();
+                    } else {
+                        webix.ajax().get("hub/company/" + userData.companyId, {
+                            success: function (text, data, xhr) {
+                                var company = data.json();
+                                if (company != null) {
+                                    companyData = company;
+                                    showApp();
+                                } else {
+                                    util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
+                                }
+                            },
+                            error: function (text, data, xhr) {
+                                util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
+                            }
+                        });
+                    }
+
+//************************
                 } else {
-                    util.messages.showErrorMessage("3");
+                    util.messages.showErrorMessage("data.json() == null || data.json().id == null");
                 }
             }
         });

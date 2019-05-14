@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping(value = "hub/user")
 @Controller
@@ -67,7 +68,8 @@ public class UserController extends GenericController<User, Integer> {
     private String badRequestDelete;
     @Value("4294967295")
     private Long longblobLength;
-
+    @Value("Ne postoji user.")
+    private String badRequestNoUser;
     @Autowired
     public UserController(UserRepository userRepository, CompanyRepository companyRepository){
     super(userRepository);
@@ -105,6 +107,20 @@ public class UserController extends GenericController<User, Integer> {
             user.setSalt("");
         }
         return users;
+    }
+
+    @Override
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    User findById(@PathVariable("id") Integer id) throws BadRequestException {
+        User user = userRepository.findById(id).orElse(null);
+        if (user != null && Objects.equals(user.getCompanyId(), userBean.getUser().getCompanyId())) {
+            user.setPassword("");
+            user.setSalt("");
+            return user;
+        } else {
+            throw new BadRequestException(badRequestNoUser);
+        }
     }
 
 
