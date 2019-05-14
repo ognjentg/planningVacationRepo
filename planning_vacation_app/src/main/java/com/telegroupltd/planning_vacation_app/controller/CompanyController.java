@@ -26,31 +26,26 @@ public class CompanyController extends GenericController<Company, Integer> {
 
     private final CompanyRepository companyRepository;
 
+
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Value("${randomString.length}")
-    private Integer randomStringLength;
-
-    @Value("${badRequest.insert}")
+    @Value("Dodavanje nije moguće.")
     private String badRequestInsert;
 
-    @Value("${badRequest.update}")
+    @Value("Ažuriranje nije moguće.")
     private String badRequestUpdate;
 
-    @Value("${badRequest.delete}")
+    @Value("Brisanje nije moguće.")
     private String badRequestDelete;
 
-    @Value("${badRequest.stringMaxLength}")
+    @Value("Dužina {tekst} prelazi maksimalnu dužinu od {broj} karaktera.")
     private String badRequestStringMaxLength;
 
-    @Value("${badRequest.binaryLength}")
+    @Value("Veličina {tekst} prelazi maksimalnu veličinu.")
     private String badRequestBinaryLength;
 
-    @Value("${badRequest.validateEmail}")
-    private String badRequestValidateEmail;
-
-    @Value("${longblob.length}")
+    @Value("4294967295")
     private Long longblobLength;
 
     @Autowired
@@ -89,8 +84,8 @@ public class CompanyController extends GenericController<Company, Integer> {
 
 
                 if (repo.saveAndFlush(newCompany) != null) {
-                    entityManager.refresh(newCompany);
-                    logCreateAction(newCompany);
+                        entityManager.refresh(newCompany);
+                        logCreateAction(newCompany);
 
                     return newCompany;
                 }
