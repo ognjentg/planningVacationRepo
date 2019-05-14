@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Objects;
 
-@RequestMapping(value = "/company")
+@RequestMapping(value = "hub/company")
 @Controller
 @Scope("request")
 public class CompanyController extends GenericController<Company, Integer> {
@@ -59,6 +59,18 @@ public class CompanyController extends GenericController<Company, Integer> {
     List<Company> getAll() {
         List<Company> companies = cloner.deepClone(companyRepository.getAllByActiveIs((byte)1));
         return companies;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Company findById(@PathVariable Integer id) {
+        Company company = companyRepository.findById(id).orElse(null);
+        // if (company != null ) {
+
+        return company;
+        //} else {
+        //    throw new BadRequestException();
+        // }
     }
 
 
