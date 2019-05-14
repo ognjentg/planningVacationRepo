@@ -352,7 +352,7 @@ element.style {
 }
 
 .companyButton {
-	background-color: #268fd5  !important;
+	background-color: #268fd5  !important;  /*  268fd5  */
 	border-radius: 6px;
 	height: 100%;
 	width: 100%;
@@ -363,6 +363,7 @@ element.style {
 	/*font-family: 'Open Sans',Tahoma;*/
 
 }
+
 .webix_img_btn_abs  {
 
 	border: 1px solid #268fd5  !important;
@@ -377,14 +378,14 @@ element.style {
 	text-align: center;
 	justify-content: center !important;
 	color: white !important;
-	background-color: #e74a3b; !important;
+	background-color: #E989A3; !important;    /*#e74a3b */
 	width: 200px !important;
 	border-radius: 5px;
 
 
 }
 .companies-counter .webix_el_label {
-	background-color: #e74a3b; !important;
+	background-color: #E989A3; !important;
 	font-size: 12px !important;
 	height: 12px;
 }
@@ -395,7 +396,7 @@ element.style {
 	text-align: center !important;
 }
 .companies-counter webix_template {
-	background-color: #e74a3b;!important;
+	background-color: #E989A3;!important;
 }
 .admin-counter{
 	font-size:30px !important;
@@ -404,7 +405,7 @@ element.style {
 	text-align: center;
 	justify-content: center !important;
 	color: white !important;
-	background-color: #fea11d; !important;
+	background-color: #9AD2CD; !important;  /* #fea11d */
 	width: 200px !important;
 	border-radius: 5px;
 
@@ -412,7 +413,7 @@ element.style {
 }
 
 .admin-counter .webix_el_label {
-	background-color: #fea11d; !important;
+	background-color: #9AD2CD; !important;
 	font-size: 12px !important;
 	height: 12px;
 }
@@ -423,7 +424,7 @@ element.style {
 	text-align: center !important;
 }
 .admin-counter webix_template {
-	background-color: #e74a3b;!important;
+	background-color: #9AD2CD;!important;
 }
 
 
@@ -434,7 +435,7 @@ element.style {
 	text-align: center;
 	justify-content: center !important;
 	color: white !important;
-	background-color: #4ca74f; !important;
+	background-color: #B289EF ; !important;  /*4ca74f*/
 	width: 200px !important;
 	border-radius: 5px;
 
@@ -442,7 +443,7 @@ element.style {
 }
 
 .employee-counter .webix_el_label {
-	background-color: #4ca74f; !important;
+	background-color: #B289EF ; !important;
 	font-size: 12px !important;
 	height: 12px;
 }
@@ -453,7 +454,7 @@ element.style {
 	text-align: center !important;
 }
 .employee-counter webix_template {
-	background-color: #e74a3b;!important;
+	background-color: #B289EF ;!important;
 }
 
 .companyDatatable .webix_cell {
