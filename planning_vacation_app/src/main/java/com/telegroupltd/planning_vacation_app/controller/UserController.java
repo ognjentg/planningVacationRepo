@@ -26,7 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.List;
 
-@RequestMapping(value = "/user")
+@RequestMapping(value = "hub/user")
 @Controller
 @Scope("request")
 public class UserController extends GenericController<User, Integer> {
@@ -55,7 +55,7 @@ public class UserController extends GenericController<User, Integer> {
 
     @Value("Postoji korisnik sa ovim korisnickim imenom.")
     private String badRequestUsernameExists;
-    @Value("${badRequest.validateEmail}")
+    @Value("Nije dobar e-mail.")
     private String badRequestValidateEmail;
     @Value("Duzina {tekst} prelazi maksimalnu duzinu od {broj} karaktera.")
     private String badRequestStringMaxLength;
@@ -95,7 +95,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     User login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
-        User user = userRepository.login(userLoginInformation);
+        User user = userRepository.login(userLoginInformation.getUsername(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
         if (user == null) {
             throw new ForbiddenException("Forbidden");
         } else {
@@ -113,7 +113,6 @@ public class UserController extends GenericController<User, Integer> {
         if (session != null) {
             session.invalidate();
         }
-
         return "Success";
     }
 

@@ -4,7 +4,7 @@ package com.telegroupltd.planning_vacation_app.model;
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +26,32 @@ public class User implements HasActive {
     private Byte receiveMail;
     private Integer sectorId;
     private byte[] photo;
+    public User()
+    {
+
+    }
+    public User(Integer id, String username, String password,  String email, Byte pauseFlag, Date startDate ,String firstName, String lastName,
+                String salt, Byte receiveMail, Integer sectorId,
+                byte[] photo, Integer userGroupId, Integer company_id, Byte active)
+    {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.pauseFlag = pauseFlag;
+        this.startDate = startDate;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.salt=salt;
+        this.receiveMail=receiveMail;
+        this.sectorId=sectorId;
+        this.photo = photo;
+        this.userGroupId = userGroupId;
+        this.companyId = company_id;
+        this.active = active;
+
+    }
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +65,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "company_id", nullable = false)
+    @Column(name = "company_id", nullable = true)
     public Integer getCompanyId() {
         return companyId;
     }
@@ -69,7 +95,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "email", nullable = false, length = 45)
+    @Column(name = "email", nullable = true, length = 45)
     public String getEmail() {
         return email;
     }
@@ -118,7 +144,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "pause_flag", nullable = false)
+    @Column(name = "pause_flag", nullable = true)
     public Byte getPauseFlag() {
         return pauseFlag;
     }
@@ -128,7 +154,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "start_date", nullable = false)
+    @Column(name = "start_date", nullable = true)
     public Date getStartDate() {
         return startDate;
     }
@@ -138,7 +164,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "first_name", nullable = false, length = 128)
+    @Column(name = "first_name", nullable = true, length = 128)
     public String getFirstName() {
         return firstName;
     }
@@ -148,7 +174,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "last_name", nullable = false, length = 128)
+    @Column(name = "last_name", nullable = true, length = 128)
     public String getLastName() {
         return lastName;
     }
@@ -168,7 +194,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "receive_mail", nullable = false)
+    @Column(name = "receive_mail", nullable = true)
     public Byte getReceiveMail() {
         return receiveMail;
     }
@@ -188,7 +214,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "photo", nullable = false)
+    @Column(name = "photo", nullable = true)
     public byte[] getPhoto() {
         return photo;
     }

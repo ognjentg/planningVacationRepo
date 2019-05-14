@@ -349,7 +349,7 @@ var showLogin = function () {
     panel = $$("loginPanel");
 };
 
-
+/*
 //TO DO
 
 var loginLayout = {
@@ -461,6 +461,128 @@ var login = function () {
         });
     }
 };
+*/
+
+
+var loginLayout = {
+    id: "loginPanel",
+    css:"loginLayoutBackground",
+    rows: [{
+        height:30,
+        css:"loginLayoutBackground"
+    }, {
+        view: "template",
+        height: 100,
+        css: "loginLayoutBackground",
+        template: '<img src="img/telegroup-logo.png"/>'
+    },{
+        height:30,
+        css:"orangeBackground",
+    },{
+        height:10,
+        css:"loginLayoutBackground",
+    },{
+        height:30,
+        css:"orangeBackground"
+    },{
+        height:10
+    }, {
+        cols: [{}, //1st column
+            {
+                view: "form",
+                id: "loginForm",
+                css:"loginForm",
+                width: 300,
+                elements: [{
+                    view: "text",
+                    required:true,
+                    id: "username",
+                    name: "korisnickoIme",
+                    label: "Korisničko ime",
+                   // invalidMessage:"Niste unijeli korisničko ime.",
+                    labelWidth: 120,
+                    width: 275,
+                    height:35
+                }, {
+                    view: "text",
+                    name: "lozinka",
+                    id:"password",
+                    required:true,
+                    type: "password",
+                    label: "Lozinka",
+                    //invalidMessage:"Niste unijeli lozinku.",
+                    labelWidth: 120,
+                    width: 275,
+                    height:35
+                },  {
+                    view: "text",
+                    id:"company",
+                    name: "kompanija",
+                    label: "Kompanija",
+                    //invalidMessage:"Niste unijeli kompaniju.",
+                    labelWidth: 120,
+                    width: 275,
+                    height:35
+                },
+                    {
+                    margin: 5,
+                    cols: [{}, {
+                        id: "login",
+                        view: "button",
+                        label: "Prijavi se",
+                        type: "iconButton",
+                        icon: "sign-in",
+                        click: "login",
+                        align:"left",
+                        width: 155,
+                        height:35
+                    }]
+                }]
+            },
+            //2nd column
+            {}
+        ]
+    }, {},{}]
+};
+
+var login = function () {
+console.log($$("loginForm").getValues());
+
+    var data = $$("loginForm").getValues();
+
+    var objectToSend = {
+        username: data.korisnickoIme,
+        password: data.lozinka,
+        companyPin: data.kompanija
+    }
+
+    if($$("loginForm").validate()) {
+        webix.ajax().headers({
+            "Content-type": "application/json"
+        }).post("hub/user/login", JSON.stringify(objectToSend), {
+            error: function (text, data, xhr) {
+               // showApp();
+                //return;
+                // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
+
+                util.messages.showErrorMessage("1");
+            },
+            success: function (text, data, xhr) {
+                util.messages.showErrorMessage("2");
+                if (data.json() != null && data.json().id != null) {
+                   userData = data.json();
+                    //showApp();
+                } else {
+                    util.messages.showErrorMessage("3");
+                }
+            }
+        });
+    }
+    else {
+        util.messages.showErrorMessage("Neuspješna prijava!")
+    }
+};
+
 
 //main call
 window.onload = function () {

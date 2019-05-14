@@ -4,5 +4,5 @@ import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.util.UserLoginInformation;
 
 public interface UserRepositoryCustom {
-    User login(UserLoginInformation userLoginInformation);
+    User login(String username, String password, String companyPin);
 }
