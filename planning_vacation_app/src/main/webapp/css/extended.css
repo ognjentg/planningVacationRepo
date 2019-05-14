@@ -498,3 +498,9 @@ element.style {
 	border-radius: 4px !important;
 	width: 50% !important;
 }
+
+.sectorToolbar{
+	background: #ffffff !important;
+	color: black !important;
+	margin-left: 0;
+}

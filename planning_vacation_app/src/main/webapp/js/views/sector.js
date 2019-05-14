@@ -1,142 +1,302 @@
-var sectorName =  {};
+var sectorName = {};
 var sectorEmployees = {};
 
-var sectorView =  {
+var user = true ? "director" : "admin";
 
-            panel: {
-                id: "sectorPanel",
-                adjust: true,
-                cols: [{ width:20},{
-                rows: [ {
-                    view: "toolbar",
-                    padding:12,
-                    rows: [
-                        {
-                            view: "select",
-                            id: "combo",
-                            width:270,
-                            label:"Odabir sektora",
-                            labelWidth:100,
-                            options:["One", "Two"]//sectorEmployees //izvrsiti ubacivanje svih sektora *opcija dozvoljena samo diretkoru
-                        },
-                        //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika
-                        {
-                            view:"label",
-                            id:"name",
-                            label: "Sektor za vandredne situacije" //sectorName.name
-                        },
-                        //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika  *izbaciti donju komponentu u slucaju da je ulogovan rukovodioc sektora
-                        {
-                            view:"label",
-                            label: "Nikolina Govedarica",  //ispraviti nakon popunjavanja combo box-a, pa selektovati rukovodica sektora
-                            inputWidth:300, align:"left",
-                            font:"150px"
-                        },
-                    ],
-                },
+var sectorView = {
+
+    panel: {
+        id: "sectorPanel",
+        adjust: true,
+        css:"sectorToolbar",
+        cols: [{width: 20}, {
+            rows: [{
+                view: "toolbar",
+                css:"sectorToolbar",
+                padding: 10,
+                rows: [
+
                     {
                         cols:[
                             {
-                                view:"button",
-                                id:"addBtn",
-                                label:"Dodaj zaposlenog",
-                                type: "iconButton",
-                                autowidth: true,
-                                width:150,
-                                icon: "plus-circle",
-                                click: "sectorView.showDialog"
+                                view: "label",
+                                id: "name",
+                                width: 200,
+                                height: 70,
+                                labelWidth:250,
+                                css: "companyPanelToolbar",
+                                label: "Odabir sektora" //sectorName.name
                             },
                             {
-                                view:"button",
-                                id:"editBtn",
-                                label:"Izmijeni zaposlenog",
-                                type: "iconButton",
-                                autowidth: true,
-                                width:150,
-                                icon: "pencil",
-                                click: "sectorView.showEditDialog"
+                                view: "select",
+                                id: "combo",
+                                options: ["One", "Sektor za vanredne situacije"]//sectorEmployees //izvrsiti ubacivanje svih sektora *opcija dozvoljena samo diretkoru
+                            },{},{}
+                        ]
+                    },
+                    {
+                        cols:[
+                            {
+                                view: "label",
+                                id: "name",
+                                width: 200,
+                                height: 70,
+                                labelWidth:250,
+                                css: "companyPanelToolbar",
+                                label: "Rukovodilac sektora: "
                             },
                             {
-                                view:"button",
-                                id:"delBtn",
-                                label:"Obriši zaposlenog",
-                                type: "iconButton",
-                                autowidth: true,
-                                width:150,
-                                icon: "trash",
-                                click: "sectorView.showDeleteDialog"
-                             },]
+                                view: "label",
+                                id: "sectorManager",
+                                width: 200,
+                                height: 70,
+                                labelWidth:250,
+                                css: "companyPanelToolbar",
+                            },{},{}
+                        ]
                     },
+                    //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika
                     {
-                        height:20
+                        view: "label",
+                        id: "name",
+                    //    width: 140,
+                      //  height: 70,
+                        css: "companyPanelToolbar",
+                        label: "Sektor za vandredne situacije" //sectorName.name
                     },
+                    //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika  *izbaciti donju komponentu u slucaju da je ulogovan rukovodioc sektora
+
+
                     {
-                        view: "datatable",
-                        id: "sectorDT",
-                        fillspace: true,
-                        editor: "text",
-                        select: "row",
-                        editable: false,
-                        navigation: true,
-                        //url: , popuniti naknadno user-ima iz odgovarajuceg sektora
-                        data:
+                        cols: [
+                            {
+                                view: "label",
+                                width: 10,
+                                height: 70,
+                                //css: "companyPanelToolbar",
+                                label: "",  //ispraviti nakon popunjavanja combo box-a, pa selektovati rukovodica sektora
+                                inputWidth: 500, align: "left",
+                                font: "150px"
+                            }, {
+                                rows: [{},{
+                                    id: "addEmployeeBtn",
+                                    view: "button",
+                                    type: "iconButton",
+                                    label: "Dodajte zaposlenog",
+                                    align: "left",
+                                    icon: "plus-circle",
+                                    css: "companyButton",
+                                    autowidth: true,
+                                    click: "sectorView.showDialog"
+                                }]
+
+                            }, {}, {}, {},   {
+
+                            }, {width: 5}, {
+
+                                css: "admin-counter",
+                                rows: [
+                                    {
+                                        view: "template",
+                                        id: "t2",
+                                        css: "admin-counter",
+                                    },
+                                    {
+                                        view: "label",
+                                        label: "Broj zaposlenih",
+                                        type: "header",
+                                        css: "admin-counter"
+                                    },
+                                ]
+                            }, {width: 20},
+                            {
+                                css: "employee-counter",
+                                rows: [
+                                    {view: "template", id: "t3", css: "employee-counter",},
+                                    {
+                                        view: "label",
+                                        label: "Broj odsutnih",
+                                        type: "header",
+                                        css: "employee-counter"
+                                    },
+                                ]
+                            },
+                            {width: 20},
+                            {
+                                css: "companies-counter",
+                                rows: [
+                                    {
+                                        view: "template",
+                                        id: "t1",
+                                        css: "companies-counter",
+                                    },
+                                    {
+                                        view: "label",
+                                        label: "Broj dozvoljenih odsutnih",
+                                        type: "header",
+                                        css: "companies-counter"
+                                    },
+
+
+                                ]
+                            },
+                        ]
+                    },
+
+                ],
+            },  {
+                    height: 20
+                },
+                {
+                    view: "datatable",
+                    id: "sectorDT",
+                    fillspace: true,
+                    editor: "text",
+                    select: "row",
+                    multiselect: false,
+                    resizeColumn: true,
+                    resizeRow: true,
+                    editable: false,
+                    navigation: true,
+                    width: 1620,
+                    //url: , popuniti naknadno user-ima iz odgovarajuceg sektora
+                    data:
                         [
                             {
-                                id:1, firstName:"Nikola", lastName:"Nikolic", eMail:"Dzoni@mail.com"
+                                id: 1, firstName: "Nikola", lastName: "Nikolic", eMail: "Dzoni@mail.com",
+                            },
+                            {
+                                id: 2, firstName: "Nikaaola", lastName: "Nikoaaic", eMail: "Dzoniaa@mail.com"
+                            },
+                            {
+                                id: 3, firstName: "Nikolaaaa", lastName: "Nikoaaalic", eMail: "Dzaaaani@mail.com"
                             }
                         ],
-                        width: 1400,
-                        resizeColumns:true,
-                        resizeRows:true,
-                        onContext:{},
-                        on: {
+                    onContext: {},
+                    on: {
 
-                            onAfterContextMenu: function (item) {
-                                this.select(item.row);
+                        onAfterContextMenu: function (item) {
+                            this.select(item.row);
+                        }
+                    },
+                    onClick: {
+                        webix_icon: function (e, id) {
+                            console.log(id["column"]);
+                            var action = id["column"];
+                            //    if (action === "delete" && user === "admin") {
+                            //          alert("Niste autorizovani da izbrisete kompaniju!");
+                            //  }
+                            //if (action === "delete" && user === "superadmin") {
+                            //        var delBox = (webix.copy(commonViews.deleteConfirm("zaposlenog")));
+                            //      delBox.callback = function (result) {
+                            //        if (result == 1) {
+                            //          animateValue($$("t1"), 0, companies.length, 1000);
+                            //    }
+                            //  };
+                            //webix.confirm(delBox);
+                            // }
+                            if (action == "delete") {
+                                sectorView.showDeleteDialog();
                             }
+
+                            if (action === "edit") {
+                                // companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
+                                sectorView.showEditDialog($$("sectorDT").getItem(id.row));
+                            }
+                            if (action === "view") {
+                                //companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));a
+                                //$$("firstName").disabled();
+                                sectorView.showSectorEmployeeDialog();
+                            }
+
+                        }
+                    },
+                    columns: [
+                        {
+                            id: "id",
+                            hidden: true
                         },
-                        onClick:{},
-                        columns: [
-                            {
-                                id: "id",
-                                hidden:true,
-                                fillspace: true
-                            },
-                            {
-                                id: "photo",
-                                header: "Slika", //cisto da se zna sta se treba nalaziti u koloni *izbaciti nakon popunjavanja podacima
-                                editable: false,
-                                width:160,
-                            },
-                            {
-                                id: "firstName",
-                                editable: false,
-                                header: [
-                                    "Ime", {
-                                        content: "textFilter"
-                                    }
-                                ],
-                                fillspace: true,
-                                editor: "text"
-                            },
-                            {
-                                id: "lastName",
-                                fillspace: true,
-                                editable: false,
-                                header: [
-                                    "Prezime", {
+                        {
+                            id: "serialNumber",
+                            header: "#",
+                            width: 50,
+                            fillspace: true
+                        },
+                        {
+                            id: "photo",
+                            header: "Slika", //cisto da se zna sta se treba nalaziti u koloni *izbaciti nakon popunjavanja podacima
+                            editable: false,
+                            fillspace: true
+                        },
+                        {
+                            id: "firstName",
+                            editable: false,
+                            header: [
+                                "Ime", {
+                                    content: "textFilter"
+                                }
+                            ],
+                            fillspace: true,
+                            editor: "text"
+                        },
+                        {
+                            id: "lastName",
+                            fillspace: true,
+                            editable: false,
+                            header: [
+                                "Prezime", {
                                     content: "textFilter"
                                 }],
-                            },
-                            {
-                                id: "eMail",
-                                fillspace: true,
-                                editable: false,
-                                header: "E-mail"
-                            },
-                        ],
-                    },]
-        }]},
+                        },
+                        {
+                            id: "eMail",
+                            fillspace: true,
+                            editable: false,
+                            header: "E-mail"
+                        },
+                        {
+                            id: "delete",
+                            header: "&nbsp;",
+                            width: 35,
+                            template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                        },
+                        {
+                            id: "edit",
+                            header: "&nbsp;",
+                            width: 35,
+                            template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
+                        },
+                        {
+                            id: "view",
+                            header: "&nbsp;",
+                            width: 35,
+                            template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa fa-eye'></span>"
+                        }
+                    ],
+                },
+
+                {
+                    view: "toolbar",
+                    css: "highlighted_header header6",
+                    paddingX: 5,
+                    paddingY: 5,
+                    height: 40,
+                    cols: [{
+                        view: "pager", id: "pagerA",
+                        template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
+                        size: 20,
+                        height: 35,
+                        group: 5,
+                        animate: {
+                            direction: "top"
+                        },
+                    }
+                    ]
+                }
+            ]
+        }]
+    },
     addDialog: {
         view: "popup",
         id: "addEmployeeDialog",
@@ -154,6 +314,7 @@ var sectorView =  {
                     view: "icon",
                     icon: "close",
                     align: "right",
+                    hotkey: 'esc',
                     click: "util.dismissDialog('addEmployeeDialog')"
                 }]
             }, {
@@ -161,67 +322,58 @@ var sectorView =  {
                 view: "form",
                 elements: [
                     {
-                    view: 'text',
-                    label: 'Ime',
-                    name: "firstName",
-                    id: 'firstName',
-                    required:true,
-                    invalidMessage: "Molimo unesite ime.",
+                        view: 'text',
+                        label: 'Ime',
+                        name: "firstName",
+                        id: 'firstName',
+                        required: true,
+                        invalidMessage: "Molimo unesite ime.",
                     },
                     {
-                    view: 'text',
-                    label: 'Prezime',
-                    id: 'lastName',
-                    name: "lastName",
-                    required:true,
-                    invalidMessage: "Molimo unesite prezime.",
+                        view: 'text',
+                        label: 'Prezime',
+                        id: 'lastName',
+                        name: "lastName",
+                        required: true,
+                        invalidMessage: "Molimo unesite prezime.",
                     },
                     {
-                    view: 'text',
-                    label: 'E-mail',
-                    name: "eMail",
-                    invalidMessage: "Molimo unesite e-mail.",
-                    required:true },
+                        view: 'text',
+                        label: 'E-mail',
+                        name: "eMail",
+                        invalidMessage: "Molimo unesite e-mail.",
+                        required: true
+                    },
                     {
-                        cols:[
+                        cols: [
                             {
-                                view:"uploader",
+                                view: "uploader",
                                 id: "photo",
-                                value:"Odaberi sliku",
-                                link:"mylist",
-                                upload:"",
-                                datatype:"photo",
-                                width:150,
+                                value: "Odaberi sliku",
+                                link: "mylist",
+                                upload: "",
+                                datatype: "photo",
+                                width: 150,
                             },
                             {
-                                view:"list",
-                                id:"mylist",
-                                type:"uploader",
-                                borderless:true
+                                view: "list",
+                                id: "mylist",
+                                type: "uploader",
+                                borderless: true
                             }
                         ]
-                    },  {
-                    cols: [{}, {
-                        view: "button",
-                        hotkey: "enter",
-                        width: 250,
-                        id: "saveEmployee",
-                        type: "iconButton",
-                        label: "Sačuvaj",
-                        icon: "save",
-                        click: "sectorView.save",
-                    },
-                        {
-                            view: 'button',
-                            label: 'Otkaži',
+                    }, {
+                        cols: [{}, {
+                            view: "button",
+                            hotkey: "enter",
+                            width: 250,
+                            id: "saveEmployee",
                             type: "iconButton",
-                            icon: "close",
-                            width: 230,
-
-                            click: function () {
-                                util.dismissDialog('addEmployeeDialog');
-                            }}]
-                }],
+                            label: "Sačuvaj izmjene",
+                            icon: "save",
+                            click: "sectorView.save",
+                        },]
+                    }],
                 width: 500,
                 rules: {},
                 id: "addEmployeeForm"
@@ -233,19 +385,20 @@ var sectorView =  {
         if (createForm.validate()) {
             var newItem = createForm.getValues();
             $$("sectorDT").add(newItem);
-          //  connection.sendAjax("POST", "user", function (text, data, xhr) {
+            //  connection.sendAjax("POST", "user", function (text, data, xhr) {
             //    var record = data.json();
-                util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
-              /*  $$("sectorDT").add(record);
-            }, function () {
-                util.messages.showErrorMessage("Došlo je do greške prilikom kreiranja zapisa o zaposlenom.");
-            }, newItem);*/
+            util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
+            /*  $$("sectorDT").add(record);
+          }, function () {
+              util.messages.showErrorMessage("Došlo je do greške prilikom kreiranja zapisa o zaposlenom.");
+          }, newItem);*/
             util.dismissDialog('addEmployeeDialog');
-        }   else {
+        } else {
             webix.alert({
-                title:"Neuspješno dodavanje zaposlenog! ",
-                text:"Podaci nisu korektno unešeni!",
-                type:"alert-error"}).then(function () {
+                title: "Neuspješno dodavanje zaposlenog! ",
+                text: "Podaci nisu korektno unešeni!",
+                type: "alert-error"
+            }).then(function () {
                 alert(2);
             });
         }
@@ -265,6 +418,7 @@ var sectorView =  {
                 }, {}, {
                     view: "icon",
                     icon: "close",
+                    hotkey: 'esc',
                     align: "right",
                     click: "util.dismissDialog('editEmployeeDialog')"
                 }]
@@ -277,38 +431,38 @@ var sectorView =  {
                         label: 'Ime',
                         id: 'firstName',
                         name: "firstName",
-                        required:true
+                        required: true
                     },
                     {
                         view: 'text',
                         label: 'Prezime',
                         id: 'lastName',
                         name: "lastName",
-                        required:true
+                        required: true
                     },
                     {
                         view: 'text',
                         label: 'Email',
                         name: "eMail",
-                        required:true
+                        required: true
                     },
                     {
-                        cols:[
+                        cols: [
                             {
-                                view:"uploader",
+                                view: "uploader",
                                 id: "photo",
-                                value:"Odaberi sliku",
-                                link:"mylist",
-                                upload:"",
-                                datatype:"photo",
-                                width:150,
+                                value: "Odaberi sliku",
+                                link: "mylist",
+                                upload: "",
+                                datatype: "photo",
+                                width: 150,
                             },
                             {
-                                view:"list",
-                                id:"mylist",
-                                type:"uploader",
-                                autoheight:true,
-                                borderless:true
+                                view: "list",
+                                id: "mylist",
+                                type: "uploader",
+                                autoheight: true,
+                                borderless: true
                             }
                         ]
                     },
@@ -320,18 +474,10 @@ var sectorView =  {
                             id: "saveEmployee",
                             type: "iconButton",
                             label: "Sačuvaj",
+                            hotkey: 'enter',
                             icon: "save",
                             click: "sectorView.saveEdited",
-                        },
-                            {
-                                view: 'button',
-                                type: "iconButton",
-                                label: "Otkaži",
-                                icon: "close",
-                                width: 230,
-                                click: function () {
-                                    util.dismissDialog('editEmployeeDialog');
-                                }}]
+                        },]
                     }],
                 width: 500,
                 rules: {},
@@ -354,65 +500,125 @@ var sectorView =  {
 
         this.preloadDependencies();
         sectorView.createDatatableContextMenu(); // dodavanje izmjene i brisanja na kontekstni meni
+        animateValue($$("t1"), 0, 25, 100);
+        animateValue($$("t2"), 0, 25 * 2, 100);
+        animateValue($$("t3"), 0, 25 * 150, 100);
         //connection.attachAjaxEvents('sectorDT', 'KOLONA');
     },
     saveEdited: function () {
         var editForm = $$("editEmployeeForm");
         if (editForm.validate()) {
             var newItem = editForm.getValues();
-           /* connection.sendAjax("PUT", "user/" + newItem.id, function (text, data, xhr) {
-                if (text === "Success") {
-                    util.messages.showMessage("Podaci zaposlenom u sektoru su uspješno promijenjeni.");
-                    $$("sectorDT").updateItem(newItem.id, newItem); // updateItem osvjezava vrijednosti za odabrani red po id-u
-                }
-                else
-                    util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
-            }, function () {
-                util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
-            }, newItem);*/
+            /* connection.sendAjax("PUT", "user/" + newItem.id, function (text, data, xhr) {
+                 if (text === "Success") {
+                     util.messages.showMessage("Podaci zaposlenom u sektoru su uspješno promijenjeni.");
+                     $$("sectorDT").updateItem(newItem.id, newItem); // updateItem osvjezava vrijednosti za odabrani red po id-u
+                 }
+                 else
+                     util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
+             }, function () {
+                 util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
+             }, newItem);*/
             util.dismissDialog('editEmployeeDialog');
-        }  else {
+        } else {
             webix.alert({
-                title:"Neuspješna promjena informacija o korisniku! ",
-                text:"Podaci nisu korektno unešeni!",
-                type:"alert-error"}).then(function () {
+                title: "Neuspješna promjena informacija o korisniku! ",
+                text: "Podaci nisu korektno unešeni!",
+                type: "alert-error"
+            }).then(function () {
             });
         }
     },
-    showEditDialog: function () {
-        var object = $$("sectorDT").getSelectedItem();
+    showSectorEmployeeDialog: function () {
+
+        webix.ui(webix.copy(sectorView.sectorEmployeeDialog));
+
+        setTimeout(function () {
+            $$("sectorEmployeeDialog").show();
+        }, 0);
+    },
+    sectorEmployeeDialog: {
+        view: "popup",
+        id: "sectorEmployeeDialog",
+        modal: true,
+        position: "center",
+        drag: "true",
+
+        body: {
+            id: "sectorEmployeeInside",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-user'></span> Pregled zaposlenog",
+                    width: 400
+                }, {}, {
+                    hotkey: 'esc',
+                    view: "icon",
+                    icon: "close",
+                    align: "right",
+                    click: "util.dismissDialog('sectorEmployeeDialog');"
+                }]
+            }, {
+                view: "form",
+                id: "sectorEmployeeForm",
+                width: 600,
+                elementsConfig: {
+                    labelWidth: 200,
+                    bottomPadding: 18
+                },
+                elements: [
+                    {
+                        view: "text",
+                        id: "name",
+                        name: "name",
+                        label: "Naziv:",
+                        disabled: true,
+                    },
+                    {
+                        margin: 5,
+                        cols: [{}, {
+                            id: "showSectorEmployee",
+                            view: "button",
+                            value: "Zatvorite",
+                            type: "form",
+                            click: "util.dismissDialog('sectorEmployeeDialog');",
+                            hotkey: "enter",
+                            width: 150
+                        }]
+                    }],
+
+            }]
+        }
+    },
+    showEditDialog: function (sectorEmployee) {
         webix.ui(webix.copy(sectorView.editDialog));
-        $$("editEmployeeForm").setValues(object);
+        $$("editEmployeeForm").setValues(sectorEmployee);
         setTimeout(function () {
             $$("editEmployeeDialog").show();
         }, 0);
     },
-    showDeleteDialog: function(){
-        var delBox = {
-            title: "Brisanje zaposlenog",
-            ok: "Da",
-            cancel: "Ne",
-            width: 500,
-            text: "Da li ste sigurni da želite obrisati zaposlenog?",
-            callback: function (okPressed) {
-                if (okPressed) // Korisnik potvrdio brisanje
-                {
-                    var id = $$("sectorDT").getSelectedId();
-                 //   connection.sendAjax("DELETE", "user/" + id, function () {
-                        $$("sectorDT").remove(id);
-                        util.messages.showMessage("Zaposleni u sektoru uspješno obrisan.");
-                   /* }, function () {
-                        util.messages.showErrorMessage("Došlo je do greške pri brisanju fakulteta.");
-                    })*/
-                }
+    showDeleteDialog: function () {
+        var delBox = (webix.copy(commonViews.deleteConfirm("zaposlenog")));
+        delBox.callback = function (result) {
+            if (result == 1) {
+
+
+//                        animateValue($$("t1"), 0, companies.length, 1000);  //reduce number of employees in choosen sector
+
+                var id = $$("sectorDT").getSelectedId();
+                //   connection.sendAjax("DELETE", "user/" + id, function () {
+                $$("sectorDT").remove(id);
+                util.messages.showMessage("Zaposleni u sektoru uspješno obrisan.");
+                /* }, function () {
+                     util.messages.showErrorMessage("Došlo je do greške pri brisanju fakulteta.");
+                 })*/
+
+
             }
         };
-
-        var object = $$("sectorDT").getSelectedItem();
-        if(object != null)
-        {
-            webix.confirm(delBox);
-        }
+        webix.confirm(delBox);
+        //sectorView.showDeleteDialog();
     },
     createDatatableContextMenu: function () {
         webix.ui({
@@ -437,11 +643,11 @@ var sectorView =  {
                     var context = this.getContext();
                     switch (id) {
                         case "1": {
-                           sectorView.showEditDialog($$("sectorDT").getItem(context.id));
+                            sectorView.showEditDialog($$("sectorDT").getItem(context.id));
                             break;
                         }
                         case "2": {
-                            sectorView.showDeleteDialog()
+                            sectorView.showDeleteDialog();
                             break;
                         }
                     }
@@ -450,20 +656,30 @@ var sectorView =  {
         });
     },
     preloadDependencies: function () {
-        $$("combo").attachEvent("onChange", function(newv, oldv){
-            webix.message("Value changed from: "+oldv+" to: "+newv);
+        $$("combo").attachEvent("onChange", function (newv, oldv) {
+            webix.message("Value changed from: " + oldv + " to: " + newv);
             //ubaciti metodu koja ce vracati zaposlene samo za taj sektor
         });
 
-        $$("name").setValue("Ime sektora");
-       // var name = 'name';
-     //   sectorName[name] = 'Ime sektora';
-     //   alert(sectorName.name);
+        if (user == "admin")
+        {
+            $$("name").setValue("Ime sektora");
+            $$("sectorManager").hide();
+            $$("combo").hide();
+        }
+        else{ //user is director
+           $$("name").hide();
+           $$("sectorManager").setValue("Nikolina Manager");
+           $$("combo").setValue("Sektor za vanredne situacije");
+        }
+        // var name = 'name';
+        //   sectorName[name] = 'Ime sektora';
+        //   alert(sectorName.name);
         var firstName = "firstName";
         var lastName = "lastName";
         var eMail = "eMail";
         var photo = "photo";
 //        sectorEmployees[firstName, lastName, eMail, photo] = '';
-     //   sectorEmployees =  ["Prvi sektor", "Drugi sektor"];
+        //   sectorEmployees =  ["Prvi sektor", "Drugi sektor"];
     }
 }
