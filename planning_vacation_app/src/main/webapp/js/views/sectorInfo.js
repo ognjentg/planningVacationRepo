@@ -3,6 +3,7 @@ var options = [
     //NISAM STIGLA ZAVRSITI SADA, SAMO SAM KOSTUR NEKI KUCALA, NISAM NI PROVJERILA GDJE MI JE STA
 ];
 
+//Teodora: dodala sam ti fju za prikazivanje ove forme, samo da vidim i ja a ti ti sta si napravila; i dodala sam to u meni
 var sectorInfoView = {
 
     sectorInfoDialog: {
@@ -90,6 +91,12 @@ var sectorInfoView = {
         }
     },
 
+    showSectorDialog: function() {
+        webix.ui(webix.copy(sectorInfoView.sectorInfoDialog));
+        setTimeout(function() {
+            $$("sectorInfoDialog").show();
+        }, 0);
+    },
     save: function () {
         var sectorInfoForm = $$("sectorInfoForm");
 

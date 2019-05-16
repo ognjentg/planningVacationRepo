@@ -37,7 +37,7 @@ var menuActions = function (id) {
             calendarView.selectPanel();
             break;
         case "sectorInfo":
-            sectorInfoView.selectPanel();
+            sectorInfoView.showSectorDialog();
             break;
         case "constrains":
             constrains.selectPanel();
