@@ -12,7 +12,8 @@ var localMenuData = [
     {id: "sector", value: "Sektor", icon: "code"},
     {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
-    {id: "calendar", value: "Kalendar", icon: "code"}
+    {id: "calendar", value: "Kalendar", icon: "code"},
+    {id:"constrains", value: "Ograničenja", icon: "briefcase"}
 ];
 
 var menuActions = function (id) {
@@ -38,6 +39,9 @@ var menuActions = function (id) {
         case "sectorInfo":
             sectorInfoView.selectPanel();
             break;
+        case "constrains":
+            constrains.selectPanel();
+            break;
             }
 };
 
@@ -55,7 +59,7 @@ var menuSuperAdmin = [
     {
         id: "usergroup",
         value: "Admini kompanija",
-        icon: "briefcase"
+        icon: "list"
     }
 ];
 
@@ -65,11 +69,11 @@ var menuAdmin=[
             value: "Kompanija",
             icon: "briefcase"
       },
-/*     {
+      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
@@ -98,12 +102,12 @@ var menuDirector=[
            id: "statistics",
            value: "Statistika",
            icon: "briefcase"
-      }
+      }*/
      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
@@ -138,21 +142,21 @@ var menuSecretary=[
            id: "statistics",
            value: "Statistika",
            icon: "briefcase"
-      }
+      },*/
      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
+           icon: "lisz"
       },
             {
                  id: "sector",
                  value: "Zaposleni po sektorima",
-                 icon: "briefcase"
+                 icon: "list"
             }
  /*    {
            id: "collectiveVacation",
