@@ -19,7 +19,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Objects;
 
-@RequestMapping(value = "hub/company")
+@RequestMapping(value = "/hub/company")
 @Controller
 @Scope("request")
 public class CompanyController extends GenericController<Company, Integer> {
