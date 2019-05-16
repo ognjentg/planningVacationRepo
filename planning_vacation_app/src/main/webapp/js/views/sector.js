@@ -1,7 +1,6 @@
 var sectorName = {};
+var sectors = {};
 var sectorEmployees = {};
-
-var user = true ? "director" : "admin";
 
 var sectorView = {
 
@@ -32,7 +31,7 @@ var sectorView = {
                             {
                                 view: "select",
                                 id: "combo",
-                                options: ["One", "Sektor za vanredne situacije"]//sectorEmployees //izvrsiti ubacivanje svih sektora *opcija dozvoljena samo diretkoru
+                                options: sectors //izvrsiti ubacivanje svih sektora *opcija dozvoljena samo diretkoru
                             },{},{}
                         ]
                     },
@@ -50,7 +49,7 @@ var sectorView = {
                             },
                             {
                                 view: "label",
-                                id: "sectorManager",
+                                id: "sectorNameLabel",
                                 width: 200,
                                 height: 70,
                                 labelWidth:250,
@@ -61,7 +60,7 @@ var sectorView = {
                     //iskljuciti jednu od dvije komponente u zavisnosti od tipa korisnika
                     {
                         view: "label",
-                        id: "name",
+                        id: "nameOfSectorLabel",
                     //    width: 140,
                       //  height: 70,
                         css: "companyPanelToolbar",
@@ -627,46 +626,55 @@ var sectorView = {
             }
         });
     },
+    loadSectors: function () {
+
+        var url="/hub/sector";
+        fetch(url).then(function(result) {
+            if(result.ok) {
+                return result.json();
+            }
+            throw new Error('Neuspješno učitavanje podataka o sektorima.');
+        }).then(function(json) {
+
+            for(var i=0;i<json.length;i++){
+                var name = json[i].name;
+                var id = json[i].id;
+                sectors[i] = {id:id, value:name};
+            }
+            $$("combo").setValue(sectors[0].id);
+            $$("sectorNameLabel").setValue(sectors[0].value);
+
+        }).catch(function(error) {
+            util.messages.showErrorMessage("Nije moguće prikupiti podatke o sektorima.")
+        });
+    },
     preloadDependencies: function () {
+        sectorView.loadSectors(); //test
         $$("combo").attachEvent("onChange", function (newv, oldv) {
             webix.message("Value changed from: " + oldv + " to: " + newv);
-            //ubaciti metodu koja ce vracati zaposlene samo za taj sektor
+
+            //ubaciti metodu koja ce vracati zaposlene samo za taj sektor i mijenjati ime rukovodica sektora
         });
 
-         if ( userData.userGroupId == 5 || userData.userGroupId == 4){  // u slucaju da je rukovodilac sektora u pitanju on nema pristup
+        if ( userData.userGroupId == 5 || userData.userGroupId == 4){
 
-                if(userData.userGroupId == 5) //sektretarica ima mogucnost pregleda i po ostalim sektorima
-                {
-                 $$("headerComponents").removeView("combo");
-                 $$("headerComponents").removeView("sectorManager");
-                 $$("headerComponents").removeView("chooseSector");
-                 $$("headerComponents2").removeView("sectorManagerName");
+            if(userData.userGroupId == 5) //sektretarica ima mogucnost pregleda i po ostalim sektorima, rukovodilac nema tu mogucnost
+            {
+                //  $$("headerComponents").removeView("combo");
+                //$$("headerComponents").removeView("sectorManager");
+                //$$("headerComponents2").removeView("sectorManagerName");
+                sectorView.loadSectors(); //test
+            }else{
+                $$("name").hide();
+            }
 
-                }else{
-                    $$("name").hide();
-                }
-
-               // $$("dtToolbar").hide();
-                //$$("editSectorEmployee").hide();
-                //$$("deleteSectorEmployee").hide();
-                $$("sectorDT").hideColumn("editSectorEmployee", {spans:true});
-                $$("sectorDT").hideColumn("deleteSectorEmployee", {spans:true});
-
+            $$("sectorDT").hideColumn("editSectorEmployee", {spans:true}); // u slucaju da je rukovodilac sektora ili sektretarica u pitanju on ne moze brisati ili prebacivati zaposlene
+            $$("sectorDT").hideColumn("deleteSectorEmployee", {spans:true});
         }
         else{ //user is director or admin
-           $$("name").hide();
-           $$("sectorManager").setValue("Nikolina Manager");
-           $$("combo").setValue("Sektor za vanredne situacije");
-        }
+            $$("headerComponents").removeView("nameOfSectorLabel");
+            $$("sectorManager").setValue("Nikolina Manager");
 
-        // var name = 'name';
-        //   sectorName[name] = 'Ime sektora';
-        //   alert(sectorName.name);
-        var firstName = "firstName";
-        var lastName = "lastName";
-        var eMail = "eMail";
-        var photo = "photo";
-//        sectorEmployees[firstName, lastName, eMail, photo] = '';
-        //   sectorEmployees =  ["Prvi sektor", "Drugi sektor"];
+        }
     }
 }
