@@ -47,20 +47,15 @@ var menuActions = function (id) {
 
 var menuSuperAdmin = [
     {
-        id: "calendar",
-        value: "Kalendar",
-        icon: "briefcase"
-    },
-    {
         id: "company",
         value: "Kompanije",
         icon: "briefcase"
-    },
+    }/*,
     {
-        id: "usergroup",
+        id: "admins",
         value: "Admini kompanija",
         icon: "list"
-    }
+    }*/
 ];
 
 var menuAdmin=[
