@@ -30,7 +30,7 @@ var cssToLoad = [
     "https://fonts.googleapis.com/css?family=Roboto:400,500",
     "https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css",
     "webix/codebase/skins/compact.css",
-    "css/extended.css", // CUSTOM CSS FILE
+    "css/extended.css", "css/company.css", // CUSTOM CSS FILE
     "webix/extensions/sidebar/sidebar.css"
 ];
 
