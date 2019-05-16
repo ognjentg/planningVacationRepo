@@ -35,7 +35,10 @@ var menuActions = function (id) {
         case "calendar":
             calendarView.selectPanel();
             break;
-    }
+        case "sectorInfo":
+            sectorInfoView.selectPanel();
+            break;
+            }
 };
 
 var menuSuperAdmin = [
@@ -70,13 +73,14 @@ var menuAdmin=[
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
+           icon: "list"
       },
       {
            id: "sector",
            value: "Zaposleni po sektorima",
-           icon: "briefcase"
+           icon: "list"
       }
+
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
@@ -103,12 +107,12 @@ var menuDirector=[
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
+           icon: "list"
       },
       {
            id: "sector",
            value: "Zaposleni po sektorima",
-           icon: "briefcase"
+           icon: "list"
       }
  /*    {
            id: "collectiveVacation",
@@ -166,12 +170,17 @@ var menuSectorManager=[
     {
         id: "calendar",
         value: "Kalendar",
-        icon: "briefcase"
+        icon: "code"
     },
      {
            id: "sector",
            value: "Zaposleni po sektorima",
-           icon: "briefcase"
+           icon: "list"
+      },
+      {
+            id: "sectorInfo",
+            value: "Sektor",
+            icon: "briefcase"
       }
 ];
 
@@ -179,7 +188,7 @@ var menuWorker=[
     {
         id: "calendar",
         value: "Kalendar",
-        icon: "briefcase"
+        icon: "code"
     }
 ];
 var settingsMenu=[
