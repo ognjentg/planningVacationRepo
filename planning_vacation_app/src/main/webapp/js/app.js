@@ -62,6 +62,11 @@ var menuAdmin=[
            id: "usergroup",
            value: "Zaposleni",
            icon: "briefcase"
+      },
+      {
+           id: "sector",
+           value: "Zaposleni po sektorima",
+           icon: "briefcase"
       }
  /*    {
            id: "collectiveVacation",
@@ -89,6 +94,11 @@ var menuDirector=[
      {
            id: "usergroup",
            value: "Zaposleni",
+           icon: "briefcase"
+      },
+      {
+           id: "sector",
+           value: "Zaposleni po sektorima",
            icon: "briefcase"
       }
  /*    {
@@ -123,7 +133,12 @@ var menuSecretary=[
            id: "usergroup",
            value: "Zaposleni",
            icon: "briefcase"
-      }
+      },
+            {
+                 id: "sector",
+                 value: "Zaposleni po sektorima",
+                 icon: "briefcase"
+            }
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
@@ -139,7 +154,7 @@ var menuSecretary=[
 var menuSectorManager=[
      {
            id: "sector",
-           value: "Sektor",
+           value: "Zaposleni po sektorima",
            icon: "briefcase"
       }
 ];
