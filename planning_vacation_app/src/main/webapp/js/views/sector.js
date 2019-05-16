@@ -12,15 +12,17 @@ var sectorView = {
         cols: [{width: 20}, {
             rows: [{
                 view: "toolbar",
+                id:"sectorTbr",
                 css:"sectorToolbar",
                 padding: 10,
                 rows: [
 
                     {
+                        id:"headerComponents",
                         cols:[
                             {
                                 view: "label",
-                                id: "name",
+                                id: "chooseSector",
                                 width: 200,
                                 height: 70,
                                 labelWidth:250,
@@ -35,10 +37,11 @@ var sectorView = {
                         ]
                     },
                     {
+                        id:"headerComponents2",
                         cols:[
                             {
                                 view: "label",
-                                id: "name",
+                                id: "sectorManagerName",
                                 width: 200,
                                 height: 70,
                                 labelWidth:250,
@@ -200,13 +203,11 @@ var sectorView = {
                             }
 
                             if (action === "edit") {
-                                // companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
                                 sectorView.showEditDialog($$("sectorDT").getItem(id.row));
                             }
                             if (action === "view") {
-                                //companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));a
                                 //$$("firstName").disabled();
-                                sectorView.showSectorEmployeeDialog();
+                               //sectorView.showSectorEmployeeDialog(); //otkomentarisati nakon sto se odradi f-ja u user.js fajlu
                             }
 
                         }
@@ -218,6 +219,7 @@ var sectorView = {
                         },
                         {
                             id: "serialNumber",
+                            name: "serialNumber",
                             header: "#",
                             width: 50,
                             fillspace: true
@@ -255,20 +257,20 @@ var sectorView = {
                             header: "E-mail"
                         },
                         {
-                            id: "delete",
+                            id: "deleteSectorEmployee",
                             header: "&nbsp;",
                             width: 35,
                             template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                         },
                         {
-                            id: "edit",
+                            id: "editSectorEmployee",
                             header: "&nbsp;",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                         },
                         {
-                            id: "view",
+                            id: "viewSectorEmployee",
                             header: "&nbsp;",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa fa-eye'></span>"
@@ -278,6 +280,7 @@ var sectorView = {
 
                 {
                     view: "toolbar",
+                    id: "dtToolbar",
                     css: "highlighted_header header6",
                     paddingX: 5,
                     paddingY: 5,
@@ -405,7 +408,7 @@ var sectorView = {
     },
     editDialog: {
         view: "popup",
-        id: "editEmployeeDialog",
+        id: "editSectorEmployeeDialog",
         position: "center",
         modal: true,
         body: {
@@ -420,7 +423,7 @@ var sectorView = {
                     icon: "close",
                     hotkey: 'esc',
                     align: "right",
-                    click: "util.dismissDialog('editEmployeeDialog')"
+                    click: "util.dismissDialog('editSectorEmployeeDialog')"
                 }]
             }, {
                 elementsConfig: {labelWidth: 140, bottomPadding: 18},
@@ -428,43 +431,10 @@ var sectorView = {
                 elements: [
                     {
                         view: 'text',
-                        label: 'Ime',
-                        id: 'firstName',
-                        name: "firstName",
+                        label: 'Naziv sektora: ',
+                        id: 'newSector',
+                        name: "sectorName",
                         required: true
-                    },
-                    {
-                        view: 'text',
-                        label: 'Prezime',
-                        id: 'lastName',
-                        name: "lastName",
-                        required: true
-                    },
-                    {
-                        view: 'text',
-                        label: 'Email',
-                        name: "eMail",
-                        required: true
-                    },
-                    {
-                        cols: [
-                            {
-                                view: "uploader",
-                                id: "photo",
-                                value: "Odaberi sliku",
-                                link: "mylist",
-                                upload: "",
-                                datatype: "photo",
-                                width: 150,
-                            },
-                            {
-                                view: "list",
-                                id: "mylist",
-                                type: "uploader",
-                                autoheight: true,
-                                borderless: true
-                            }
-                        ]
                     },
                     {
                         cols: [{}, {
@@ -473,7 +443,7 @@ var sectorView = {
                             width: 250,
                             id: "saveEmployee",
                             type: "iconButton",
-                            label: "Sačuvaj",
+                            label: "Sačuvaj izmjene",
                             hotkey: 'enter',
                             icon: "save",
                             click: "sectorView.saveEdited",
@@ -481,7 +451,7 @@ var sectorView = {
                     }],
                 width: 500,
                 rules: {},
-                id: "editEmployeeForm"
+                id: "editSectorEmployeeForm"
             }]
         }
     },
@@ -506,9 +476,11 @@ var sectorView = {
         //connection.attachAjaxEvents('sectorDT', 'KOLONA');
     },
     saveEdited: function () {
-        var editForm = $$("editEmployeeForm");
+        var editForm = $$("editSectorEmployeeForm");
         if (editForm.validate()) {
             var newItem = editForm.getValues();
+
+            //prvo delete zaposlenog iz sektora, a zatim dodavanje zaposlenog u novi sektor
             /* connection.sendAjax("PUT", "user/" + newItem.id, function (text, data, xhr) {
                  if (text === "Success") {
                      util.messages.showMessage("Podaci zaposlenom u sektoru su uspješno promijenjeni.");
@@ -519,7 +491,7 @@ var sectorView = {
              }, function () {
                  util.messages.showErrorMessage("Došlo je do greške prilikom promjene podataka o zaposlenom u sektoru .");
              }, newItem);*/
-            util.dismissDialog('editEmployeeDialog');
+            util.dismissDialog('editSectorEmployeeDialog');
         } else {
             webix.alert({
                 title: "Neuspješna promjena informacija o korisniku! ",
@@ -593,9 +565,9 @@ var sectorView = {
     },
     showEditDialog: function (sectorEmployee) {
         webix.ui(webix.copy(sectorView.editDialog));
-        $$("editEmployeeForm").setValues(sectorEmployee);
+        $$("editSectorEmployeeForm").setValues(sectorEmployee);
         setTimeout(function () {
-            $$("editEmployeeDialog").show();
+            $$("editSectorEmployeeDialog").show();
         }, 0);
     },
     showDeleteDialog: function () {
@@ -661,17 +633,32 @@ var sectorView = {
             //ubaciti metodu koja ce vracati zaposlene samo za taj sektor
         });
 
-        if (user == "admin")
-        {
-            $$("name").setValue("Ime sektora");
-            $$("sectorManager").hide();
-            $$("combo").hide();
+         if ( userData.userGroupId == 5 || userData.userGroupId == 4){  // u slucaju da je rukovodilac sektora u pitanju on nema pristup
+
+                if(userData.userGroupId == 5) //sektretarica ima mogucnost pregleda i po ostalim sektorima
+                {
+                 $$("headerComponents").removeView("combo");
+                 $$("headerComponents").removeView("sectorManager");
+                 $$("headerComponents").removeView("chooseSector");
+                 $$("headerComponents2").removeView("sectorManagerName");
+
+                }else{
+                    $$("name").hide();
+                }
+
+               // $$("dtToolbar").hide();
+                //$$("editSectorEmployee").hide();
+                //$$("deleteSectorEmployee").hide();
+                $$("sectorDT").hideColumn("editSectorEmployee", {spans:true});
+                $$("sectorDT").hideColumn("deleteSectorEmployee", {spans:true});
+
         }
-        else{ //user is director
+        else{ //user is director or admin
            $$("name").hide();
            $$("sectorManager").setValue("Nikolina Manager");
            $$("combo").setValue("Sektor za vanredne situacije");
         }
+
         // var name = 'name';
         //   sectorName[name] = 'Ime sektora';
         //   alert(sectorName.name);
