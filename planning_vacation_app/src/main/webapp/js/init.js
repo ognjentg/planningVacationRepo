@@ -7,7 +7,7 @@ var scriptsToLoad = [
     {
         "section": "extensions",
         "path": "webix/extensions/",
-        "files": ["sidebar/sidebar"]
+        "files": ["sidebar/sidebar", "dhtmlxscheduler", "dhtmlxscheduler_limit"]
     },
     {
         "section": "common",
@@ -17,7 +17,7 @@ var scriptsToLoad = [
     {
         "section": "views",
         "path": "js/views/",
-        "files": ["template", "sector", "user","usergroup", "company"] // ADD VIEWS HERE
+        "files": ["template", "sector", "user", "usergroup", "company", "calendar"] // ADD VIEWS HERE
     },
     {
         "section": "core",
@@ -30,8 +30,9 @@ var cssToLoad = [
     "https://fonts.googleapis.com/css?family=Roboto:400,500",
     "https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css",
     "webix/codebase/skins/compact.css",
-    "css/extended.css", "css/company.css", // CUSTOM CSS FILE
-    "webix/extensions/sidebar/sidebar.css"
+    "css/extended.css", "css/company.css", "css/calendar.css", // CUSTOM CSS FILE
+    "webix/extensions/sidebar/sidebar.css",
+    "webix/codebase/dhtmlxscheduler_flat.css"
 ];
 
 var linearJsDownloadOrder = [];

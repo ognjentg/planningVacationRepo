@@ -61,7 +61,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Override
     public @ResponseBody
     List<LeaveRequest> getAll(){
-        return cloner.deepClone(leaveRequestRepository.getAllByActiveIs((byte)1));
+        return leaveRequestRepository.getAllByActiveIs((byte)1);
     }
 }
 

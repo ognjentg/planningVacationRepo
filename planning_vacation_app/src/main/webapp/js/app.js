@@ -12,6 +12,7 @@ var localMenuData = [
     {id: "sector", value: "Sektor", icon: "code"},
     {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
+    {id: "calendar", value: "Kalendar", icon: "code"}
 ];
 
 var menuActions = function (id) {
@@ -31,10 +32,18 @@ var menuActions = function (id) {
         case "company":
             companyView.selectPanel();
             break;
+        case "calendar":
+            calendarView.selectPanel();
+            break;
     }
 };
 
 var menuSuperAdmin = [
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "briefcase"
+    },
     {
         id: "company",
         value: "Kompanije",
@@ -106,14 +115,16 @@ var menuDirector=[
            value: "Kolektivni godišnji odmor",
            icon: "briefcase"
       }*/
+
 ];
 
 var menuSecretary=[
-/*     {
+     {
             id: "calendar",
              value: "Kalendar",
              icon: "briefcase"
      },
+    /*
      {
             id: "requests",
             value: "Zahtjevi",
@@ -152,6 +163,11 @@ var menuSecretary=[
 ];
 
 var menuSectorManager=[
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "briefcase"
+    },
      {
            id: "sector",
            value: "Zaposleni po sektorima",
@@ -160,7 +176,11 @@ var menuSectorManager=[
 ];
 
 var menuWorker=[
-
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "briefcase"
+    }
 ];
 var settingsMenu=[
     {id: "1", value: "O programu", icon: "info-circle"},

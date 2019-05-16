@@ -62,7 +62,7 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     @Override
     public @ResponseBody
     List<ColectiveVacation> getAll(){
-        return cloner.deepClone(colectiveVacationRepository.getAllByActiveIs((byte)1));
+        return colectiveVacationRepository.getAllByActiveIs((byte)1);
     }
 
 }
