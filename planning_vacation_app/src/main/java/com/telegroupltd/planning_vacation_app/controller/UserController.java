@@ -26,6 +26,7 @@ import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequestMapping(value = "hub/user")
 @Controller
@@ -82,31 +83,40 @@ public class UserController extends GenericController<User, Integer> {
 
     @Override
     public @ResponseBody
-    List<User> getAll() {
-        List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte)1));  //List<T> getAllByActiveIs(Byte active);
+    List<User> getAll() throws ForbiddenException {
+        List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
 
-        if(superAdmin == userBean.getUser().getUserGroupId()) {
-            users.stream().filter(u -> admin == u.getUserGroupId()); //od aktivnih usera, filtriram sve admine kompanija
-            return users;
+        if (superAdmin == userBean.getUser().getUserGroupId()) {
+            for (User u : users) {
+                u.setPassword("");
+                u.setSalt("");
+            }
+            return users.stream().filter(u -> admin == u.getUserGroupId()).collect(Collectors.toList()); //od aktivnih usera, filtriram sve admine kompanija
         }
 
-        users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte)1)));
-        if(admin == userBean.getUser().getUserGroupId())
-            users.stream().filter(u->superAdmin != u.getUserGroupId() && admin != u.getUserGroupId());
-        else if(director == userBean.getUser().getUserGroupId())
-            users.stream().filter(u-> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId() && director != u.getUserGroupId());
-        else if(secretary == userBean.getUser().getUserGroupId())
-            users.stream().filter(u->sectorManager == u.getUserGroupId() && worker == u.getUserGroupId());
-        else if(sectorManager== userBean.getUser().getUserGroupId()) {
+
+        users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte) 1)));
+        if (admin == userBean.getUser().getUserGroupId()){
+            for (User u : users) {
+                u.setPassword("");
+                u.setSalt("");
+            }
+        return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).collect(Collectors.toList());
+    }else if(director == userBean.getUser().getUserGroupId()) {
+            for (User u : users) {
+                u.setPassword("");
+                u.setSalt("");
+            }
+            return users.stream().filter(u ->  admin != u.getUserGroupId() && director != u.getUserGroupId()).collect(Collectors.toList());
+        }else if(secretary == userBean.getUser().getUserGroupId()) {
+            for(User u:users){ u.setPassword(""); u.setSalt(""); }
+            return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).collect(Collectors.toList());
+        } else if(sectorManager== userBean.getUser().getUserGroupId()) {
             users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte)1)));
-            users.stream().filter(u-> worker != u.getUserGroupId());
+             for(User u:users){ u.setPassword(""); u.setSalt(""); }
+            return users.stream().filter(u-> worker == u.getUserGroupId()).collect(Collectors.toList());
         }
-
-        for(User user : users){
-            user.setPassword("");
-            user.setSalt("");
-        }
-        return users;
+        throw new ForbiddenException("Forbidden");
     }
 
     @Override
@@ -162,6 +172,43 @@ public class UserController extends GenericController<User, Integer> {
         return users.stream().filter(u -> admin == u.getUserGroupId()).count();
         }else  throw new ForbiddenException("Forbidden");
     }
+
+    /*
+    * Superadmin can get number of everybody on sistem except admins
+    * Admin can get number of everybody(workers, secretary, sector managers and director)
+    * Director can get number of secretary+sector managers+workers
+    * secretary can get number of sector managers+workers
+    * sector manager can get number of workers in his sector
+    * */
+    @SuppressWarnings("SameReturnValue")
+    @RequestMapping(value = "/numberOfWorkers", method = RequestMethod.GET)
+    public @ResponseBody
+    long numberOfWorkers(HttpServletRequest request) throws ForbiddenException {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
+
+        if (superAdmin == userBean.getUser().getUserGroupId())
+            return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).count();
+        else {
+            users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte) 1)));
+
+            if (admin == userBean.getUser().getUserGroupId())
+                return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).count();
+            else if (director == userBean.getUser().getUserGroupId())
+                return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId() && director != u.getUserGroupId()).count();
+            else if (secretary == userBean.getUser().getUserGroupId())
+                return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).count();
+            else if (sectorManager == userBean.getUser().getUserGroupId()) {
+                users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte) 1)));
+                return users.stream().filter(u -> worker == u.getUserGroupId()).count();
+            } else
+                throw new ForbiddenException("Forbidden");
+        }
+    }
+
 
     @Override
     @Transactional
