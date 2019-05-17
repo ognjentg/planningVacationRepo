@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ConstraintsRepository extends JpaRepository<Constraints, Integer>, HasActiveRepository<Constraints,Integer> {
 
+    Constraints getByCompanyIdAndActive(Integer companyId, byte active);
 }
