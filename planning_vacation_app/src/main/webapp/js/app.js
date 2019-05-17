@@ -13,7 +13,8 @@ var localMenuData = [
     {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
     {id: "calendar", value: "Kalendar", icon: "code"},
-    {id:"constrains", value: "Ograničenja", icon: "briefcase"}
+    {id:"constrains", value: "Ograničenja", icon: "briefcase"},
+    {id:"admins", value: "Admini kompanija", icon: "list"}
 ];
 
 var menuActions = function (id) {
@@ -42,6 +43,9 @@ var menuActions = function (id) {
         case "constrains":
             constrains.selectPanel();
             break;
+        case "admins":
+            adminsView.selectPanel();
+            break;
             }
 };
 
@@ -50,12 +54,12 @@ var menuSuperAdmin = [
         id: "company",
         value: "Kompanije",
         icon: "briefcase"
-    }/*,
+    },
     {
         id: "admins",
-        value: "Admini kompanija",
+        value: "Testiranje-Admini kompanija",
         icon: "list"
-    }*/
+    }
 ];
 
 var menuAdmin=[
