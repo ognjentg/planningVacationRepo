@@ -236,7 +236,7 @@ var profileView = {
         }
     },
 
-    showProfileDialog: function() {
+    bla: function() {
         webix.ui(webix.copy(profileView.profileDialog));
         setTimeout(function() {
             $$("profileDialog").show();

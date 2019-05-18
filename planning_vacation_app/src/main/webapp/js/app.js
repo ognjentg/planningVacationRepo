@@ -213,7 +213,7 @@ var settingsMenuActions=function (id) {
             changePasswordView.showChangePasswordDialog();
             break;
         case "3":
-            profileView.showProfileDialog();
+            profileView.bla();
             break;
         case "4":
             logout();
