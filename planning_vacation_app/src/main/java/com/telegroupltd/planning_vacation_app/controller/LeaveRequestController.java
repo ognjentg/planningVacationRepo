@@ -13,16 +13,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping(value = "/leave_request")
+import java.util.List;
+
+@RequestMapping(value = "hub/leave_request")
 @Controller
 @Scope("request")
 public class LeaveRequestController extends GenericHasActiveController<LeaveRequest, Integer> {
     private final LeaveRequestRepository leaveRequestRepository;
 
-    @Value("${badRequest.insert}")
+    @Value("Dodavanje nije moguće")
     private String badRequestInsert;
 
-    @Value("${badRequest.update}")
+    @Value("Ažuriranje nije moguće")
     private String badRequestUpdate;
 
     @Autowired
@@ -55,6 +57,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             throw new BadRequestException(badRequestInsert);
         return super.update(id, leaveRequest);
     }
-
+    
+    @Override
+    public @ResponseBody
+    List<LeaveRequest> getAll(){
+        return leaveRequestRepository.getAllByActiveIs((byte)1);
+    }
 }
 

@@ -120,7 +120,7 @@ var companyView = {
                     id: "btn",
                     view: "button",
                     type: "iconButton",
-                    label: " Analitikka  ",
+                    label: " Statistika  ",
                     icon: "fas fa-line-chart",
                     css: "companyButton",
                     autowidth: true
@@ -162,7 +162,7 @@ var companyView = {
                     view: "button",
                     type: "iconButton",
                     icon: "fas fa-print",
-                    label: "Stampajte",
+                    label: "Štampajte",
                     width: 100,
                     css: "companyButton",
                     click: function (id) {
@@ -174,7 +174,7 @@ var companyView = {
                     view: "button",
                     type: "iconButton",
                     icon: "fa fa-refresh",
-                    label: "Osvjezite",
+                    label: "Osvježite",
                     width: 100,
                     css: "companyButton",
                     click: function () {
@@ -266,7 +266,7 @@ var companyView = {
                     console.log(id["column"]);
                     var action = id["column"];
                     if (action === "delete" && user === "admin") {
-                        alert("Niste autorizovani da izbrisete kompaniju!");
+                        alert("Niste autorizovani da izbrišete kompaniju!");
                     }
                     if (action === "delete" && user === "superadmin") {
                         var delBox = (webix.copy(commonViews.deleteConfirm("company")));
@@ -388,7 +388,7 @@ var companyView = {
                             break;
                         case "2":
                             if (user === "admin") {
-                                alert("Niste autorizovani da izbrisete kompaniju!");
+                                alert("Niste autorizovani da izbrišete kompaniju!");
                                 break;
                             }
                             var delBox = (webix.copy(commonViews.deleteConfirm("company")));
@@ -444,18 +444,18 @@ var companyView = {
                     id: "name",
                     name: "name",
                     label: "Naziv:",
-                    invalidMessage: "Unesite naziv kompanije!",
+                    invalidMessage: "Naziv je obavezno unijeti.",
                     required: true
                 }, {
                     view: "text",
                     id: "pin",
-                    invalidMessage: "Unesite validan PIN!",
+                    invalidMessage: "PIN kompanije je obavezno unijeti.",
                     name: "pin",
                     type: "password",
                     editable: true,
                     stringResult: true,
                     label: "PIN kompanije:",
-                    required: true
+                    required: true,
 
 
                 },
@@ -475,7 +475,7 @@ var companyView = {
 
                             id: "cancelCompany",
                             view: "button",
-                            value: "Otkazite",
+                            value: "Otkažite",
                             type: "danger",
                             align: "right",
                             click: function () {
@@ -490,10 +490,10 @@ var companyView = {
                 rules: {
                     "name": function (value) {
                         if (!value) {
-                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Naziv je obavezno unijeti.';
                             return false;
                         } else if (value.length > 100) {
-                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            $$('addCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne može biti veći od 100!';
                             return false;
                         } else {
                             return true;
@@ -501,21 +501,21 @@ var companyView = {
                     },
                     "pin": function (value) {
                         if (!value) {
-                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Morate unijeti PIN!';
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'PIN kompanije je obavezno unijeti.';
                             return false;
 
                         } else if (isNaN(value)) {
                             console.log(isNaN(value));
-                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Nisu dozvoljeni drugi karakteri osim numerickih!';
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Samo numerički znakovi mogu biti korišteni.';
                             return false;
 
                         } else if (value.length < 4) {
-                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti manji od 4!';
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne može biti manji od 4!';
                             console.log("less then od 4");
                             return false;
 
                         } else if (value.length > 4) {
-                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti veci od 4!';
+                            $$('addCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne može biti veci od 4!';
                             console.log("greater than 4");
                             return false;
 
@@ -592,13 +592,13 @@ var companyView = {
                         id: "name",
                         name: "name",
                         label: "Naziv:",
-                        invalidMessage: "Unesite naziv kompanije!",
+                        invalidMessage: "Naziv je obavezno unijeti.",
                         required: true
                     },
                     {
                         view: "text",
                         id: "pin",
-                        invalidMessage: "Unesite validan PIN!",
+                        invalidMessage: "PIN kompanije je obavezno unijeti.",
                         name: "pin",
                         type: "password",
                         editable: true,
@@ -625,10 +625,10 @@ var companyView = {
                 rules: {
                     "name": function (value) {
                         if (!value) {
-                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Naziv je obavezno unijeti.';
                             return false;
                         } else if (value.length > 100) {
-                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne može biti veći od 100!';
                             return false;
                         } else {
                             return true;
@@ -636,21 +636,21 @@ var companyView = {
                     },
                     "pin": function (value) {
                         if (!value) {
-                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Morate unijeti PIN!';
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'PIN kompanije je obavezno unijeti.';
                             return false;
 
                         } else if (isNaN(value)) {
                             console.log(isNaN(value));
-                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Nisu dozvoljeni drugi karakteri osim numerickih!';
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Samo numerički znakovi mogu biti korišteni.';
                             return false;
 
                         } else if (value.length < 4) {
-                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti manji od 4!';
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne može biti manji od 4!';
                             console.log("less then od 4");
                             return false;
 
                         } else if (value.length > 4) {
-                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne moze biti veci od 4!';
+                            $$('changeCompanyForm').elements.pin.config.invalidMessage = 'Broj karaktera ne može biti veći od 4!';
                             console.log("greater than 4");
                             return false;
 
@@ -705,7 +705,7 @@ var companyView = {
                         id: "name",
                         name: "name",
                         label: "Naziv:",
-                        invalidMessage: "Unesite naziv kompanije!",
+                        invalidMessage: "Naziv je obavezno unijeti.",
                         required: true
                     },
 
@@ -798,10 +798,10 @@ var companyView = {
                 rules: {
                     "name": function (value) {
                         if (!value) {
-                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Morate unijeti naziv!';
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Naziv je obavezno unijeti.';
                             return false;
                         } else if (value.length > 100) {
-                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne moze biti veci od 100!';
+                            $$('changeCompanyForm').elements.name.config.invalidMessage = 'Broj karaktera ne može biti veći od 100!';
                             return false;
                         } else {
                             return true;
@@ -856,7 +856,7 @@ var companyView = {
                         view: "text",
                         id: "pin",
                         name: "pin",
-                        type: "password",
+                        type: "text",
                         editable: false,
                         stringResult: true,
                         label: "PIN kompanije:",

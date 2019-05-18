@@ -4,6 +4,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenExcepti
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.NonWorkingDay;
 import com.telegroupltd.planning_vacation_app.repository.NonWorkingDayRepository;
+import com.telegroupltd.planning_vacation_app.session.UserBean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@RequestMapping(value = "/nonWorkigDay")
+@RequestMapping(value = "/hub/nonWorkingDay")
 @Controller
 @Scope("request")
 public class NonWorkingDayController extends GenericHasActiveController<NonWorkingDay, Integer> {
@@ -25,9 +26,10 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     }
 
 
+    @Override
     @Transactional
-    public List<NonWorkingDay> getAll(@PathVariable("companyId") Integer id) throws ForbiddenException {
-        return nonWorkingDayRepository.getAllByActiveIs((byte) 1);
+    public List<NonWorkingDay> getAll() throws ForbiddenException {
+        return nonWorkingDayRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(),(byte) 1);
     }
 
 

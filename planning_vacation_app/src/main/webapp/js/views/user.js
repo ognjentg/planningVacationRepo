@@ -236,7 +236,7 @@ var profileView = {
         }
     },
 
-    showProfileDialog: function() {
+    bla: function() {
         webix.ui(webix.copy(profileView.profileDialog));
         setTimeout(function() {
             $$("profileDialog").show();
@@ -251,4 +251,96 @@ var profileView = {
             // slanje podataka na serversku stranu
         }
     }
-}
+};
+
+var changePasswordView = {
+
+    changePasswordDialog : {
+        view: "popup",
+        id: "changePasswordDialog",
+        name: "passwordDialog",
+        position: "center",
+        modal: true,
+        body: {
+            rows:[
+                {
+                    view:"toolbar",
+                    cols:[
+                        {
+                            view: "label",
+                            width: 400,
+                            label: "<span class='webix_icon fas fa-lock'></span> Promjena lozinke"
+                        },
+                        {},
+                        {
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            hotkey:"esc",
+                            click: "util.dismissDialog('changePasswordDialog')"
+                        }
+                    ]
+                },
+                {
+                    view:"form",
+                    id:"changePasswordForm",
+                    width:500,
+                    elementsConfig: {
+                        labelWidth: 140,
+                        bottomPadding: 18
+                    },
+                    elements:[
+                        {
+                            view:"text",
+                            id:"oldPassword",
+                            label:"Trenutna lozinka:",
+                            required:true
+
+                        },
+                        {
+                            view:"text",
+                            label:"Nova lozinka:",
+                            id:"newPassword",
+                            required:true,
+                            on:{
+                                'onTimedKeyPress':function () {
+                                    if($$("newPassword").getValue().length<8) {
+                                        util.messages.showErrorMessage("Lozinka mora imati barem 8 karaktera!");
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            view:"text",
+                            label:"Potvrda nove lozinke:",
+                            id:"newPasswordConfirmation",
+                            required:true,
+                            on:{
+                                'onTimedKeyPress':function () {
+                                    if($$("newPasswordConfirmation").getValue()!==$$("newPassword").getValue())
+                                        util.messages.showErrorMessage("Potvrda lozinke nije jednaka novoj lozinci!");
+                                }
+                            }
+                        },
+                        {
+                            view:"button",
+                            label:"Promijeni",
+                            click:"util.messages.showErrorMessage(\"klik\");",
+                            width:150,
+                            align:"right",
+                            hotkey:"enter"
+                        }
+                    ]
+                }
+            ]
+
+        }
+    },
+
+    showChangePasswordDialog: function() {
+        webix.ui(webix.copy(changePasswordView.changePasswordDialog));
+        setTimeout(function() {
+            $$("changePasswordDialog").show();
+        }, 0);
+    }
+};

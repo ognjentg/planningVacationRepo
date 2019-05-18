@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@RequestMapping(value = "/constarints")
+@RequestMapping(value = "/hub/constraints")
 @Controller
 @Scope("request")
 public class ConstraintsController extends GenericHasActiveController<Constraints, Integer> {
@@ -31,23 +31,29 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
 
 
-    //Obzirom da imam jedan (aktivan) zapis u bazi za odredjenu kompaniju, kontam da nikad necu traziti taj zapis po njegovom id
-    // nego po id kompanije, pa sam zato samo redefinisala
     @Override
-    public Constraints findById(@PathVariable("companyId") Integer id) throws ForbiddenException {
-        return constraintsRepository.getByIdAndActive(id, (byte) 1);
+    @Transactional
+    public List<Constraints> getAll() throws ForbiddenException {
+        throw new ForbiddenException("Forbidden");
     }
 
-    //Obzirom da imam jedan zapis za jednu firmu, da li u update trebam samo updatovati taj zapis
+    @Override
+    public Constraints findById(Integer companyId) throws ForbiddenException {
+        return constraintsRepository.getByCompanyIdAndActive(companyId,(byte) 1);
+    }
+
+
+
+    //Obzirom da imam jedan aktivan zapis za jednu firmu, da li u update trebam samo update-ovati taj zapis
     // ili da stari zapis obrisem(setujem active), a ubacim novi zapis?
     @Override
     @Transactional
-    public String update(@PathVariable("companyId") Integer id, @RequestBody Constraints object) throws BadRequestException, ForbiddenException {
-        Constraints objectDb = constraintsRepository.getByIdAndActive(id, (byte) 1);
+    public String update(Integer companyId, @RequestBody Constraints object) throws BadRequestException, ForbiddenException {
+        Constraints objectDb = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1);
         if (objectDb != null) {
             if (object.getActive() == null)
                 object.setActive(objectDb.getActive());
-            return super.update(id,object);
+            return super.update(companyId,object);
         }
         throw new BadRequestException("Bad Request");
     }
@@ -55,9 +61,9 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
     @Override
     @Transactional
-    public String delete(@PathVariable("companyId") Integer id) throws BadRequestException, ForbiddenException {
+    public String delete(Integer companyId) throws BadRequestException, ForbiddenException {
         Constraints object = null;
-        if ((object = constraintsRepository.getByIdAndActive(id, (byte) 1)) != null) {
+        if ((object = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1)) != null) {
             object.setActive((byte) 0);
             repo.saveAndFlush(object);
             logDeleteAction(object);

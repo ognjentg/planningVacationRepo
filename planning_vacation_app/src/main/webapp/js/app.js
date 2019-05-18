@@ -12,6 +12,9 @@ var localMenuData = [
     {id: "sector", value: "Sektor", icon: "code"},
     {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
+    {id: "calendar", value: "Kalendar", icon: "code"},
+    {id:"constrains", value: "Ograničenja", icon: "briefcase"},
+    {id:"admins", value: "Admini kompanija", icon: "list"}
 ];
 
 var menuActions = function (id) {
@@ -31,7 +34,19 @@ var menuActions = function (id) {
         case "company":
             companyView.selectPanel();
             break;
-    }
+        case "calendar":
+            calendarView.selectPanel();
+            break;
+        case "sectorInfo":
+            sectorInfoView.showSectorDialog();
+            break;
+        case "constrains":
+            constrains.selectPanel();
+            break;
+        case "admins":
+            adminsView.selectPanel();
+            break;
+            }
 };
 
 var menuSuperAdmin = [
@@ -41,9 +56,9 @@ var menuSuperAdmin = [
         icon: "briefcase"
     },
     {
-        id: "usergroup",
-        value: "Admini kompanija",
-        icon: "briefcase"
+        id: "admins",
+        value: "Testiranje-Admini kompanija",
+        icon: "list"
     }
 ];
 
@@ -53,16 +68,22 @@ var menuAdmin=[
             value: "Kompanija",
             icon: "briefcase"
       },
-/*     {
+      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
+           icon: "list"
+      },
+      {
+           id: "sector",
+           value: "Zaposleni po sektorima",
+           icon: "list"
       }
+
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
@@ -80,30 +101,37 @@ var menuDirector=[
            id: "statistics",
            value: "Statistika",
            icon: "briefcase"
-      }
+      }*/
      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
+           icon: "list"
+      },
+      {
+           id: "sector",
+           value: "Zaposleni po sektorima",
+           icon: "list"
       }
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
            icon: "briefcase"
       }*/
+
 ];
 
 var menuSecretary=[
-/*     {
+     {
             id: "calendar",
              value: "Kalendar",
              icon: "briefcase"
      },
+    /*
      {
             id: "requests",
             value: "Zahtjevi",
@@ -113,17 +141,22 @@ var menuSecretary=[
            id: "statistics",
            value: "Statistika",
            icon: "briefcase"
-      }
+      },*/
      {
             id: "constrains",
             value: "Ogranicenja kompanije",
             icon: "briefcase"
-      },*/
+      },
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "briefcase"
-      }
+           icon: "lisz"
+      },
+            {
+                 id: "sector",
+                 value: "Zaposleni po sektorima",
+                 icon: "list"
+            }
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
@@ -137,15 +170,29 @@ var menuSecretary=[
 ];
 
 var menuSectorManager=[
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "code"
+    },
      {
            id: "sector",
-           value: "Sektor",
-           icon: "briefcase"
+           value: "Zaposleni po sektorima",
+           icon: "list"
+      },
+      {
+            id: "sectorInfo",
+            value: "Sektor",
+            icon: "briefcase"
       }
 ];
 
 var menuWorker=[
-
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "code"
+    }
 ];
 var settingsMenu=[
     {id: "1", value: "O programu", icon: "info-circle"},

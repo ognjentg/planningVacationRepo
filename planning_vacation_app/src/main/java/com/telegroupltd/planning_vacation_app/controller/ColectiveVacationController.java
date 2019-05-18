@@ -13,18 +13,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
-@RequestMapping(value = "/colective_vacation")
+@RequestMapping(value = "/hub/colective_vacation")
 @Controller
 @Scope("request")
 public class ColectiveVacationController extends GenericHasActiveController<ColectiveVacation, Integer> {
     private final ColectiveVacationRepository colectiveVacationRepository;
 
-    @Value("${badRequest.insert}")
+    @Value("Dodavanje nije moguće")
     private String badRequestInsert;
 
-    @Value("${badRequest.update}")
+    @Value("Ažuriranje nije moguće")
     private String badRequestUpdate;
 
     @Autowired
@@ -57,4 +58,11 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
             throw new BadRequestException(badRequestUpdate);
         return super.update(id, colectiveVacation);
     }
+
+    @Override
+    public @ResponseBody
+    List<ColectiveVacation> getAll(){
+        return colectiveVacationRepository.getAllByActiveIs((byte)1);
+    }
+
 }
