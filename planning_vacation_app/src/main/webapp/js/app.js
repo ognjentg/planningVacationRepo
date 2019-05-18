@@ -13,7 +13,7 @@ var localMenuData = [
     {id:"usergroup",value:"Zaposleni",icon:"list"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
     {id: "calendar", value: "Kalendar", icon: "code"},
-    {id:"constrains", value: "Ograničenja", icon: "briefcase"},
+    {id:"constraints", value: "Ograničenja", icon: "briefcase"},
     {id:"admins", value: "Admini kompanija", icon: "list"}
 ];
 
@@ -40,8 +40,8 @@ var menuActions = function (id) {
         case "sectorInfo":
             sectorInfoView.showSectorDialog();
             break;
-        case "constrains":
-            constrains.selectPanel();
+        case "constraints":
+            //constraints.selectPanel();
             break;
         case "admins":
             adminsView.selectPanel();
