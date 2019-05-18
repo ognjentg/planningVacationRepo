@@ -163,10 +163,10 @@ var settingsMenuActions=function (id) {
             showAboutDialog();
             break;
         case "2":
-            util.messages.showMessage("TODO");
+            changePasswordView.showChangePasswordDialog();
             break;
         case "3":
-            profileView.showProfileDialog();
+            profileView.bla();
             break;
         case "4":
             logout();
@@ -198,8 +198,8 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                   // showApp();
-                    showLogin();
+                   showApp();
+                   // showLogin();
                 }
             }
         }
@@ -492,27 +492,21 @@ var showLogin = function () {
 
 var loginLayout = {
     id: "loginPanel",
-    css:"loginLayoutBackground",
     rows: [{
-        height:30,
-        css:"loginLayoutBackground"
-    }, {
+        height:100
+    },{
         view: "template",
         height: 100,
-        css: "loginLayoutBackground",
+        css: "loginLogo",
         template: '<img src="img/telegroup-logo.png"/>'
     },{
-        height:30,
-        css:"orangeBackground",
+        view:"label",
+        css:"welcomeLabel",
+        label:"Dobro došli",
+        align:"center"
     },{
-        height:10,
-        css:"loginLayoutBackground",
+        height:50
     },{
-        height:30,
-        css:"orangeBackground"
-    },{
-        height:10
-    }, {
         cols: [{}, //1st column
             {
                 view: "form",
@@ -524,10 +518,8 @@ var loginLayout = {
                     required:true,
                     id: "username",
                     name: "korisnickoIme",
-                    label: "Korisničko ime",
-                   // invalidMessage:"Niste unijeli korisničko ime.",
-                    labelWidth: 120,
-                    width: 275,
+                    invalidMessage:"Niste unijeli korisničko ime.",
+                    width: 400,
                     height:35
                 }, {
                     view: "text",
@@ -535,35 +527,28 @@ var loginLayout = {
                     id:"password",
                     required:true,
                     type: "password",
-                    label: "Lozinka",
-                    //invalidMessage:"Niste unijeli lozinku.",
-                    labelWidth: 120,
-                    width: 275,
+                    invalidMessage:"Niste unijeli lozinku.",
+                    width: 400,
                     height:35
                 },  {
                     view: "text",
                     id:"company",
                     name: "kompanija",
-                    label: "Kompanija",
-                    //invalidMessage:"Niste unijeli kompaniju.",
-                    labelWidth: 120,
-                    width: 275,
+                    width: 400,
                     height:35
-                },
-                    {
-                    margin: 5,
-                    cols: [{}, {
+                },{}, {
                         id: "login",
                         view: "button",
+                        css:"buttonShape",
                         label: "Prijavi se",
                         type: "iconButton",
                         icon: "sign-in",
                         click: "login",
                         align:"left",
-                        width: 155,
+                        hotkey:"enter",
+                        width: 380,
                         height:35
                     }]
-                }]
             },
             //2nd column
             {}
@@ -591,15 +576,13 @@ console.log($$("loginForm").getValues());
                 //return;
                 // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
 
-                util.messages.showErrorMessage("1");
+                util.messages.showErrorMessage("Prijavljivanje nije uspjelo!")
             },
             success: function (text, data, xhr) {
                 //util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
                     console.log(user);
-
-///*********************
 
                     if (userData.userGroupId == 1) {
                         companyData = null;
@@ -620,16 +603,11 @@ console.log($$("loginForm").getValues());
                             }
                         });
                     }
-
-//************************
                 } else {
                     util.messages.showErrorMessage("data.json() == null || data.json().id == null");
                 }
             }
         });
-    }
-    else {
-        util.messages.showErrorMessage("Neuspješna prijava!")
     }
 };
 

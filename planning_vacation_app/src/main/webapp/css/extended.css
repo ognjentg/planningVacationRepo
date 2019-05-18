@@ -53,7 +53,7 @@
 .loginLogo{
 	border:none;
 	text-align:center;
-	background-color: #e17d20;
+	background-color: white;
 }
 
 .loginBar{
@@ -63,15 +63,18 @@
 .loginLayoutBackground{
 	border:none;
 	text-align:center;
-	background: linear-gradient(25deg,#29ced4,#3498db) !important;
-}
-
-.orangeBackground{
-	background-color: #ff7129;
 }
 
 .loginForm{
-	border-radius: 8px;
+	border:none;
+}
+
+.welcomeLabel{
+	font-size: 30px;
+}
+
+.buttonShape{
+	border-radius: 80px;
 }
 
 .logoInside{
