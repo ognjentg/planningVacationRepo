@@ -24,6 +24,7 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -53,8 +54,10 @@ public class UserController extends GenericController<User, Integer> {
     private Integer worker;
 
 
-    @Value("Postoji korisnik sa ovim korisnickim imenom.")
+    @Value("Postoji korisnik sa ovim korisničkim imenom.")
     private String badRequestUsernameExists;
+    @Value("Postoji korisnik sa ovom e-mail adresom.")
+    private String badRequestEmailExists;
     @Value("Nije dobar e-mail.")
     private String badRequestValidateEmail;
     @Value("Duzina {tekst} prelazi maksimalnu duzinu od {broj} karaktera.")
@@ -219,18 +222,26 @@ public class UserController extends GenericController<User, Integer> {
             if (Validator.stringMaxLength(user.getFirstName(), 100)) {
                 if (Validator.stringMaxLength(user.getLastName(), 100)) {
                     if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
+                        if(Util.validateEmail(user.getEmail())) {
+                            if(user.getUsername().equals(findById(id).getUsername()) || userRepository.getByUsernameAndCompanyId(user.getUsername(), user.getCompanyId()) == null) {
+                                if(userRepository.getByEmail(user.getEmail()) == null) {
+                                    User userTemp = userRepository.findById(id).orElse(null);
+                                    User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
 
-                        User userTemp = userRepository.findById(id).orElse(null);
-                        User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
+                                    userTemp.setFirstName(user.getFirstName());
+                                    userTemp.setLastName(user.getLastName());
+                                    userTemp.setUsername(user.getUsername());
+                                    userTemp.setReceiveMail(user.getReceiveMail());
+                                    userTemp.setPhoto(Base64.getDecoder().decode(String.valueOf(user.getPhoto())));
+                                    logUpdateAction(user, oldUser);
 
-                        userTemp.setFirstName(user.getFirstName());
-                        userTemp.setLastName(user.getLastName());
-                        userTemp.setUsername(user.getUsername());
-                        userTemp.setReceiveMail(user.getReceiveMail());
-                        userTemp.setPhoto(user.getPhoto());
-                        logUpdateAction(user, oldUser);
-
-                        return "Success";
+                                    return "Success";
+                                }
+                                throw new BadRequestException(badRequestEmailExists);
+                            }
+                            throw new BadRequestException(badRequestUsernameExists);
+                        }
+                        throw new BadRequestException(badRequestValidateEmail);
                     }
                     throw new BadRequestException(badRequestBinaryLength.replace("{tekst}", "slike"));
                 }

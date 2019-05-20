@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Integer>, HasActiveR
     List<User> getAllByCompanyIdAndActive(Integer companyId, byte active);
     List<User> getAllByCompanyIdAndSectorIdAndActive(Integer companyId, Integer sectorId, byte b);
     User getByUsernameAndCompanyId(String username, Integer companyId);
-
+    User getByEmail(String email);
 
 }

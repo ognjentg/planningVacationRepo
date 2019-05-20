@@ -1,105 +1,19 @@
+var file = null;
+
+function onAfterPhotoSelected(uploadedFile) {
+    var reader  = new FileReader();
+    reader.addEventListener('load', function (event) {
+
+        var file = reader.result;
+        $$('preview').setValues({ src: file });
+    }, false);
+
+    if (uploadedFile) {
+        reader.readAsDataURL(uploadedFile.file);
+    }
+}
+
 var profileView = {
-    /*getPanel: function() {
-        return {
-            id: "profileView",
-            adjust: true,
-            height: 0,
-            width: 0,
-            rows: [{
-                cols: [
-                    {
-                        view: "form",
-                        adjust: true,
-                        height: 0,
-                        width: 0,
-                        id: "profileForm",
-                        name: "profileForm",
-                        elements: [
-                            {
-                                view: "text",
-                                required: true,
-                                id: "username",
-                                name: "username",
-                                label: "Korisničko ime",
-                                invalidMessage: "Niste unijeli korisničko ime.",
-                                labelWidth: 150,
-                                height: 35
-                            },
-                            {
-                                view: "text",
-                                required: true,
-                                id: "firstName",
-                                name: "firstName",
-                                label: "Ime",
-                                invalidMessage: "Niste unijeli ime.",
-                                labelWidth: 150,
-                                height: 35
-                            },
-                            {
-                                view: "text",
-                                required: true,
-                                id: "lastName",
-                                name: "lastName",
-                                label: "Prezime",
-                                invalidMessage: "Niste unijeli prezime.",
-                                labelWidth: 150,
-                                height: 35
-                            },
-                            {
-                                view: "text",
-                                id: "email",
-                                name: "email",
-                                label: "E-mail adresa",
-                                required: true,
-                                invalidMessage: "Niste unijeli e-mail adresu",
-                                labelWidth: 150,
-                                height: 35
-                            },
-                            {
-                                view: "checkbox",
-                                id: "notifications",
-                                name: "notifications",
-                                label: "Da li želite da primate obavještenja na e-mail?",
-                                labelWidth: 320,
-                                height: 35
-                            },
-                            {
-                                view: "list",
-                                id: "photo",
-                                type: "uploader",
-                                autoheight: true,
-                                borderless: true
-                            },
-                            {
-                                view: "uploader",
-                                id: "photoUploader",
-                                name: "photoUploader",
-                                value: "Odaberi sliku",
-                                link: "photo",
-                                datatype: "json",
-                                // upload: "metoda za upload slike"
-                                multiple: false,
-                                autosend: false,
-                                accept: "image/png, image/jpg, image/jpeg",
-                            },
-                            {
-                                view: "button",
-                                id: "saveProfileButton",
-                                name: "saveProfileButton",
-                                label: "Sačuvaj",
-                                click: "profileView.save"
-                            }
-                        ]
-                    }
-                ]
-            },{}]
-        }
-    },
-
-    selectPanel: function () {
-        util.selectPanel(this.getPanel());
-    },*/
-
     profileDialog: {
         view: "popup",
         id: "profileDialog",
@@ -134,6 +48,40 @@ var profileView = {
                         bottomPadding: 18
                     },
                     elements: [
+                        {
+                            cols: [
+                                {},
+                                {
+                                    view: "template",
+                                    id: "preview",
+                                    template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                                    data: { src: null },
+                                    height: 200,
+                                    width: 200,
+                                },
+                                {}
+                            ]
+                        },
+                        {
+                            cols: [
+                                {},
+                                {
+                                    view: "uploader",
+                                    id: "photoUploader",
+                                    name: "photoUploader",
+                                    value: "Odaberi sliku",
+                                    link: "photo",
+                                    multiple: false,
+                                    autosend: false,
+                                    accept: "image/*",
+                                    width: 150,
+                                    on: {
+                                        "onAfterFileAdd": onAfterPhotoSelected
+                                    }
+                                },
+                                {}
+                            ]
+                        },
                         {
                             view: "text",
                             required: true,
@@ -176,35 +124,11 @@ var profileView = {
                         },
                         {
                             view: "checkbox",
-                            id: "notifications",
-                            name: "notifications",
+                            id: "receiveMail",
+                            name: "receiveMail",
                             label: "Da li želite da primate obavještenja na e-mail?",
                             labelWidth: 320,
                             height: 35
-                        },
-                        {
-                            cols: [
-                                {
-                                    view: "uploader",
-                                    id: "photoUploader",
-                                    name: "photoUploader",
-                                    value: "Odaberi sliku",
-                                    link: "photo",
-                                    datatype: "json",
-                                    // upload: "metoda za upload slike"
-                                    multiple: false,
-                                    autosend: false,
-                                    accept: "image/png, image/jpg, image/jpeg",
-                                    width: 150
-                                },
-                                {
-                                    view: "list",
-                                    id: "photo",
-                                    type: "uploader",
-                                    autoheight: true,
-                                    borderless: true
-                                }
-                            ]
                         },
                         {
                             cols: [
@@ -239,6 +163,13 @@ var profileView = {
     showProfileDialog: function() {
         webix.ui(webix.copy(profileView.profileDialog));
         setTimeout(function() {
+            console.log(userData);
+            $$("username").setValue(userData.username);
+            $$("firstName").setValue(userData.firstName);
+            $$("lastName").setValue(userData.lastName);
+            $$("email").setValue(userData.email);
+            $$("receiveMail").setValue(userData.receiveMail);
+            $$("preview").setValues({ src: atob(userData.photo) });
             $$("profileDialog").show();
         }, 0);
     },
@@ -246,6 +177,27 @@ var profileView = {
     save: function () {
         var profileForm = $$("profileForm");
         if(profileForm.validate()) {
+            var data = $$("profileForm").getValues();
+            var objectToSend = {
+                username: data.username,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                email: data.email,
+                receiveMail: data.receiveMail,
+                photo: file,
+                companyId: userData.companyId
+            }
+            webix.ajax().headers({
+                "Content-type": "application/json"
+            }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
+                error: function(text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                },
+                success: function (text, data, xhr) {
+                    util.dismissDialog("profileDialog");
+                    util.messages.showMessage("Izmjene uspješno sačuvane.")
+                }
+            })
             // provjera validnosti e-mail adrese
             // provjera jedinstvenosti korisničkog imena
             // slanje podataka na serversku stranu
