@@ -54,25 +54,10 @@ var menuSuperAdmin = [
         id: "company",
         value: "Kompanije",
         icon: "briefcase"
-    },
-    {
-        id: "admins",
-        value: "Testiranje-Admini kompanija",
-        icon: "list"
     }
 ];
 
 var menuAdmin=[
-     {
-            id: "company",
-            value: "Kompanija",
-            icon: "briefcase"
-      },
-      {
-            id: "constrains",
-            value: "Ogranicenja kompanije",
-            icon: "briefcase"
-      },
      {
            id: "usergroup",
            value: "Zaposleni",
@@ -80,7 +65,7 @@ var menuAdmin=[
       },
       {
            id: "sector",
-           value: "Zaposleni po sektorima",
+           value: "Sektori",
            icon: "list"
       }
 
@@ -103,18 +88,13 @@ var menuDirector=[
            icon: "briefcase"
       }*/
      {
-            id: "constrains",
-            value: "Ogranicenja kompanije",
-            icon: "briefcase"
-      },
-     {
            id: "usergroup",
            value: "Zaposleni",
            icon: "list"
       },
       {
            id: "sector",
-           value: "Zaposleni po sektorima",
+           value: "Sektori",
            icon: "list"
       }
  /*    {
@@ -143,18 +123,13 @@ var menuSecretary=[
            icon: "briefcase"
       },*/
      {
-            id: "constrains",
-            value: "Ogranicenja kompanije",
-            icon: "briefcase"
-      },
-     {
            id: "usergroup",
            value: "Zaposleni",
            icon: "lisz"
       },
             {
                  id: "sector",
-                 value: "Zaposleni po sektorima",
+                 value: "Sektori",
                  icon: "list"
             }
  /*    {
@@ -176,8 +151,8 @@ var menuSectorManager=[
         icon: "code"
     },
      {
-           id: "sector",
-           value: "Zaposleni po sektorima",
+           id: "usergroup",
+           value: "Zaposleni",
            icon: "list"
       },
       {
