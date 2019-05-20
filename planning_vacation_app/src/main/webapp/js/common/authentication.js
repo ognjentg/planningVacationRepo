@@ -80,7 +80,7 @@ var login = function () {
 };
 
 var logout = function () {
-    webix.ajax().get("logout", function (text, data, xhr) {
+    webix.ajax().get("hub/user/logout", function (text, data, xhr) {
         if (xhr.status == "200") {
             if (text == "Success") {
                 util.messages.showLogoutMessage();

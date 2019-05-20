@@ -237,8 +237,8 @@ var init = function () {
     webix.ajax("hub/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-              //showLogin();
-              showApp();
+              showLogin();
+              //showApp();
             }
         },
         success: function (text, data, xhr) {
