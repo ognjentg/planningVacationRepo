@@ -88,11 +88,11 @@ public class CompanyController extends GenericController<Company, Integer> {
             if (Validator.binaryMaxLength(company.getLogo(), longblobLength)) {
 
                 Company newCompany = new Company();
-                company.setId(company.getId());
-                company.setName(company.getName());
-                company.setActive((byte) 1);
-                company.setLogo(company.getLogo());
-                company.setPin(company.getPin());
+                newCompany.setId(null);
+                newCompany.setName(company.getName());
+                newCompany.setActive((byte) 1);
+                newCompany.setLogo(company.getLogo());
+                newCompany.setPin(company.getPin());
 
 
                 if (repo.saveAndFlush(newCompany) != null) {
@@ -127,9 +127,9 @@ public class CompanyController extends GenericController<Company, Integer> {
                 companyTemp.setLogo(company.getLogo());
                 companyTemp.setPin(company.getPin());
 
-                if (companyRepository.saveAndFlush(company) != null) {
-                    entityManager.refresh(company);
-                    logUpdateAction(company, oldCompany);
+                if (companyRepository.saveAndFlush(companyTemp) != null) {
+                    entityManager.refresh(companyTemp);
+                    logUpdateAction(companyTemp, oldCompany);
 
                     return "Success";
                 }

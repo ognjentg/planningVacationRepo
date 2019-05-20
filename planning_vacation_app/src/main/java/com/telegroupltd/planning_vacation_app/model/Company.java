@@ -8,14 +8,21 @@ import java.util.Objects;
 
 @Entity
 public class Company {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id",unique=true, nullable = false)
     private Integer id;
+
     private String name;
     private Byte active;
     private String pin;
     private byte[] logo;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id",unique=true, nullable = false)
     public Integer getId() {
         return id;
     }
