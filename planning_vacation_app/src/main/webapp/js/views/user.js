@@ -198,9 +198,6 @@ var profileView = {
                     util.messages.showMessage("Izmjene uspješno sačuvane.")
                 }
             })
-            // provjera validnosti e-mail adrese
-            // provjera jedinstvenosti korisničkog imena
-            // slanje podataka na serversku stranu
         }
     }
 };
