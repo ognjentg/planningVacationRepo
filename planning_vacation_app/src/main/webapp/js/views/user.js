@@ -1,18 +1,3 @@
-var file = null;
-
-function onAfterPhotoSelected(uploadedFile) {
-    var reader  = new FileReader();
-    reader.addEventListener('load', function (event) {
-
-        var file = reader.result;
-        $$('preview').setValues({ src: file });
-    }, false);
-
-    if (uploadedFile) {
-        reader.readAsDataURL(uploadedFile.file);
-    }
-}
-
 var profileView = {
     profileDialog: {
         view: "popup",
@@ -49,11 +34,18 @@ var profileView = {
                     },
                     elements: [
                         {
+                            view: "text",
+                            id: "base64ImageUser",
+                            name: "base64ImageUser",
+                            hidden: true
+                        },
+                        {
                             cols: [
                                 {},
                                 {
                                     view: "template",
                                     id: "preview",
+                                    name: "preview",
                                     template: "<img style='height: 100%; width: 100%;' src='#src#'>",
                                     data: { src: null },
                                     height: 200,
@@ -76,7 +68,17 @@ var profileView = {
                                     accept: "image/*",
                                     width: 150,
                                     on: {
-                                        "onAfterFileAdd": onAfterPhotoSelected
+                                        //"onAfterFileAdd": onAfterPhotoSelected
+                                        onBeforeFileAdd: function (upload) {
+                                            var file = upload.file;
+                                            var reader = new FileReader();
+                                            reader.onload = function (ev) {
+                                                $$("preview").setValues({src:ev.target.result});
+                                                $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1  ]);
+                                            }
+                                            reader.readAsDataURL(file)
+                                            return false;
+                                        }
                                     }
                                 },
                                 {}
@@ -163,13 +165,13 @@ var profileView = {
     showProfileDialog: function() {
         webix.ui(webix.copy(profileView.profileDialog));
         setTimeout(function() {
-            console.log(userData);
             $$("username").setValue(userData.username);
             $$("firstName").setValue(userData.firstName);
             $$("lastName").setValue(userData.lastName);
             $$("email").setValue(userData.email);
             $$("receiveMail").setValue(userData.receiveMail);
-            $$("preview").setValues({ src: atob(userData.photo) });
+            $$("base64ImageUser").setValue(userData.photo);
+            $$("preview").setValues({ src: "data:image/png;base64," + userData.photo });
             $$("profileDialog").show();
         }, 0);
     },
@@ -177,16 +179,16 @@ var profileView = {
     save: function () {
         var profileForm = $$("profileForm");
         if(profileForm.validate()) {
-            var data = $$("profileForm").getValues();
+            var dataToSend = $$("profileForm").getValues();
             var objectToSend = {
-                username: data.username,
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                receiveMail: data.receiveMail,
-                photo: file,
+                username: dataToSend.username,
+                firstName: dataToSend.firstName,
+                lastName: dataToSend.lastName,
+                email: dataToSend.email,
+                receiveMail: dataToSend.receiveMail,
+                photo: dataToSend.base64ImageUser,
                 companyId: userData.companyId
-            }
+            };
             webix.ajax().headers({
                 "Content-type": "application/json"
             }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
@@ -194,8 +196,14 @@ var profileView = {
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {
+                    userData.username = dataToSend.username;
+                    userData.firstName = dataToSend.firstName;
+                    userData.lastName = dataToSend.lastName;
+                    userData.email = dataToSend.email;
+                    userData.receiveMail = dataToSend.receiveMail;
+                    userData.photo = objectToSend.photo;
                     util.dismissDialog("profileDialog");
-                    util.messages.showMessage("Izmjene uspješno sačuvane.")
+                    util.messages.showMessage("Izmjene uspješno sačuvane.");
                 }
             })
         }

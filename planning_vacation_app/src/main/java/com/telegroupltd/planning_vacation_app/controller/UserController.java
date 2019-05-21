@@ -223,7 +223,7 @@ public class UserController extends GenericController<User, Integer> {
                 if (Validator.stringMaxLength(user.getLastName(), 100)) {
                     if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
                         if(Util.validateEmail(user.getEmail())) {
-                            if(user.getUsername().equals(findById(id).getUsername()) || userRepository.getByUsernameAndCompanyId(user.getUsername(), user.getCompanyId()) == null) {
+                            if(user.getUsername().equals(userRepository.findById(id).orElse(null).getUsername()) || userRepository.getByUsernameAndCompanyId(user.getUsername(), user.getCompanyId()) == null) {
                                 if(userRepository.getByEmail(user.getEmail()) == null) {
                                     User userTemp = userRepository.findById(id).orElse(null);
                                     User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
@@ -232,7 +232,7 @@ public class UserController extends GenericController<User, Integer> {
                                     userTemp.setLastName(user.getLastName());
                                     userTemp.setUsername(user.getUsername());
                                     userTemp.setReceiveMail(user.getReceiveMail());
-                                    userTemp.setPhoto(Base64.getDecoder().decode(String.valueOf(user.getPhoto())));
+                                    userTemp.setPhoto(user.getPhoto());
                                     logUpdateAction(user, oldUser);
 
                                     return "Success";
