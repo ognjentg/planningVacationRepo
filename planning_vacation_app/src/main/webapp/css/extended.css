@@ -67,10 +67,19 @@
 
 .loginForm{
 	border:none;
+    background-color: #0d8bf2;
+}
+
+.backgroundImage{
+    background: url(town.jpg);
+    background-width: auto;
+    background-height: auto;
+
 }
 
 .welcomeLabel{
-	font-size: 30px;
+	font-size: 39px;
+    background-color: white;
 }
 
 .buttonShape{

@@ -540,68 +540,145 @@ var showLogin = function () {
 var loginLayout = {
     id: "loginPanel",
     rows: [{
-        height:100
-    },{
-        view: "template",
-        height: 100,
-        css: "loginLogo",
-        template: '<img src="img/telegroup-logo.png"/>'
-    },{
-        view:"label",
-        css:"welcomeLabel",
-        label:"Dobro došli",
-        align:"center"
-    },{
-        height:50
-    },{
-        cols: [{}, //1st column
+        height:110
+        },{
+        cols: [{}
+        , //1st column
             {
-                view: "form",
-                id: "loginForm",
-                css:"loginForm",
-                width: 300,
-                elements: [{
-                    view: "text",
-                    required:true,
-                    id: "username",
-                    name: "korisnickoIme",
-                    invalidMessage:"Niste unijeli korisničko ime.",
-                    width: 400,
-                    height:35
-                }, {
-                    view: "text",
-                    name: "lozinka",
-                    id:"password",
-                    required:true,
-                    type: "password",
-                    invalidMessage:"Niste unijeli lozinku.",
-                    width: 400,
-                    height:35
-                },  {
-                    view: "text",
-                    id:"company",
-                    name: "kompanija",
-                    width: 400,
-                    height:35
-                },{}, {
+                rows:[{
+                    view:"label",
+                    css:"welcomeLabel",
+                    label:"Dobro došli",
+                    align:"center",
+                    width:590
+                },{
+                    height:30
+                },
+                    {
+                    height:120,
+                    template: '<img src="img/user.png"/>',
+                    css:"loginLogo",
+                    align:"center"
+                },{
+                    view: "form",
+                    id: "loginForm",
+                    css:"loginForm",
+                    width: 600,
+                    elements: [{
+                        view: "text",
+                        type:"email",
+                        placeholder:"E-mail",
+                        required:true,
+                        id: "email",
+                        name: "email",
+                        invalidMessage:"Niste unijeli e-mail adresu.",
+                        width: 600,
+                        height:40
+                    }, {
+                        view: "text",
+                        placeholder:"Lozinka",
+                        name: "lozinka",
+                        id:"password",
+                        required:true,
+                        type: "password",
+                        invalidMessage:"Niste unijeli lozinku.",
+                        width: 600,
+                        height:40
+                    },  {
+                        view: "text",
+                        placeholder:"Kompanija",
+                        css:"textS",
+                        id:"company",
+                        name: "kompanija",
+                        width: 600,
+                        height:40
+                    },{}, {
                         id: "login",
                         view: "button",
-                        css:"buttonShape",
                         label: "Prijavi se",
                         type: "iconButton",
                         icon: "sign-in",
                         click: "login",
                         align:"left",
                         hotkey:"enter",
-                        width: 380,
-                        height:35
+                        width: 580,
+                        height:40
                     }]
+                }]
+
             },
             //2nd column
             {}
         ]
     }, {},{}]
+   /* css:"backgroundImage",
+    cols:[
+        {},
+        {
+            rows:[{
+                height:130
+            },
+                {
+                    height:130,
+                    template: '<img src="img/user.png"/>',
+                    css:"loginLogo",
+                    align:"center"
+                },{
+                    view: "form",
+                    id: "loginForm",
+                    css:"loginForm",
+                    width: 600,
+                    elements: [{
+                        view: "text",
+                        type:"email",
+                        placeholder:"E-mail",
+                        required:true,
+                        id: "email",
+                        name: "email",
+                        invalidMessage:"Niste unijeli e-mail adresu.",
+                        width: 600,
+                        height:40
+                    }, {
+                        view: "text",
+                        placeholder:"Lozinka",
+                        name: "lozinka",
+                        id:"password",
+                        required:true,
+                        type: "password",
+                        invalidMessage:"Niste unijeli lozinku.",
+                        width: 600,
+                        height:40
+                    },  {
+                        view: "text",
+                        placeholder:"Kompanija",
+                        css:"textS",
+                        id:"company",
+                        name: "kompanija",
+                        width: 600,
+                        height:40
+                    }, {
+                        id: "login",
+                        view: "button",
+                        label: "Prijavi se",
+                        type: "iconButton",
+                        icon: "sign-in",
+                        click: "login",
+                        align:"left",
+                        hotkey:"enter",
+                        width: 580,
+                        height:40
+                    },
+                        {
+                            height:20
+                        }]
+                }]
+        },{
+            height:722
+        }
+        ]*/
 };
+
+
 
 var login = function () {
 console.log($$("loginForm").getValues());
