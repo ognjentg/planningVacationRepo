@@ -539,7 +539,7 @@ var showLogin = function () {
 
 var loginLayout = {
     id: "loginPanel",
-    rows: [{
+   rows: [{
         height:110
         },{
         cols: [{}
@@ -611,7 +611,7 @@ var loginLayout = {
             {}
         ]
     }, {},{}]
-   /* css:"backgroundImage",
+  /*  css:"backgroundImage",
     cols:[
         {},
         {

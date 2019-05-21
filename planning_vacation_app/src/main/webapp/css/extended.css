@@ -71,7 +71,7 @@
 }
 
 .backgroundImage{
-    background: url(town.jpg);
+    background: url("../img/town.jpg");
     background-width: auto;
     background-height: auto;
 
