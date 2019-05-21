@@ -686,7 +686,7 @@ console.log($$("loginForm").getValues());
     var data = $$("loginForm").getValues();
 
     var objectToSend = {
-        username: data.korisnickoIme,
+        email: data.email,
         password: data.lozinka,
         companyPin: data.kompanija
     }
@@ -699,11 +699,10 @@ console.log($$("loginForm").getValues());
                // showApp();
                 //return;
                 // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
-
                 util.messages.showErrorMessage("Prijavljivanje nije uspjelo!")
             },
             success: function (text, data, xhr) {
-                //util.messages.showErrorMessage("2");
+               // util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
                     console.log(user);

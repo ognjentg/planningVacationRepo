@@ -4,11 +4,12 @@ public class UserLoginInformation {
     private String username;
     private String password;
     private String companyPin;
+    private String email;
 
     public UserLoginInformation(){}
 
-    public UserLoginInformation(String username, String password, String companyPin) {
-        this.username = username;
+    public UserLoginInformation(String email, String password, String companyPin) {
+        this.email = email;
         this.password = password;
         this.companyPin = companyPin;
     }
@@ -36,4 +37,8 @@ public class UserLoginInformation {
     public void setCompanyPin(String companyPin) {
         this.companyPin = companyPin;
     }
+
+    public String getEmail() { return email; }
+
+    public void setEmail(String mail) { email = mail;}
 }

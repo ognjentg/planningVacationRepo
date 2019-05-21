@@ -140,7 +140,10 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
     User login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
-        User user = userRepository.login(userLoginInformation.getUsername(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
+        System.out.println(userLoginInformation.getEmail());
+        System.out.println(userLoginInformation.getPassword());
+        System.out.println(userLoginInformation.getCompanyPin());
+        User user = userRepository.login(userLoginInformation.getEmail(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
         if (user == null) {
             throw new ForbiddenException("Forbidden");
         } else {
