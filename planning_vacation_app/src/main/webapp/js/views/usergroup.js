@@ -1,12 +1,14 @@
 var usergroupView;
-var user =null;
-var sectorId=null;
-var options = [
+var user =null; //logged in user
+var sectorId=null; // if there is sector manager
+int numberOfSectors; //when sector is changed
+
+var options = [  // pristupiti stvarnim korisnickim grupama, jer se moze kasnije baza pod mijenjatij!!!!!!!!
     { id:1, value:"Direktor"  },
     { id:2, value:"Rukovodilac"  },
     { id:3, value:"Zaposleni" },
-    { id:4, value:"Sekretarica" }
-];//potrebno dodati stvarne korisnicke grupe
+    { id:4, value:"Sekretar" }
+];
 
 usergroupView = {
     getPanel:function(){
@@ -44,8 +46,8 @@ usergroupView = {
                                 width: 200,
                                 height: 70,
                                 css: "companyPanelToolbar",
-                                template: "<span class='fa fa-list'></span> Korisničke grupe"
-                            },  {},
+                                template: "<span class='fa fa-list'></span> Zaposleni"
+                            },  {},{},{},
                                  /*
                             {
                                 css: "companies-counter",
@@ -76,7 +78,7 @@ usergroupView = {
                                     },
                                     {
                                         view: "label",
-                                        label: "broj administratora",
+                                        label: "broj zaposlenih u sektoru",
                                         type: "header",
                                         css: "admin-counter"
                                     },
@@ -89,7 +91,7 @@ usergroupView = {
                                 css: "employee-counter",
                                 rows: [
                                     {view: "template", id: "t3", css: "employee-counter",},
-                                    {view: "label", label: "Broj zaposlenih", type: "header", css: "employee-counter"},
+                                    {view: "label", label: "Broj zaposlenih u sektoru", type: "header", css: "employee-counter"},
 
                                 ]
                             },{
@@ -99,7 +101,7 @@ usergroupView = {
                                 label: " Statistika  ",
                                 icon: "fas fa-line-chart",
                                 css: "companyButton",
-                                align:"left",
+                                align:"right",
                                 autowidth: true
                             }
                             ]
@@ -108,7 +110,9 @@ usergroupView = {
                         cols:[{
                             id:"addUserButton",
                             view:"button",
-                            type:"iconButton",
+                             type: "iconButton",
+                             hotkey: "enter",
+                            icon: "plus-circle",
                             label:"Dodaj korisnika",
                             width: 200,
                             hight:80,
@@ -120,6 +124,7 @@ usergroupView = {
                              view:"button",
                              type:"iconButton",
                              label:"Izbrisi zaposlene",
+                             icon: "trash",
                              width: 200,
                              hight:80,
                              css: "companyButton",
@@ -128,7 +133,9 @@ usergroupView = {
                         },{
                             id:"changeSectorOfSelectedButton",
                              view:"button",
-                             type:"iconButton",
+                             type: "iconButton",
+                             hotkey: "enter",
+                             icon: "users",
                              label:"Promijeni sektor",
                              width: 200,
                              hight:80,
@@ -139,7 +146,7 @@ usergroupView = {
                             view:"label",
                             id:"izaberiLabel",
                             label:"Izaberi sektor:",
-                            align:"left"
+                            align:"right"
                         },{
                             view:"combo",
                             id:"izaberiCombo",
@@ -147,8 +154,20 @@ usergroupView = {
                             width:400,
                             click:'usergroupView.filter',
                             options: {
-                            //dobavljanje svih sektora
-
+                            filter:function(obj, filter){
+                                        //obj - combo option
+                                        //filter - current text in combo control
+                                            return obj.value.toLowerCase().indexOf(filter.toLowerCase()) != -1;
+                                    },
+                        body: {
+                       // view:list,
+                            template: "#name#",
+                           yCount: "hub/sector/numberOfSectors",
+                            url: "hub/sector"
+                           // on:function(id){
+                            //               webix.message("Prikazaće Vam se zaposleni u sektoru: "+this.getItem(id).value);
+                             //           }
+                        }
                             }
                         }]
                     },
@@ -156,55 +175,89 @@ usergroupView = {
                         /*Tabela*/
                         view:"datatable",
                         id:"usergroupDT",
-                        autowidth:true,
-                        navigation:true,
-                        /*data:[
+                         margin: 10,
+                         //fillspace: true,
+                                    //editaction: "dblclick",
+                                   // multiselect: false,
+                                  //  resizeColumn: true,
+                                   // resizeRow: true,
+                                    //checkboxRefresh: true,
+                                    //onContext: {},
+                                    //pager: "pagerA",  sa ovim nema tabele...
+                                    //url:"hub/user",
+                        data:[
                                 {
-                                    //id: 1, firstName: "Ana", lastName: "Nikolic", email: "ana96@mail.com",usergroup:"admin",sector:"a"
+                                    id: 1, firstName: "Ana", lastName: "Nikolic", email: "ana96@mail.com",usergroup:"admin",sector:"a"
                                 }
 
-                            ],*/
+                            ],
                         on: {
                             onAfterContextMenu: function (item) {
                                 this.select(item.row);
                             }
                         },
-                        columns:[{
+                        columns:[
+                                        {
+                                            id: "checkboxRow",
+                                            header: "",
+                                            checkValue: 'on',
+                                            uncheckValue: 'off',
+                                            template: "{common.checkbox()}",
+                                            width: 35,
+                                            cssFormat: checkBoxStatus,
+
+
+                                        },
+                        {
                             id:"id",
                             hidden:true
                         },{
                             id:"firstName",
+                            fillspace: true,
                             editable:false,
                             sort:"string",
-                            width:210,
-                            header:"<span class='webix_icon fa fa-user'/> Ime"
+                            //width:210,
+                            header:["<span class='webix_icon fa fa-user'/>Ime",
+                            {
+                            content: "textFilter", value: "" , icon:"wxi-search"
+                            }]
                         },{
                             id:"lastName",
+                            fillspace: true, // ovo siri kolonu
                             editable:false,
                             sort:"string",
-                            width:210,
-                            header: "<span class='webix_icon fa fa-user'/> Prezime"
+                            //width:210,
+                            header: ["<span class='webix_icon fa fa-user'/>Prezime",
+                            {
+                                                        content: "textFilter", value: "" , icon:"wxi-search"
+                                                        }]
                         },
                         {
                             id: "email",
+                            fillspace: true,
                             editable: false,
                             sort: "text",
-                            width:220,
-                            header: "<span class='webix_icon fa fa-envelope'/> E-mail"
+                            //width:220,
+                            header: "<span class='webix_icon fa fa-envelope'/>Email"
                         },
                         {
                             id: "usergroup",
+                            fillspace: true,
                             editable: false,
                             sort: "string",
-                            width:220,
-                            header:"<span class='webix_icon fa fa-address-card'/> Pozicija"
+                            //width:220,
+                            header:"<span class='webix_icon fa fa-address-card'/>Pozicija"
                         },
                         {
                             id: "sector",
+                            fillspace: true,
                             editable: false,
                             sort: "string",
-                            width:220,
-                            header: "<span class='webix_icon fa fa-users'/>Sektor"
+                            //width:220,
+                            header: ["<span class='webix_icon fa fa-users'/>Sektor",
+                            {
+                            content: "textFilter", value: "" , icon:"wxi-search"
+                            }]
                         },
                         {
                             id: "delete",
@@ -278,7 +331,7 @@ usergroupView = {
                     },{
                         cols:[{
                             view:"label",
-                            label:"Izaberi korisničku grupu:",
+                            label:"Izaberi korisni&#x010D;ku grupu:",   /*č*/
                             align:"left"
 
                         },{
@@ -291,7 +344,7 @@ usergroupView = {
                         cols:[{
                             view:"label",
                             id:"labelStartDate",
-                            label:"Unesite početni datum:"
+                            label:"Unesite po&#x010D;etni datum:"  /*Č*/
                         }, {
                             view: "text",
                             id: "startDate"
@@ -313,7 +366,7 @@ usergroupView = {
                             {
                                 id:"save",
                                 view:"button",
-                                value:"Sačuvaj",
+                                value:"Sa&#x010D;uvaj",
                                 width:150,
                                 hotkey:"enter",
                                 click:'usergroupView.save'
@@ -381,7 +434,7 @@ usergroupView = {
             $$("izaberiLabel").hide();
         }
       //  animateValue($$("t1"), 0, 25, 100);
-      //  animateValue($$("t2"), 0, 25 * 2, 100);
+        animateValue($$("t2"), 0, 25 * 2, 100);
         animateValue($$("t3"), 0, 25 * 150, 100);
     },
 
@@ -437,7 +490,12 @@ usergroupView = {
     },
 
     filter:function(){
-    //funkcija koja ce na osnovu selektovanog sektora izlistati zaposlene iz iste
+    //funkcija koja ce na osnovu selektovanog sektora izlistati zaposlene iz liste
+    on:function(id){
+                webix.message("Prikazaće Vam se zaposleni u sektoru: "+this.getItem(id).value);
+    numberOfSectors=
+    }
+
 
     },
 
@@ -465,6 +523,14 @@ usergroupView = {
             }
         };
         webix.confirm(delBox);
+
+    },
+
+    showDeleteSelectedDialog:function(){
+//brise oznacene korisnike iz tabele
+    },
+
+    showChangeSectorOfSelectedDialog:function(){
 
     }
 };
