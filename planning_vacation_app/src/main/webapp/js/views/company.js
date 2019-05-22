@@ -272,11 +272,11 @@ var companyView = {
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                 },
                 {
-                    id: "view",
+                    id: "admins",
                     header: "&nbsp;",
                     width: 35,
                     cssFormat: checkBoxStatus,
-                    template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>"
+                    template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
                 },
                 {
                     id: "status",
@@ -335,6 +335,11 @@ var companyView = {
                     if (action === "view") {
                         companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));
 
+                    }
+
+                    if (action === "admins") {
+                        console.log($$("companyDT").getItem(id.row).id);
+                        webix.ui(webix.copy(adminsView.showAddNewAdminDialog($$("companyDT").getItem(id.row).id)));
                     }
 
                 }
