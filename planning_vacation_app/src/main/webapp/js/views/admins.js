@@ -359,8 +359,8 @@ var adminsView = {
     showAdminsDialogForSuperadmin: function (adminsCompanyId){
         if(adminsView.adminsCompanyId != adminsCompanyId){
             adminsView.adminsCompanyId = adminsCompanyId;
-            adminsView.adminsURL = adminsView.adminsURL + adminsCompanyId;
-            adminsView.nonAdminsURL = adminsView.nonAdminsURL + adminsCompanyId;
+            adminsView.adminsURL = "hub/user/admins/" + adminsCompanyId;
+            adminsView.nonAdminsURL = "hub/user/nonAdmins/" + adminsCompanyId;
         }
         console.log(this.adminsURL);
 
@@ -369,7 +369,8 @@ var adminsView = {
         $$("adminsDT").define("url", adminsView.adminsURL);
     },
     showAdminsDialog: function () {
-        adminsView.adminsCompanyId = userData.companyId;
+        adminsView.adminsURL = "hub/user/admins/";
+        adminsView.nonAdminsURL = "hub/user/nonAdmins/";
         console.log(adminsView.adminsCompanyId);
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
         connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
