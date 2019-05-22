@@ -2,10 +2,7 @@ package com.telegroupltd.planning_vacation_app.model;
 
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
@@ -18,7 +15,8 @@ public class Constraints implements HasActive {
     private Byte active;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
     }

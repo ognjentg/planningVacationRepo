@@ -15,7 +15,8 @@ public class NonWorkingDay implements HasActive {
     private Byte active;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
     }
@@ -69,4 +70,6 @@ public class NonWorkingDay implements HasActive {
     public int hashCode() {
         return Objects.hash(id, day, companyId, active);
     }
+
+
 }

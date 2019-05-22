@@ -17,7 +17,8 @@ public class NonWorkingDayInWeek  implements HasActive {
     private Byte active;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
     }

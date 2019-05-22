@@ -9,12 +9,13 @@ import java.util.Objects;
 @Table(name = "day_in_week", schema = "planning_vacation_db", catalog = "")
 public class DayInWeek implements HasActive {
     private Integer id;
-    private String key;
+    private String dayKey;
     private Integer javaValue;
     private Byte active;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
     }
@@ -24,13 +25,13 @@ public class DayInWeek implements HasActive {
     }
 
     @Basic
-    @Column(name = "key", nullable = false, length = 45)
-    public String getKey() {
-        return key;
+    @Column(name = "dayKey", nullable = false, length = 45)
+    public String getDayKey() {
+        return dayKey;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setDayKey(String dayKey) {
+        this.dayKey = dayKey;
     }
 
     @Basic
@@ -59,13 +60,13 @@ public class DayInWeek implements HasActive {
         if (o == null || getClass() != o.getClass()) return false;
         DayInWeek dayInWeek = (DayInWeek) o;
         return Objects.equals(id, dayInWeek.id) &&
-                Objects.equals(key, dayInWeek.key) &&
+                Objects.equals(dayKey, dayInWeek.dayKey) &&
                 Objects.equals(javaValue, dayInWeek.javaValue) &&
                 Objects.equals(active, dayInWeek.active);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, key, javaValue, active);
+        return Objects.hash(id, dayKey, javaValue, active);
     }
 }
