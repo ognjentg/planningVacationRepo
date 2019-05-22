@@ -76,4 +76,25 @@ public class Util {
         }
         return "";
     }
+
+    //Calculate password strength. Returns 0 (invalid) and 1-3 for weak,medium and strong.
+    public static Integer passwordStrength(String password)
+    {
+        Integer strength = 0;
+        //TODO: expand the pattern to include non punctuation symbols, emojis, control characters,etc.
+        String p = "(?:([\\p{Punct}\\p{Space}])|(\\p{L})|(\\p{Digit})){8,}";
+        Pattern pattern = Pattern.compile(p);
+        Matcher m = pattern.matcher(password);
+        if (m.find())
+        {
+            if(m.group(1)!=null)
+                strength += 1;
+            if(m.group(2)!=null)
+                strength += 1;
+            if(m.group(3)!=null)
+                strength += 1;
+        }
+        return strength;
+    }
+
 }
