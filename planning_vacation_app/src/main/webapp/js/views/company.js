@@ -224,13 +224,13 @@ var companyView = {
                 },
 
                 {
-                    id: "companyLogo",
-                    width: 400,
-                    header: {text: "Logo", css: "wrap-line"},
-                    cssFormat: checkBoxStatus,
-                    template: "<img src='data:image/jpg;base64,#companyLogo#'/>"
-
+                    id: "logo",
+                    header: "Logo",
+                    fillspace: true, template: function (obj) {
+                        return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
+                    }
                 },
+
                 {
                     id: "name",
                     fillspace: true,
@@ -798,6 +798,16 @@ var companyView = {
                 elements: [
                     {
                         view: "text",
+                        name: "id",
+                        hidden: true
+                    },
+                    {
+                        view: "text",
+                        name: "pin",
+                        hidden: true
+                    },
+                    {
+                        view: "text",
                         id: "name",
                         name: "name",
                         label: "Naziv:",
@@ -809,6 +819,16 @@ var companyView = {
                     {
                         height: 50,
                         cols: [
+                            {
+                                view: "text",
+                                name: "id",
+                                hidden: "true"
+                            },
+                            {
+                                view: "text",
+                                name: "pin",
+                                hidden: "true"
+                            },
                             {
                                 view: "label",
                                 width: 200,
@@ -825,7 +845,7 @@ var companyView = {
                                 },
                                 scroll: false,
                                 id: "companyLogoList",
-                                width: 290,
+                                width: 372,
                                 type: {
                                     height: "auto"
                                 },
@@ -852,30 +872,35 @@ var companyView = {
                         on: {
                             onBeforeFileAdd: function (upload) {
                                 var type = upload.type.toLowerCase();
-                                if (type != "jpg" && type != "png" != "jpeg") {
-                                    util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!")
+                                console.log(type);
+                                if (type === "jpg" || type === "png" || type === "jpeg") {
+                                    var file = upload.file;
+                                    var reader = new FileReader();
+                                    reader.onload = function (event) {
+                                        var img = new Image();
+                                        img.onload = function (ev) {
+                                            if (img.width > 220 || img.height > 50) {
+                                                util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                            } else {
+                                                var newDocument = {
+                                                    name: file['name'],
+                                                    content: event.target.result.split("base64,")[1],
+                                                };
+                                                $$("companyLogoList").clearAll();
+                                                $$("companyLogoList").add(newDocument);
+
+                                            }
+                                        };
+                                        img.src = event.target.result;
+                                    };
+                                    reader.readAsDataURL(file);
+                                    return false;
+                                } else {
+                                    util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+
                                     return false;
                                 }
-                                var file = upload.file;
-                                var reader = new FileReader();
-                                reader.onload = function (event) {
-                                    var img = new Image();
-                                    img.onload = function (ev) {
-                                        if (img.width === 220 && img.height === 50) {
-                                            var newDocument = {
-                                                name: file['name'],
-                                                content: event.target.result.split("base64,")[1],
-                                            };
-                                            $$("companyLogoList").clearAll();
-                                            $$("companyLogoList").add(newDocument);
-                                        } else {
-                                            util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!")
-                                        }
-                                    };
-                                    img.src = event.target.result;
-                                };
-                                reader.readAsDataURL(file);
-                                return false;
+
                             }
                         }
                     },
@@ -888,7 +913,9 @@ var companyView = {
                             type: "form",
                             click: "companyView.saveChangedCompany",
                             hotkey: "enter",
-                            width: 150
+                            width: 150,
+                            margin: 20,
+
                         }]
                     }],
                 rules: {
@@ -989,22 +1016,28 @@ var companyView = {
             webix.ui(webix.copy(companyView.adminChangeCompanyDialog));
             var form = $$("adminChangeCompanyForm");
 
+            form.elements.id.setValue(company.id);
             form.elements.name.setValue(company.name);
+            form.elements.pin.setValue(company.pin);
 
 
             setTimeout(function () {
                 $$("adminChangeCompanyDialog").show();
                 webix.UIManager.setFocus("name");
                 var newDocument = {
-                    name: company.name,
+                    name: '',
+                    content: company.logo,
+
 
                 };
-                $$("changeCompanyLogoList").clearAll();
-                $$("changeCompanyLogoList").add(newDocument);
+                $$("companyLogoList").clearAll();
+                $$("companyLogoList").add(newDocument);
             }, 0);
         } else {
             webix.ui(webix.copy(companyView.changeCompanyDialog));
+
             var form = $$("changeCompanyForm");
+
             form.elements.id.setValue(company.id);
             form.elements.name.setValue(company.name);
             form.elements.pin.setValue(company.pin);
@@ -1052,15 +1085,36 @@ var companyView = {
             var form = $$("changeCompanyForm");
         }
 
+        var logo = $$("companyLogoList");
+        console.log(logo);
 
         var validation = form.validate();
         if (validation) {
-            var newCompany = {
-                id: form.getValues().id,
-                name: form.getValues().name,
-                pin: form.getValues().pin,
+            var newCompany;
+            if (userData.userGroupId === 2) {
+                newCompany = {
+                    id: form.getValues().id,
+                    name: form.getValues().name,
+                    pin: form.getValues().pin,
+                    //companyLogo: logo.getItem(logo.getLastId()).content,
+                    logo: logo.getItem(logo.getLastId()).content
 
-            };
+                };
+            } else {
+                var record = $$("companyDT").getItem(form.getValues().id);
+                console.log(record);
+                companyLogo = record.logo;
+                console.log(logo);
+                newCompany = {
+                    id: form.getValues().id,
+                    name: form.getValues().name,
+                    pin: form.getValues().pin,
+                    logo: companyLogo
+
+
+                };
+            }
+
             console.log(newCompany.id);
             connection.sendAjax("PUT", "hub/company/" + newCompany.id,
                 function (text, data, xhr) {
@@ -1073,7 +1127,9 @@ var companyView = {
                     util.messages.showErrorMessage(text);
                     alert(text);
                 }, newCompany);
-
+            if (userData.userGroupId == 2) {
+                util.dismissDialog('adminChangeCompanyDialog');
+            }
 
             util.dismissDialog('changeCompanyDialog');
         }

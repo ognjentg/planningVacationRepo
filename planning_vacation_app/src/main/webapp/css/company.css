@@ -215,4 +215,12 @@
     border: 1px dashed grey !important;
     border-radius: 4px !important;
     width: 50% !important;
+    width: 372px !important;
+    margin-left: 210px !important;
+    margin-bottom: 15px !important;
+}
+.webix_cell img {
+    margin: 0 auto;
+}
+
 }
