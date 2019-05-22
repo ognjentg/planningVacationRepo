@@ -339,7 +339,7 @@ var companyView = {
 
                     if (action === "admins") {
                         console.log($$("companyDT").getItem(id.row).id);
-                        webix.ui(webix.copy(adminsView.showAddNewAdminDialog($$("companyDT").getItem(id.row).id)));
+                        webix.ui(webix.copy(adminsView.showAdminsDialogForSuperadmin($$("companyDT").getItem(id.row).id)));
                     }
 
                 }
@@ -525,7 +525,12 @@ var companyView = {
                         align: "right",
                         hotkey: "esc",
                         width: 150,
-                        margin: 50
+                        margin: 50,
+                        click: function () {
+                            webix.ui(webix.copy(adminsView.showAddNewAdminDialog()));
+
+                        }
+
 
                     },
 
