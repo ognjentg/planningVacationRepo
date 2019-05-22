@@ -15,25 +15,8 @@ usergroupView = {
 
     getPanel:function(){
 
-        //pokupim sve moguce user grupe:
-        /*webix.ajax().get("hub/user_group").then(function(result) {
-            if(result.text()){
-            var userGroups=JSON.parse(result.text());
-                userGroups.forEach(function(userGroup)){
-                    usergroupView.userGroups.push({
-                        id: userGroup.id,
-                        value: userGroup.key
-                     });
-                }
-            }
-            console.log("uslo u usergroupview");
-               // $$("choseUserGroupCombo").define("options", usergroupView.userGroups);
-               // $$("choseUserGroupCombo").refresh();
-               // $$("choseUserGroupCombo1").define("options", usergroupView.userGroups);
-               // $$("choseUserGroupCombo1").refresh();
-        }).fail(function (err) {
-            util.messages.showErrorMessage(err.responseText);
-            });*/
+
+
 
     console.log("uslo u usergroupview");
         switch (userData.userGroupId) {
@@ -412,27 +395,84 @@ usergroupView = {
 
     selectPanel:function(){
         util.selectPanel(this.getPanel());
-      //  usergroupView.createDatatableContextMenu();
+        usergroupView.createDatatableContextMenu();
         if(user==="secretary" || user==="manager"){//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
-            //$$("addUserButton").hide();
-            //$$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
+            $$("addUserButton").hide();
+            $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
         }
         if( user==="manager"){// rukovodioc ne moze gledati ostale sektore
-          //  $$("choseSectorCombo").hide();
-        //    $$("izaberiLabel").hide();
+            $$("choseSectorCombo").hide();
+            $$("izaberiLabel").hide();
         }
-      //  animateValue($$("t3"), 0, 25 * 150, 100);
+        animateValue($$("t3"), 0, 25 * 150, 100);
         console.log("u selectPanel");
     },
 
     showAddDialog:function(){
+    var options=[];
         webix.ui(webix.copy(usergroupView.addDialog)).show();
+        webix.UIManager.setFocus("email");
+        /*
         if (user !== "superadmin") { //ako nije upitanju superadmin
             $$("check").hide();
             $$("startdate").hide();
             $$("labelStartDate").hide();
             $$("labelPauseFlag").hide();
-        }
+        }*/
+
+
+        usergroupView.userGroups= [];
+        /*    webix.ajax("hub/user_group", {
+                error: function (text, data, xhr) {
+                    if (xhr.status != 200) {
+                        alert("No data to load! Check your internet connection and try again.");
+                       // table.hideProgress();
+                    }
+                },
+                success: function (text, data, xhr) {
+                    if (xhr.status === 200) {
+                        if (data.json() != null) {
+                            console.log("loaded data with success");
+                            var userGroups = data.json();
+                            //var userGroups=JSON.parse(data);
+                           // numberOfCompanies = companies.length;
+                            var options=[];
+                           userGroups.forEach(function(userGroup)){
+                                               options.push({
+                                                   id: userGroup.id,
+                                                   value: userGroup.key
+                                                });
+                                           }
+                            $$("choseUserGroupCombo").define("options", options );
+                            $$("choseUserGroupCombo").refresh();
+                          }else {
+                           util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
+                          }
+                    }
+                }
+        });*/
+
+       webix.ajax().get("hub/user_group").then(function(data){
+           //response text
+           console.log(data.text());
+                                   if (data.json() != null) {
+                                       console.log("loaded data with success");
+                                       var userGroups = data.json();
+
+                                       userGroups.forEach(function(userGroup){
+                                                          options.push({
+                                                              id: userGroup.id,
+                                                              value: userGroup.key
+                                                           });
+                                                      });
+                                       $$("choseUserGroupCombo").define("options", /*userGroups */options);
+                                       $$("choseUserGroupCombo").refresh();
+                                     }else {
+                                      util.messages.showErrorMessage("nije uspjelo!");
+                                     }
+
+       });
+
     },
 
     save:function(){ //dodavanje novog zaposlenog
@@ -524,5 +564,64 @@ usergroupView = {
     sectors: [],
     userGroups: []
 };
+
+function getUserGroups(){
+    usergroupView.userGroups=[];
+        //pokupim sve moguce user grupe:
+
+    /*    webix.ajax().get("hub/user_group").then(function(result) {
+            if(result.text()){
+            var userGroups=JSON.parse(result.text());
+                userGroups.forEach(function(userGroup)){
+                    usergroupView.userGroups.push({
+                        id: userGroup.id,
+                        value: userGroup.key
+                     });
+                }
+                //$$("choseUserGroupCombo").define("options", usergroupView.userGroups);
+                //$$("choseUserGroupCombo").refresh();
+                //$$("choseUserGroupCombo1").define("options", usergroupView.userGroups);
+                //$$("choseUserGroupCombo1").refresh();
+            }
+            //console.log("uslo u usergroupview");
+
+        }).fail(function (err) {
+            //util.messages.showErrorMessage(err.responseText);
+            alert("No data to load! Check your internet connection and try again.");
+            });
+    */
+
+
+ //var table = webix.$$("usergroupDT");
+   // table.clearAll();
+
+    webix.ajax("hub/user_group", {
+
+        error: function (text, data, xhr) {
+
+            if (xhr.status != 200) {
+                alert("No data to load! Check your internet connection and try again.");
+               // table.hideProgress();
+            }
+
+        },
+
+        success: function (text, data, xhr) {
+
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+                    var companies = data.json();
+                   // numberOfCompanies = companies.length;
+                   $$("choseUserGroupCombo").define("options", /*usergroupView.userGroups*/ companies);
+                    $$("choseUserGroupCombo").refresh();
+                  }else {
+                   util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
+                  }
+            }
+        }
+    });
+            //return true;
+}
 
 

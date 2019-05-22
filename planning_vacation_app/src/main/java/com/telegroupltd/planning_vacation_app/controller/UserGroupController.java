@@ -31,7 +31,7 @@ public class UserGroupController extends GenericHasActiveController<UserGroup,In
     List<UserGroup> getAll() {
         List<UserGroup> userGroups = userGroupRepository.getAllByActiveIs((byte) 1);
         //return userGroups.stream().filter(ug-> !superAdmin.equals(ug.getKey())).collect(Collectors.toList());
-        return userGroups.stream().filter(ug-> 1!=(ug.getId())).collect(Collectors.toList()); //hardkodovano za sada,dok ne pull-am da mogu sve izmijeniti sto trebam.
+        return userGroups.stream().filter(ug-> 1!=(ug.getId()) && 2!=(ug.getId())).collect(Collectors.toList()); //hardkodovano za sada,dok ne pull-am da mogu sve izmijeniti sto trebam.
     }
 
 }
