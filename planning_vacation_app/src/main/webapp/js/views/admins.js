@@ -1,4 +1,7 @@
 var adminsView = {
+    adminsCompanyId: null,
+    adminsURL: "hub/user/admins/",
+    nonAdminsURL: "hub/user/nonAdmins/",
     adminsDialog: {
         view: "fadeInWindow",
         id: "adminsDialog",
@@ -36,43 +39,124 @@ var adminsView = {
                     margin: 10,
                     editable: false,
                     multiselect: false,
-                    url: "hub/user",
+                    // url: this.adminsURL,
                     height: 300,
                     columns: [
+                        {
+                            id: "id",
+                            hidden: "true"
+                        },
                         {
                             id: "email",
                             header: "EMAIL",
                             width: 200,
                         },
                         {
-                            id: "first_name",
+                            id: "firstName",
                             header: "IME",
                             width: 200
                         },
                         {
-                            id: "last_name",
+                            id: "lastName",
                             header: "PREZIME",
                             width: 200
                         },
                         {
-                            //TODO: delete!
+                            id: "companyId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "username",
+                            hidden: "true"
+                        },
+                        {
+                            id: "password",
+                            hidden: "true"
+                        },
+                        {
+                            id: "userGroupId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "active",
+                            hidden: "true"
+                        },
+                        {
+                            id: "pauseFlag",
+                            hidden: "true"
+                        },
+                        {
+                            id: "startDate",
+                            hidden: "true"
+                        },
+                        {
+                            id: "salt",
+                            hidden: "true"
+                        },
+                        {
+                            id: "receiveMail",
+                            hidden: "true"
+                        },
+                        {
+                            id: "sectorId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "photo",
+                            hidden: "true"
+                        },
+                        {
                             id: "delete",
                             header: "&nbsp;",
                             width: 35,
                             template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>"
                         }
-                    ]
+                    ],
+                    onClick: {
+                        webix_icon: function (e, id) {
+                            var adminTemp = $$("adminsDT").getItem(id);
+                            console.log(adminTemp);
+                            connection.sendAjax("PUT", "hub/user/deleteAdmin/" + adminTemp.id,
+                                function (text, data, xhr) {
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("admins")));
+                                    if(text){
+                                        delBox.callback = function (result){
+                                            if(result == 1){
+                                                util.messages.showMessage("Admin je uspješno uklonjen.");
+                                                //$$("adminsDT").remove(id);
+                                                adminsView.refreshDatatables();
+                                            }
+                                        }
+                                        webix.confirm(delBox);
+                                    }
+                                    else
+                                        util.messages.showErrorMessage("Neuspješno uklanjanje.");
+                                }, function (text, data, xhr) {
+                                    util.messages.showErrorMessage(text);
+                                }, adminTemp.id);
+
+                        }
+                    }
                 },
                 {
                     cols: [
                         {
                             view: "button",
+                            id: "addNewAdminButton",
+                            value: "Dodaj novog admina",
+                            align: "left",
+                            autoWidth: "true",
+                            click: 'adminsView.showAddNewAdminDialog'
+                        },
+                        {
+                            view: "button",
                             id: "addAdminButton",
-                            value: "Dodaj admina",
+                            value: "Izaberi admina",
                             align: "right",
                             autoWidth: "true",
-                            click: 'adminsView.showChooseAdminDialog',
+                            click: 'adminsView.showChooseAdminDialog'
                         }
+
                     ]
                 }
             ]
@@ -109,11 +193,10 @@ var adminsView = {
                 },
 
                 {
-                    //TODO: izbor admina
                     id: "chooseAdminDT",
                     view: "datatable",
                     border: 10,
-                    url: "hub/user",
+                    //url: "hub/user/nonAdmins",
                     margin: 10,
                     editable: false,
                     multiselect: false,
@@ -122,34 +205,80 @@ var adminsView = {
                     height: 300,
                     columns: [
                         {
+                            id: "id",
+                            hidden: "true"
+                        },
+                        {
                             id: "email",
                             header: "EMAIL",
                             width: 200,
                         },
                         {
-                            id: "first_name",
+                            id: "firstName",
                             header: "IME",
                             width: 200
                         },
                         {
-                            id: "last_name",
+                            id: "lastName",
                             header: "PREZIME",
                             width: 200
+                        },
+                        {
+                            id: "companyId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "username",
+                            hidden: "true"
+                        },
+                        {
+                            id: "password",
+                            hidden: "true"
+                        },
+                        {
+                            id: "userGroupId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "active",
+                            hidden: "true"
+                        },
+                        {
+                            id: "pauseFlag",
+                            hidden: "true"
+                        },
+                        {
+                            id: "startDate",
+                            hidden: "true"
+                        },
+                        {
+                            id: "salt",
+                            hidden: "true"
+                        },
+                        {
+                            id: "receiveMail",
+                            hidden: "true"
+                        },
+                        {
+                            id: "sectorId",
+                            hidden: "true"
+                        },
+                        {
+                            id: "photo",
+                            hidden: "true"
                         }
                     ]
                 },
                 {
-                    cols: [
-                        {
-                            view: "button",
-                            id: "add_new_button",
-                            value: "Dodaj novoga",
-                            align: "right",
-                            autoWidth: "true",
-                            click: "adminsView.showAddNewAdminDialog"
-                        }
-                    ]
+                    view: "button",
+                    id: "chooseAdmin",
+                    value: "Izaberi admina",
+                    align: "right",
+                    autoWidth: "true",
+                    click: 'adminsView.addSelectedAdmin'
+
                 }
+
             ]
 
 
@@ -186,7 +315,7 @@ var adminsView = {
                 },
                 {
                     view: "form",
-                    id: "addNewAdmin",
+                    id: "addNewAdminForm",
                     elements: [{
                         view: "text",
                         id: "email",
@@ -194,40 +323,114 @@ var adminsView = {
                         label: "Email:",
                         invalidMessage: "Email je obavezno unijeti.",
                         required: true
-                    }]
-                },
-
-                {
-                    cols: [
+                    },
                         {
-                            //TODO: Dodavanje novog admina
+                            id: "addAdmin",
                             view: "button",
-                            id: "add_button",
                             value: "Dodaj",
+                            type: "form",
+                            click: "adminsView.addNewAdmin",
                             align: "right",
-                            autoWidth: "true",
-                            //click: " "
+                            hotkey: "esc",
+                            width: 150,
+                            margin: 50
                         }
-                    ]
+
+                    ],
+                    rules: {
+                        "email": function (value) {
+                            if (!value) {
+                                $$("addNewAdminForm").elements.email.config.invalidMessage = 'Emsil je obavezno unijeti.';
+                                return false;
+                            } else {
+                                console.log("success " + value);
+                                return true;
+
+                            }
+                        }
+                    }
                 }
+
+
             ]
         }
     },
 
-    //TODO: pravi upiti za bazu
-    showAdminsDialog: function () {
+    showAdminsDialogForSuperadmin: function (adminsCompanyId){
+        if(adminsView.adminsCompanyId != adminsCompanyId){
+            adminsView.adminsCompanyId = adminsCompanyId;
+            adminsView.adminsURL = adminsView.adminsURL + adminsCompanyId;
+            adminsView.nonAdminsURL = adminsView.nonAdminsURL + adminsCompanyId;
+        }
+        console.log(this.adminsURL);
+
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
-        connection.attachAjaxEvents("adminsDT", "hub/user");
+        connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
+        $$("adminsDT").define("url", adminsView.adminsURL);
+    },
+    showAdminsDialog: function () {
+        adminsView.adminsCompanyId = userData.companyId;
+        console.log(adminsView.adminsCompanyId);
+        webix.ui(webix.copy(adminsView.adminsDialog)).show();
+        connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
+        $$("adminsDT").define("url", adminsView.adminsURL);
     },
     showChooseAdminDialog: function () {
+        console.log(this.nonAdminsURL);
         webix.ui(webix.copy(adminsView.chooseAdminDialog)).show();
-        connection.attachAjaxEvents("chooseAdminDT", "hub/user");
+        connection.attachAjaxEvents("chooseAdminDT", adminsView.nonAdminsURL);
+        $$("chooseAdminDT").define("url", adminsView.nonAdminsURL);
     },
     showAddNewAdminDialog: function () {
         webix.ui(webix.copy(adminsView.addNewAdminDialog)).show();
         webix.UIManager.setFocus("email");
-    }
+    },
+    addNewAdmin: function () {
+        var form = $$("addNewAdminForm");
+        var newAdmin = {
+            email: form.getValues().email,
+            userGroup: 2
+        };
+        console.log(newAdmin);
+        var currentDialog = this.getTopParentView();
+        connection.sendAjax("POST", "/hub/user",
+            function (text, data, xhr) {
+                if (text) {
+                    $$("adminsDT").add(newAdmin);
+                    util.messages.showMessage("Admin uspješno dodan.");
+                    currentDialog.hide();
+                } else
+                    alert("Greška u dodavanju admina.");
+            }, function (text, data, xhr) {
+                alert(text);
+            }, newAdmin);
+    },
+    addSelectedAdmin: function () {
+        var table = $$("chooseAdminDT");
+        var selectedId = table.getSelectedId();
+        console.log("SELECTED ID: " +  selectedId);
+        connection.sendAjax("PUT", "hub/user/addAdmin/" + selectedId,
+            function (text, data, xhr) {
+                if (text) {
+                    util.messages.showErrorMessage("Uspješno.");
+                    adminsView.refreshDatatables();
+                } else
+                    util.messages.showErrorMessage("Neuspješno uklanjanje.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+                alert(text);
+            }, selectedId);
+    },
+    refreshDatatables: function () {
+        var table1 = $$("adminsDT");
+        var table2 = $$("chooseAdminDT");
 
+        table1.clearAll();
+        table2.clearAll();
+
+        table1.define("url", adminsView.adminsURL);
+        table2.define("url", adminsView.nonAdminsURL);
+    }
 }
 
 

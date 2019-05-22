@@ -314,5 +314,73 @@ public class UserController extends GenericController<User, Integer> {
         //}
        // throw new BadRequestException(badRequestEmailExists);
     }
+    @RequestMapping(value = "/admins", method = RequestMethod.GET)
+    public @ResponseBody
+    List<User> getAdminsOfCompany(){
+        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUser().getCompanyId(), admin, (byte)1);
+        resoult.forEach(user -> user.setPassword(null));
+        return resoult;
+    }
+
+    @RequestMapping(value = "/nonAdmins", method = RequestMethod.GET)
+    public @ResponseBody
+    List<User> getNonAdmins(){
+        Integer companyId = userBean.getUser().getCompanyId();
+        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 3, (byte)1);
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 4, (byte)1));
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 5, (byte)1));
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 6, (byte)1));
+        resoult.forEach(user -> user.setPassword(null));
+        return resoult;
+    }
+    @RequestMapping(value = "/admins/{companyId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<User> getAdminsOfCompany(@PathVariable("companyId") Integer companyId){
+        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, admin, (byte)1);
+        resoult.forEach(user -> user.setPassword(null));
+        return resoult;
+    }
+    @RequestMapping(value = "/nonAdmins/{companyId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<User> getNonAdmins(@PathVariable("companyId") Integer companyId){
+        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 3, (byte)1);
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 4, (byte)1));
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 5, (byte)1));
+        resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 6, (byte)1));
+        resoult.forEach(user -> user.setPassword(null));
+        return resoult;
+    }
+    @RequestMapping(value = "/deleteAdmin/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String changeUserGroupToUser(@PathVariable("id")Integer id) throws BadRequestException{
+        User oldUser = userRepository.findById(id).orElse(null);
+        if(oldUser == null)
+            throw new BadRequestException(badRequestNoUser);
+        User userTemp = cloner.deepClone(oldUser);
+        //TODO: FIX 6
+        userTemp.setUserGroupId(6);
+        if(repo.saveAndFlush(userTemp) != null){
+            logUpdateAction(userTemp, oldUser);
+            return "Success";
+        }
+        else
+            throw new BadRequestException(badRequestUpdate);
+    }
+
+    @RequestMapping(value = "/addAdmin/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String changeUserGroupToAdmin(@PathVariable("id")Integer id) throws BadRequestException{
+        User oldUser = userRepository.findById(id).orElse(null);
+        if(oldUser == null)
+            throw new BadRequestException(badRequestNoUser);
+        User userTemp = cloner.deepClone(oldUser);
+        userTemp.setUserGroupId(admin);
+        if(repo.saveAndFlush(userTemp) != null){
+            logUpdateAction(userTemp, oldUser);
+            return "Success";
+        }
+        else
+            throw new BadRequestException(badRequestUpdate);
+    }
         }
 
