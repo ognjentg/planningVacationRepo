@@ -39,6 +39,20 @@ public class GenericController<T, ID extends Serializable> extends GenericLogger
 
     @Value("Brisanje nije moguće.")
     private String badRequestDelete;
+/*
+    @Value("superadmin")
+    protected String superAdmin;
+    @Value("admin")
+    protected String admin;
+    @Value("direktor")
+    protected String director;
+    @Value("sekretar")
+    protected String secretary;
+    @Value("menadzer")
+    protected String sectorManager;
+    @Value("zaposleni")
+    protected String worker;
+*/
 
     public GenericController(JpaRepository<T, ID> repo) {
         this.repo = repo;
