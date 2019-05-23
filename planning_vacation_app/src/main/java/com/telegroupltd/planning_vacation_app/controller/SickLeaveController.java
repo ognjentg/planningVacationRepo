@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@RequestMapping(value="/sick_leave")
+@RequestMapping(value="/hub/sickLeave")
 @Controller
 @Scope("request")
 public class SickLeaveController extends GenericHasActiveController<SickLeave,Integer> {

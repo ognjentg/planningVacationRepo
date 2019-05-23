@@ -7,15 +7,6 @@ var sickRequestsView = {
 
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
-
-        sickRequestsView.createDatatableContextMenu(); // dodavanje izmjene i brisanja na kontekstni meni
-
-       // connection.attachAjaxEvents('secretary_requestDT', sickRequestsView.sickLeaveURL);
-
-
-        //$$("secretary_requestDT").define("url", sickRequestsView.sickLeaveURL);
-
-        refreshData();
     },
     getPanel: function () {
         return {
@@ -47,57 +38,29 @@ var sickRequestsView = {
                     margin: 10,
                     multiselect: false,
                     navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
-                    //editable: true,
-                    //editaction: "dblclick", // dvostrukim klikom se moze izmijeniti polje u tabeli
                     select: "row", // cell
                     resizeColumn: true, // omogucen resize kolona korisniku
                     resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
-                   data: requests,
-                    //url: "/sick_leave",
                     columns: [{
                         id: "id",
                         header: "#",
                         width: 50,
-                    }, /*{
-                        id: "senderName",
-                        fillspace: true,
-                        editor: "text",
-                        sort: "string",
-                        //cssFormat: checkBoxStatus,
-                        header: [
-                            "Ime posiljaoca", {
-                                content: "textFilter", value: ""
-                            }
-                        ]
-                    }, {
-                        id: "senderSurname",
-                        fillspace: true,
-                        editor: "text",
-                        sort: "string",
-                        //cssFormat: checkBoxStatus,
-                        header: [
-                            "Prezime posiljaoca", {
-                                content: "textFilter", value: ""
-                            }
-                        ]
-                    }, */{
-                        id: "date_from",
+                    },{
+                        id: "dateFrom",
                         fillspace: true,
                         editor: "text",
                         sort: "date",
-                        //cssFormat: checkBoxStatus,
                         header: [
                             "Datum od", {
                                 content: "textFilter", value: ""
                             }
                         ]
                     },{
-                        id: "date_to",
+                        id: "dateTo",
                         fillspace: true,
                         editor: "text",
                         sort: "date",
-                        //cssFormat: checkBoxStatus,
                         header: [
                             "Datum do", {
                                 content: "textFilter", value: ""
@@ -124,7 +87,7 @@ var sickRequestsView = {
                     ],
                     select: "row",
                     navigation: true,
-                    url: "secretary_sick_request",
+                    url: "/hub/sickLeave",
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -144,7 +107,7 @@ var sickRequestsView = {
                                     if (result == 1) {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                        connection.sendAjax("DELETE", "/sick_leave/" + id, function (text, data, xhr) {
+                                        connection.sendAjax("DELETE", "/hub/sickLeave" + id, function (text, data, xhr) {
                                             if (text) {
                                                 $$("companyDT").remove(id);
                                                 util.messages.showMessage("Uspjesno uklanjanje");
@@ -206,11 +169,7 @@ var sickRequestsView = {
                     bottomPadding: 18
                 },
                 elements: [
-                    /*{
-                        view: "text",
-                        name: "id",
-                        hidden: false
-                    },*/ {
+                    {
                         view: "text",
                         id: "first_name",
                         name: "first_name",
@@ -278,89 +237,13 @@ var sickRequestsView = {
             $$("showEmployeeInformationDialog").show();
             webix.UIManager.setFocus("first_name");
             var newDocument = {
-              //  name: company.name,
-               // pin: company.pin
+                //  name: company.name,
+                // pin: company.pin
             };
 
         }, 0);
     },
-
-
-
 };
-function refreshData() {
-    $$("t1").setHTML(`<p>${0}</p>`);
-    $$("t2").setHTML(`<p>${0}</p>`);
-    $$("t3").setHTML(`<p>${0}</p>`);
-    console.log("refresh data");
-
-
-    webix.extend($$("secretary_requestDT"), webix.ProgressBar);
-
-    var table = webix.$$("secretary_requestDT");
-    table.clearAll();
-    table.showProgress();
-
-
-    webix.ajax("sick_leave", {
-
-        error: function (text, data, xhr) {
-
-            if (xhr.status != 200) {
-                alert("No data to load! Check your internet connection and try again.");
-                table.hideProgress();
-            }
-
-        },
-
-        success: function (text, data, xhr) {
-
-            if (xhr.status === 200) {
-                if (data.json() != null) {
-                    console.log("loaded data with success");
-                    requests = data.json();
-                   // numberOfCompanies = companies.length;
-                    table.hideProgress();
-                    // counterAnimation(1130, 1130, 2230);
-
-                   /* if (userData.userGroupId === 2) {
-
-                        $$("addCompanyBtn").hide();
-*/
-
-                         var table = webix.$$("secretary_requestDT");
-
-                         table.clearAll();
-
-                    requests = requests.slice(0, 1);
-
-                        table.parse(requests);
-/*
-                        animateValue($$("t1"), 0, numberOfCompanies, 100);
-                        animateValue($$("t2"), 0, 100, 100);
-                        animateValue($$("t3"), 0, 100, 100);
-
-                    } else {
-                        table.parse(companies);
-                        animateValue($$("t1"), 0, numberOfCompanies, 1000);
-                        animateValue($$("t2"), 0, 100, 900);
-                        animateValue($$("t3"), 0, 100, 900);
-
-                    }*/
-                }
-            }
-
-
-        }
-
-    });
-
-
-}
-
-
-
-
 var typeRequest = [
     {id: 1, value: "Na čekanju"},
     {id: 2, value: "Opravdano"},
