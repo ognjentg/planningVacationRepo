@@ -2,6 +2,7 @@ var adminsView = {
     adminsCompanyId: null,
     adminsURL: "hub/user/admins/",
     nonAdminsURL: "hub/user/nonAdmins/",
+    padding: 10,
     adminsDialog: {
         view: "fadeInWindow",
         id: "adminsDialog",
@@ -118,12 +119,11 @@ var adminsView = {
                             console.log(adminTemp);
                             connection.sendAjax("PUT", "hub/user/deleteAdmin/" + adminTemp.id,
                                 function (text, data, xhr) {
-                                    var delBox = (webix.copy(commonViews.deleteConfirm("admins")));
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("admina")));
                                     if(text){
                                         delBox.callback = function (result){
                                             if(result == 1){
                                                 util.messages.showMessage("Admin je uspješno uklonjen.");
-                                                //$$("adminsDT").remove(id);
                                                 adminsView.refreshDatatables();
                                             }
                                         }
@@ -390,16 +390,18 @@ var adminsView = {
         var form = $$("addNewAdminForm");
         var newAdmin = {
             email: form.getValues().email,
-            userGroup: 2
+            userGroupId: 2,
+            companyId: adminsView.adminsCompanyId
         };
         console.log(newAdmin);
         var currentDialog = this.getTopParentView();
         connection.sendAjax("POST", "/hub/user",
             function (text, data, xhr) {
                 if (text) {
-                    $$("adminsDT").add(newAdmin);
+                    //$$("adminsDT").add(newAdmin);
                     util.messages.showMessage("Admin uspješno dodan.");
                     currentDialog.hide();
+                    adminsView.refreshDatatables();
                 } else
                     alert("Greška u dodavanju admina.");
             }, function (text, data, xhr) {
@@ -413,10 +415,10 @@ var adminsView = {
         connection.sendAjax("PUT", "hub/user/addAdmin/" + selectedId,
             function (text, data, xhr) {
                 if (text) {
-                    util.messages.showErrorMessage("Uspješno.");
+                    util.messages.showMessage("Admin uspješno izabran.");
                     adminsView.refreshDatatables();
                 } else
-                    util.messages.showErrorMessage("Neuspješno uklanjanje.");
+                    util.messages.showErrorMessage("Neuspješno.");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
                 alert(text);
@@ -425,6 +427,13 @@ var adminsView = {
     refreshDatatables: function () {
         var table1 = $$("adminsDT");
         var table2 = $$("chooseAdminDT");
+
+
+        webix.extend(table1, webix.ProgressBar);
+        webix.extend(table2, webix.ProgressBar);
+
+        table1.showProgress();
+        table2.showProgress();
 
         table1.clearAll();
         table2.clearAll();

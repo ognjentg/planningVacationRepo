@@ -251,6 +251,9 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     User insert(@RequestBody User user) throws BadRequestException {
      ////   if(userRepository.countAllByCompanyIdAndEmail(userBean.getUser().getCompanyId(), user.getEmail()).compareTo(Integer.valueOf(0)) == 0){
+            if(userRepository.getByCompanyIdAndEmailAndActive(user.getCompanyId(), user.getEmail(), (byte)1) != null){
+                throw new BadRequestException(badRequestEmailExists);
+            }
             if(Util.validateEmail(user.getEmail())){
                 User newUser = new User();
                 String salt=Util.randomSalt();
@@ -259,7 +262,9 @@ public class UserController extends GenericController<User, Integer> {
 
                 newUser.setFirstName(null);
                 newUser.setLastName(null);
-                if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
+                if(user.getCompanyId() == null)
+                    user.setCompanyId(userBean.getUser().getCompanyId());
+                else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
                     newUser.setPauseFlag(user.getPauseFlag());
                     newUser.setStartDate(user.getStartDate());
                     newUser.setReceiveMail((byte) 1);
@@ -347,8 +352,7 @@ public class UserController extends GenericController<User, Integer> {
         if(oldUser == null)
             throw new BadRequestException(badRequestNoUser);
         User userTemp = cloner.deepClone(oldUser);
-        //TODO: FIX 6
-        userTemp.setUserGroupId(6);
+        userTemp.setUserGroupId(worker);
         if(repo.saveAndFlush(userTemp) != null){
             logUpdateAction(userTemp, oldUser);
             return "Success";
