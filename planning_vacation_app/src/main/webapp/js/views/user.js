@@ -68,7 +68,6 @@ var profileView = {
                                     accept: "image/*",
                                     width: 150,
                                     on: {
-                                        //"onAfterFileAdd": onAfterPhotoSelected
                                         onBeforeFileAdd: function (upload) {
                                             var file = upload.file;
                                             var reader = new FileReader();
@@ -87,16 +86,6 @@ var profileView = {
                         {
                             view: "text",
                             required: true,
-                            id: "username",
-                            name: "username",
-                            label: "Korisničko ime",
-                            invalidMessage: "Niste unijeli korisničko ime.",
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            required: true,
                             id: "firstName",
                             name: "firstName",
                             label: "Ime",
@@ -111,16 +100,6 @@ var profileView = {
                             name: "lastName",
                             label: "Prezime",
                             invalidMessage: "Niste unijeli prezime.",
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            id: "email",
-                            name: "email",
-                            label: "E-mail adresa",
-                            required: true,
-                            invalidMessage: "Niste unijeli e-mail adresu",
                             labelWidth: 150,
                             height: 35
                         },
@@ -165,10 +144,11 @@ var profileView = {
     showProfileDialog: function() {
         webix.ui(webix.copy(profileView.profileDialog));
         setTimeout(function() {
-            $$("username").setValue(userData.username);
             $$("firstName").setValue(userData.firstName);
             $$("lastName").setValue(userData.lastName);
-            $$("email").setValue(userData.email);
+            if(userData.userGroupId == 1) {
+                $$("receiveMail").hide();
+            }
             $$("receiveMail").setValue(userData.receiveMail);
             $$("base64ImageUser").setValue(userData.photo);
             $$("preview").setValues({ src: "data:image/png;base64," + userData.photo });
@@ -181,10 +161,8 @@ var profileView = {
         if(profileForm.validate()) {
             var dataToSend = $$("profileForm").getValues();
             var objectToSend = {
-                username: dataToSend.username,
                 firstName: dataToSend.firstName,
                 lastName: dataToSend.lastName,
-                email: dataToSend.email,
                 receiveMail: dataToSend.receiveMail,
                 photo: dataToSend.base64ImageUser,
                 companyId: userData.companyId
@@ -196,10 +174,8 @@ var profileView = {
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {
-                    userData.username = dataToSend.username;
                     userData.firstName = dataToSend.firstName;
                     userData.lastName = dataToSend.lastName;
-                    userData.email = dataToSend.email;
                     userData.receiveMail = dataToSend.receiveMail;
                     userData.photo = objectToSend.photo;
                     util.dismissDialog("profileDialog");

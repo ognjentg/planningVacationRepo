@@ -222,26 +222,16 @@ public class UserController extends GenericController<User, Integer> {
             if (Validator.stringMaxLength(user.getFirstName(), 100)) {
                 if (Validator.stringMaxLength(user.getLastName(), 100)) {
                     if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
-                        if(Util.validateEmail(user.getEmail())) {
-                            if(user.getUsername().equals(userRepository.findById(id).orElse(null).getUsername()) || userRepository.getByUsernameAndCompanyId(user.getUsername(), user.getCompanyId()) == null) {
-                                if(userRepository.getByEmail(user.getEmail()) == null) {
-                                    User userTemp = userRepository.findById(id).orElse(null);
-                                    User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
+                        User userTemp = userRepository.findById(id).orElse(null);
+                        User oldUser = cloner.deepClone(repo.findById(id).orElse(null));
 
-                                    userTemp.setFirstName(user.getFirstName());
-                                    userTemp.setLastName(user.getLastName());
-                                    userTemp.setUsername(user.getUsername());
-                                    userTemp.setReceiveMail(user.getReceiveMail());
-                                    userTemp.setPhoto(user.getPhoto());
-                                    logUpdateAction(user, oldUser);
+                        userTemp.setFirstName(user.getFirstName());
+                        userTemp.setLastName(user.getLastName());
+                        userTemp.setReceiveMail(user.getReceiveMail());
+                        userTemp.setPhoto(user.getPhoto());
+                        logUpdateAction(user, oldUser);
 
-                                    return "Success";
-                                }
-                                throw new BadRequestException(badRequestEmailExists);
-                            }
-                            throw new BadRequestException(badRequestUsernameExists);
-                        }
-                        throw new BadRequestException(badRequestValidateEmail);
+                        return "Success";
                     }
                     throw new BadRequestException(badRequestBinaryLength.replace("{tekst}", "slike"));
                 }
