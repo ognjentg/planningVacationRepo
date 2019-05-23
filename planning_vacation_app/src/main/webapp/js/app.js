@@ -70,11 +70,7 @@ var menuAdmin=[
       },
       {
            id: "sector",
-<<<<<<< HEAD
-           value: "Sektori",
-=======
            value: "Pregled sektora",
->>>>>>> Sectors - not finished
            icon: "list"
       }
 
@@ -103,11 +99,7 @@ var menuDirector=[
       },
       {
            id: "sector",
-<<<<<<< HEAD
-           value: "Sektori",
-=======
            value: "Pregled sektora",
->>>>>>> Sectors - not finished
            icon: "list"
       }
  /*    {
@@ -142,11 +134,7 @@ var menuSecretary=[
       },
             {
                  id: "sector",
-<<<<<<< HEAD
-                 value: "Sektori",
-=======
                  value: "Pregled sektora",
->>>>>>> Sectors - not finished
                  icon: "list"
             }
  /*    {
