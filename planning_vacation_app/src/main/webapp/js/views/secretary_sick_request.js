@@ -1,4 +1,6 @@
 var sickRequestsView = {
+
+    sickLeaveURL: "/sick_leave",
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
         rightPanel = "requestPanel"; // novi rightPanel će biti facultyPanel
@@ -8,7 +10,12 @@ var sickRequestsView = {
 
         sickRequestsView.createDatatableContextMenu(); // dodavanje izmjene i brisanja na kontekstni meni
 
-        connection.attachAjaxEvents('secretary_requestDT', 'secretary_request');
+       // connection.attachAjaxEvents('secretary_requestDT', sickRequestsView.sickLeaveURL);
+
+
+        //$$("secretary_requestDT").define("url", sickRequestsView.sickLeaveURL);
+
+        refreshData();
     },
     getPanel: function () {
         return {
@@ -47,7 +54,7 @@ var sickRequestsView = {
                     resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
                    data: requests,
-                    //url: "secretary_request",
+                    //url: "/sick_leave",
                     columns: [{
                         id: "id",
                         header: "#",
@@ -277,8 +284,79 @@ var sickRequestsView = {
 
         }, 0);
     },
-};
 
+
+
+};
+function refreshData() {
+    $$("t1").setHTML(`<p>${0}</p>`);
+    $$("t2").setHTML(`<p>${0}</p>`);
+    $$("t3").setHTML(`<p>${0}</p>`);
+    console.log("refresh data");
+
+
+    webix.extend($$("secretary_requestDT"), webix.ProgressBar);
+
+    var table = webix.$$("secretary_requestDT");
+    table.clearAll();
+    table.showProgress();
+
+
+    webix.ajax("sick_leave", {
+
+        error: function (text, data, xhr) {
+
+            if (xhr.status != 200) {
+                alert("No data to load! Check your internet connection and try again.");
+                table.hideProgress();
+            }
+
+        },
+
+        success: function (text, data, xhr) {
+
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+                    requests = data.json();
+                   // numberOfCompanies = companies.length;
+                    table.hideProgress();
+                    // counterAnimation(1130, 1130, 2230);
+
+                   /* if (userData.userGroupId === 2) {
+
+                        $$("addCompanyBtn").hide();
+*/
+
+                         var table = webix.$$("secretary_requestDT");
+
+                         table.clearAll();
+
+                    requests = requests.slice(0, 1);
+
+                        table.parse(requests);
+/*
+                        animateValue($$("t1"), 0, numberOfCompanies, 100);
+                        animateValue($$("t2"), 0, 100, 100);
+                        animateValue($$("t3"), 0, 100, 100);
+
+                    } else {
+                        table.parse(companies);
+                        animateValue($$("t1"), 0, numberOfCompanies, 1000);
+                        animateValue($$("t2"), 0, 100, 900);
+                        animateValue($$("t3"), 0, 100, 900);
+
+                    }*/
+                }
+            }
+
+
+        }
+
+    });
+
+
+}
 
 
 
