@@ -4,6 +4,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestExcept
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
 import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.UserUserGroupSector;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
@@ -376,5 +377,14 @@ public class UserController extends GenericController<User, Integer> {
         else
             throw new BadRequestException(badRequestUpdate);
     }
+
+
+    @RequestMapping(value = "/custom/bySector/{sectorId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<UserUserGroupSector> getAllExtendedByRoomId(@PathVariable Integer sectorId) {
+        return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUser().getCompanyId(), sectorId);
+    }
+
+
         }
 

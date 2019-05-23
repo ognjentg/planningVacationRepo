@@ -1,6 +1,7 @@
 package com.telegroupltd.planning_vacation_app.repository;
 
 import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.UserUserGroupSector;
 import com.telegroupltd.planning_vacation_app.repository.genericRepository.HasActiveRepository;
 import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.UserRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
