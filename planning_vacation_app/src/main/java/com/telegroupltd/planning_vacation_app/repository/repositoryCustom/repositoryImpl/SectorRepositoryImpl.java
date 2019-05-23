@@ -18,6 +18,6 @@ public class SectorRepositoryImpl implements SectorRepositoryCustom {
     @Override
     public List<SectorInformation> getSectorsInformation(){
         List result=entityManager.createNativeQuery(SQL_Manager).getResultList();
-
+        return null;
     }
 }
