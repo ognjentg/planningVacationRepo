@@ -8,16 +8,15 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 public class SectorRepositoryImpl implements SectorRepositoryCustom {
-    private static final String SQL_Manager="SELECT s.id,s.name,s.max_percentage_absent_people,s.sector_manager_id,u.first_name,u.last_name\n" +
-            "FROM sector s JOIN user u ON s.sector_manager_id = u.id\n" +
+    private static final String SQL_Manager="SELECT s.id,s.name,s.max_percentage_absent_people,u.first_name,u.last_name " +
+            "FROM sector s JOIN user u ON s.sector_manager_id = u.id " +
             "WHERE s.active=1;";
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public List<SectorInformation> getSectorsInformation(){
-        List result=entityManager.createNativeQuery(SQL_Manager).getResultList();
-        return null;
+    public List getSectorsInformation(){
+        return entityManager.createNativeQuery(SQL_Manager).getResultList();
     }
 }

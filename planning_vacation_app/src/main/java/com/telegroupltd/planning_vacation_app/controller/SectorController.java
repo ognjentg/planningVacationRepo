@@ -59,4 +59,11 @@ public class SectorController extends GenericController<Sector, Integer> {
 
         return sectors.size();
     }
+
+    @RequestMapping(value = "/sectorInfo", method = RequestMethod.GET)
+    public @ResponseBody
+    List getSectorsInformation(){
+        return sectorRepository.getSectorsInformation();
+    }
+
 }

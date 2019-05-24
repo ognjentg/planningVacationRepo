@@ -84,6 +84,13 @@ var sectorView = {
                 onContext: {},
                 pager: "pagerA",
                 columns:[
+                    {
+                        id: "id",
+                        hidden: true,
+                        fillspace: true,
+                        height: 35,
+
+                    },
 
                     {
                         id: "id",
@@ -115,6 +122,14 @@ var sectorView = {
                         header: "Prezime rukovodioca"
                     },
                     {
+                        id: "maxPercentageAbsentPeople",
+                        fillspace: true,
+                        editor: "text",
+                        sort: "string",
+                        cssFormat: checkBoxStatus,
+                        header: "Maksimalan procenat odsutnih"
+                    },
+                    {
                         id: "delete",
                         header: "&nbsp;",
                         width: 35,
@@ -130,6 +145,13 @@ var sectorView = {
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                     },
                     {
+                        id: "view",
+                        header: "&nbsp;",
+                        width: 35,
+                        cssFormat: checkBoxStatus,
+                        template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
+                    },
+                    {
                         id: "status",
                         header: "",
                         checkValue: 'on',
@@ -138,8 +160,43 @@ var sectorView = {
                         width: 35,
                         cssFormat: checkBoxStatus,
                     }
-                ]
+                ],
+                select: "row",
+                navigation: true,
+                url:"hub/sector/sectorInfo",
+                on: {
 
+                    onAfterContextMenu: function (item) {
+                        this.select(item.row);
+                    }
+                },
+                onClick: {
+                    webix_icon: function (e, id) {
+
+                        console.log(id["column"]);
+                        var action = id["column"];
+                        if (action === "delete" && userData.userGroupId === 4) {
+                            alert("Niste autorizovani da izbrišete sektor!");
+                        }
+                        if (action === "delete" && (userData.userGroupId === 2 || userData.userGroupId === 3 )) {
+                            //implementirati za prebacivanje bez sektora
+                        }
+                        if (action === "edit" && userData.userGroupId === 4) {
+                            alert("Niste autorizovani da mijenjate sektor!");
+                        }
+
+                        if (action === "edit" && (userData.userGroupId === 2 || userData.userGroupId === 3 )) {
+
+                            sectorView.showEditDialog($$("sectorDT").getItem(id.row));
+
+                        }
+                        if (action === "view") {
+                            usergroupView.selectPanel();
+                        }
+
+
+                    }
+                }
             },
             {
                 view: "toolbar",
@@ -187,6 +244,10 @@ var sectorView = {
         }, webix.ui.window);
     },
     save: function () {
+
+    },
+
+    getUsers: function () {
 
     },
 
@@ -248,7 +309,7 @@ var sectorView = {
                             value: "Dodajte",
                             type: "form",
                             align: "right",
-                            //click: "companyView.save",
+                            click: "sectorView.save",
                             hotkey: "enter",
                             width: 150
 
@@ -278,6 +339,37 @@ var sectorView = {
                     }
                 }
             ]
+        }
+    },
+
+
+    save: function(){
+        var form = $$("addSectorForm");
+        var validation = form.validate();
+        if(validation){
+            var newSector={
+                id:$$("sectorDT").getLastId() + 1,
+                name: form.getValues().name,
+                sectorManagerId: form.getValues().managerCombo().getActiveId(),
+                maxAbsentPeople: null,
+                maxPercentageAbsentPeople: null,
+                companyId: userData.companyId,
+                active:0
+            }
+
+            console.log(newSector.id);
+            connection.sendAjax("POST", "hub/sector/insert",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Sektor uspješno dodan.");
+                        util.dismissDialog('addDialog');
+                        $$("sectorDT").updateItem(newSector.id, newSector);
+                    } else
+                        util.messages.showErrorMessage("Neuspješno dodavanje.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, newSector);
         }
     },
 
@@ -326,6 +418,13 @@ var sectorView = {
                     elements:[
                         {
                             view: "text",
+                            id: "id",
+                            name: "id",
+                            label: "id:",
+                            hidden: true
+                        },
+                        {
+                            view: "text",
                             id: "name",
                             name: "name",
                             label: "Naziv:",
@@ -346,7 +445,7 @@ var sectorView = {
                             value: "Sačuvajte izmjene",
                             type: "form",
                             align: "right",
-                            //click: "companyView.save",
+                            click: "sectorView.saveUpdate",
                             hotkey: "enter",
                             width: 150
 
@@ -385,9 +484,40 @@ var sectorView = {
         webix.UIManager.setFocus("name");
         var form = $$("editSectorForm");
         form.elements.name.setValue(sector.name);
+        form.elements.id.setValue(sector.id);
         //form.elements.managerCombo();
 
     },
+
+    saveUpdate: function(){
+        var form = $$("editSectorForm");
+        var validation = form.validate();
+        if(validation){
+            var newSector={
+                id:form.getValues.id,
+                name: form.getValues().name,
+                sectorManagerId: form.getValues().managerCombo().getActiveId(),
+                maxAbsentPeople: null,
+                maxPercentageAbsentPeople: null,
+                companyId: userData.companyId,
+                active:0
+            }
+
+            console.log(newSector.id);
+            connection.sendAjax("PUT", "hub/sector/" + newSector.id,
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Sektor uspješno izmjenjen.");
+                        util.dismissDialog('editDialog');
+                        $$("sectorDT").updateItem(newSector.id, newSector);
+                    } else
+                        util.messages.showErrorMessage("Neuspješna izmjena.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, newSector);
+        }
+    }
 
 
 };
