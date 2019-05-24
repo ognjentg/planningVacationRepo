@@ -266,15 +266,17 @@ public class UserController extends GenericController<User, Integer> {
                 if(user.getCompanyId() == null)
                     user.setCompanyId(userBean.getUser().getCompanyId());
                 else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
-                    newUser.setPauseFlag(user.getPauseFlag());
-                    newUser.setStartDate(user.getStartDate());
+                 //   newUser.setPauseFlag(user.getPauseFlag());
+                 //   newUser.setStartDate(user.getStartDate()); - ne kupi dobro na frontu,kupi undefined,pa zato ovako zasada/....
+                    newUser.setPauseFlag(null);
+                    newUser.setStartDate(null);
                     newUser.setReceiveMail((byte) 1);
                 }else {
                     newUser.setPauseFlag(null);
                     newUser.setStartDate(null);
                     newUser.setReceiveMail((byte) 0);
                 }
-                newUser.setSectorId(null);  //It is sector manager's job
+                newUser.setSectorId(user.getSectorId());  //It is sector manager's job
                 newUser.setPhoto(null);
                 newUser.setUserGroupId(user.getUserGroupId());
                 if(user.getUserGroupId()!=superAdmin) {
@@ -285,14 +287,14 @@ public class UserController extends GenericController<User, Integer> {
                 if(user.getUserGroupId()!=superAdmin) {   //Ako nije superadmin, imace e-mail na koji ce dobiti username i password
                     newUser.setEmail(user.getEmail());
 
-                    User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
-                    if (userWithUsername == null) {
+                    //User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
+                    //if (userWithUsername == null) {
                         newUser.setUsername(username);
                         newUser.setPassword(Util.hashPasswordSalt(newPassword,salt));
                         newUser.setSalt(salt);
-                    } else {
-                        throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
-                    }
+                    //} else {
+                    //    throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
+                    //}
                 }
                 //Superadmin will be added from workbench.
 

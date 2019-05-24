@@ -15,8 +15,10 @@ import javax.persistence.SqlResultSetMapping;
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name", type = String.class),
                         @ColumnResult(name = "email", type = String.class),
+                        @ColumnResult(name = "company_id", type = Integer.class),
                         @ColumnResult(name = "position", type = String.class),
-                        @ColumnResult(name = "sector_name", type = String.class)
+                        @ColumnResult(name = "sector_name", type = String.class),
+                        @ColumnResult(name = "sector_id", type = Integer.class),
                 }
         )
 )
@@ -30,7 +32,10 @@ public class UserUserGroupSector extends User{
 
     }
 
-    public UserUserGroupSector(Integer id, String firstName, String lastName, String email, String position, String sector_name) {
+    public UserUserGroupSector(Integer id, String firstName, String lastName, String email, Integer company_id,String position, String sector_name, Integer sectorId) {
+        setSectorId(sectorId);
+        setCompanyId(company_id);
+        setId(id);
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);

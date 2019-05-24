@@ -42,9 +42,9 @@ public class SectorController extends GenericController<Sector, Integer> {
     @Override
     public @ResponseBody
     List<Sector> getAll() {
-        //List<Sector> sectors = sectorRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1);
-        List<Sector> sectors = sectorRepository.getAllByActiveIs((byte)1);
-        return sectors;
+        return sectorRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1);
+        // return sectors = sectorRepository.getAllByActiveIs((byte)1);
+
     }
 
     @SuppressWarnings("SameReturnValue")

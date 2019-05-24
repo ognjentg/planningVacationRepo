@@ -2,24 +2,12 @@
 
 var usergroupView;
 var user =null; //logged in user
-var sectorId=null; // if there is sector manager
+var sectorID=null; // if there is sector manager
 //int numberOfSectors; //when sector is changed
 
-/*
-var options = [  // pristupiti stvarnim korisnickim grupama, jer se moze kasnije baza pod mijenjatij!!!!!!!!
-    { id:1, value:"Direktor"  },
-    { id:2, value:"Rukovodilac"  },
-    { id:3, value:"Zaposleni" },
-    { id:4, value:"Sekretar" }
-];
-*/
+
 usergroupView = {
-
     getPanel:function(){
-
-
-
-
     console.log("uslo u usergroupview");
         switch (userData.userGroupId) {
             case 1:
@@ -33,8 +21,8 @@ usergroupView = {
                 break;
             case 4:
                 user = "manager";
-                sectorId=userData.sectorId;
-                console.log(sectorId);
+                sectorID=userData.sectorId;
+                console.log(sectorID);
                 break;
         };
 
@@ -126,9 +114,14 @@ usergroupView = {
                               on:{
                              // var input= $$("choseSectorCombo").getInputNode().value;
                                   onChange(id){
+                                 //'onItemClick': function(id){
+                                  sectorID=id;
+                                  console.log("id sektora je"+id);
                                     webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
-
+                               $$("usergroupDT").clearAll();
                               connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                              //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
+                              $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
                                  $$("usergroupDT").detachEvent("onBeforeDelete");
 
 
@@ -140,7 +133,7 @@ usergroupView = {
                                               webix.message("Clicked: "+this.getItem(id).value);
                                             }*/
                                 },
-                            //click:'usergroupView.filter',
+
                             options: {
                               /*  filter:function(obj, filter){
                                             //obj - combo option
@@ -151,7 +144,7 @@ usergroupView = {
                                            //view:"list",
                                            template: "#id# #name#",
                                            yCount: 7, //"hub/sector/numberOfSectors",
-                                           url: "hub/sector",
+ //                                          url: "hub/sector",
                                            value: "Izaberi sektor",
                                             /*on:function(id){
                                                            //webix.message("Prikazaće Vam se zaposleni u sektoru: "+this.getItem(id).value);
@@ -160,7 +153,36 @@ usergroupView = {
                                                          }
 
                                             }*/
+         url:function(details){
+           return webix.ajax().get("hub/sector").then(function(data){
 
+                         //response text
+                         console.log(data.text());
+                                                 if (data.json() != null) {
+                                                     console.log("loaded data with success");
+                                                     var sectors = data.json();
+
+                                                     sectors.forEach(function(sector){
+                                                                        usergroupView.sectors.push({
+                                                                            id: sector.id,
+                                                                            value: sector.name
+                                                                         });
+                                                                    });
+                                                        var newSector = {id:551, name:"Bez sektora"};
+                                                        usergroupView.sectors.push({
+                                                             id: newSector.id,
+                                                             value: newSector.name
+                                                             });
+                                                     //$$("choseSectorCombo").define("options", usergroupView.userGroups);
+                                                     //$$("choseSectorCombo").refresh();
+                                                   }else {
+                                                    util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
+                                                   }
+
+return usergroupView.sectors;
+                     });
+
+                     }
                                         }
                                 }
                             }
@@ -172,6 +194,7 @@ usergroupView = {
                         view:"datatable",
                         id:"usergroupDT",
                          margin: 10,
+                         tooltip:true,
                          //fillspace: true,
                                     //editaction: "dblclick",
                                    // multiselect: false,
@@ -181,12 +204,6 @@ usergroupView = {
                                     //onContext: {},
                                     //pager: "pagerA",  sa ovim nema tabele...
                                     //url:"hub/user",
-                    //    data:[
-                      //          {
-                        //            id: 1, firstName: "Ana", lastName: "Nikolic", email: "ana96@mail.com",usergroup:"admin",sector:"a"
-                          //      }
-
-                            //],
                         on: {
                             onAfterContextMenu: function (item) {
                                 this.select(item.row);
@@ -201,8 +218,6 @@ usergroupView = {
                                             template: "{common.checkbox()}",
                                             width: 35,
                                             cssFormat: checkBoxStatus,
-
-
                                         },
                         {
                             id:"id",
@@ -264,16 +279,19 @@ usergroupView = {
                         },{
                             id: "view",
                             header: "&nbsp;",
+                            tooltip:"Informacije o zaposlenom",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                          },{
                             id: "pencil", //mijenjanje korisnicke grupe, od strane direktora i admina
                             header: "&nbsp;",
+                            tooltip:"Mijenjanje radne pozicije zaposlenog",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                          },{
                             id: "sector", //mijenjanje sektora, od strane direktora i admina
                             header: "&nbsp;",
+                             tooltip:"Mijenjanje sektora zaposlenog.",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-users'></span>"
                          },{
@@ -309,6 +327,7 @@ usergroupView = {
         id:"addUserDialog",
         position:"center",
         modal:true,
+        move: true,
         body:{
             id:"addUserInside",
             rows:[
@@ -316,8 +335,8 @@ usergroupView = {
                     view:"toolbar",
                     cols:[{
                         view:"label",
-                        label:"Podaci o novom zaposlenom",
-                        width:400
+                        label: "<span class='webix_icon fa-user'></span> Podaci o novom zaposlenom",
+                        autoWidth: true,
                     },{},{
                         hotkey:'esc',
                         view:"icon",
@@ -327,22 +346,26 @@ usergroupView = {
                     }]
                 },{
                     view:"form",
-                    rules: {},
+                   // rules: {},
                     id:"addUserForm",
                     elements:[{
                         view:"text",
                         id:"email",
+                        name: "email", //bez ovog name, nece da izbaci gresku ako nedostaje prlikom odavanja!!!!
                         label:"E-mail:",
+                        invalidMessage: "Obavezan je unos e-mail adrese zaposlenog.",
                         required:true
                     },{
                         cols:[{
                             view:"label",
-                            label:"Izaberi korisni&#x010D;ku grupu:",   //č
+                            label:"Izaberi poziciju:",   //č
                             align:"left"
 
                         },{
                             view:"combo",
                             id:"choseUserGroupCombo",
+                            name:"choseUserGroupCombo",
+                            invalidMessage: "Obavezan je izbor radne pozicije.",
                             required:true//,
                             //options:usergroupView.userGroups
                         }]
@@ -354,12 +377,15 @@ usergroupView = {
                         }, {
                             view: "text",
                             id: "startDate",
+                            name: "startDate",
+                            invalidMessage: "Obavezan je unos datuma po&#x010D;etka rada.",
                             required:true
                         }]
                     },{
                         cols:[{
                             view:"label",
                             id:"labelPauseFlag",
+                            name:"labelPauseFlag",
                             label:"Korisnik je bio na dužoj pauzi od 30 dana",  // Ž !!!
                             align:"left"
 
@@ -376,11 +402,44 @@ usergroupView = {
                                 view:"button",
                                 value:"Dodaj",
                                 width:150,
+                                 icon: "plus-circle",
                                 hotkey:"enter",
                                 click:'usergroupView.addNewUser'
                             }]
                     }],
-                    width:600
+                    width:600,
+                     rules: {
+                                        "email": function (value) {
+                                            if (!value) {
+                                                $$('addUserForm').elements.email.config.invalidMessage = 'Obavezan je unos e-mail adrese zaposlenog.';
+                                                return false;
+                                            }
+                                            if (value.length > 100) {
+                                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100';
+                                                return false;
+                                            }
+                                            if (!webix.rules.isEmail(value)) {
+                                                $$('addUserForm').elements.email.config.invalidMessage = 'E-mail nije u validnom formatu.';
+                                                return false;
+                                            }
+
+                                            return true;
+                                        },
+                                        "startDate": function (value) {
+                                                                                    if (!value) {
+                                                                                        $$('addUserForm').elements.startDate.config.invalidMessage = 'Obavezan je unos datuma početka.';
+                                                                                        return false;
+                                                                                    }
+                                                                                    return true;
+                                                                                    },  //
+                                        "choseUserGroupCombo": function (value) {
+                                             if (!value) {
+                                             $$('addUserForm').elements.choseUserGroupCombo.config.invalidMessage = 'Obavezno je izabrati poziciju.';
+                                             return false;
+                                             }
+                                             return true;
+                                        }
+                                    }
             }]
         }
     },
@@ -446,6 +505,12 @@ usergroupView = {
         }
         animateValue($$("t3"), 0, 25 * 150, 100);
         console.log("u selectPanel");
+
+
+//connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
+//$$("usergroupDT").define("url", "hub/user/custom/bySector/73");
+
+                                 //$$("usergroupDT").detachEvent("onBeforeDelete");
 
 
         //SEKTORI:
@@ -547,21 +612,54 @@ usergroupView = {
 
     },
 
-//! fali detaljan ispis poruka o losim podacima!!!
+//! ovo se poziva kad se klikne na dugme
     addNewUser:function(){ //dodavanje novog zaposlenog
+        var form = $$("addUserForm");
+        if (form.validate()) {
+        var newUser = {
+            email: form.getValues().email,
+            sectorId: sectorID,
+            userGroupId: 6,   //OCITATI KOJA JE USER GRUPA!!
+            companyId: companyData.id,
+            pauseFlag: form.getValues().checkPauseFlag,
+            startDate: form.getValues().startDate
+
+        };
+        console.log(newUser);
+
+        connection.sendAjax("POST", "/hub/user",
+            function (text, data, xhr) {
+                if (text) {
+                    util.messages.showMessage("Zaposleni uspješno dodan.");
+                    currentDialog.hide();
+                     $$("usergroupDT").add(newUser);
+                     $$("usergroupDT").refresh();
+                    usergroupView.refreshDatatable();
+                } else
+                    alert("Greška u dodavanju zaposlenog.");
+            }, function (text, data, xhr) {
+                alert(text);
+            }, newUser);
+
+/*
         var emailText = $$("email");
         var comboSelect=$$("choseUserGroupCombo");
+        var startDateText=$$("startDate");
+        var pauseFlagSelect=$$("checkPauseFlag");
+
         if (emailText.validate() && comboSelect.validate()) {
             util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
-        }  else {
+        }  /*else {
             webix.alert({
                 title:"Neuspješno dodavanje zaposlenog! ",
                 text:"Podaci nisu korektno uneseni!",
                 type:"alert-error"}).then(function () {
                 alert(2);
             });
+        }*/
+
+        //util.dismissDialog('addUserDialog');
         }
-        util.dismissDialog('addUserDialog');
     },
 
     createDatatableContextMenu: function () {
@@ -641,7 +739,21 @@ usergroupView = {
     },
 
     sectors: [],
-    userGroups: []
+    userGroups: [],
+
+        refreshDatatable: function () {
+            var table1 = $$("usergroupDT");
+console.log("usao u refreshdatatable");
+            webix.extend(table1, webix.ProgressBar);
+
+            table1.showProgress();
+
+
+            table1.clearAll();
+
+            console.log(sectorID);
+            table1.define("url", "url", "hub/user/custom/bySector/"+sectorID);
+        }
 };
 
 function getUserGroups(){

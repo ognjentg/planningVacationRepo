@@ -19,7 +19,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
 
     //prikaz zaposlenih iz kompanije PO SEKTORU, ako zaposleni ili sektor nije izbrisano (ako je sektor izbrisan, necemo pokazivati taj sektor u kombo boksu,pa nam ovdje ne treba taj uslov)
-    private static final String SQL_GET_ALL_EXTENDED_BY_SECTOR_ID = "SELECT u.id, u.first_name, u.last_name, u.email, u.company_id, ug.name as 'position', s.name as 'sector_name'" +
+    private static final String SQL_GET_ALL_EXTENDED_BY_SECTOR_ID = "SELECT u.id, u.first_name, u.last_name, u.email, u.company_id, ug.name as 'position', s.id as 'sector_id',s.name as 'sector_name'" +
             "FROM user u LEFT JOIN sector s on u.sector_id=s.id JOIN user_group ug ON u.user_group_id=ug.id " +
             "WHERE u.company_id=? AND s.id=? AND u.active=1 " ;
     //select u.first_name, u.last_name, u.email, ug.name as 'pozicija', s.name as 'sektor' from user u left join sector s on u.sector_id=s.id join user_group ug on u.user_group_id=ug.id;
