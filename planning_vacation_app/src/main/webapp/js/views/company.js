@@ -1,6 +1,7 @@
 // var users = ["admin", "superadmin"];
 
 var user = true ? "superadmin" : "admin";
+var selectedItemsCheckBox = [];
 
 // dummy data
 var companies = [
@@ -56,27 +57,8 @@ var companyView = {
                     height: 70,
                     css: "companyPanelToolbar",
                     template: "<span class='fa fa-briefcase'></span> Kompanije"
-                }, {}, {}, {},
-
-                {
-                    css: "companies-counter",
-                    rows: [
-                        {
-                            view: "template",
-                            id: "t1",
-                            css: "companies-counter",
-                        },
-                        {
-                            view: "label",
-                            label: "broj kompanija",
-                            type: "header",
-                            css: "companies-counter"
-                        },
-
-                    ]
-
-
                 },
+                
                 {
                     css: "admin-counter",
                     rows: [
@@ -97,6 +79,26 @@ var companyView = {
 
                 },
                 {
+                    css: "companies-counter",
+                    rows: [
+                        {
+                            view: "template",
+                            id: "t1",
+                            css: "companies-counter",
+                        },
+                        {
+                            view: "label",
+                            label: "broj kompanija",
+                            type: "header",
+                            css: "companies-counter"
+                        },
+
+                    ]
+
+
+                },
+
+                {
                     id: "employee-counter",
                     css: "employee-counter",
                     rows: [
@@ -107,6 +109,7 @@ var companyView = {
 
 
                 },
+
 
                 // {
                 //     view: "template",
@@ -226,6 +229,7 @@ var companyView = {
                 {
                     id: "logo",
                     header: "Logo",
+                    cssFormat: checkBoxStatus,
                     fillspace: true, template: function (obj) {
                         return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
                     }
@@ -285,10 +289,17 @@ var companyView = {
                     uncheckValue: 'off',
                     template: "{common.checkbox()}",
                     width: 35,
-                    cssFormat: checkBoxStatus,
+                    cssFormat: checkBoxStatus
 
 
                 },
+
+                {
+                    id: "delete-selected",
+                    header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
+                    width: 35,
+
+                }
 
             ],
             select: "row",
@@ -298,8 +309,24 @@ var companyView = {
 
                 onAfterContextMenu: function (item) {
                     this.select(item.row);
+                },
+
+                onCheck: function (rowId, colId, state) {
+
+                    console.log(state);
+                    if (state === "on") {
+                        selectedItemsCheckBox.push(rowId);
+                    } else {
+                        var index = selectedItemsCheckBox.indexOf(rowId);
+                        if (index > -1) {
+                            selectedItemsCheckBox.splice(index, 1);
+                        }
+                    }
+
+
                 }
             },
+
             onClick: {
                 webix_icon: function (e, id) {
 
@@ -340,6 +367,39 @@ var companyView = {
                     if (action === "admins") {
                         console.log($$("companyDT").getItem(id.row).id);
                         webix.ui(webix.copy(adminsView.showAdminsDialogForSuperadmin($$("companyDT").getItem(id.row).id)));
+                    }
+
+                    if (action === "delete-selected" && selectedItemsCheckBox.length) {
+                        console.log("delete selected");
+
+                        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                        delBox.callback = function (result) {
+                            if (result == 1) {
+
+                                $$("companyDT").detachEvent("onBeforeDelete");
+
+                                selectedItemsCheckBox.forEach(function (item) {
+
+                                    connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
+                                        if (text) {
+                                            $$("companyDT").remove(item);
+
+
+                                        }
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, item);
+
+
+                                });
+
+                                $$("companyDT").refresh();
+                                selectedItemsCheckBox = [];
+
+                            }
+                        };
+                        webix.confirm(delBox);
+
                     }
 
                 }
@@ -526,6 +586,7 @@ var companyView = {
                         hotkey: "esc",
                         width: 150,
                         margin: 50,
+                        hidden: true,
                         click: function () {
                             webix.ui(webix.copy(adminsView.showAddNewAdminDialog()));
 

@@ -73,6 +73,7 @@
     background-color: #E989A3 !important;   /* #268fd5*/
     border: 1px solid #E989A3;
     width: 200px !important;
+    float: right;
     border-radius: 5px;
     -webkit-box-shadow: 0 8px 6px -6px black;
     -moz-box-shadow: 0 8px 6px -6px black;
@@ -107,7 +108,9 @@
     background-color: #B289EF  !important;     /* #268fd5*/
     border: 1px solid #B289EF;
     width: 200px !important;
+    float: right;
     border-radius: 5px;
+    margin-right: 25px !important;
 
 }
 
@@ -139,6 +142,7 @@
     background-color: #9AD2CD  !important;      /* #268fd5*/
     border: 1px solid #9AD2CD;
     width: 200px !important;
+    float: right;
     border-radius: 5px;
 
 }
@@ -223,4 +227,4 @@
     margin: 0 auto;
 }
 
-}
+
