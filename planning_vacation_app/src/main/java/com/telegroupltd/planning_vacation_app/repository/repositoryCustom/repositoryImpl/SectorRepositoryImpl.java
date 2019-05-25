@@ -1,5 +1,8 @@
 package com.telegroupltd.planning_vacation_app.repository.repositoryCustom.repositoryImpl;
 
+import com.telegroupltd.planning_vacation_app.model.Sector;
+import com.telegroupltd.planning_vacation_app.model.SectorUser;
+import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.SectorRepositoryCustom;
 import com.telegroupltd.planning_vacation_app.util.SectorInformation;
 
@@ -16,7 +19,7 @@ public class SectorRepositoryImpl implements SectorRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public List getSectorsInformation(){
-        return entityManager.createNativeQuery(SQL_Manager).getResultList();
+    public List<SectorUser> getSectorsInformation(){
+        return entityManager.createNativeQuery(SQL_Manager,"SectorUserMapping").getResultList();
     }
 }

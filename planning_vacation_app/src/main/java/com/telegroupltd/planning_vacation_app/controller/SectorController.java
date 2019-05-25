@@ -2,12 +2,15 @@ package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
+import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.Company;
 import com.telegroupltd.planning_vacation_app.model.Sector;
+import com.telegroupltd.planning_vacation_app.model.SectorUser;
 import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.SectorRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.util.SectorInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -24,7 +27,7 @@ import java.util.List;
 @RequestMapping(value = "/hub/sector")
 @Controller
 @Scope("request")
-public class SectorController extends GenericController<Sector, Integer> {
+public class SectorController extends GenericHasActiveController<Sector, Integer> {
 
     private final SectorRepository sectorRepository;
     private final CompanyRepository companyRepository;
@@ -62,7 +65,7 @@ public class SectorController extends GenericController<Sector, Integer> {
 
     @RequestMapping(value = "/sectorInfo", method = RequestMethod.GET)
     public @ResponseBody
-    List getSectorsInformation(){
+    List<SectorUser> getSectorsInformation(){
         return sectorRepository.getSectorsInformation();
     }
 

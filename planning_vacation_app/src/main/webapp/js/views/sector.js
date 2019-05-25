@@ -100,13 +100,21 @@ var sectorView = {
                     },
 
                     {
-                        id: "sectorName",
+                        id: "name",
                         width: 400,
                         header: {text: "Naziv sektora", css: "wrap-line"},
                         cssFormat: checkBoxStatus
                     },
                     {
-                        id: "name",
+                        id: "max_percentage_absent_people",
+                        fillspace: true,
+                        editor: "text",
+                        sort: "string",
+                        cssFormat: checkBoxStatus,
+                        header: "Maksimalan procenat odsutnih"
+                    },
+                    {
+                        id: "first_name",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
@@ -114,20 +122,12 @@ var sectorView = {
                         header: "Ime rukovodioca"
                     },
                     {
-                        id: "surname",
+                        id: "last_name",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
                         cssFormat: checkBoxStatus,
                         header: "Prezime rukovodioca"
-                    },
-                    {
-                        id: "maxPercentageAbsentPeople",
-                        fillspace: true,
-                        editor: "text",
-                        sort: "string",
-                        cssFormat: checkBoxStatus,
-                        header: "Maksimalan procenat odsutnih"
                     },
                     {
                         id: "delete",
@@ -242,14 +242,31 @@ var sectorView = {
                 });
             }
         }, webix.ui.window);
-    },
-    save: function () {
 
+        webix.ui({
+            view: "contextmenu",
+            id: "sectorContextMenu",
+            width: 200,
+            data: [{
+                id: "1",
+                value: "Izmijenite",
+                icon: "pencil-square-o"
+            }, {
+                $template: "Separator"
+            }, {
+                id: "2",
+                value: "Obrišite",
+                icon: "trash"
+            }],
+            master: $$("sectorDT"),
+            on: {
+                onItemClick: function (id) {
+
+                }
+            }
+        })
     },
 
-    getUsers: function () {
-
-    },
 
     addDialog:{
         view: "fadeInWindow",
@@ -300,7 +317,12 @@ var sectorView = {
                             id:"managerCombo",
                             name:"managerCombo",
                             label:"Rukovodilac",
-                           // options:options
+                            options:{
+                                body:{
+                                    template: "#id# #firstName# #lastName#",
+                                    url: "hub/user",
+                                }
+                            },
                             required:true
                         },
                         {
@@ -345,31 +367,36 @@ var sectorView = {
 
     save: function(){
         var form = $$("addSectorForm");
-        var validation = form.validate();
-        if(validation){
-            var newSector={
-                id:$$("sectorDT").getLastId() + 1,
-                name: form.getValues().name,
-                sectorManagerId: form.getValues().managerCombo().getActiveId(),
-                maxAbsentPeople: null,
-                maxPercentageAbsentPeople: null,
-                companyId: userData.companyId,
-                active:0
-            }
+        if(!isThereInternetConnection()){
+            alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+        }else{
+            var validation = form.validate();
+            if(validation){
+                var newSector={
+                    id:$$("sectorDT").getLastId() + 1,
+                    name: form.getValues().name,
+                    maxAbsentPeople: null,
+                    maxPercentageAbsentPeople: null,
+                    sectorManagerId: $$("managerCombo").getValue(),
+                    companyId: userData.companyId,
+                    active:1
+                }
 
-            console.log(newSector.id);
-            connection.sendAjax("POST", "hub/sector/insert",
-                function (text, data, xhr) {
-                    if (text) {
-                        util.messages.showMessage("Sektor uspješno dodan.");
-                        util.dismissDialog('addDialog');
-                        $$("sectorDT").updateItem(newSector.id, newSector);
-                    } else
-                        util.messages.showErrorMessage("Neuspješno dodavanje.");
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    alert(text);
-                }, newSector);
+                console.log(newSector.id);
+                connection.sendAjax("POST", "/hub/sector",
+                    function (text, data, xhr) {
+                        if (text) {
+                            //$$("sectorDT").add(newCompany);
+
+                            util.dismissDialog('addSectorDialog');
+                            alert("Sektor uspješno dodat.");
+                        }
+                    }, function (text, data, xhr) {
+                        if (text.includes("name_UNIQUE")) {
+                            alert("Izabrani naziv već postoji. Unesite drugi naziv.");
+                        }
+                    }, newSector);
+            }
         }
     },
 
@@ -436,7 +463,12 @@ var sectorView = {
                             id:"managerCombo",
                             name:"managerCombo",
                             label:"Rukovodilac",
-                            // options:options
+                            options:{
+                                body: {
+                                    template: "#id# #firstName# #lastName#",
+                                    url: "hub/user",
+                                }
+                            },
                             required:true
                         },
                         {
@@ -485,7 +517,7 @@ var sectorView = {
         var form = $$("editSectorForm");
         form.elements.name.setValue(sector.name);
         form.elements.id.setValue(sector.id);
-        //form.elements.managerCombo();
+        $$("managerCombo").setValue(sector.sectorManagerId);
 
     },
 
@@ -496,11 +528,11 @@ var sectorView = {
             var newSector={
                 id:form.getValues.id,
                 name: form.getValues().name,
-                sectorManagerId: form.getValues().managerCombo().getActiveId(),
+                sectorManagerId: $$("managerCombo").getValue(),
                 maxAbsentPeople: null,
                 maxPercentageAbsentPeople: null,
                 companyId: userData.companyId,
-                active:0
+                active:1
             }
 
             console.log(newSector.id);
@@ -521,7 +553,20 @@ var sectorView = {
 
 
 };
-
+function animateValue(id, start, end, duration) {
+    console.log("counter start");
+    var range = end - start;
+    var current = start;
+    var increment = end > start ? 1 : -1;
+    var stepTime = Math.abs(Math.floor(duration / range));
+    var timer = setInterval(function () {
+        current += increment;
+        id.setHTML(`<p>${current}</p>`);
+        if (current == end) {
+            clearInterval(timer);
+        }
+    }, stepTime);
+}
 function checkBoxStatus(value, obj) {
 
     if (obj.status === "on") {
