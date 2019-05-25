@@ -1,5 +1,6 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
+import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.SickLeave;
 import com.telegroupltd.planning_vacation_app.repository.SickLeaveRepository;
@@ -7,10 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping(value="/hub/sickLeave")
 @Controller
@@ -34,4 +38,19 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         List<SickLeave> sickLeaveList = cloner.deepClone(sickLeaveRepository.getAllByActiveIs((byte)1));
         return sickLeaveList;
     }
+
+    @Override
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody
+    String delete(@PathVariable Integer id) throws BadRequestException {
+        SickLeave sickLeave = sickLeaveRepository.findById(id).orElse(null);
+        cloner.deepClone(sickLeave);
+        Objects.requireNonNull(sickLeave).setActive((byte)0);
+        if(sickLeaveRepository.getByIdAndActive(id,(byte)1) == null){
+            logDeleteAction(sickLeave);
+            return "Success";
+        }
+        else throw new BadRequestException(badRequestDelete);
+    }
 }
+

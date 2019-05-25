@@ -29,7 +29,13 @@ var sickRequestsView = {
                             label: "Vrsta zahtjeva",
                             labelWidth: 100,
                             value: "4",
-                            options: typeRequest
+                            options:{
+                                body:{
+                                    template: '#name#',
+                                    url: "hub/sick_leave_status",
+                                }
+                            },
+                            required: true,
                         },]
                 }, {
                     view: "datatable",
@@ -42,6 +48,7 @@ var sickRequestsView = {
                     resizeColumn: true, // omogucen resize kolona korisniku
                     resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
+                    pager: "pagerA",
                     columns: [{
                         id: "id",
                         header: "#",
@@ -101,37 +108,56 @@ var sickRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject" /*&& userData.userGroupId === 4*/) {
+                            if (action === "reject" && userData.userGroupId === 4) {
+                                //alert("TO DO");
                                 var delBox = (webix.copy(commonViews.deleteConfirm("zahtjeva za bolovannje: ")));
                                 delBox.callback = function (result) {
                                     if (result == 1) {
+                                        refreshData();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                        connection.sendAjax("DELETE", "/hub/sickLeave" + id, function (text, data, xhr) {
+                                        connection.sendAjax("DELETE", "/hub/sickLeave/" + id, function (text, data, xhr) {
                                             if (text) {
                                                 $$("companyDT").remove(id);
                                                 util.messages.showMessage("Uspjesno uklanjanje");
-                                                animateValue($$("t1"), 0, companies.length, 1000);
+                                                //animateValue($$("t1"), 0, companies.length, 1000);
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
                                     }
+                                    refreshData();
                                 };
                                 webix.confirm(delBox);
                             }
 
-                            /*if (action === "edit") {
-                                companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
-
-                            }*/
+                            if (action === "accept") {
+                               // companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
+                                alert("TO DO");
+                            }
                             if (action === "view") {
                                 sickRequestsView.showShowEmployeDialog($$("secretary_requestDT").getItem(id.row));
-
                             }
-
                         }
                     }
+                },
+                {
+                    view: "toolbar",
+                    css: "highlighted_header header6",
+                    paddingX: 5,
+                    paddingY: 5,
+                    height: 40,
+                    cols: [{
+                        view: "pager", id: "pagerA",
+                        template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
+                        size: 20,
+                        height: 35,
+                        group: 5,
+                        animate: {
+                            direction: "top"
+                        },
+                    }
+                    ]
                 }
             ],
 
@@ -244,20 +270,43 @@ var sickRequestsView = {
         }, 0);
     },
 };
-var typeRequest = [
-    {id: 1, value: "Na čekanju"},
-    {id: 2, value: "Opravdano"},
-    {id: 3, value: "Neopravdano"},
-    {id: 4, value: "Svi"},
-];
 
-var format = webix.Date.dateToStr("%d.%m.%Y");
-var stringDate = format(new Date());
+function refreshData() {
+    console.log("refresh data");
 
-var requests = [
-    {id:1,  date_from: stringDate, date_to: stringDate},
-    {id:2,  date_from: stringDate, date_to: stringDate},
-    {id:4,  date_from: stringDate, date_to: stringDate},
 
-];
+    webix.extend($$("secretary_requestDT"), webix.ProgressBar);
 
+    var table = webix.$$("secretary_requestDT");
+    table.clearAll();
+    table.load("/hub/sickLeave");
+    table.refresh();
+    //table.showProgress();
+
+
+    webix.ajax("/hub/sickLeave", {
+
+        error: function (text, data, xhr) {
+
+            if (xhr.status != 200) {
+                alert("No data to load! Check your internet connection and try again.");
+                table.hideProgress();
+            }
+
+        },
+
+        success: function (text, data, xhr) {
+
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+
+                    table.clearAll();
+                    table.load("/hub/sickLeave");
+                    table.refresh();
+
+                }
+            }
+        }
+    });
+}
