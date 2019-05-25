@@ -373,7 +373,7 @@ var sectorView = {
             var validation = form.validate();
             if(validation){
                 var newSector={
-                    id:$$("sectorDT").getLastId() + 1,
+                    id:null,
                     name: form.getValues().name,
                     maxAbsentPeople: null,
                     maxPercentageAbsentPeople: null,
@@ -448,7 +448,8 @@ var sectorView = {
                             id: "id",
                             name: "id",
                             label: "id:",
-                            hidden: true
+                            //hidden: true,
+                            editable: false
                         },
                         {
                             view: "text",
