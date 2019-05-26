@@ -175,6 +175,8 @@ var menuWorker=[
     }
 ];
 var settingsMenu=[
+    {id: "0", value: "O kompaniji", hidden:true, icon: "info-circle"},
+    {$template: "Separator"},
     {id: "1", value: "O programu", icon: "info-circle"},
     {$template: "Separator"},
     {id: "2", value: "Promjena lozinke", icon: "lock"},
@@ -186,6 +188,9 @@ var settingsMenu=[
 
 var settingsMenuActions=function (id) {
     switch (id) {
+        case "0":
+            companyInfoView.showCompanyInfoDialog();
+            break;
         case "1":
             showAboutDialog();
             break;
@@ -325,9 +330,12 @@ var showApp = function () {
     mainApp = webix.ui(main, panel);
     panel = $$("app");
     //$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
-
     //**************
     var localMenuData = null;
+
+    if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+        $$("companyInfoOption").hide();
+
     if(userData!=null)
     {
     switch (userData.userGroupId) {
