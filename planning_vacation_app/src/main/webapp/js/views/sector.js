@@ -2,6 +2,8 @@ var sectorName = {};
 var sectors = {};
 var sectorEmployees = {};
 
+var selectedItems = [];
+
 var sectorView = {
     panel:{
         type: "space",
@@ -96,29 +98,36 @@ var sectorView = {
                         id: "id",
                         header: "#",
                         width: 50,
-                        cssFormat: checkBoxStatus
+                        cssFormat: checkCheckBoxStatus
                     },
 
                     {
                         id: "name",
                         width: 400,
                         header: {text: "Naziv sektora", css: "wrap-line"},
-                        cssFormat: checkBoxStatus
+                        cssFormat: checkCheckBoxStatus
                     },
                     {
                         id: "max_percentage_absent_people",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         header: "Maksimalan procenat odsutnih"
+                    },
+                    {
+                        id: "sectorManagerId",
+                        header: "sectorManagerId",
+                        width: 50,
+                        cssFormat: checkCheckBoxStatus,
+                        hidden: true
                     },
                     {
                         id: "first_name",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         header: "Ime rukovodioca"
                     },
                     {
@@ -126,14 +135,14 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         header: "Prezime rukovodioca"
                     },
                     {
                         id: "delete",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                     },
@@ -141,14 +150,14 @@ var sectorView = {
                         id: "edit",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                     },
                     {
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                     },
                     {
@@ -158,7 +167,13 @@ var sectorView = {
                         uncheckValue: 'off',
                         template: "{common.checkbox()}",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        cssFormat: checkCheckBoxStatus,
+                    },
+                    {
+                        id: "delete-selected",
+                        header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
+                        width: 35,
+
                     }
                 ],
                 select: "row",
@@ -168,6 +183,24 @@ var sectorView = {
 
                     onAfterContextMenu: function (item) {
                         this.select(item.row);
+                    },
+
+                    onCheck: function (rowId, colId, state) {
+                        console.log(state);
+                        if (state === "on") {
+                            $$("sectorDT").showColumn("delete-selected");
+                            selectedItems.push(rowId);
+                        } else {
+                            var index = selectedItems.indexOf(rowId);
+                            if (index > -1) {
+                                selectedItems.splice(index, 1);
+                            }
+                            if(selectedItems.length ==0){
+                                $$("sectorDT").hideColumn("delete-selected");
+                            }
+                        }
+
+
                     }
                 },
                 onClick: {
@@ -179,7 +212,33 @@ var sectorView = {
                             alert("Niste autorizovani da izbrišete sektor!");
                         }
                         if (action === "delete" && (userData.userGroupId === 2 || userData.userGroupId === 3 )) {
-                            //implementirati za prebacivanje bez sektora
+
+                            var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
+                            delBox.callback = function (result) {
+                                if (result == 1) {
+                                    var item = $$("sectorDT").getItem(id);
+                                    $$("sectorDT").detachEvent("onBeforeDelete");
+
+                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+id,
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                            }
+                                        }, function (text, data, xhr) {
+
+                                        },item);
+
+                                    connection.sendAjax("DELETE", "hub/sector/" + id, function (text, data, xhr) {
+                                        if (text) {
+                                            $$("sectorDT").remove(id);
+                                            util.messages.showMessage("Uspjesno uklanjanje");
+                                            animateSectorValue($$("t1"), 0, sectors.length, 1000);
+                                        }
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, item);
+                                }
+                            };
+                            webix.confirm(delBox);
                         }
                         if (action === "edit" && userData.userGroupId === 4) {
                             alert("Niste autorizovani da mijenjate sektor!");
@@ -192,6 +251,46 @@ var sectorView = {
                         }
                         if (action === "view") {
                             usergroupView.selectPanel();
+                        }
+
+                        if (action === "delete-selected" && selectedItems.length) {
+                            console.log("delete sector selected");
+
+                            var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
+                            delBox.callback = function (result) {
+                                if (result == 1) {
+
+                                    $$("sectorDT").detachEvent("onBeforeDelete");
+
+                                    selectedItems.forEach(function (item) {
+
+                                        connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
+                                            function (text, data, xhr) {
+                                                if (text) {
+                                                }
+                                            }, function (text, data, xhr) {
+
+                                            },item);
+
+                                        connection.sendAjax("DELETE", "hub/sector/" + item, function (text, data, xhr) {
+                                            if (text) {
+                                                $$("sectorDT").remove(id);
+                                                util.messages.showMessage("Uspjesno uklanjanje");
+                                                animateSectorValue($$("t1"), 0, sectors.length, 1000);
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, item);
+
+
+                                    });
+
+                                    selectedItems = [];
+
+                                }
+                            };
+                            webix.confirm(delBox);
+                            refreshSectorData();
                         }
 
 
@@ -207,7 +306,7 @@ var sectorView = {
                 cols: [{
                     view: "pager", id: "pagerA",
                     template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
-                    size: 20,
+                    size: 19,
                     height: 35,
                     group: 5,
                     animate: {
@@ -221,12 +320,23 @@ var sectorView = {
     },
 
     selectPanel: function(){
+        console.log(userData.userGroupId === 2 || userData.userGroupId ==3 || userData.userGroupId==4);
+
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
-
         var panelCopy = webix.copy(this.panel);
 
         $$("main").addView(webix.copy(panelCopy));
+
+        if(userData.userGroupId == 4){
+            $$("sectorDT").hideColumn("delete");
+            $$("sectorDT").hideColumn("edit");
+            $$("sectorDT").hideColumn("status");
+        }
+
+        $$("sectorDT").hideColumn("delete-selected");
+
+        refreshSectorData();
 
         webix.protoUI({
             name: "fadeInWindow",
@@ -261,7 +371,36 @@ var sectorView = {
             master: $$("sectorDT"),
             on: {
                 onItemClick: function (id) {
+                    var context = this.getContext();
+                    switch (id) {
+                        case "1":
+                            sectorView.showChangeCompanyDialog($$("sectorDT").getItem(context.id.row));
+                            break;
+                        case "2":
+                            if (userData.userGroupId === 4) {
+                                alert("Niste autorizovani da izbrišete sektor!");
+                                break;
+                            }
+                            var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
+                            delBox.callback = function (result) {
+                                if (result == 1) {
+                                    var item = $$("sectorDT").getItem(context.id.row);
+                                    $$("sectorDT").detachEvent("onBeforeDelete");
+                                    connection.sendAjax("DELETE", "hub/sector/" + item.id, function (text, data, xhr) {
+                                        if (text) {
+                                            $$("sectorDT").remove(context.id.row);
+                                            util.messages.showMessage("Uspjesno uklanjanje");
+                                            animateSectorValue($$("t1"), 0, sectors.length, 1000);
+                                        }
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, item);
 
+                                }
+                            };
+                            webix.confirm(delBox);
+                            break;
+                    }
                 }
             }
         })
@@ -351,7 +490,6 @@ var sectorView = {
                         },
                         "managerCombo": function (value) {
                             if (!value) {
-                                //$$('addSectorForm').elements.managerCombo.config.invalidMessage = 'Rukovodioca je obavezno odabrati.';
                                 return false;
                             }else {
                                 return true;
@@ -367,7 +505,7 @@ var sectorView = {
 
     save: function(){
         var form = $$("addSectorForm");
-        if(!isThereInternetConnection()){
+        if(!checkInternetConnection()){
             alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
         }else{
             var validation = form.validate();
@@ -398,6 +536,7 @@ var sectorView = {
                     }, newSector);
             }
         }
+        refreshSectorData();
     },
 
     showAddDialog: function () {
@@ -449,7 +588,7 @@ var sectorView = {
                             name: "id",
                             label: "id:",
                             //hidden: true,
-                            editable: false
+                            //editable: false
                         },
                         {
                             view: "text",
@@ -518,6 +657,7 @@ var sectorView = {
         var form = $$("editSectorForm");
         form.elements.name.setValue(sector.name);
         form.elements.id.setValue(sector.id);
+        form.elements.id.hide(true);
         $$("managerCombo").setValue(sector.sectorManagerId);
 
     },
@@ -527,7 +667,7 @@ var sectorView = {
         var validation = form.validate();
         if(validation){
             var newSector={
-                id:form.getValues.id,
+                id:form.getValues().id,
                 name: form.getValues().name,
                 sectorManagerId: $$("managerCombo").getValue(),
                 maxAbsentPeople: null,
@@ -554,7 +694,7 @@ var sectorView = {
 
 
 };
-function animateValue(id, start, end, duration) {
+function animateSectorValue(id, start, end, duration) {
     console.log("counter start");
     var range = end - start;
     var current = start;
@@ -568,7 +708,8 @@ function animateValue(id, start, end, duration) {
         }
     }, stepTime);
 }
-function checkBoxStatus(value, obj) {
+
+function checkCheckBoxStatus(value, obj) {
 
     if (obj.status === "on") {
         console.log(obj.status);
@@ -579,7 +720,7 @@ function checkBoxStatus(value, obj) {
     }
 
 }
-function isThereInternetConnection() {
+function checkInternetConnection() {
 
     if (navigator.onLine) {
         return true;
@@ -587,4 +728,53 @@ function isThereInternetConnection() {
 
     return false;
 
+}
+
+function refreshSectorData() {
+    $$("t1").setHTML(`<p>${0}</p>`);
+    console.log("refresh sector data");
+
+
+    webix.extend($$("sectorDT"), webix.ProgressBar);
+
+    var table = webix.$$("sectorDT");
+    table.clearAll();
+    table.showProgress();
+
+
+    webix.ajax("hub/sector/sectorInfo", {
+
+        error: function (text, data, xhr) {
+
+            if (xhr.status != 200) {
+                alert("No data to load! Check your internet connection and try again.");
+                table.hideProgress();
+            }
+
+        },
+
+        success: function (text, data, xhr) {
+
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+                    sectors = data.json();
+                    numberOfSectors = sectors.length;
+                    table.hideProgress();
+
+                    if(userData.userGroupId == 4){
+                        $$("sectorDT").hideColumn("delete");
+                        $$("sectorDT").hideColumn("edit");
+                        $$("sectorDT").hideColumn("status");
+                    }
+
+                    $$("sectorDT").hideColumn("delete-selected");
+                    table.parse(sectors);
+                    animateSectorValue($$("t1"), 0, numberOfSectors, 100);
+                }
+            }
+
+        }
+
+    });
 }

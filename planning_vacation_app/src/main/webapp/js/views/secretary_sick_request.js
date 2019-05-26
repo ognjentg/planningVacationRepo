@@ -271,7 +271,7 @@ var sickRequestsView = {
     },
 };
 
-function refreshData() {
+/*function refreshData() {
     console.log("refresh data");
 
 
@@ -309,4 +309,5 @@ function refreshData() {
             }
         }
     });
-}
+}*/
+

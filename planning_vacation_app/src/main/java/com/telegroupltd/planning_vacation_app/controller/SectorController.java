@@ -10,13 +10,12 @@ import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.SectorRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.SectorInformation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -25,7 +24,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RequestMapping(value = "/hub/sector")
-@Controller
+@RestController
 @Scope("request")
 public class SectorController extends GenericHasActiveController<Sector, Integer> {
 
@@ -66,7 +65,12 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     @RequestMapping(value = "/sectorInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<SectorUser> getSectorsInformation(){
-        return sectorRepository.getSectorsInformation();
+        return sectorRepository.getSectorsInformation(userBean.getUser().getCompanyId());
     }
 
+    @RequestMapping(value = "/updateUsersFromSector/{sectorId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateSectorsUsers(@PathVariable Integer sectorId){
+        sectorRepository.updateUsersFromSector(sectorId);
+    }
 }

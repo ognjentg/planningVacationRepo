@@ -14,6 +14,7 @@ import javax.persistence.SqlResultSetMapping;
                         @ColumnResult(name = "id", type = Integer.class),
                         @ColumnResult(name = "name", type = String.class),
                         @ColumnResult(name="max_percentage_absent_people", type=Double.class),
+                        @ColumnResult(name = "sectorManagerId", type = Integer.class),
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name", type = String.class)
                 }
@@ -25,19 +26,28 @@ public class SectorUser {
     private Integer id;
     private String name;
     private Double max_percentage_absent_people;
+    private Integer sectorManagerId;
     private String first_name;
     private String last_name;
 
     public SectorUser(){}
 
-    public SectorUser(Integer id, String name, Double max_percentage_absent_people, String first_name, String last_name) {
+    public SectorUser(Integer id, String name, Double max_percentage_absent_people,Integer sectorManagerId, String first_name, String last_name) {
         this.id=id;
         this.name=name;
         this.max_percentage_absent_people=max_percentage_absent_people;
+        this.sectorManagerId=sectorManagerId;
         this.first_name = first_name;
         this.last_name = last_name;
     }
 
+    public Integer getSectorManagerId() {
+        return sectorManagerId;
+    }
+
+    public void setSectorManagerId(Integer sectorManagerId) {
+        this.sectorManagerId = sectorManagerId;
+    }
 
     public Integer getId() {
         return id;
