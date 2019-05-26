@@ -81,6 +81,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
                     break;
                 } else {
                     throw new BadRequestException(badRequestInsert);
+                    // nasbdsha
                 }
             }
         }
