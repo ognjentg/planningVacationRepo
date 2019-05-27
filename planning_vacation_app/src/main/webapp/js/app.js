@@ -565,7 +565,7 @@ var loginLayout = {
                     }, {
                         view: "text",
                         placeholder:"Lozinka",
-                        name: "lozinka",
+                        name: "password",
                         id:"password",
                         required:true,
                         type: "password",
@@ -577,7 +577,7 @@ var loginLayout = {
                         placeholder:"Kompanija",
                         css:"textS",
                         id:"company",
-                        name: "kompanija",
+                        name: "company",
                         width: 600,
                         height:40
                     },{}, {
@@ -675,8 +675,8 @@ console.log($$("loginForm").getValues());
 
     var objectToSend = {
         email: data.email,
-        password: data.lozinka,
-        companyPin: data.kompanija
+        password: data.password,
+        companyPin: data.company
     }
 
     if($$("loginForm").validate()) {
