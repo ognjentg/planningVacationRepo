@@ -175,7 +175,7 @@ var menuWorker=[
     }
 ];
 var settingsMenu=[
-    {id: "0", value: "O kompaniji", hidden:true, icon: "info-circle"},
+    {id: "0", value: "O kompaniji", icon: "info-circle"},
     {$template: "Separator"},
     {id: "1", value: "O programu", icon: "info-circle"},
     {$template: "Separator"},
@@ -189,8 +189,8 @@ var settingsMenu=[
 var settingsMenuActions=function (id) {
     switch (id) {
         case "0":
-            companyInfoView.showCompanyInfoDialog();
-            break;
+          companyInfoView.showCompanyInfoDialog();
+          break;
         case "1":
             showAboutDialog();
             break;
@@ -333,8 +333,8 @@ var showApp = function () {
     //**************
     var localMenuData = null;
 
-    if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
-        $$("companyInfoOption").hide();
+    //if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+
 
     if(userData!=null)
     {
