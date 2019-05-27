@@ -4,19 +4,23 @@ import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Objects;
 
+@Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "sick_leave", schema = "planning_vacation_db", catalog = "")
 public class SickLeave implements HasActive {
     private Integer id;
-    private Date dateFrom;
-    private Date dateTo;
+    private Timestamp dateFrom;
+    private Timestamp dateTo;
     private Integer sickLeaveStatusId;
     private Integer userId;
     private Byte active;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
@@ -28,21 +32,21 @@ public class SickLeave implements HasActive {
 
     @Basic
     @Column(name = "date_from", nullable = false)
-    public Date getDateFrom() {
+    public Timestamp getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(Date dateFrom) {
+    public void setDateFrom(Timestamp dateFrom) {
         this.dateFrom = dateFrom;
     }
 
     @Basic
     @Column(name = "date_to", nullable = false)
-    public Date getDateTo() {
+    public Timestamp getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(Date dateTo) {
+    public void setDateTo(Timestamp dateTo) {
         this.dateTo = dateTo;
     }
 
