@@ -3,21 +3,19 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.SickLeave;
+import com.telegroupltd.planning_vacation_app.model.SickLeaveUserSickLeaveStatus;
 import com.telegroupltd.planning_vacation_app.repository.SickLeaveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
 
 @RequestMapping(value="/hub/sickLeave")
-@Controller
+@RestController
 @Scope("request")
 public class SickLeaveController extends GenericHasActiveController<SickLeave,Integer> {
     private final SickLeaveRepository sickLeaveRepository;
@@ -35,8 +33,15 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     @Override
     public @ResponseBody
     List<SickLeave> getAll() {
+        //return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
         List<SickLeave> sickLeaveList = cloner.deepClone(sickLeaveRepository.getAllByActiveIs((byte)1));
         return sickLeaveList;
+    }
+
+    @RequestMapping(value = "/sickLeaveInfo", method = RequestMethod.GET)
+    public @ResponseBody
+    List<SickLeaveUserSickLeaveStatus> getSectorsInformation(){
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
     }
 
     @Override
@@ -52,5 +57,13 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         }
         else throw new BadRequestException(badRequestDelete);
     }
+
+    /*
+   @RequestMapping(value = "/sickLeaveinfo", method = RequestMethod.GET)
+   public @ResponseBody
+   List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(){
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
+    }
+    */
 }
 

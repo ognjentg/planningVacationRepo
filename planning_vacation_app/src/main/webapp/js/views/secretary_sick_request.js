@@ -54,6 +54,31 @@ var sickRequestsView = {
                         header: "#",
                         width: 50,
                     },{
+                        id: "name",
+                        sort: "string",
+                        header: "Status",
+                        sort: "string"
+                    },{
+                        id: "firstName",
+                        fillspace: true,
+                        editor: "text",
+                        sort: "string",
+                        header: [
+                            "Ime", {
+                                content: "textFilter", value: ""
+                            }
+                        ]
+                    },{
+                        id: "lastName",
+                        fillspace: true,
+                        editor: "text",
+                        sort: "string",
+                        header: [
+                            "Prezime", {
+                                content: "textFilter", value: ""
+                            }
+                        ]
+                    },{
                         id: "dateFrom",
                         fillspace: true,
                         editor: "text",
@@ -85,16 +110,17 @@ var sickRequestsView = {
                         width: 35,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
 
-                    }, {
+                    }, /*{
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa fa-eye'></span>"
-                    }
+                    }*/
                     ],
                     select: "row",
                     navigation: true,
-                    url: "/hub/sickLeave",
+                    //url: "/hub/sickLeave",
+                    url: "/hub/sickLeave/sickLeaveInfo",
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -113,7 +139,7 @@ var sickRequestsView = {
                                 var delBox = (webix.copy(commonViews.deleteConfirm("zahtjeva za bolovannje: ")));
                                 delBox.callback = function (result) {
                                     if (result == 1) {
-                                        refreshData();
+                                        refreshSecretaryData();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("DELETE", "/hub/sickLeave/" + id, function (text, data, xhr) {
@@ -126,7 +152,7 @@ var sickRequestsView = {
                                             util.messages.showErrorMessage(text);
                                         }, item);
                                     }
-                                    refreshData();
+                                    refreshSecretaryData();
                                 };
                                 webix.confirm(delBox);
                             }
@@ -163,7 +189,7 @@ var sickRequestsView = {
 
         }
     },
-    showEmployeeInformation: {
+   /* showEmployeeInformation: {
 
 
         view: "popup",
@@ -247,19 +273,19 @@ var sickRequestsView = {
 
             }]
         }
-    },
+    },*/
 
-    showShowEmployeDialog: function (sick_request) {
+   /* showShowEmployeDialog: function (sickRequest) {
 
         webix.ui(webix.copy(sickRequestsView.showEmployeeInformation));
         var form = $$("showEmployeeInformationForm");
 
-        /* form.elements.first_name.setValue(secretary_sick_request.first_name);
-
+         form.elements.first_name.setValue(secretary_sick_request.first_name);
+/*
         // form.elements.name.setValue(secretary_sick_request.first_name);
         // form.elements.pin.setValue(secretary_sick_request.last_name);
  */
-        setTimeout(function () {
+    /*    setTimeout(function () {
             $$("showEmployeeInformationDialog").show();
             webix.UIManager.setFocus("first_name");
             var newDocument = {
@@ -268,35 +294,26 @@ var sickRequestsView = {
             };
 
         }, 0);
-    },
+    },    */
 };
 
-/*function refreshData() {
+function refreshSecretaryData() {
     console.log("refresh data");
 
 
     webix.extend($$("secretary_requestDT"), webix.ProgressBar);
 
     var table = webix.$$("secretary_requestDT");
-    table.clearAll();
-    table.load("/hub/sickLeave");
-    table.refresh();
-    //table.showProgress();
-
 
     webix.ajax("/hub/sickLeave", {
 
         error: function (text, data, xhr) {
-
             if (xhr.status != 200) {
                 alert("No data to load! Check your internet connection and try again.");
                 table.hideProgress();
             }
-
         },
-
         success: function (text, data, xhr) {
-
             if (xhr.status === 200) {
                 if (data.json() != null) {
                     console.log("loaded data with success");
@@ -304,10 +321,9 @@ var sickRequestsView = {
                     table.clearAll();
                     table.load("/hub/sickLeave");
                     table.refresh();
-
                 }
             }
         }
     });
-}*/
+}
 
