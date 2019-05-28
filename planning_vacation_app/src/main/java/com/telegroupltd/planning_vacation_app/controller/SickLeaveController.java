@@ -43,6 +43,12 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
     }
 
+    @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatus/{key}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
+        return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUser().getId(), key);
+    }
+
     @Override
     @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
     public @ResponseBody

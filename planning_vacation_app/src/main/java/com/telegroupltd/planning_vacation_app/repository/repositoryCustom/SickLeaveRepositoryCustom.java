@@ -5,6 +5,7 @@ import com.telegroupltd.planning_vacation_app.model.SickLeaveUserSickLeaveStatus
 import java.util.List;
 
 public interface SickLeaveRepositoryCustom {
-    public List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id);
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id);
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id,Integer key);
    // void updateUsersFromSector(Integer sectorId);
 }

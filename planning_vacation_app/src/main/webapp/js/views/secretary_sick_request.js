@@ -1,3 +1,7 @@
+//var format = webix.Date.dateToStr("%d-%F-%Y,%D");
+
+
+
 var sickRequestsView = {
 
     selectPanel: function () {
@@ -28,6 +32,20 @@ var sickRequestsView = {
                             label: "Vrsta zahtjeva",
                             labelWidth: 100,
                             value: "4",
+                            on: {
+                                onChange(name) {
+                                    $$("secretary_requestDT").clearAll();
+                                    if(name === 4){
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo");
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo");
+                                        $$("secretary_requestDT").detachEvent("onBeforeDelete");
+                                    } else {
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").detachEvent("onBeforeDelete");
+                                    }
+                                }
+                            },
                             options:{
                                 body:{
                                     template: '#name#',
@@ -119,7 +137,6 @@ var sickRequestsView = {
                     ],
                     select: "row",
                     navigation: true,
-                    //url: "/hub/sickLeave",
                     url: "/hub/sickLeave/sickLeaveInfo",
                     on: {
 
