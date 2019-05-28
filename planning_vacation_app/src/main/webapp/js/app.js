@@ -222,7 +222,7 @@ var init = function () {
     webix.ajax("hub/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-              showLogin();
+             showLogin();
               //showApp();
             }
         },
@@ -230,8 +230,8 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                   showApp();
-                   // showLogin();
+                   //showApp();
+                    showLogin();
                 }
             }
         }
@@ -334,7 +334,6 @@ var showApp = function () {
     var localMenuData = null;
 
     //if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
-
 
     if(userData!=null)
     {
@@ -536,7 +535,7 @@ var loginLayout = {
                 rows:[{
                     view:"label",
                     css:"welcomeLabel",
-                    label:"Dobro došli",
+                    label:"Dobro do&#154;li",
                     align:"center",
                     width:590
                 },{

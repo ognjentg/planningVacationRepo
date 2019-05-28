@@ -6,6 +6,7 @@ import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.UserRe
 import com.telegroupltd.planning_vacation_app.util.UserLoginInformation;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
@@ -29,8 +30,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public User login(String email, String password, String companyPin) {
-        Object[] result = (Object[])entityManager.createNativeQuery(SQL_LOGIN).setParameter(1, email).setParameter(2, password).setParameter(3, companyPin).getSingleResult();
-        return new User((Integer)result[0],(String)result[1],(String)result[2],(String)result[3],(Byte)result[4],(Date)result[5],(String)result[6],(String)result[7],(String)result[8],(Byte)result[9],(Integer)result[10],(byte[])result[11],(Integer)result[12],(Integer)result[13],(Byte)result[14] );
+        User user = null;
+        try {
+            Object[] result = (Object[]) entityManager.createNativeQuery(SQL_LOGIN).setParameter(1, email).setParameter(2, password).setParameter(3, companyPin).getSingleResult();
+            return new User((Integer)result[0],(String)result[1],(String)result[2],(String)result[3],(Byte)result[4],(Date)result[5],(String)result[6],(String)result[7],(String)result[8],(Byte)result[9],(Integer)result[10],(byte[])result[11],(Integer)result[12],(Integer)result[13],(Byte)result[14] );
+        }
+        catch (NoResultException e){
+
+        }
+
+        return user;
     }
 
     @Override
