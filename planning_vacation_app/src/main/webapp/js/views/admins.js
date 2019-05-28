@@ -114,23 +114,23 @@ var adminsView = {
                     ],
                     onClick: {
                         webix_icon: function (e, id) {
-                            var adminTemp = $$("adminsDT").getItem(id);
-                            connection.sendAjax("PUT", "hub/user/deleteAdmin/" + adminTemp.id,
-                                function (text, data, xhr) {
-                                    var delBox = (webix.copy(commonViews.deleteConfirm("admina")));
-                                    if (text) {
-                                        delBox.callback = function (result) {
-                                            if (result == 1) {
+                            var delBox = (webix.copy(commonViews.deleteConfirm("admina")));
+                            delBox.callback = function (result) {
+                                if (result == 1) {
+                                    var adminTemp = $$("adminsDT").getItem(id);
+                                    connection.sendAjax("PUT", "hub/user/deleteAdmin/" + adminTemp.id,
+                                        function (text, data, xhr) {
+                                            if (text) {
                                                 util.messages.showMessage("Admin je uspješno uklonjen.");
                                                 adminsView.refreshDatatables();
-                                            }
-                                        }
-                                        webix.confirm(delBox);
-                                    } else
-                                        util.messages.showErrorMessage("Neuspješno uklanjanje.");
-                                }, function (text, data, xhr) {
-                                    util.messages.showErrorMessage(text);
-                                }, adminTemp.id);
+                                            } else
+                                                util.messages.showErrorMessage("Neuspješno uklanjanje.");
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, adminTemp.id);
+                                }
+                            }
+                            webix.confirm(delBox);
                         }
                     }
                 },
