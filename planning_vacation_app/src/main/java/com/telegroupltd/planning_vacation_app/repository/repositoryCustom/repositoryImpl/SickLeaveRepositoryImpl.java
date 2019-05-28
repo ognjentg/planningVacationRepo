@@ -16,7 +16,7 @@ public class SickLeaveRepositoryImpl implements SickLeaveRepositoryCustom {
 
     private static final String SQL_MANAGER= "SELECT sl.id, date_from, date_to,u.first_name,u.last_name, sls.name AS status_name "+
             "FROM sick_leave sl " + "JOIN sick_leave_status sls ON sl.sick_leave_status_id = sls.id "+
-            "JOIN user u ON sl.user_id = u.id"+
+            "JOIN user u ON sl.user_id = u.id "+
             //"WHERE sl.active = 1 AND sl.id=?;";
             "WHERE sl.active = 1;";
 
