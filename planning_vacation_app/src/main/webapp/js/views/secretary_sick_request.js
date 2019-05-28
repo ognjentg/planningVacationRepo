@@ -1,6 +1,5 @@
 var sickRequestsView = {
 
-    sickLeaveURL: "/sick_leave",
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
         rightPanel = "requestPanel"; // novi rightPanel će biti facultyPanel
@@ -54,7 +53,8 @@ var sickRequestsView = {
                         header: "#",
                         width: 50,
                     },{
-                        id: "name",
+                        //id: "status_name",
+                        id: "statusName",
                         sort: "string",
                         header: "Status",
                         sort: "string"

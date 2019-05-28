@@ -11,7 +11,7 @@ import java.util.Objects;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "sick_leave", schema = "planning_vacation_db", catalog = "")
-public class SickLeave implements HasActive {
+public class SickLeave implements HasActive  {
     private Integer id;
     private Timestamp dateFrom;
     private Timestamp dateTo;

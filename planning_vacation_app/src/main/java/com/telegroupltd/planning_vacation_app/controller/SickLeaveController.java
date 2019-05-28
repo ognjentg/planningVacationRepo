@@ -33,7 +33,6 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     @Override
     public @ResponseBody
     List<SickLeave> getAll() {
-        //return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
         List<SickLeave> sickLeaveList = cloner.deepClone(sickLeaveRepository.getAllByActiveIs((byte)1));
         return sickLeaveList;
     }
@@ -58,12 +57,5 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         else throw new BadRequestException(badRequestDelete);
     }
 
-    /*
-   @RequestMapping(value = "/sickLeaveinfo", method = RequestMethod.GET)
-   public @ResponseBody
-   List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(){
-        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
-    }
-    */
 }
 
