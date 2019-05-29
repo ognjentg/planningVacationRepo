@@ -386,14 +386,14 @@ public class UserController extends GenericController<User, Integer> {
     List<UserUserGroupSector> getAllExtendedByRoomId(@PathVariable Integer sectorId) {
         return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUser().getCompanyId(), sectorId);
     }
-    @RequestMapping(value = "/removeFromSector/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.PUT)
     public @ResponseBody
-    String removeFromSector(@PathVariable Integer id) throws BadRequestException{
+    String deleteUser(@PathVariable Integer id) throws BadRequestException{
         User user = userRepository.getByIdAndActive(id, (byte)1);
         if(user == null)
             throw new BadRequestException(badRequestNoUser);
         User userTemp = cloner.deepClone(user);
-        userTemp.setSectorId(null);
+        userTemp.setActive((byte) 0);
         if(repo.saveAndFlush(userTemp) != null){
             logUpdateAction(userTemp, user);
             return "Success";

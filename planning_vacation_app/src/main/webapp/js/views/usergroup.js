@@ -93,13 +93,14 @@ usergroupView = {
                         id: "deleteSelectedButton",
                         view: "button",
                         type: "iconButton",
-                        label: "Izbrisi zaposlene",
+                        label: "Izbriši zaposlene",
                         icon: "trash",
                         width: 200,
                         height: 40,
                         css: "companyButton",
                         align: "left",
-                        click: 'usergroupView.showDeleteSelectedDialog'
+                        click: 'usergroupView.deleteSelected',
+                        disabled: true
                     }, {
                         id: "changeSectorOfSelectedButton",
                         view: "button",
@@ -111,11 +112,13 @@ usergroupView = {
                         height: 40,
                         css: "companyButton",
                         align: "left",
-                        click: 'usergroupView.showChangeSectorOfSelectedDialog'
+                        click: 'usergroupView.showChangeSectorOfSelectedDialog',
+                        disabled: true
                     }, {
                         view: "label",
                         id: "izaberiLabel",
                         label: "Izaberi sektor:",
+                        css: "companyPanelToolbar",
                         align: "right",
                         inputWidth: 100
                     }, {
@@ -135,8 +138,9 @@ usergroupView = {
                                 //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
                                 $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
                                 $$("usergroupDT").detachEvent("onBeforeDelete");
-
-
+                                $$("deleteSelectedButton").disable();
+                                var num = $$("usergroupDT").count();//TODO: Popraviti! Ne broji dobro
+                                animateValue($$("t3"), 0, num , num == 0 ? 0 : 100/num);
                             }
 
 
@@ -311,12 +315,8 @@ usergroupView = {
                             header: "&nbsp;",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-calendar'></span>"
-                        },
-                        {
-                            id: "delete-selected",
-                            header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
-                            width: 35
-                        }],
+                        }
+                        ],
                     select: "row",
                     multiselect: false,
                     checkboxRefresh: true,
@@ -329,6 +329,7 @@ usergroupView = {
                         onCheck: function (rowId, colId, state) {
                             if (state == "on") {
                                 selectedItems.push(rowId);
+                                $$("deleteSelectedButton").enable();
                                 this.select(rowId);
                             } else {
                                 var index = selectedItems.indexOf(rowId);
@@ -336,6 +337,8 @@ usergroupView = {
                                     selectedItems.splice(index, 1);
                                     this.unselect(rowId);
                                 }
+                                if(selectedItems.length == 0)
+                                    $$("deleteSelectedButton").disable();
                             }
                         }
                     },
@@ -348,23 +351,6 @@ usergroupView = {
                             }
                             if (action === "edit" && user === "secretary") {
                                 alert("Niste autorizovani da izvršite ovu radnju!");
-                            } else if (action == "delete-selected" && selectedItems.length > 0) {
-                                var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
-                                delBox.callback = function (result) {
-                                    if (result == 1) {
-                                        selectedItems.forEach(function (element) {
-                                            connection.sendAjax("PUT", "hub/user/removeFromSector/" + element,
-                                                function (text, data, xhr) {
-                                                    util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
-                                                }, function (text, data, xhr) {
-                                                    util.messages.showErrorMessage(text);
-                                                    alert(text);
-                                                }, element);
-                                            usergroupView.refreshDatatable();
-                                        });
-                                    }
-                                };
-                                webix.confirm(delBox);
                             }
                             if (action === "view") {
                                 usergroupView.employeeInfo();
@@ -560,7 +546,7 @@ usergroupView = {
             $$("choseSectorCombo").hide();
             $$("izaberiLabel").hide();
         }
-        animateValue($$("t3"), 0, 25 * 150, 100);
+        //animateValue($$("t3"), 0, 25 * 150, 100);
         console.log("u selectPanel");
 
 
@@ -775,10 +761,10 @@ usergroupView = {
                 var id = $$("usergroupDT").getSelectedId();
                 var user = $$("usergroupDT").getItem(id);
                 console.log("USR ID: " + id + "USER " + user.email);
-                connection.sendAjax("PUT", "hub/user/removeFromSector/" + id,
+                connection.sendAjax("PUT", "hub/user/deleteUser/" + id,
                     function (text, data, xhr) {
                         util.messages.showMessage("Zaposleni uspješno izbrisan iz sektora.");
-                        usergroupView.refreshDatatable();
+                        $$("usergroupDT").remove(id);
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
                         alert(text);
@@ -791,8 +777,25 @@ usergroupView = {
     },
 
 //brise oznacene korisnike iz tabele
-    showDeleteSelectedDialog: function () {
-
+    deleteSelected: function () {
+        if(selectedItems.length > 0){
+            var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
+            delBox.callback = function (result) {
+                if (result == 1) {
+                    selectedItems.forEach(function (element) {
+                        connection.sendAjax("PUT", "hub/user/deleteUser/" + element,
+                            function (text, data, xhr) {
+                                $$("usergroupDT").remove(element);
+                            }, function (text, data, xhr) {
+                                util.messages.showErrorMessage(text);
+                                alert(text);
+                            }, element);
+                    });
+                    util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
+                }
+            };
+            webix.confirm(delBox);
+        }
     },
 
 ////mijenja sektor oznacenim korisnicima iz tabele
