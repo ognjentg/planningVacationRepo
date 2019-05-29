@@ -76,10 +76,10 @@ public class UserController extends GenericController<User, Integer> {
     private String badRequestOldPassword;
     @Autowired
     public UserController(UserRepository userRepository, CompanyRepository companyRepository){
-    super(userRepository);
-    this.userRepository=userRepository;
-    this.companyRepository=companyRepository;
-}
+        super(userRepository);
+        this.userRepository=userRepository;
+        this.companyRepository=companyRepository;
+    }
 //Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
 //Implementirati metode: login*, logout*, ...
 
@@ -104,8 +104,8 @@ public class UserController extends GenericController<User, Integer> {
                 u.setPassword("");
                 u.setSalt("");
             }
-        return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).collect(Collectors.toList());
-    }else if(director == userBean.getUser().getUserGroupId()) {
+            return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).collect(Collectors.toList());
+        }else if(director == userBean.getUser().getUserGroupId()) {
             for (User u : users) {
                 u.setPassword("");
                 u.setSalt("");
@@ -116,7 +116,7 @@ public class UserController extends GenericController<User, Integer> {
             return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).collect(Collectors.toList());
         } else if(sectorManager== userBean.getUser().getUserGroupId()) {
             users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte)1)));
-             for(User u:users){ u.setPassword(""); u.setSalt(""); }
+            for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u-> worker == u.getUserGroupId()).collect(Collectors.toList());
         }
         throw new ForbiddenException("Forbidden");
@@ -145,7 +145,7 @@ public class UserController extends GenericController<User, Integer> {
             throw new ForbiddenException("Forbidden");
         } else {
             userBean.setUser(user);
-          //  userBean.setLoggedIn(true);
+            //  userBean.setLoggedIn(true);
             return userBean.getUser();
         }
     }
@@ -172,17 +172,17 @@ public class UserController extends GenericController<User, Integer> {
         List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
 
         if (superAdmin == userBean.getUser().getUserGroupId()) {
-        return users.stream().filter(u -> admin == u.getUserGroupId()).count();
+            return users.stream().filter(u -> admin == u.getUserGroupId()).count();
         }else  throw new ForbiddenException("Forbidden");
     }
 
     /*
-    * Superadmin can get number of everybody on sistem except admins
-    * Admin can get number of everybody(workers, secretary, sector managers and director)
-    * Director can get number of secretary+sector managers+workers
-    * secretary can get number of sector managers+workers
-    * sector manager can get number of workers in his sector
-    * */
+     * Superadmin can get number of everybody on sistem except admins
+     * Admin can get number of everybody(workers, secretary, sector managers and director)
+     * Director can get number of secretary+sector managers+workers
+     * secretary can get number of sector managers+workers
+     * sector manager can get number of workers in his sector
+     * */
     @SuppressWarnings("SameReturnValue")
     @RequestMapping(value = "/numberOfWorkers", method = RequestMethod.GET)
     public @ResponseBody
@@ -250,66 +250,66 @@ public class UserController extends GenericController<User, Integer> {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
     User insert(@RequestBody User user) throws BadRequestException {
-     ////   if(userRepository.countAllByCompanyIdAndEmail(userBean.getUser().getCompanyId(), user.getEmail()).compareTo(Integer.valueOf(0)) == 0){
-            if(userRepository.getByCompanyIdAndEmailAndActive(user.getCompanyId(), user.getEmail(), (byte)1) != null){
-                throw new BadRequestException(badRequestEmailExists);
-            }
-            if(Util.validateEmail(user.getEmail())){
-                User newUser = new User();
-                String salt=Util.randomSalt();
-                String newPassword=Util.randomPassword();
-                String username=Util.generateUsername(user.getEmail());
+        ////   if(userRepository.countAllByCompanyIdAndEmail(userBean.getUser().getCompanyId(), user.getEmail()).compareTo(Integer.valueOf(0)) == 0){
+        if(userRepository.getByCompanyIdAndEmailAndActive(user.getCompanyId(), user.getEmail(), (byte)1) != null){
+            throw new BadRequestException(badRequestEmailExists);
+        }
+        if(Util.validateEmail(user.getEmail())){
+            User newUser = new User();
+            String salt=Util.randomSalt();
+            String newPassword=Util.randomPassword();
+            String username=Util.generateUsername(user.getEmail());
 
-                newUser.setFirstName(null);
-                newUser.setLastName(null);
-                if(user.getCompanyId() == null)
-                    user.setCompanyId(userBean.getUser().getCompanyId());
-                else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
-                 //   newUser.setPauseFlag(user.getPauseFlag());
-                 //   newUser.setStartDate(user.getStartDate()); - ne kupi dobro na frontu,kupi undefined,pa zato ovako zasada/....
-                    newUser.setPauseFlag(null);
-                    newUser.setStartDate(null);
-                    newUser.setReceiveMail((byte) 1);
-                }else {
-                    newUser.setPauseFlag(null);
-                    newUser.setStartDate(null);
-                    newUser.setReceiveMail((byte) 0);
-                }
-                newUser.setSectorId(user.getSectorId());  //It is sector manager's job
-                newUser.setPhoto(null);
-                newUser.setUserGroupId(user.getUserGroupId());
+            newUser.setFirstName(null);
+            newUser.setLastName(null);
+            if(user.getCompanyId() == null)
+                user.setCompanyId(userBean.getUser().getCompanyId());
+            else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
+                //   newUser.setPauseFlag(user.getPauseFlag());
+                //   newUser.setStartDate(user.getStartDate()); - ne kupi dobro na frontu,kupi undefined,pa zato ovako zasada/....
+                newUser.setPauseFlag(null);
+                newUser.setStartDate(null);
+                newUser.setReceiveMail((byte) 1);
+            }else {
+                newUser.setPauseFlag(null);
+                newUser.setStartDate(null);
+                newUser.setReceiveMail((byte) 0);
+            }
+            newUser.setSectorId(user.getSectorId());  //It is sector manager's job
+            newUser.setPhoto(null);
+            newUser.setUserGroupId(user.getUserGroupId());
+            if(user.getUserGroupId()!=superAdmin) {
+                newUser.setCompanyId(user.getCompanyId());
+            }else newUser.setCompanyId(null);
+            newUser.setActive((byte) 1);
+
+            if(user.getUserGroupId()!=superAdmin) {   //Ako nije superadmin, imace e-mail na koji ce dobiti username i password
+                newUser.setEmail(user.getEmail());
+
+                //User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
+                //if (userWithUsername == null) {
+                newUser.setUsername(username);
+                newUser.setPassword(Util.hashPasswordSalt(newPassword,salt));
+                newUser.setSalt(salt);
+                //} else {
+                //    throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
+                //}
+            }
+            //Superadmin will be added from workbench.
+
+            if(repo.saveAndFlush(newUser) != null){
+                entityManager.refresh(newUser);
+                logCreateAction(newUser);
                 if(user.getUserGroupId()!=superAdmin) {
-                    newUser.setCompanyId(user.getCompanyId());
-                }else newUser.setCompanyId(null);
-                newUser.setActive((byte) 1);
-
-                if(user.getUserGroupId()!=superAdmin) {   //Ako nije superadmin, imace e-mail na koji ce dobiti username i password
-                    newUser.setEmail(user.getEmail());
-
-                    //User userWithUsername = userRepository.getByUsernameAndCompanyId(username, user.getCompanyId());
-                    //if (userWithUsername == null) {
-                        newUser.setUsername(username);
-                        newUser.setPassword(Util.hashPasswordSalt(newPassword,salt));
-                        newUser.setSalt(salt);
-                    //} else {
-                    //    throw new BadRequestException(badRequestUsernameExists);  //postoji ovaj username u  ovoj kompaniji                    }
-                    //}
+                    Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                 }
-                //Superadmin will be added from workbench.
-
-                if(repo.saveAndFlush(newUser) != null){
-                    entityManager.refresh(newUser);
-                    logCreateAction(newUser);
-                    if(user.getUserGroupId()!=superAdmin) {
-                        Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
-                         }
-                    return newUser;
-                }
-                throw new BadRequestException(badRequestInsert);
+                return newUser;
             }
-            throw new BadRequestException(badRequestValidateEmail);
+            throw new BadRequestException(badRequestInsert);
+        }
+        throw new BadRequestException(badRequestValidateEmail);
         //}
-       // throw new BadRequestException(badRequestEmailExists);
+        // throw new BadRequestException(badRequestEmailExists);
     }
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public @ResponseBody
@@ -406,22 +406,22 @@ public class UserController extends GenericController<User, Integer> {
     String updatePassword(@RequestBody PasswordInformation passwordInformation) throws BadRequestException{
         User user = userRepository.findById(userBean.getUser().getId()).orElse(null);
         if(user != null){
-           if(passwordInformation.getOldPassword() != null && user.getPassword().trim().equals(Util.hashPasswordSalt(passwordInformation.getOldPassword().trim(),user.getSalt()))){
+            if(passwordInformation.getOldPassword() != null && user.getPassword().trim().toLowerCase().equals(Util.hashPasswordSalt(passwordInformation.getOldPassword().trim(),user.getSalt()))){
                 //if(passwordInformation.getNewPassword() != null && Validator.passwordChecking(passwordInformation.getNewPassword())){
-                    user.setSalt(Util.randomSalt());
-                    user.setPassword(Util.hashPasswordSalt(passwordInformation.getNewPassword(),user.getSalt()));
-                        if(repo.saveAndFlush(user) != null){
-                            return "Success";
-                        }
-                        throw new BadRequestException(badRequestUpdate);
+                user.setSalt(Util.randomSalt());
+                user.setPassword(Util.hashPasswordSalt(passwordInformation.getNewPassword(),user.getSalt()));
+                if(repo.saveAndFlush(user) != null){
+                    return "Success";
+                }
+                throw new BadRequestException(badRequestUpdate);
 
-               // }
-               // throw new BadRequestException(badRequestPasswordStrength);
+                // }
+                // throw new BadRequestException(badRequestPasswordStrength);
             }
             throw new BadRequestException(badRequestOldPassword);
         }
         throw new BadRequestException(badRequestNoUser);
     }
 
-        }
+}
 

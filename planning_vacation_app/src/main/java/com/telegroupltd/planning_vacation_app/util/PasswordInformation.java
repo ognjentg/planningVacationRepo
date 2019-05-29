@@ -30,11 +30,11 @@ public class PasswordInformation {
         this.newPassword = newPassword;
     }
 
-    public String getRepeatedNewPassword() {
+    public String getNewPasswordConfirmation() {
         return newPasswordConfirmation;
     }
 
-    public void setRepeatedNewPassword(String repeatedNewPassword) {
-        this.newPasswordConfirmation = repeatedNewPassword;
+    public void setNewPasswordConfirmation(String newPasswordConfirmation) {
+        this.newPasswordConfirmation = newPasswordConfirmation;
     }
 }

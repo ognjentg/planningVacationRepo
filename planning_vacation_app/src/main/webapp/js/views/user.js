@@ -217,6 +217,7 @@ var changePasswordView = {
                 {
                     view:"form",
                     id:"changePasswordForm",
+                    name:"changePasswordForm",
                     width:500,
                     elementsConfig: {
                         labelWidth: 140,
@@ -226,6 +227,7 @@ var changePasswordView = {
                         {
                             view:"text",
                             id:"oldPassword",
+                            type:"password",
                             label:"Trenutna lozinka:",
                             required:true
 
@@ -234,6 +236,7 @@ var changePasswordView = {
                             view:"text",
                             label:"Nova lozinka:",
                             id:"newPassword",
+                            type:"password",
                             required:true,
                             on:{
                                 'onTimedKeyPress':function () {
@@ -247,6 +250,7 @@ var changePasswordView = {
                             view:"text",
                             label:"Potvrda nove lozinke:",
                             id:"newPasswordConfirmation",
+                            type:"password",
                             required:true,
                             on:{
                                 'onTimedKeyPress':function () {
@@ -272,9 +276,9 @@ var changePasswordView = {
     savePassword:function(){
         if ($$("changePasswordForm").validate()) {
             var passwordInformation={
-                oldPassword:$$("changePasswordForm").getValues().oldPassword,
-                newPassword:$$("changePasswordForm").getValues().newPassword,
-                repeatedNewPassword:$$("changePasswordForm").getValues().newPasswordConfirmation,
+                oldPassword:$$("oldPassword").getValue(),
+                newPassword:$$("newPassword").getValue(),
+                newPasswordConfirmation:$$("newPasswordConfirmation").getValue()
             };
 
             connection.sendAjax("POST", "hub/user/updatePassword",
