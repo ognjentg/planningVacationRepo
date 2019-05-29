@@ -65,6 +65,20 @@ var sickRequestsView = {
                     resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
                     pager: "pagerA",
+                    scheme: {
+                        $init: function (obj) {
+                            if (obj.dateFrom)
+                                obj.dateFrom = new Date(obj.dateFrom);
+                            if (obj.dateTo)
+                                obj.dateTo = new Date(obj.dateTo);
+                        },
+                        $change: function (obj) {
+                            if (obj.dateFrom)
+                                obj.dateFrom = new Date(obj.dateFrom);
+                            if (obj.dateTo)
+                                obj.dateTo = new Date(obj.dateTo);
+                        }
+                    },
                     columns: [{
                         id: "id",
                         header: "#",
@@ -97,31 +111,25 @@ var sickRequestsView = {
                         ]
                     },{
                         id: "dateFrom",
-                        view: "date",
                         fillspace: true,
-                        editor: "text",
                         sort: "date",
                         header: [
                             "Datum od", {
-                                content: "textFilter", value: ""
+                                content: "dateFilter"
                             }
                         ],
-                       /* scheme : {
-                            $init:function(obj){
-                                obj.dateFrom = my_format(obj.dateFrom);
-                            }
-                        }*/
-
+                        format: webix.Date.dateToStr("%d.%m.%Y.")
                     },{
                         id: "dateTo",
                         fillspace: true,
-                        editor: "text",
                         sort: "date",
                         header: [
                             "Datum do", {
-                                content: "textFilter", value: ""
+                                content: "dateFilter"
                             }
-                        ]
+                        ],
+                        format: webix.Date.dateToStr("%d.%m.%Y.")
+                        //format: webix.Date.dateToStr("%d.%m.%Y. %H:%i") -- for time if someone needs it
                     },{
                         id: "accept",
                         header: "&nbsp;",
