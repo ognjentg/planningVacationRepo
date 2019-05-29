@@ -7,5 +7,6 @@ import java.util.List;
 public interface SickLeaveRepositoryCustom {
     List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id);
     List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id,Integer key);
-   // void updateUsersFromSector(Integer sectorId);
+    void updateSickLeaveStatusUnjustified(Integer sickLeaveId);
+    void updateSickLeaveStatusJustified(Integer sickLeaveId);
 }

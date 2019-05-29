@@ -9,5 +9,4 @@ import java.util.List;
 
 public interface SickLeaveRepository extends JpaRepository<SickLeave,Integer>, HasActiveRepository<SickLeave,Integer>, SickLeaveRepositoryCustom {
 
-    //List<SickLeave> getAllByActiveIs(byte i);
 }

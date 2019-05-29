@@ -1,6 +1,5 @@
-//var format = webix.Date.dateToStr("%d-%F-%Y,%D");
 
-
+var my_format = webix.Date.strToDate("%Y-%m-%d");
 
 var sickRequestsView = {
 
@@ -98,6 +97,7 @@ var sickRequestsView = {
                         ]
                     },{
                         id: "dateFrom",
+                        view: "date",
                         fillspace: true,
                         editor: "text",
                         sort: "date",
@@ -105,7 +105,13 @@ var sickRequestsView = {
                             "Datum od", {
                                 content: "textFilter", value: ""
                             }
-                        ]
+                        ],
+                       /* scheme : {
+                            $init:function(obj){
+                                obj.dateFrom = my_format(obj.dateFrom);
+                            }
+                        }*/
+
                     },{
                         id: "dateTo",
                         fillspace: true,
@@ -128,12 +134,7 @@ var sickRequestsView = {
                         width: 35,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
 
-                    }, /*{
-                        id: "view",
-                        header: "&nbsp;",
-                        width: 35,
-                        template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa fa-eye'></span>"
-                    }*/
+                    },
                     ],
                     select: "row",
                     navigation: true,
@@ -152,17 +153,35 @@ var sickRequestsView = {
                             var action = id["column"];
 
                             if (action === "reject" && userData.userGroupId === 4) {
-                                //alert("TO DO");
-                                var delBox = (webix.copy(commonViews.deleteConfirm("zahtjeva za bolovannje: ")));
-                                delBox.callback = function (result) {
+                                var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovannje: ")));
+                                rejectLeaveBox.callback = function (result) {
                                     if (result == 1) {
                                         refreshSecretaryData();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                        connection.sendAjax("DELETE", "/hub/sickLeave/" + id, function (text, data, xhr) {
+                                        connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
                                             if (text) {
-                                                $$("companyDT").remove(id);
-                                                util.messages.showMessage("Uspjesno uklanjanje");
+                                                $$("secretary_requestDT").update(id);
+                                                util.messages.showMessage("Zahtjev neopravdan");
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, item);
+                                    }
+                                    refreshSecretaryData();
+                                };
+                                webix.confirm(rejectLeaveBox);
+                            } else if (action === "accept" && userData.userGroupId === 4) {
+                                var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
+                                acceptLeaveBox.callback = function (result) {
+                                    if (result == 1) {
+                                        refreshSecretaryData();
+                                        var item = $$("secretary_requestDT").getItem(id);
+                                        $$("secretary_requestDT").detachEvent("onBeforeDelete");
+                                        connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
+                                            if (text) {
+                                                $$("secretary_requestDT").update(id);
+                                                util.messages.showMessage("Zahtjev opravdan");
                                                 //animateValue($$("t1"), 0, companies.length, 1000);
                                             }
                                         }, function (text, data, xhr) {
@@ -171,18 +190,11 @@ var sickRequestsView = {
                                     }
                                     refreshSecretaryData();
                                 };
-                                webix.confirm(delBox);
-                            }
-
-                            if (action === "accept") {
-                               // companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
-                                alert("TO DO");
-                            }
-                            if (action === "view") {
-                                sickRequestsView.showShowEmployeDialog($$("secretary_requestDT").getItem(id.row));
+                                webix.confirm(acceptLeaveBox);
                             }
                         }
                     }
+
                 },
                 {
                     view: "toolbar",
@@ -206,112 +218,31 @@ var sickRequestsView = {
 
         }
     },
-   /* showEmployeeInformation: {
 
+    rejectLeaveConfirm: function (titleEntity, textEntity) {
+        var text = titleEntity;
+        if (textEntity) text = textEntity;
+        return {
+            title: "Odbijanje " + titleEntity,
+            ok: "Da",
+            cancel: "Ne",
+            width: 500,
+            text: "Da li ste sigurni da želite odbiti " + text + "?"
+        };
+    },
 
-        view: "popup",
-        id: "showEmployeeInformationDialog",
-        modal: true,
-        position: "center",
+    acceptLeaveConfirm: function (titleEntity, textEntity) {
+        var text = titleEntity;
+        if (textEntity) text = textEntity;
+        return {
+            title: "Prihvatanje " + titleEntity,
+            ok: "Da",
+            cancel: "Ne",
+            width: 500,
+            text: "Da li ste sigurni da želite prihvatiti " + text + "?"
+        };
+    },
 
-        body: {
-            id: "showEmployeeInformationInside",
-            rows: [{
-                view: "toolbar",
-                cols: [{
-                    view: "label",
-                    label: "<span class='webix_icon fa fa-eye'></span> Pregled zaposlenog",
-                    width: 400
-                }, {}, {
-                    hotkey: 'esc',
-                    view: "icon",
-                    icon: "close",
-                    align: "right",
-                    click: "util.dismissDialog('showEmployeeInformationDialog');"
-                }]
-            }, {
-                view: "form",
-                id: "showEmployeeInformationForm",
-                width: 600,
-                elementsConfig: {
-                    labelWidth: 200,
-                    bottomPadding: 18
-                },
-                elements: [
-                    {
-                        view: "text",
-                        id: "first_name",
-                        name: "first_name",
-                        label: "Ime:",
-                        editable: false,
-                        readonly: true
-                    }, {
-                        view: "text",
-                        id: "last_name",
-                        name: "last_name",
-                        label: "Prezime:",
-                        editable: false,
-                        readonly: true
-                    }, {
-                        view: "text",
-                        id: "email",
-                        name: "email",
-                        label: "e-mail:",
-                        editable: false,
-                        readonly: true
-                    }, {
-                        view: "text",
-                        id: "date_from",
-                        name: "date_from",
-                        label: "Pocetak bolovanja:",
-                        editable: false,
-                        readonly: true
-                    }, {
-                        view: "text",
-                        id: "date_to",
-                        name: "date_to",
-                        label: "Kraj bolovanja:",
-                        editable: false,
-                        readonly: true
-                    },
-
-                    {
-                        margin: 5,
-                        cols: [{}, {
-                            id: "showEmployeeInformationCloseBtn",
-                            view: "button",
-                            value: "Zatvorite",
-                            type: "form",
-                            click: "util.dismissDialog('showEmployeeInformationDialog');",
-                            hotkey: "enter",
-                            width: 150
-                        }]
-                    }],
-
-            }]
-        }
-    },*/
-
-   /* showShowEmployeDialog: function (sickRequest) {
-
-        webix.ui(webix.copy(sickRequestsView.showEmployeeInformation));
-        var form = $$("showEmployeeInformationForm");
-
-         form.elements.first_name.setValue(secretary_sick_request.first_name);
-/*
-        // form.elements.name.setValue(secretary_sick_request.first_name);
-        // form.elements.pin.setValue(secretary_sick_request.last_name);
- */
-    /*    setTimeout(function () {
-            $$("showEmployeeInformationDialog").show();
-            webix.UIManager.setFocus("first_name");
-            var newDocument = {
-                //  name: company.name,
-                // pin: company.pin
-            };
-
-        }, 0);
-    },    */
 };
 
 function refreshSecretaryData() {
@@ -322,7 +253,7 @@ function refreshSecretaryData() {
 
     var table = webix.$$("secretary_requestDT");
 
-    webix.ajax("/hub/sickLeave", {
+    webix.ajax("/hub/sickLeave/sickLeaveInfo", {
 
         error: function (text, data, xhr) {
             if (xhr.status != 200) {
@@ -336,7 +267,7 @@ function refreshSecretaryData() {
                     console.log("loaded data with success");
 
                     table.clearAll();
-                    table.load("/hub/sickLeave");
+                    table.load("/hub/sickLeave/sickLeaveInfo");
                     table.refresh();
                 }
             }
