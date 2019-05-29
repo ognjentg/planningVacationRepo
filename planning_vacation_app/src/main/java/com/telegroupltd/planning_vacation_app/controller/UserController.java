@@ -8,10 +8,7 @@ import com.telegroupltd.planning_vacation_app.model.UserUserGroupSector;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
-import com.telegroupltd.planning_vacation_app.util.Notification;
-import com.telegroupltd.planning_vacation_app.util.UserLoginInformation;
-import com.telegroupltd.planning_vacation_app.util.Util;
-import com.telegroupltd.planning_vacation_app.util.Validator;
+import com.telegroupltd.planning_vacation_app.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -75,6 +72,8 @@ public class UserController extends GenericController<User, Integer> {
     private Long longblobLength;
     @Value("Ne postoji user.")
     private String badRequestNoUser;
+    @Value("Stara lozinka nije ispravna.")
+    private String badRequestOldPassword;
     @Autowired
     public UserController(UserRepository userRepository, CompanyRepository companyRepository){
     super(userRepository);
@@ -400,6 +399,28 @@ public class UserController extends GenericController<User, Integer> {
         }
         else
             throw new BadRequestException(badRequestUpdate);
+    }
+
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    public @ResponseBody
+    String updatePassword(@RequestBody PasswordInformation passwordInformation) throws BadRequestException{
+        User user = userRepository.findById(userBean.getUser().getId()).orElse(null);
+        if(user != null){
+           if(passwordInformation.getOldPassword() != null && user.getPassword().trim().equals(Util.hashPasswordSalt(passwordInformation.getOldPassword().trim(),user.getSalt()))){
+                //if(passwordInformation.getNewPassword() != null && Validator.passwordChecking(passwordInformation.getNewPassword())){
+                    user.setSalt(Util.randomSalt());
+                    user.setPassword(Util.hashPasswordSalt(passwordInformation.getNewPassword(),user.getSalt()));
+                        if(repo.saveAndFlush(user) != null){
+                            return "Success";
+                        }
+                        throw new BadRequestException(badRequestUpdate);
+
+               // }
+               // throw new BadRequestException(badRequestPasswordStrength);
+            }
+            throw new BadRequestException(badRequestOldPassword);
+        }
+        throw new BadRequestException(badRequestNoUser);
     }
 
         }

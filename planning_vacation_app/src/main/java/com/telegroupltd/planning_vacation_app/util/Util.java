@@ -2,6 +2,9 @@ package com.telegroupltd.planning_vacation_app.util;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
@@ -62,36 +65,38 @@ public class Util {
 
 
     //Hash passwordToHash with given salt
-    public static String hashPasswordSalt(String passwordToHash,String salt) {
+    public static String hashPasswordSalt(String passwordToHash, String salt) {
+        String generatedPassword = null;
         try {
-            byte[] saltByte = Base64.getDecoder().decode(salt);
-            KeySpec spec = new PBEKeySpec(passwordToHash.toCharArray(), saltByte, 65536, 128);
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-            byte[] hashByte = factory.generateSecret(spec).getEncoded();
-            String hash = Base64.getEncoder().encodeToString(hashByte);
-            return hash;
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-512");
+            messageDigest.update(salt.getBytes());
+            byte[] bytes = messageDigest.digest(passwordToHash.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < bytes.length; i++) {
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
 
-        } catch (Exception e) {
+            generatedPassword = sb.toString();
+        } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        return "";
+
+        return generatedPassword;
     }
 
     //Calculate password strength. Returns 0 (invalid) and 1-3 for weak,medium and strong.
-    public static Integer passwordStrength(String password)
-    {
+    public static Integer passwordStrength(String password) {
         Integer strength = 0;
         //TODO: expand the pattern to include non punctuation symbols, emojis, control characters,etc.
         String p = "(?:([\\p{Punct}\\p{Space}])|(\\p{L})|(\\p{Digit})){8,}";
         Pattern pattern = Pattern.compile(p);
         Matcher m = pattern.matcher(password);
-        if (m.find())
-        {
-            if(m.group(1)!=null)
+        if (m.find()) {
+            if (m.group(1) != null)
                 strength += 1;
-            if(m.group(2)!=null)
+            if (m.group(2) != null)
                 strength += 1;
-            if(m.group(3)!=null)
+            if (m.group(3) != null)
                 strength += 1;
         }
         return strength;

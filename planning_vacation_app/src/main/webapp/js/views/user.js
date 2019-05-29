@@ -258,14 +258,36 @@ var changePasswordView = {
                         {
                             view:"button",
                             label:"Promijeni",
-                            click:"util.messages.showErrorMessage(\"klik\");",
                             width:150,
+                            click:"changePasswordView.savePassword",
                             align:"right",
                             hotkey:"enter"
                         }
                     ]
                 }
             ]
+
+        }
+    },
+    savePassword:function(){
+        if ($$("changePasswordForm").validate()) {
+            var passwordInformation={
+                oldPassword:$$("changePasswordForm").getValues().oldPassword,
+                newPassword:$$("changePasswordForm").getValues().newPassword,
+                repeatedNewPassword:$$("changePasswordForm").getValues().newPasswordConfirmation,
+            };
+
+            connection.sendAjax("POST", "hub/user/updatePassword",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Uspješna izmjena lozinke.");
+                    } else
+                        util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                }, passwordInformation);
+            util.dismissDialog('changePasswordDialog');
+
 
         }
     },
