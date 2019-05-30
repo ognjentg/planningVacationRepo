@@ -122,6 +122,7 @@ var adminsView = {
                                         function (text, data, xhr) {
                                             if (text) {
                                                 util.messages.showMessage("Admin je uspješno uklonjen.");
+                                                $$("adminsDT").remove(id);
                                                 adminsView.refreshDatatables();
                                             } else
                                                 util.messages.showErrorMessage("Neuspješno uklanjanje.");
@@ -348,19 +349,19 @@ var adminsView = {
         }
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
         $$("adminsDT").define("url", adminsView.adminsURL);
-        connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
+        //connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
     },
     showAdminsDialog: function () {
         adminsView.adminsURL = "hub/user/admins/";
         adminsView.nonAdminsURL = "hub/user/nonAdmins/";
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
         $$("adminsDT").define("url", adminsView.adminsURL);
-        connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
+        //connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
     },
     showChooseAdminDialog: function () {
         webix.ui(webix.copy(adminsView.chooseAdminDialog)).show();
         $$("chooseAdminDT").define("url", adminsView.nonAdminsURL);
-        connection.attachAjaxEvents("chooseAdminDT", adminsView.nonAdminsURL);
+       // connection.attachAjaxEvents("chooseAdminDT", adminsView.nonAdminsURL);
     },
     showAddNewAdminDialog: function () {
         webix.ui(webix.copy(adminsView.addNewAdminDialog)).show();

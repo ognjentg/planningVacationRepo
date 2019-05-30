@@ -11,16 +11,27 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-@RequestMapping(value="/vacation_days")
+
+@RequestMapping(value="hub/vacation_days")
 @Controller
 @Scope("request")
 public class VacationDaysController extends GenericHasActiveController<VacationDays,Integer> {
     private final VacationDaysRepository vacationDaysRepository;
+
     @Autowired
     VacationDaysController(VacationDaysRepository vacationDaysRepository)
     {
         super(vacationDaysRepository);
         this.vacationDaysRepository = vacationDaysRepository;
     }
+
+    @RequestMapping(value = "/byUserId/{userId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<VacationDays> getByUserId(@PathVariable Integer userId){
+        List<VacationDays> list = vacationDaysRepository.getAllByUserIdAndActive(userId, (byte)1);
+        return list;
+    }
+
 }
