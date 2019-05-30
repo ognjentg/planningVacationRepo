@@ -46,16 +46,27 @@ var companyInfoView = {
                         },
                         {
                             view:"text",
-                            label:"Logo:",
-                            id:"companyLogo",
-                            invalidMessage: "Niste odabrali logo.",
-                            required:true,
-                        },
-                        {
-                            view:"text",
                             label:"PIN:",
                             id:"companyPin",
                             disabled:true
+                        },
+                        {
+                            view:"text",
+                            label:"Broj dana godišnjeg:",
+                            id:"vacationDays",
+                        },
+                        {
+                            view:"text",
+                            label:"Broj dana bolovanja:",
+                            id:"sickDays",
+                        },
+                        {
+                            view:"datepicker",
+                          //  value:"2016-1-14, 2016-1-16, 2016-1-18",
+                            multiselect:"touch",
+                            stringResult:true,
+                            label:"Odabir neradnih dana",
+                            id:"nonWorkingDays"
                         },
                         {
                             view: "combo",
@@ -65,13 +76,57 @@ var companyInfoView = {
                             options: daysInWeek
                         },
                         {
+                            view: "uploader",
+                            id: "photoUploader",
+                            required:true,
+                            invalidMessage: "Niste odabrali logo.",
+                            width: 110,
+                            height: 60,
+                            css: "upload-logo",
+                            template: "<span class='webix fa fa-upload' />Dodajte logo</span>",
+                            on: {
+                                onBeforeFileAdd: function (upload) {
+                                    var type = upload.type.toLowerCase();
+                                    console.log(type);
+                                    if (type === "jpg" || type === "png" || type === "jpeg") {
+                                        var file = upload.file;
+                                        var reader = new FileReader();
+                                        reader.onload = function (event) {
+                                            var img = new Image();
+                                            img.onload = function (ev) {
+                                                if (img.width > 220 || img.height > 50) {
+                                                    util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                                } else {
+                                                    var newDocument = {
+                                                        name: file['name'],
+                                                        content: event.target.result.split("base64,")[1],
+                                                    };
+                                                    $$("companyLogoList").clearAll();
+                                                    $$("companyLogoList").add(newDocument);
+
+                                                }
+                                            };
+                                            img.src = event.target.result;
+                                        };
+                                        reader.readAsDataURL(file);
+                                        return false;
+                                    } else {
+                                        util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+
+                                        return false;
+                                    }
+
+                                }
+                            }
+                        },
+                        {
                             view:"button",
                             label:"Sačuvaj izmjene",
                             click:"companyInfoView.saveChanges",
                             width:150,
                             align:"right",
                             hotkey:"enter"
-                        }
+                        },
                     ]
                 }
             ]
@@ -80,21 +135,48 @@ var companyInfoView = {
     },
 
     showCompanyInfoDialog: function() {
-        //popuniti podatke o kompaniji
 
         webix.ui(webix.copy(companyInfoView.companyInfoDialog));
+        companyInfoView.setValues();
         setTimeout(function() {
             $$("companyInfoDialog").show();
         }, 0);
     },
+    setValues: function(){
+        var companyId = userData.companyId;
+        var company;
+
+        connection.sendAjax("GET",
+            "hub/company/" + companyId, function (text, data, xhr) {
+            //provjera svega
+             company = data.json();
+             $$("companyName").setValue(company.name);
+             $$("companyPin").setValue(company.pin);
+                var newDocument = {
+                    name: '',
+                    content: company.logo,
+                }; 
+             $$("companyLogoList").clearAll();
+             $$("companyLogoList").add(newDocument);
+             $$("daysInWeekCombo").setValue();
+             $$("vacationDays").setValue();
+             $$("sickDays").setValue();
+             $$("nonWorkingDays").setValue();
+            });
+    },
     saveChanges: function () {
-    // alert(2);
      companyId = userData.companyId;
      companyName = $$("companyName").getValue();
-     companyLogo = $$("companyLogo").getValue();
+     companyLogo = $$("photoUploader").getValue();
      nonWorkingDay = $$("daysInWeekCombo").getValue();
+     numberOfVacationDays = $$("vacationDays").getValue();
+     numberOfSickDays = $$("sickDays").getValue();
+     nonWorkingDays =  $$("nonWorkingDays").getValue();
 
-     //pozvati metodu, snimiti, ispisati poruku
+
+ //       var validation = $$("companyInfoDialog").validate();
+            //pozvati metodu, snimiti, ispisati poruku
+
     }
 };
 
