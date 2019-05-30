@@ -120,6 +120,27 @@ var companyInfoView = {
                             }
                         },
                         {
+                            view: "list",
+                            name: "companyLogoList",
+                            rules: {
+                                content: webix.rules.isNotEmpty
+                            },
+                            scroll: false,
+                            id: "companyLogoList",
+                            width: 372,
+                            type: {
+                                height: "auto"
+                            },
+                            css: "relative image-upload",
+                            template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+                            onClick: {
+                                'delete-file': function (e, id) {
+                                    this.remove(id);
+                                    return false;
+                                }
+                            }
+                        },
+                        {
                             view:"button",
                             label:"Sačuvaj izmjene",
                             click:"companyInfoView.saveChanges",
@@ -144,7 +165,7 @@ var companyInfoView = {
     },
     setValues: function(){
         var companyId = userData.companyId;
-        var company;
+
 
         connection.sendAjax("GET",
             "hub/company/" + companyId, function (text, data, xhr) {
@@ -158,22 +179,95 @@ var companyInfoView = {
                 }; 
              $$("companyLogoList").clearAll();
              $$("companyLogoList").add(newDocument);
-             $$("daysInWeekCombo").setValue();
-             $$("vacationDays").setValue();
-             $$("sickDays").setValue();
-             $$("nonWorkingDays").setValue();
+             });
+
+        connection.sendAjax("GET",
+            "hub/constraints/" + companyId, function (text, data, xhr) {
+                constraints = data.json();
+                $$("daysInWeekCombo").setValue();
+                $$("vacationDays").setValue(constraints.maxVacationDays);
+                $$("sickDays").setValue(constraints.sickLeaveJustificationPeriodLength);
+                $$("nonWorkingDays").setValue();
             });
+
+        connection.sendAjax("GET",
+            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
+                nonWorkingDays = data.json();
+                //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
+                //tu listu i oznacavanje u DTP tih dana
+                //$$("nonWorkingDays").setValue();
+            });
+
+        connection.sendAjax("GET",
+            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
+                daysInWeek = data.json();
+                //$$("daysInWeekCombo").setValue(); staviti cekirano u combu
+                // ako je neradni dan
+            });
+
+
+
     },
     saveChanges: function () {
-     companyId = userData.companyId;
-     companyName = $$("companyName").getValue();
-     companyLogo = $$("photoUploader").getValue();
-     nonWorkingDay = $$("daysInWeekCombo").getValue();
-     numberOfVacationDays = $$("vacationDays").getValue();
-     numberOfSickDays = $$("sickDays").getValue();
-     nonWorkingDays =  $$("nonWorkingDays").getValue();
+     var logo = $$("companyLogoList");
+     var companyId = userData.companyId;
+     var companyName = $$("companyName").getValue();
+     //var companyLogo = $$("photoUploader").getValue();
+     var nonWorkingDayInWeek = $$("daysInWeekCombo").getValue();
+     var numberOfVacationDays = $$("vacationDays").getValue();
+     var numberOfSickDays = $$("sickDays").getValue();
+     var nonWorkingDays =  $$("nonWorkingDays").getValue();
+     var companyPin = $$("companyPin").getValue();
+
+        var  company= {
+         id: companyId,
+         name: companyName,
+         pin: companyPin,
+         active: 1,
+         logo: logo.getItem(logo.getLastId()).content
+     };
 
 
+        connection.sendAjax("PUT", "hub/company/" + companyId,
+            function (text, data, xhr) {
+                if (text) {
+                } else {
+                    //alert("Greška u dodavanju admina.");
+                //    button.enable();
+                }
+            }, function (text, data, xhr) {
+            //    alert(text);
+          //      button.enable();
+            }, company);
+
+     /*   connection.sendAjax("PUT", "/hub/dayInWeek/" + companyId,
+            function (text, data, xhr) {
+                alert(nonWorkingDayInWeek);
+                if (text) {
+                    alert(2)
+                } else {
+                    //alert("Greška u dodavanju admina.");
+                    //    button.enable();
+                }
+            }, function (text, data, xhr) {
+        //        alert(text);
+      //          button.enable();
+            }, nonWorkingDayInWeek);*/
+/*
+        connection.sendAjax("PUT", "hub/nonWorkingDay/" +companyId,
+            function (text, data, xhr) {
+                if (text) {
+                    alert(2)
+                } else {
+                    //alert("Greška u dodavanju admina.");
+                    //    button.enable();
+                }
+            }, function (text, data, xhr) {
+                alert(text);
+                button.enable();
+            }, company);
+*/
+        util.dismissDialog('companyInfoDialog');
  //       var validation = $$("companyInfoDialog").validate();
             //pozvati metodu, snimiti, ispisati poruku
 
