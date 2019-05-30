@@ -219,19 +219,18 @@ var init = function () {
     webix.ui(panel);
     panel = $$("empty");
 
-    webix.ajax("hub/state", {
+    webix.ajax("hub/user/state", {
         error: function (text, data, xhr) {
-            if (xhr.status == 401 || true) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
-             showLogin();
-              //showApp();
+            if (xhr.status == 403) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
+                showLogin();
             }
         },
         success: function (text, data, xhr) {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                   //showApp();
-                    showLogin();
+                    showApp();
+                    // showLogin();
                 }
             }
         }

@@ -145,7 +145,7 @@ public class UserController extends GenericController<User, Integer> {
             throw new ForbiddenException("Forbidden");
         } else {
             userBean.setUser(user);
-            //  userBean.setLoggedIn(true);
+            userBean.setAuthorized(true);
             return userBean.getUser();
         }
     }
@@ -421,6 +421,15 @@ public class UserController extends GenericController<User, Integer> {
             throw new BadRequestException(badRequestOldPassword);
         }
         throw new BadRequestException(badRequestNoUser);
+    }
+
+    @RequestMapping(value = {"/state"}, method = RequestMethod.GET)
+    public @ResponseBody
+    User checkState() throws ForbiddenException {
+        if (userBean.isAuthorized()) {
+            return userBean.getUser();
+        } else
+            throw new ForbiddenException("Forbidden");
     }
 
 }
