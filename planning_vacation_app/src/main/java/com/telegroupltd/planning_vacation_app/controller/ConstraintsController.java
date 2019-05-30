@@ -44,9 +44,21 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         throw new ForbiddenException("Forbidden");
     }
 
-    @Override
-    public Constraints findById(Integer companyId) throws ForbiddenException {
-        return constraintsRepository.getByCompanyIdAndActive(companyId,(byte) 1);
+//    @Override
+//    public Constraints findById(Integer companyId) throws ForbiddenException {
+//        return constraintsRepository.getByCompanyIdAndActive(companyId,(byte) 1);
+//    }
+//
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Constraints findById(@PathVariable Integer id) {
+        Constraints constraints = constraintsRepository.getByCompanyIdAndActive(id, (byte) 1);
+        // if (company != null ) {
+
+        return constraints;
+        //} else {
+        //    throw new BadRequestException();
+        // }
     }
 
     @Override
