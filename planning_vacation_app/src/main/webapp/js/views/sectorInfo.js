@@ -4,6 +4,9 @@ var options = [
 ];
 
 //Teodora: dodala sam ti fju za prikazivanje ove forme, samo da vidim i ja a ti ti sta si napravila; i dodala sam to u meni
+
+var sector = null;
+
 var sectorInfoView = {
 
     sectorInfoDialog: {
@@ -94,11 +97,30 @@ var sectorInfoView = {
     showSectorDialog: function() {
         webix.ui(webix.copy(sectorInfoView.sectorInfoDialog));
         setTimeout(function() {
+            connection.sendAjax("GET",
+                "hub/sector/" + userData.companyId + "/" + userData.id,
+                function (text, data, xhr) {
+                    sector = data.json();
+                    $$("name").setValue(sector.name);
+                    $$("max_absent_people").setValue(sector.maxAbsentPeople);
+                    $$("max_percentage_absent_people").setValue(sector.maxPercentageAbsentPeople);
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                });
             $$("sectorInfoDialog").show();
         }, 0);
     },
-    save: function () {
-        var sectorInfoForm = $$("sectorInfoForm");
 
+    save: function () {
+        sector.name = $$("name").getValue();
+        sector.maxAbsentPeople = $$("max_absent_people").getValue();
+        sector.maxPercentageAbsentPeople = $$("max_percentage_absent_people").getValue();
+        connection.sendAjax("PUT", "hub/sector/" + sector.id,
+            function (text, data, xhr) {
+                util.dismissDialog("sectorInfoDialog");
+                util.messages.showMessage("Izmjene uspješno sačuvane.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, sector);
     }
 }

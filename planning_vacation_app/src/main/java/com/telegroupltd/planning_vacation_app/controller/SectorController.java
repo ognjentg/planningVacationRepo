@@ -1,5 +1,6 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
+import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
@@ -13,8 +14,10 @@ import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.SectorInformation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
@@ -30,6 +33,11 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
 
     private final SectorRepository sectorRepository;
     private final CompanyRepository companyRepository;
+
+    @Value("Ne postoji sektor.")
+    private String badRequestNoSector;
+    @Value("Ažuriranje nije moguće.")
+    private String badRequestUpdate;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -72,5 +80,26 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     public @ResponseBody
     void updateSectorsUsers(@PathVariable Integer sectorId){
         sectorRepository.updateUsersFromSector(sectorId);
+    }
+
+    @RequestMapping(value = "/{companyId}/{managerId}", method = RequestMethod.GET)
+    public @ResponseBody
+    Sector getSectorByManagerIdAndCompanyId(@PathVariable Integer companyId, @PathVariable Integer managerId){
+        return sectorRepository.getBySectorManagerIdAndCompanyId(managerId, companyId);
+    }
+
+    @Override
+    @Transactional
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String update(@PathVariable Integer id, @RequestBody Sector newSector) throws BadRequestException {
+        Sector sector = sectorRepository.findById(id).orElse(null);
+        if(sector != null) {
+            if(repo.saveAndFlush(newSector) != null) {
+                return "Success";
+            }
+            throw new BadRequestException(badRequestUpdate);
+        }
+        throw new BadRequestException(badRequestNoSector);
     }
 }

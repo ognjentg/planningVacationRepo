@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface SectorRepository extends JpaRepository<Sector, Integer>, HasActiveRepository<Sector,Integer>, SectorRepositoryCustom {
     List<Sector> getAllByCompanyIdAndActive(Integer companyId, byte b);
+    Sector getBySectorManagerIdAndCompanyId(Integer managerId, Integer companyId);
 }
