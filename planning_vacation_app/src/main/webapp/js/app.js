@@ -691,7 +691,7 @@ console.log($$("loginForm").getValues());
                // util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
-                    console.log(user);
+                    console.log(userData.userGroupId);
 
                     if (userData.userGroupId == 1) {
                         companyData = null;

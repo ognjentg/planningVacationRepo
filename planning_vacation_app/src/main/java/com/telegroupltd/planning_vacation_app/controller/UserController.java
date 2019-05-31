@@ -395,7 +395,12 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/custom/bySector/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<UserUserGroupSector> getAllExtendedByRoomId(@PathVariable Integer sectorId) {
+    List<UserUserGroupSector> getAllExtendedBySectorId(@PathVariable Integer sectorId) {
+        if(sectorId==-1) //svi sektori
+            return userRepository.getAllByCompanyIdAllSectorsAndActive(userBean.getUser().getCompanyId());
+            else if(sectorId==-2) //workers without sector
+                return userRepository.getAllExtendedBySectorIdNullAndActive(userBean.getUser().getCompanyId());
+
         return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUser().getCompanyId(), sectorId);
     }
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.PUT)

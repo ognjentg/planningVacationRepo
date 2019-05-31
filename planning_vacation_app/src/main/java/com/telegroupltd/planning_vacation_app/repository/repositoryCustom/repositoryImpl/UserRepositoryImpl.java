@@ -25,9 +25,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             "WHERE u.company_id=? AND s.id=? AND u.active=1 " ;
     //select u.first_name, u.last_name, u.email, ug.name as 'pozicija', s.name as 'sektor' from user u left join sector s on u.sector_id=s.id join user_group ug on u.user_group_id=ug.id;
 
+//<<<<<<< HEAD
 
     private static final String SQL_GETALL_BY_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id=? AND u.user_group_id=6 AND u.active=1";
     private static final String SQL_GET_ALL_WITHOUT_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id is null AND u.user_group_id=6 AND u.active=1";
+//=======
+    //
+    private static final String SQL_GET_ALL_EXTENDED_BY_SECTOR_ID_NULL = "SELECT u.id, u.first_name, u.last_name, u.email, u.company_id, ug.name as 'position', s.id as 'sector_id',s.name as 'sector_name'" +
+            "FROM user u LEFT JOIN sector s on u.sector_id=s.id JOIN user_group ug ON u.user_group_id=ug.id " +
+            "WHERE u.company_id=? AND s.id is null AND u.active=1 " ;
+
+
+    private static final String SQL_GET_ALL_EXTENDED = "SELECT u.id, u.first_name, u.last_name, u.email, u.company_id, ug.name as 'position', s.id as 'sector_id',s.name as 'sector_name'" +
+            "FROM user u LEFT JOIN sector s on u.sector_id=s.id JOIN user_group ug ON u.user_group_id=ug.id " +
+            "WHERE u.company_id=? AND u.active=1 " ;
+
+//>>>>>>> 1)Implemented adding new user in selected sector in usergroup.js  2)Changed usergroup.js-added option "Bez sektora" to combo, added tooltips, added rules for adding new user, added refresing datatable after adding new user,...  3)fixed on backend-getting all sectors by companyId for admin, director and secretary 4)Fixed User model class, so it knows there exists some inheritance 5)Fixed adding new user in UserController
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -52,13 +65,23 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
+//<<<<<<< HEAD
     public List<User> getAllUsersFromSectorByUserGroupId(Integer companyId, Integer sectorId){
         return entityManager.createNativeQuery(SQL_GETALL_BY_SECTOR,User.class).setParameter(1,companyId).setParameter(2,sectorId).getResultList();
     }
 
     @Override
     public List<User> getAllUsersWithoutSector(Integer companyId){
-        return entityManager.createNativeQuery(SQL_GET_ALL_WITHOUT_SECTOR,User.class).setParameter(1,companyId).getResultList();
+        return entityManager.createNativeQuery(SQL_GET_ALL_WITHOUT_SECTOR,User.class).setParameter(1,companyId).getResultList();}
+//=======
+    public List<UserUserGroupSector> getAllExtendedBySectorIdNullAndActive(Integer companyId) {
+        return entityManager.createNativeQuery(SQL_GET_ALL_EXTENDED_BY_SECTOR_ID_NULL, "UserUserGroupSectorMapping").setParameter(1, companyId).getResultList();
+    }
+
+    @Override
+    public List<UserUserGroupSector> getAllByCompanyIdAllSectorsAndActive(Integer companyId) {
+        return entityManager.createNativeQuery(SQL_GET_ALL_EXTENDED, "UserUserGroupSectorMapping").setParameter(1, companyId).getResultList();
+//>>>>>>> 1)Implemented adding new user in selected sector in usergroup.js  2)Changed usergroup.js-added option "Bez sektora" to combo, added tooltips, added rules for adding new user, added refresing datatable after adding new user,...  3)fixed on backend-getting all sectors by companyId for admin, director and secretary 4)Fixed User model class, so it knows there exists some inheritance 5)Fixed adding new user in UserController
     }
 
 }

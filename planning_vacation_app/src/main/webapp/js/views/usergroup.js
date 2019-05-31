@@ -77,7 +77,7 @@ usergroupView = {
                     paddingX: 5,
                     paddingY: 5,
                     height: 60,
-                    cols: [{
+        /*            cols: [{
                         id: "addUserButton",
                         view: "button",
                         type: "iconButton",
@@ -132,8 +132,8 @@ usergroupView = {
                                 //'onItemClick': function(id){
                                 sectorID = id;
                                 console.log("id sektora je" + id);
-                                webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
-                                $$("usergroupDT").clearAll();
+                                webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue());*/
+ /*                               $$("usergroupDT").clearAll();
                                 connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/" + id);
                                 //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
                                 $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
@@ -142,13 +142,14 @@ usergroupView = {
                                 var num = $$("usergroupDT").count();//TODO: Popraviti! Ne broji dobro
                                 animateValue($$("t3"), 0, num , num == 0 ? 0 : 100/num);
                             }
+<<<<<<< HEAD
 
 
                             //'onItemClick':filter
                             /*function(id){
                                          webix.message("Clicked: "+this.getItem(id).value);
                                        }*/
-                        },
+   /*                     },
 
                         options: {
                             /*  filter:function(obj, filter){
@@ -156,7 +157,7 @@ usergroupView = {
                                           //filter - current text in combo control
                                               return obj.value.toLowerCase().indexOf(filter.toLowerCase()) != -1;
                                       },*/
-                            body: {
+/*                            body: {
                                 //view:"list",
                                 template: "#id# #name#",
                                 yCount: 7, //"hub/sector/numberOfSectors",
@@ -169,7 +170,7 @@ usergroupView = {
                                              }
 
                                 }*/
-                                url: function (details) {
+   /*                             url: function (details) {
                                     return webix.ajax().get("hub/sector").then(function (data) {
 
                                         //response text
@@ -199,9 +200,135 @@ usergroupView = {
                                     });
 
                                 }
+=======
+                            ]
+                    },
+                    {*/
+                        cols:[{
+                            id:"addUserButton",
+                            view:"button",
+                             type: "iconButton",
+                             hotkey: "enter",
+                            icon: "plus-circle",
+                            label:"Dodaj korisnika",
+                            width: 200,
+                            height:40,
+                            css: "companyButton",
+                            align:"left",
+                            click:'usergroupView.showAddDialog'
+                        },{
+                            id:"deleteSelectedButton",
+                             view:"button",
+                             type:"iconButton",
+                             label:"Izbrisi zaposlene",
+                             icon: "trash",
+                             width: 200,
+                             height:40,
+                             css: "companyButton",
+                             align:"left",
+                             click:'usergroupView.showDeleteSelectedDialog'
+                        },{
+                            id:"changeSectorOfSelectedButton",
+                             view:"button",
+                             type: "iconButton",
+                             hotkey: "enter",
+                             icon: "users",
+                             label:"Promijeni sektor",
+                             width: 200,
+                             height:40,
+                             css: "companyButton",
+                             align:"left",
+                             click:'usergroupView.showChangeSectorOfSelectedDialog'
+                        },{
+                            view:"label",
+                            id:"izaberiLabel",
+                            label:"Izaberi sektor:",
+                            align:"right"
+                        },{
+                            view:"combo",
+                            id:"choseSectorCombo",
+                            align:"left",
+                            width:400,
+                           // value: "Svi sektori",
+                              on:{
+                             // var input= $$("choseSectorCombo").getInputNode().value;
+                                  onChange(id){
+                                 //'onItemClick': function(id){
+                                  sectorID=id;
+                                  console.log("id sektora je"+id);
+                                    webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
+                               $$("usergroupDT").clearAll();
+                              connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                              //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
+                              $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
+                                 $$("usergroupDT").detachEvent("onBeforeDelete");
+
+
+                                  }
+
+
+                                 //'onItemClick':filter
+                                 /*function(id){
+                                              webix.message("Clicked: "+this.getItem(id).value);
+                                            }*/
+                                }
+                                //,
+
+ //                           options: {
+                              /*  filter:function(obj, filter){
+                                            //obj - combo option
+                                            //filter - current text in combo control
+                                                return obj.value.toLowerCase().indexOf(filter.toLowerCase()) != -1;
+                                        },*/
+ //                                       body: {
+                                           //view:"list",
+ //                                          template: "#id# #name#",
+ //                                          yCount: 7, //"hub/sector/numberOfSectors",
+ //                                          url: "hub/sector",
+ //                                          value: "Izaberi sektor",
+                                            /*on:function(id){
+                                                           //webix.message("Prikazaće Vam se zaposleni u sektoru: "+this.getItem(id).value);
+                                            'onItemClick':function(id){
+                                                         webix.message("Clicked: "+this.getItem(id).value);
+                                                         }
+
+                                            }*/
+    /*     url:function(details){
+           return webix.ajax().get("hub/sector").then(function(data){
+
+                         //response text
+                         console.log(data.text());
+                                                 if (data.json() != null) {
+                                                     console.log("loaded data with success");
+                                                     var sectors = data.json();
+
+                                                     sectors.forEach(function(sector){
+                                                                        usergroupView.sectors.push({
+                                                                            id: sector.id,
+                                                                            value: sector.name
+                                                                         });
+                                                                    });
+                                                        var newSector = {id:551, value:"Bez sektora"};
+                                                        usergroupView.sectors.push({
+                                                             id: newSector.id,
+                                                             value: newSector.name
+                                                             });
+                                                     //$$("choseSectorCombo").define("options", usergroupView.userGroups);
+                                                     //$$("choseSectorCombo").refresh();
+                                                   }else {
+                                                    util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
+                                                   }
+
+                                                    return usergroupView.sectors;
+                                                                          });
+
+                     }*/
+   //                                     }
+   //                             }
+//>>>>>>> Showing workers without sector and all workers in company (1.Changed usergroup.js; 2. Impelmented custom queries in UserRepositoryImpl 3.Changed method for getting workers from chosen sector 4.Changed UserRepository 5.Added methods in UserRepositoryCustom   )
                             }
-                        }
-                    }
+                       // }
+                   // }
 
                     ]
                 },
@@ -537,7 +664,7 @@ usergroupView = {
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
             $$("addUserButton").hide();
-            $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
+           // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
             // $$("companyDT").refreshColumns();
@@ -557,6 +684,7 @@ usergroupView = {
 
 
         //SEKTORI:
+//<<<<<<< HEAD
         /*    usergroupView.sectors= [];
 
                          webix.ajax().get("hub/sector").then(function(data){
@@ -579,6 +707,39 @@ usergroupView = {
                                                        }
 
                          });*/
+//=======
+       usergroupView.sectors= [];
+
+                     webix.ajax().get("hub/sector").then(function(data){
+                         //response text
+                         console.log(data.text());
+                                                 if (data.json() != null) {
+                                                     console.log("loaded data with success");
+                                                     var sectors = data.json();
+                                                        usergroupView.sectors.push({
+                                                                              id: -2,
+                                                                              value: "Bez sektora"
+                                                          });
+                                                        usergroupView.sectors.push({
+                                                                              id: -1,
+                                                                              value: "Svi sektori"
+                                                          });
+                                                     sectors.forEach(function(sector){
+                                                                        usergroupView.sectors.push({
+                                                                            id: sector.id,
+                                                                            value: sector.name
+                                                                         });
+                                                                    });
+
+                                                          console.log(data.text());
+                                                     $$("choseSectorCombo").define("options", usergroupView.sectors);
+                                                     $$("choseSectorCombo").refresh();
+                                                   }else {
+                                                    util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
+                                                   }
+
+                     });
+//>>>>>>> Showing workers without sector and all workers in company (1.Changed usergroup.js; 2. Impelmented custom queries in UserRepositoryImpl 3.Changed method for getting workers from chosen sector 4.Changed UserRepository 5.Added methods in UserRepositoryCustom   )
 
     },
 
