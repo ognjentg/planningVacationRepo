@@ -280,14 +280,16 @@ public class UserController extends GenericController<User, Integer> {
             else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
                 //   newUser.setPauseFlag(user.getPauseFlag());
                 //   newUser.setStartDate(user.getStartDate()); - ne kupi dobro na frontu,kupi undefined,pa zato ovako zasada/....
-                newUser.setPauseFlag(null);
-                newUser.setStartDate(null);
+//                newUser.setPauseFlag(null);
+//                newUser.setStartDate(null);
                 newUser.setReceiveMail((byte) 1);
             }else {
-                newUser.setPauseFlag(null);
-                newUser.setStartDate(null);
+//                newUser.setPauseFlag(null);
+//                newUser.setStartDate(null);
                 newUser.setReceiveMail((byte) 0);
             }
+            newUser.setPauseFlag(user.getPauseFlag());
+            newUser.setStartDate(user.getStartDate());
             newUser.setSectorId(user.getSectorId());  //It is sector manager's job
             newUser.setPhoto(null);
             newUser.setUserGroupId(user.getUserGroupId());

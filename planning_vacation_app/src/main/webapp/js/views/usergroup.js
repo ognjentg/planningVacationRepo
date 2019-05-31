@@ -127,13 +127,18 @@ usergroupView = {
                              // var input= $$("choseSectorCombo").getInputNode().value;
                                   onChange(id){
                                  //'onItemClick': function(id){
-                                  sectorID=id;
-                                  console.log("id sektora je"+id);
-                                    webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
-                               $$("usergroupDT").clearAll();
-                              connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
-                              $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
-                                 $$("usergroupDT").detachEvent("onBeforeDelete");
+                                      sectorID = id;
+                                      console.log("id sektora je"+id);
+                                      webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
+                                      $$("usergroupDT").clearAll();
+                                      connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                                      $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
+                                      $$("usergroupDT").detachEvent("onBeforeDelete");
+                                      if(sectorID == -1) {
+                                          $$("addUserButton").hide();
+                                      } else {
+                                          $$("addUserButton").show();
+                                      }
                                   }
                                 }
                             }
@@ -334,15 +339,16 @@ usergroupView = {
                     }, {
                         cols: [{
                             view: "label",
+                            id: "choseUserGroupComboLabel",
+                            name: "choseUserGroupComboLabel",
                             label: "Izaberi poziciju:",   //č
-                            align: "left"
-
+                            align: "left",
                         }, {
                             view: "combo",
                             id: "choseUserGroupCombo",
                             name: "choseUserGroupCombo",
                             invalidMessage: "Obavezan je izbor radne pozicije.",
-                            required: true//,
+                            required: true,
                             //options:usergroupView.userGroups
                         }]
                     }, {
@@ -351,11 +357,13 @@ usergroupView = {
                             id: "labelStartDate",
                             label: "Unesite po&#x010D;etni datum:"  //Č
                         }, {
-                            view: "text",
+                            view: "datepicker",
                             id: "startDate",
                             name: "startDate",
                             invalidMessage: "Obavezan je unos datuma po&#x010D;etka rada.",
-                            required: true
+                            required: true,
+                            multiselect: false,
+                            timepicker: false
                         }]
                     }, {
                         cols: [{
@@ -368,6 +376,7 @@ usergroupView = {
                         }, {
                             view: "checkbox",
                             id: "checkPauseFlag",
+                            name: "checkPauseFlag",
                             align: "left",
                             required: true
                         }]
@@ -521,6 +530,14 @@ usergroupView = {
         var options = [];
         webix.ui(webix.copy(usergroupView.addDialog)).show();
         webix.UIManager.setFocus("email");
+        if(sectorID !== -2) {
+            $$("choseUserGroupCombo").hide();
+            $$("choseUserGroupComboLabel").hide();
+        }
+        if(sectorID == null) {
+            $$("choseUserGroupCombo").show();
+            $$("choseUserGroupComboLabel").show();
+        }
         /*
         if (user !== "superadmin") { //ako nije upitanju superadmin
             $$("check").hide();
@@ -595,25 +612,29 @@ usergroupView = {
                 email: form.getValues().email,
                 sectorId: sectorID,
                 userGroupId: 6,   //OCITATI KOJA JE USER GRUPA!!
-                companyId: companyData.id,
+                companyId: userData.companyId,
                 pauseFlag: form.getValues().checkPauseFlag,
                 startDate: form.getValues().startDate
-
             };
+            if(sectorID === -2) {
+                newUser.userGroupId = $$("choseUserGroupCombo").getValue();
+                newUser.sectorId = null;
+            }
             console.log(newUser);
 
             connection.sendAjax("POST", "/hub/user",
                 function (text, data, xhr) {
+                    console.log(text);
                     if (text) {
                         util.messages.showMessage("Zaposleni uspješno dodan.");
-                        currentDialog.hide();
+                        util.dismissDialog('addUserDialog');
                         $$("usergroupDT").add(newUser);
                         $$("usergroupDT").refresh();
                         usergroupView.refreshDatatable();
                     } else
                         alert("Greška u dodavanju zaposlenog.");
                 }, function (text, data, xhr) {
-                    alert(text);
+                    util.messages.showErrorMessage(text);
                 }, newUser);
 
             /*
