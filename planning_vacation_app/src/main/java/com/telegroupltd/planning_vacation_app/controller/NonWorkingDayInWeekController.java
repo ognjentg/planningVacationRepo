@@ -61,7 +61,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
     NonWorkingDayInWeek insert(@RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException, ForbiddenException {
-
         NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
 
         DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
@@ -85,7 +84,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
                 }
             }
         }
-
         if (flag) {
             newNonWorkingDayInWeek.setCompanyId(userBean.getUser().getCompanyId());
             newNonWorkingDayInWeek.setActive((byte)1);
@@ -146,20 +144,17 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     }
 
 
-    @Override
-    @Transactional
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public @ResponseBody
-    String update(@PathVariable Integer id, @RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException {
-
-
-
-        if (nonWorkingDayInWeekRepository.saveAndFlush(nonWorkingDayInWeek) != null) {
-            entityManager.refresh(nonWorkingDayInWeek);
-            return "Success";
-        }
-        throw new BadRequestException(badRequestUpdate);
-    }
-
-
+//    @Override
+//    @Transactional
+//    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+//    public @ResponseBody
+//    String update(@PathVariable Integer id, @RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException {
+//
+//        if (nonWorkingDayInWeekRepository.saveAndFlush(nonWorkingDayInWeek) != null) {
+//            entityManager.refresh(nonWorkingDayInWeek);
+//            return "Success";
+//        }
+//        throw new BadRequestException(badRequestUpdate);
+//    }
+//
 }
