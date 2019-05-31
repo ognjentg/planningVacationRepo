@@ -247,7 +247,6 @@ var changePasswordView = {
                             on: {
                                 'onTimedKeyPress': function () {
                                     var typed = $$("newPassword").getValue();
-                                    util.messages.showErrorMessage(typed);
                                     var strength=0;
                                     var re1=/[0-9]/;
                                     var re2=/[A-Z]/;
@@ -287,6 +286,7 @@ var changePasswordView = {
                             id:"strength",
                             name:"strength",
                             hidden:true,
+                            height:15,
                             align:"right"
                         },
                         {
@@ -328,6 +328,7 @@ var changePasswordView = {
                                 $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
                                 return false;
                             }
+                            return true;
                         },
                         "newPasswordConfirmation":function (value) {
                             if (!value)
