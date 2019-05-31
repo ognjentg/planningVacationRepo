@@ -25,6 +25,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             "WHERE u.company_id=? AND s.id=? AND u.active=1 " ;
     //select u.first_name, u.last_name, u.email, ug.name as 'pozicija', s.name as 'sektor' from user u left join sector s on u.sector_id=s.id join user_group ug on u.user_group_id=ug.id;
 
+
+    private static final String SQL_GETALL_BY_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id=? AND u.user_group_id=6 AND u.active=1";
+    private static final String SQL_GET_ALL_WITHOUT_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id is null AND u.user_group_id=6 AND u.active=1";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -45,6 +49,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     @Override
     public List<UserUserGroupSector> getAllExtendedBySectorIdAndActive(Integer companyId, Integer sectorId) {
         return entityManager.createNativeQuery(SQL_GET_ALL_EXTENDED_BY_SECTOR_ID, "UserUserGroupSectorMapping").setParameter(1, companyId).setParameter(2, sectorId).getResultList();
+    }
+
+    @Override
+    public List<User> getAllUsersFromSectorByUserGroupId(Integer companyId, Integer sectorId){
+        return entityManager.createNativeQuery(SQL_GETALL_BY_SECTOR,User.class).setParameter(1,companyId).setParameter(2,sectorId).getResultList();
+    }
+
+    @Override
+    public List<User> getAllUsersWithoutSector(Integer companyId){
+        return entityManager.createNativeQuery(SQL_GET_ALL_WITHOUT_SECTOR,User.class).setParameter(1,companyId).getResultList();
     }
 
 }

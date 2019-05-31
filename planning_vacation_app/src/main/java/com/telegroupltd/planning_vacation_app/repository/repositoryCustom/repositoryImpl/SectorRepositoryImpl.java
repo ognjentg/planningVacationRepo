@@ -4,7 +4,6 @@ import com.telegroupltd.planning_vacation_app.model.Sector;
 import com.telegroupltd.planning_vacation_app.model.SectorUser;
 import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.SectorRepositoryCustom;
-import com.telegroupltd.planning_vacation_app.util.SectorInformation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;

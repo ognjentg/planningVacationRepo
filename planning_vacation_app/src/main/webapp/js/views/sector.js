@@ -459,7 +459,7 @@ var sectorView = {
                             options:{
                                 body:{
                                     template: "#id# #firstName# #lastName#",
-                                    url: "hub/user",
+                                    url: "hub/user/getAllUsersWithoutSector",
                                 }
                             },
                             required:true
@@ -606,7 +606,8 @@ var sectorView = {
                             options:{
                                 body: {
                                     template: "#id# #firstName# #lastName#",
-                                    url: "hub/user",
+                                    url: "hub/user"
+                                   // url: "hub/user/getAllUsersFromSectorByUserGroupId/"+$$("id").getValue(),
                                 }
                             },
                             required:true

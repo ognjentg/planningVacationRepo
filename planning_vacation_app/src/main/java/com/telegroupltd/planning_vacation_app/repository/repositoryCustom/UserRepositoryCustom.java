@@ -9,4 +9,6 @@ public interface UserRepositoryCustom {
     User login(String username, String password, String companyPin);
 
     List<UserUserGroupSector> getAllExtendedBySectorIdAndActive(Integer companyId, Integer sectorId);
+    List<User> getAllUsersFromSectorByUserGroupId(Integer companyId, Integer sectorId);
+    List<User> getAllUsersWithoutSector(Integer companyId);
 }

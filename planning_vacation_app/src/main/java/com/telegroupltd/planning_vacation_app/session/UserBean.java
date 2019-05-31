@@ -11,6 +11,15 @@ import java.io.Serializable;
 public class UserBean implements Serializable {
     private User user;
     private boolean authorized=false;
+    private String keyUserGroup;
+
+    public String getKeyUserGroup() {
+        return keyUserGroup;
+    }
+
+    public void setKeyUserGroup(String keyUserGroup) {
+        this.keyUserGroup = keyUserGroup;
+    }
 
     public User getUser() {
         return user;

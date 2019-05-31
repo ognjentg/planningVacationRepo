@@ -4,8 +4,11 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestExcept
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
 import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.UserGroup;
+import com.telegroupltd.planning_vacation_app.model.UserUserGroupKey;
 import com.telegroupltd.planning_vacation_app.model.UserUserGroupSector;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
+import com.telegroupltd.planning_vacation_app.repository.UserGroupRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.*;
@@ -34,6 +37,7 @@ public class UserController extends GenericController<User, Integer> {
 
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -75,10 +79,11 @@ public class UserController extends GenericController<User, Integer> {
     @Value("Stara lozinka nije ispravna.")
     private String badRequestOldPassword;
     @Autowired
-    public UserController(UserRepository userRepository, CompanyRepository companyRepository){
+    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository){
         super(userRepository);
         this.userRepository=userRepository;
         this.companyRepository=companyRepository;
+        this.userGroupRepository=userGroupRepository;
     }
 //Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
 //Implementirati metode: login*, logout*, ...
@@ -139,14 +144,20 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public @ResponseBody
-    User login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
+    UserUserGroupKey login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
         User user = userRepository.login(userLoginInformation.getEmail(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
         if (user == null) {
             throw new ForbiddenException("Forbidden");
         } else {
             userBean.setUser(user);
             userBean.setAuthorized(true);
-            return userBean.getUser();
+           // return userBean.getUser();
+            UserGroupController userGroupController=new UserGroupController(userGroupRepository);
+            UserGroup userGroup= userGroupController.findById(user.getUserGroupId());
+            userBean.setKeyUserGroup(userGroup.getKey());
+            //  userBean.setLoggedIn(true);
+
+            return new UserUserGroupKey(userBean.getUser(),userBean.getKeyUserGroup());
         }
     }
 
@@ -430,6 +441,20 @@ public class UserController extends GenericController<User, Integer> {
             return userBean.getUser();
         } else
             throw new ForbiddenException("Forbidden");
+    }
+
+
+
+
+    @RequestMapping(value = "/getAllUsersFromSectorByUserGroupId/{sectorId}", method = RequestMethod.GET)
+    public @ResponseBody List<User> getAllUsersFromSectorByUserGroupId(@PathVariable Integer sectorId){
+        return userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUser().getCompanyId(),sectorId);
+    }
+
+    @RequestMapping(value = "/getAllUsersWithoutSector", method = RequestMethod.GET)
+    public @ResponseBody List<User> getAllUsersWithoutSector(){
+        Integer companyId=userBean.getUser().getCompanyId();
+        return userRepository.getAllUsersWithoutSector(companyId);
     }
 
 }
