@@ -78,6 +78,8 @@ public class UserController extends GenericController<User, Integer> {
     private String badRequestNoUser;
     @Value("Stara lozinka nije ispravna.")
     private String badRequestOldPassword;
+    @Value("Nova lozinka ne ispunjava pravila.")
+    private String badRequestNewPassword;
     @Autowired
     public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository){
         super(userRepository);
@@ -418,7 +420,7 @@ public class UserController extends GenericController<User, Integer> {
         User user = userRepository.findById(userBean.getUser().getId()).orElse(null);
         if(user != null){
             if(passwordInformation.getOldPassword() != null && user.getPassword().trim().toLowerCase().equals(Util.hashPasswordSalt(passwordInformation.getOldPassword().trim(),user.getSalt()))){
-                //if(passwordInformation.getNewPassword() != null && Validator.passwordChecking(passwordInformation.getNewPassword())){
+                if(passwordInformation.getNewPassword() != null && Validator.passwordChecking(passwordInformation)){
                 user.setSalt(Util.randomSalt());
                 user.setPassword(Util.hashPasswordSalt(passwordInformation.getNewPassword(),user.getSalt()));
                 if(repo.saveAndFlush(user) != null){
@@ -426,8 +428,8 @@ public class UserController extends GenericController<User, Integer> {
                 }
                 throw new BadRequestException(badRequestUpdate);
 
-                // }
-                // throw new BadRequestException(badRequestPasswordStrength);
+                 }
+                 throw new BadRequestException(badRequestNewPassword);
             }
             throw new BadRequestException(badRequestOldPassword);
         }

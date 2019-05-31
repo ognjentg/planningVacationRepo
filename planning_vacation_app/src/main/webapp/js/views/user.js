@@ -47,7 +47,7 @@ var profileView = {
                                     id: "preview",
                                     name: "preview",
                                     template: "<img style='height: 100%; width: 100%;' src='#src#'>",
-                                    data: { src: null },
+                                    data: {src: null},
                                     height: 200,
                                     width: 200,
                                 },
@@ -72,8 +72,8 @@ var profileView = {
                                             var file = upload.file;
                                             var reader = new FileReader();
                                             reader.onload = function (ev) {
-                                                $$("preview").setValues({src:ev.target.result});
-                                                $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1  ]);
+                                                $$("preview").setValues({src: ev.target.result});
+                                                $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
                                             }
                                             reader.readAsDataURL(file)
                                             return false;
@@ -141,24 +141,24 @@ var profileView = {
         }
     },
 
-    showProfileDialog: function() {
+    showProfileDialog: function () {
         webix.ui(webix.copy(profileView.profileDialog));
-        setTimeout(function() {
+        setTimeout(function () {
             $$("firstName").setValue(userData.firstName);
             $$("lastName").setValue(userData.lastName);
-            if(userData.userGroupId == 1) {
+            if (userData.userGroupId == 1) {
                 $$("receiveMail").hide();
             }
             $$("receiveMail").setValue(userData.receiveMail);
             $$("base64ImageUser").setValue(userData.photo);
-            $$("preview").setValues({ src: "data:image/png;base64," + userData.photo });
+            $$("preview").setValues({src: "data:image/png;base64," + userData.photo});
             $$("profileDialog").show();
         }, 0);
     },
 
     save: function () {
         var profileForm = $$("profileForm");
-        if(profileForm.validate()) {
+        if (profileForm.validate()) {
             var dataToSend = $$("profileForm").getValues();
             var objectToSend = {
                 firstName: dataToSend.firstName,
@@ -170,7 +170,7 @@ var profileView = {
             webix.ajax().headers({
                 "Content-type": "application/json"
             }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
-                error: function(text, data, xhr) {
+                error: function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {
@@ -188,17 +188,17 @@ var profileView = {
 
 var changePasswordView = {
 
-    changePasswordDialog : {
+    changePasswordDialog: {
         view: "popup",
         id: "changePasswordDialog",
         name: "passwordDialog",
         position: "center",
         modal: true,
         body: {
-            rows:[
+            rows: [
                 {
-                    view:"toolbar",
-                    cols:[
+                    view: "toolbar",
+                    cols: [
                         {
                             view: "label",
                             width: 400,
@@ -209,76 +209,150 @@ var changePasswordView = {
                             view: "icon",
                             icon: "close",
                             align: "right",
-                            hotkey:"esc",
+                            hotkey: "esc",
                             click: "util.dismissDialog('changePasswordDialog')"
                         }
                     ]
                 },
                 {
-                    view:"form",
-                    id:"changePasswordForm",
-                    name:"changePasswordForm",
-                    width:500,
+                    view: "form",
+                    id: "changePasswordForm",
+                    name: "changePasswordForm",
+                    width: 500,
                     elementsConfig: {
                         labelWidth: 140,
                         bottomPadding: 18
                     },
-                    elements:[
+                    elements: [
                         {
-                            view:"text",
-                            id:"oldPassword",
-                            type:"password",
-                            label:"Trenutna lozinka:",
-                            required:true
+                            view: "text",
+                            id: "oldPassword",
+                            type: "password",
+                            name:"oldPassword",
+                            label: "Trenutna lozinka:",
+                            invalidMessage:"Unesite lozinku!",
+                            required: true
 
                         },
                         {
-                            view:"text",
-                            label:"Nova lozinka:",
-                            id:"newPassword",
-                            type:"password",
-                            required:true,
-                            on:{
-                                'onTimedKeyPress':function () {
-                                    if($$("newPassword").getValue().length<8) {
-                                        util.messages.showErrorMessage("Lozinka mora imati barem 8 karaktera!");
+                            view: "text",
+                            label: "Nova lozinka:",
+                            id: "newPassword",
+                            name:"newPassword",
+                            type: "password",
+                            invalidMessage:"Unesite lozinku!",
+                            required: true,
+                            bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
+                            keyPressTimeout:1000,
+                            on: {
+                                'onTimedKeyPress': function () {
+                                    var typed = $$("newPassword").getValue();
+                                    util.messages.showErrorMessage(typed);
+                                    var strength=0;
+                                    var re1=/[0-9]/;
+                                    var re2=/[A-Z]/;
+                                    var re3=/[@#$%^&+=]/;
+                                    if(re1.test(typed))
+                                        strength++;
+                                    if (re2.test(typed))
+                                        strength++;
+                                    if (re3.test(typed))
+                                        strength++;
+                                    if(typed.length>=8)
+                                        strength++;
+                                    switch(strength){
+                                        case 0:
+                                        case 1:
+                                        case 2:
+                                            $$("strength").setValue("Jacina lozinke: slabo");
+                                            $$("strength").show();
+                                            break;
+                                        case 3:
+                                            $$("strength").setValue("Jacina lozinke: srednje");
+                                            $$("strength").show();
+                                            break;
+                                        case 4:
+                                            $$("strength").setValue("Jacina lozinke: jako");
+                                            $$("strength").show();
+                                            break;
                                     }
+
                                 }
+
                             }
+
                         },
                         {
-                            view:"text",
-                            label:"Potvrda nove lozinke:",
-                            id:"newPasswordConfirmation",
-                            type:"password",
-                            required:true,
-                            on:{
-                                'onTimedKeyPress':function () {
-                                    if($$("newPasswordConfirmation").getValue()!==$$("newPassword").getValue())
-                                        util.messages.showErrorMessage("Potvrda lozinke nije jednaka novoj lozinci!");
-                                }
-                            }
+                            view: "label",
+                            id:"strength",
+                            name:"strength",
+                            hidden:true,
+                            align:"right"
                         },
                         {
-                            view:"button",
-                            label:"Promijeni",
-                            width:150,
-                            click:"changePasswordView.savePassword",
-                            align:"right",
-                            hotkey:"enter"
+                            view: "text",
+                            label: "Potvrda nove lozinke:",
+                            id: "newPasswordConfirmation",
+                            name:"newPasswordConfirmation",
+                            invalidMessage:"Unesite lozinku!",
+                            type: "password",
+                            required: true,
+
+                        },
+
+                        {
+                            view: "button",
+                            label: "Promijeni",
+                            width: 150,
+                            click: "changePasswordView.savePassword",
+                            align: "right",
+                            hotkey: "enter"
                         }
-                    ]
+                    ],
+                    rules: {
+                        "oldPassword":function (value) {
+                            if (!value)
+                                return false;
+                            return true;
+                        },
+                        "newPassword": function (value) {
+                            if(value.length<8){
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
+                                return false;}
+                            if (value == $$("oldPassword").getValue()){
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
+                                return false;
+                            }
+                            var re = /[0-9A-Z@#$%^&+=]/;
+                            if (!re.test(value)) {
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
+                                return false;
+                            }
+                        },
+                        "newPasswordConfirmation":function (value) {
+                            if (!value)
+                                return false;
+                            if(value!=$$("changePasswordForm").getValues().newPassword)
+                            {
+                                $$('changePasswordForm').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
+                                return false;}
+
+                            return true;
+
+                        },
+                    }
                 }
             ]
 
         }
     },
-    savePassword:function(){
+
+    savePassword: function () {
         if ($$("changePasswordForm").validate()) {
-            var passwordInformation={
-                oldPassword:$$("oldPassword").getValue(),
-                newPassword:$$("newPassword").getValue(),
-                newPasswordConfirmation:$$("newPasswordConfirmation").getValue()
+            var passwordInformation = {
+                oldPassword: $$("oldPassword").getValue(),
+                newPassword: $$("newPassword").getValue(),
+                newPasswordConfirmation: $$("newPasswordConfirmation").getValue()
             };
 
             connection.sendAjax("POST", "hub/user/updatePassword",
@@ -296,10 +370,15 @@ var changePasswordView = {
         }
     },
 
-    showChangePasswordDialog: function() {
+    showChangePasswordDialog: function () {
         webix.ui(webix.copy(changePasswordView.changePasswordDialog));
-        setTimeout(function() {
+        setTimeout(function () {
             $$("changePasswordDialog").show();
         }, 0);
-    }
+
+    },
+
+
 };
+
+
