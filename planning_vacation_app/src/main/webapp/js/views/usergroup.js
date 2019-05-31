@@ -10,16 +10,16 @@ usergroupView = {
     getPanel: function () {
         console.log("uslo u usergroupview");
         switch (userData.userGroupId) {
-            case 1:
+            case 2:
                 user = "admin";
                 break;
-            case 2:
+            case 3:
                 user = "director";
                 break;
-            case 3:
+            case 4:
                 user = "secretary";
                 break;
-            case 4:
+            case 5:
                 user = "manager";
                 sectorID = userData.sectorId;
                 console.log(sectorID);
@@ -470,7 +470,7 @@ usergroupView = {
         util.selectPanel(this.getPanel());
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
-            //$$("addUserButton").hide();
+            $$("addUserButton").hide();
            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
@@ -484,37 +484,6 @@ usergroupView = {
         console.log("u selectPanel");
 
 
-//connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/73");
-//$$("usergroupDT").define("url", "hub/user/custom/bySector/73");
-
-        //$$("usergroupDT").detachEvent("onBeforeDelete");
-
-
-        //SEKTORI:
-//<<<<<<< HEAD
-        /*    usergroupView.sectors= [];
-
-                         webix.ajax().get("hub/sector").then(function(data){
-                             //response text
-                             console.log(data.text());
-                                                     if (data.json() != null) {
-                                                         console.log("loaded data with success");
-                                                         var sectors = data.json();
-
-                                                         sectors.forEach(function(sector){
-                                                                            usergroupView.sectors.push({
-                                                                                id: sector.id,
-                                                                                value: sector.name
-                                                                             });
-                                                                        });
-                                                         $$("choseSectorCombo").define("options", usergroupView.userGroups);
-                                                         $$("choseSectorCombo").refresh();
-                                                       }else {
-                                                        util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
-                                                       }
-
-                         });*/
-//=======
        usergroupView.sectors= [];
 
                      webix.ajax().get("hub/sector").then(function(data){
@@ -546,8 +515,6 @@ usergroupView = {
                                                    }
 
                      });
-//>>>>>>> Showing workers without sector and all workers in company (1.Changed usergroup.js; 2. Impelmented custom queries in UserRepositoryImpl 3.Changed method for getting workers from chosen sector 4.Changed UserRepository 5.Added methods in UserRepositoryCustom   )
-
     },
 
     showAddDialog: function () {
