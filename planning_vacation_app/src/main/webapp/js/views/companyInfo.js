@@ -200,15 +200,23 @@ var companyInfoView = {
             });
 
         connection.sendAjax("GET",
-            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
-                nonWorkingDays = data.json();
+            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
+            function (text, data, xhr) {
+             if(text){
+                 alert(33);
+             }
+            nonWorkingDays = data.json();
                 //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
                 //tu listu i oznacavanje u DTP tih dana
                 //$$("nonWorkingDays").setValue();
             });
 
         connection.sendAjax("GET",
-            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
+            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
+            function (text, data, xhr) {
+                if(text){
+                    alert(34);
+                }
                 daysInWeek = data.json();
 
                //staviti cekirano u comb ako je neradni dan
@@ -262,7 +270,7 @@ var companyInfoView = {
           to: null,
         };
          
-        connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
+ /*       connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
             function (text, data, xhr) {
                 alert(2)
                 if (text) {
@@ -274,21 +282,28 @@ var companyInfoView = {
             }, function (text, data, xhr) {
                 alert(text);
       //          button.enable();
-            }, nonWorkingDayInWeek);
-/*
-        connection.sendAjax("PUT", "hub/nonWorkingDay/" +companyId,
+            }, nonWorkingDayInWeek);*/
+ //otkomentarisati kad se ispravi greska na backend strani
+
+        var date = new Date($$("nonWorkingDays").getValue());
+        var nonWorkingDayInYear = {
+           day:date,
+           companyId:companyId,
+           active:0
+        }
+
+        connection.sendAjax("POST", "hub/nonWorkingDay/",
             function (text, data, xhr) {
                 if (text) {
                     alert(2)
                 } else {
-                    //alert("Greška u dodavanju admina.");
-                    //    button.enable();
+                    //alert("Greška u dodavanju neradnog dana.");
+                       //button.enable();
                 }
             }, function (text, data, xhr) {
                 alert(text);
-                button.enable();
-            }, company);
-*/
+            }, nonWorkingDayInYear);
+
         util.dismissDialog('companyInfoDialog');
  //       var validation = $$("companyInfoDialog").validate();
             //pozvati metodu, snimiti, ispisati poruku
