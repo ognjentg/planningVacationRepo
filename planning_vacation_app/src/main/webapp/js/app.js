@@ -258,7 +258,7 @@ var mainLayout = {
                 cols: [
                     {
                         view: "label",
-                        label: "<b>Template</b>",
+                        label: "<b>Planiranje godišnjeg odmora</b>",
                         width: 400
                     }, {},
                     {
