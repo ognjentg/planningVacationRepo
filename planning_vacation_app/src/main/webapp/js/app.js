@@ -339,21 +339,27 @@ var showApp = function () {
     switch (userData.userGroupId) {
         case 1:
             localMenuData = webix.copy(menuSuperAdmin);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">superadmin</span>');
             break;
         case 2:
             localMenuData = webix.copy(menuAdmin);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">admin</span>');
             break;
         case 3:
             localMenuData = webix.copy(menuDirector);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">direktor</span>');
             break;
         case 4:
             localMenuData = webix.copy(menuSecretary);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">sekretar</span>');
             break;
         case 5:
             localMenuData = webix.copy(menuSectorManager);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">menadzer</span>');
             break;
         case 6:
             localMenuData = webix.copy(menuWorker);
+            $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">korisnik</span>');
             break;
     }}
 

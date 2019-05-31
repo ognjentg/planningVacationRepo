@@ -119,10 +119,11 @@ element.style {
 }
 .usernameHolderName{
 	font-weight: bold;
+	color:white;
 }
-.usernameHolderUsername{
+.usernameHolderRole{
 	font-size:10pt;
-	color:#EEE;
+	color:white;
 }
 .webix_pager_item {
 	width: auto;
