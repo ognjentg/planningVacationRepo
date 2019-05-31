@@ -470,7 +470,7 @@ usergroupView = {
         util.selectPanel(this.getPanel());
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
-            $$("addUserButton").hide();
+            //$$("addUserButton").hide();
            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
