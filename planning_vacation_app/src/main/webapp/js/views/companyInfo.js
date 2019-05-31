@@ -1,4 +1,11 @@
-var daysInWeek =[ "Ponedjeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota", "Nedjelja"];
+var daysInWeek =[
+    {"id":8,"value":"Ponedjeljak"},
+    {"id":9,"value": "Utorak"},
+    {"id":10,"value":"Srijeda"},
+    {"id":11,"value":"Četvrtak"},
+    {"id":12,"value":"Petak"},
+    {"id":13,"value":"Subota"},
+    {"id":14,"value":"Nedjelja"}];
 
 var companyInfoView = {
 
@@ -70,7 +77,8 @@ var companyInfoView = {
                         },
                         {
                             view:"multicombo",
-                            name:"tags",
+                            id:"nonWorkingDaysInWeek",
+                            name:"nonWorkingDaysInWeek",
                             value:"",
                             label: "Sedmični neradni dani",
                             placeholder:"Neradni dani u sedmici",
@@ -203,8 +211,7 @@ var companyInfoView = {
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
                 daysInWeek = data.json();
 
-                //$$("daysInWeekCombo").setValue(); staviti cekirano u combu
-                // ako je neradni dan
+               //staviti cekirano u comb ako je neradni dan
             });
 
 
@@ -215,7 +222,8 @@ var companyInfoView = {
      var companyId = userData.companyId;
      var companyName = $$("companyName").getValue();
      //var companyLogo = $$("photoUploader").getValue();
-  //   var nonWorkingDayInWeek = $$("daysInWeekCombo").getValue();
+    // var nonWorkingDayInWeek = $$("nonWorkingDaysInWeek").getValue();
+
      var numberOfVacationDays = $$("vacationDays").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
      var nonWorkingDays =  $$("nonWorkingDays").getValue();
@@ -242,19 +250,31 @@ var companyInfoView = {
           //      button.enable();
             }, company);
 
-     /*   connection.sendAjax("PUT", "/hub/dayInWeek/" + companyId,
+        var dayId = $$("nonWorkingDaysInWeek").getValue(); //8
+        //var dayInWeek = "Utorak"// napraviti metodu koja na osnovu id vraca naziv dana
+        // daysInWeek.getById(dayId);
+
+        var nonWorkingDayInWeek = {
+          dayInWeekId: dayId,
+          companyId: companyId,
+          from: null,
+          active:0,
+          to: null,
+        };
+         
+        connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
             function (text, data, xhr) {
-                alert(nonWorkingDayInWeek);
+                alert(2)
                 if (text) {
                     alert(2)
                 } else {
-                    //alert("Greška u dodavanju admina.");
+                    alert("Greška u dodavanju neradnih dana u sedmici .");
                     //    button.enable();
                 }
             }, function (text, data, xhr) {
-        //        alert(text);
+                alert(text);
       //          button.enable();
-            }, nonWorkingDayInWeek);*/
+            }, nonWorkingDayInWeek);
 /*
         connection.sendAjax("PUT", "hub/nonWorkingDay/" +companyId,
             function (text, data, xhr) {
