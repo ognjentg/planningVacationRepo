@@ -83,6 +83,7 @@ var sickRequestsView = {
                         id: "id",
                         header: "#",
                         width: 50,
+                        hidden: "true",
                     },{
                         //id: "status_name",
                         id: "statusName",
@@ -146,7 +147,8 @@ var sickRequestsView = {
                     ],
                     select: "row",
                     navigation: true,
-                    url: "/hub/sickLeave/sickLeaveInfo",
+                    //url: "/hub/sickLeave/sickLeaveInfo",
+                    url: "/hub/sickLeave/sickLeaveInfoWait",
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -164,7 +166,7 @@ var sickRequestsView = {
                                 var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovannje: ")));
                                 rejectLeaveBox.callback = function (result) {
                                     if (result == 1) {
-                                        refreshSecretaryData();
+                                   //     refreshSecretaryData();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
@@ -175,15 +177,18 @@ var sickRequestsView = {
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
+                                        //webix.$$("secretary_requestDT").getItem(id).refresh();
+                                        item.refresh();
                                     }
-                                    refreshSecretaryData();
+                                  //  refreshSecretaryData();
                                 };
                                 webix.confirm(rejectLeaveBox);
                             } else if (action === "accept" && userData.userGroupId === 4) {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
-                                        refreshSecretaryData();
+                                     //   refreshSecretaryData();
+                                        //secretary_requestDT.refresh();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
@@ -195,8 +200,9 @@ var sickRequestsView = {
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
+                                        item.refresh();
                                     }
-                                    refreshSecretaryData();
+                                   // refreshSecretaryData();
                                 };
                                 webix.confirm(acceptLeaveBox);
                             }

@@ -20,7 +20,10 @@ public class SickLeaveRepositoryImpl implements SickLeaveRepositoryCustom {
             "JOIN user u ON sl.user_id = u.id "+
             "WHERE sl.active = 1;";
 
-
+    private static final String SQL_MANAGER_SHOW_WAIT_REQUESTS= "SELECT sl.id, date_from, date_to,u.first_name,u.last_name, sls.name AS status_name "+
+            "FROM sick_leave sl " + "JOIN sick_leave_status sls ON sl.sick_leave_status_id = sls.id "+
+            "JOIN user u ON sl.user_id = u.id "+
+            "WHERE sl.active = 1 AND sl.sick_leave_status_id = 1 ;";
 
     private static final String SQL_UPDATE_SICK_LEAVE_STATUS_UNJUSTUFIED= "UPDATE sick_leave sl "+
             " JOIN sick_leave_status sls ON  sl.sick_leave_status_id = sls.id "+
@@ -67,5 +70,10 @@ public class SickLeaveRepositoryImpl implements SickLeaveRepositoryCustom {
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(Integer id) {
+        return entityManager.createNativeQuery(SQL_MANAGER_SHOW_WAIT_REQUESTS,"SickLeaveUserSickLeaveStatusMapping").getResultList();
     }
 }

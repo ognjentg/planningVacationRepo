@@ -9,4 +9,5 @@ public interface SickLeaveRepositoryCustom {
     List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id,Integer key);
     void updateSickLeaveStatusUnjustified(Integer sickLeaveId);
     void updateSickLeaveStatusJustified(Integer sickLeaveId);
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(Integer id);
 }
