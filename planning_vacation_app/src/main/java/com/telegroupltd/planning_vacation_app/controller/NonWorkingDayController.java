@@ -81,8 +81,15 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         boolean isExist = false;
         for (NonWorkingDay nonWorkingDay1 : nonWorkingDayList) {
             if (nonWorkingDay1.getActive() == 1 && nonWorkingDay1.getDay() == newNonWorkingDay.getDay()
-            && nonWorkingDay1.getCompanyId() == newNonWorkingDay.getCompanyId())
+            && nonWorkingDay1.getCompanyId() == newNonWorkingDay.getCompanyId()) {
                 isExist = true;
+                try {
+                    delete(nonWorkingDay1);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
 
         if (!isExist) {
@@ -96,7 +103,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     }
 
     @Override
-    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public @ResponseBody
     String delete(@PathVariable Integer id) throws BadRequestException{
         NonWorkingDay nonWorkingDay = nonWorkingDayRepository.findById(id).orElse(null);
@@ -105,18 +112,14 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         return "Uspjesno";
     }
 
-    @RequestMapping(value = "/deleteNonWorkingDay/{date}",method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public @ResponseBody
-    String delete(@PathVariable String date) throws BadRequestException, ParseException {
-        date = "07-04-2008";
-        SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
-        java.util.Date baseDate = sdf1.parse(date);
-        java.sql.Date sqlStartDate = new java.sql.Date(baseDate.getTime());
-        System.out.println(sqlStartDate);
+    String delete(@PathVariable NonWorkingDay nonWorkingDays) throws BadRequestException, ParseException {
+
         List<NonWorkingDay> nonWorkingDaysList = getNonWorkingDayForCompany(userBean.getUser().getCompanyId());
         for (NonWorkingDay nonWorkingDay : nonWorkingDaysList) {
             System.out.println(nonWorkingDay.getDay());
-            if (nonWorkingDay.getActive() == 1 && nonWorkingDay.getDay().compareTo(sqlStartDate) == 0) {
+            if (nonWorkingDay.getActive() == 1 && nonWorkingDay.getDay().compareTo(nonWorkingDays.getDay()) == 0) {
                 nonWorkingDay.setActive((byte)0);
                 if (repo.saveAndFlush(nonWorkingDay) != null)
                     return "Uspjesno";

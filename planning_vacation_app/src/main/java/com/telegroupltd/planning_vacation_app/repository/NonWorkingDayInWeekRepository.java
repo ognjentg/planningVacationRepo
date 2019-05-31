@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface NonWorkingDayInWeekRepository extends JpaRepository<NonWorkingDayInWeek, Integer>, HasActiveRepository<NonWorkingDayInWeek, Integer> {
-    List<NonWorkingDayInWeek> getAllByCompanyIdAndActive(Integer companyID, Byte active);
+    //List<NonWorkingDayInWeek> getAllByCompanyIdAndActive(Integer companyID, Byte active);
 }

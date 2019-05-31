@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -46,7 +49,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     @Override
     @Transactional
     public List<NonWorkingDayInWeek> getAll() throws ForbiddenException {
-        return nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(),(byte) 1);
+         return nonWorkingDayInWeekRepository.getAllByActiveIs((byte) 1);
     }
 
 //    @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
@@ -66,22 +69,27 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
         boolean flag = true;
         java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+        System.out.println(currentDate);
         List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
 
         for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
-            if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1) {
-                newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek1.getCompanyId());
-                newNonWorkingDayInWeek.setActive((byte)0);
-                newNonWorkingDayInWeek.setFrom(nonWorkingDayInWeek1.getFrom());
-                newNonWorkingDayInWeek.setTo(currentDate);
-                newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
-                newNonWorkingDayInWeek.setId(nonWorkingDayInWeek1.getId());
-                if ("Success".equals(update(nonWorkingDayInWeek1.getId(), newNonWorkingDayInWeek))) {
-                    flag = false;
-                    break;
-                } else {
-                    throw new BadRequestException(badRequestInsert);
-                }
+            if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
+            && nonWorkingDayInWeek1.getCompanyId() == userBean.getUser().getCompanyId()) {
+//                newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek1.getCompanyId());
+//                newNonWorkingDayInWeek.setActive((byte)0);
+//                newNonWorkingDayInWeek.setFrom(nonWorkingDayInWeek1.getFrom());
+//                newNonWorkingDayInWeek.setTo(currentDate);
+//                newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
+//                newNonWorkingDayInWeek.setId(nonWorkingDayInWeek1.getId());
+                nonWorkingDayInWeek1.setTo(currentDate);
+                if (repo.saveAndFlush(nonWorkingDayInWeek1) != null)
+                    return nonWorkingDayInWeek1;
+                    //if ("Success".equals(update(nonWorkingDayInWeek1.getId(), newNonWorkingDayInWeek))) {
+//                    flag = false;
+//                    break;
+//                } else {
+//                    throw new BadRequestException(badRequestInsert);
+//                }
             }
         }
         if (flag) {
