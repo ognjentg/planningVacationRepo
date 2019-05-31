@@ -15,7 +15,7 @@ import java.util.List;
 
 
 @RequestMapping(value="hub/vacation_days")
-@Controller
+@RestController
 @Scope("request")
 public class VacationDaysController extends GenericHasActiveController<VacationDays,Integer> {
     private final VacationDaysRepository vacationDaysRepository;
@@ -29,9 +29,8 @@ public class VacationDaysController extends GenericHasActiveController<VacationD
 
     @RequestMapping(value = "/byUserId/{userId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<VacationDays> getByUserId(@PathVariable Integer userId){
-        List<VacationDays> list = vacationDaysRepository.getAllByUserIdAndActive(userId, (byte)1);
-        return list;
+    VacationDays getByUserId(@PathVariable Integer userId){
+        return vacationDaysRepository.getByUserIdAndActive(userId, (byte)1);
     }
 
 }

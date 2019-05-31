@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface VacationDaysRepository extends JpaRepository<VacationDays,Integer>, HasActiveRepository<VacationDays,Integer> {
-    List<VacationDays> getAllByUserIdAndActive(Integer userId, byte active);
+    VacationDays getByUserIdAndActive(Integer userId, byte active);
 }

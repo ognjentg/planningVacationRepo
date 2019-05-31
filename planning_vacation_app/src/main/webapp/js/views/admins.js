@@ -282,7 +282,7 @@ var adminsView = {
         modal: true,
         position: "center",
         body: {
-            id: "chooseAdminDialogInside",
+            id: "addNewAdminDialogInside",
             width: 450,
             rows: [
                 {
@@ -290,7 +290,7 @@ var adminsView = {
                     cols: [
                         {
                             view: "label",
-                            label: "<span class='webix_icon fa-briefcase'></span> Izaberi admina",
+                            label: "<span class='webix_icon fa-briefcase'></span> Dodaj novog admina",
                             autoWidth: true,
                             height: 50
                         }, {}, {
