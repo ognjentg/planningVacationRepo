@@ -69,10 +69,12 @@ var companyInfoView = {
                             id:"nonWorkingDays"
                         },
                         {
-                            view: "combo",
-                            id:"daysInWeekCombo",
-                            name:"daysInWeekCombo",
-                            label:"Odabir neradnog dana:",
+                            view:"multicombo",
+                            name:"tags",
+                            value:"",
+                            label: "Sedmični neradni dani",
+                            placeholder:"Neradni dani u sedmici",
+                            newValues: true,
                             options: daysInWeek
                         },
                         {
@@ -184,10 +186,9 @@ var companyInfoView = {
         connection.sendAjax("GET",
             "hub/constraints/" + companyId, function (text, data, xhr) {
                 constraints = data.json();
-                $$("daysInWeekCombo").setValue();
+             //   $$("daysInWeekCombo").setValue();
                 $$("vacationDays").setValue(constraints.maxVacationDays);
                 $$("sickDays").setValue(constraints.sickLeaveJustificationPeriodLength);
-                $$("nonWorkingDays").setValue();
             });
 
         connection.sendAjax("GET",
@@ -201,6 +202,7 @@ var companyInfoView = {
         connection.sendAjax("GET",
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId, function (text, data, xhr) {
                 daysInWeek = data.json();
+
                 //$$("daysInWeekCombo").setValue(); staviti cekirano u combu
                 // ako je neradni dan
             });
@@ -213,7 +215,7 @@ var companyInfoView = {
      var companyId = userData.companyId;
      var companyName = $$("companyName").getValue();
      //var companyLogo = $$("photoUploader").getValue();
-     var nonWorkingDayInWeek = $$("daysInWeekCombo").getValue();
+  //   var nonWorkingDayInWeek = $$("daysInWeekCombo").getValue();
      var numberOfVacationDays = $$("vacationDays").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
      var nonWorkingDays =  $$("nonWorkingDays").getValue();
