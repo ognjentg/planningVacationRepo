@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,7 +55,6 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         this.nonWorkingDayRepository=nonWorkingDayRepository;
     }
 
-
     @Override
     @Transactional
     public List<NonWorkingDay> getAll() throws ForbiddenException {
@@ -70,18 +71,26 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    NonWorkingDay insert(@RequestBody NonWorkingDay nonWorkingDay) throws BadRequestException {
+    NonWorkingDay insert(@RequestBody NonWorkingDay nonWorkingDay) throws BadRequestException, ForbiddenException {
 
         NonWorkingDay newNonWorkingDay = new NonWorkingDay();
         newNonWorkingDay.setDay(nonWorkingDay.getDay());
         newNonWorkingDay.setCompanyId(nonWorkingDay.getCompanyId());
         newNonWorkingDay.setActive((byte)1);
+        List<NonWorkingDay> nonWorkingDayList = getAll();
+        boolean isExist = false;
+        for (NonWorkingDay nonWorkingDay1 : nonWorkingDayList) {
+            if (nonWorkingDay1.getActive() == 1 && nonWorkingDay1.getDay() == newNonWorkingDay.getDay()
+            && nonWorkingDay1.getCompanyId() == newNonWorkingDay.getCompanyId())
+                isExist = true;
+        }
 
+        if (!isExist) {
+            if (repo.saveAndFlush(newNonWorkingDay) != null) {
+                entityManager.refresh(newNonWorkingDay);
 
-        if (repo.saveAndFlush(newNonWorkingDay) != null) {
-            entityManager.refresh(newNonWorkingDay);
-
-            return newNonWorkingDay;
+                return newNonWorkingDay;
+            }
         }
         throw new BadRequestException(badRequestInsert);
     }
@@ -94,6 +103,24 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         cloner.deepClone(nonWorkingDay);
         Objects.requireNonNull(nonWorkingDay).setActive((byte)0);
         return "Uspjesno";
+    }
+
+    @RequestMapping(value = "/deleteNonWorkingDay/{date}",method = RequestMethod.DELETE)
+    public @ResponseBody
+    String delete(@PathVariable String date) throws BadRequestException, ParseException {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
+        java.util.Date baseDate = sdf1.parse(date);
+        java.sql.Date sqlStartDate = new java.sql.Date(baseDate.getTime());
+        List<NonWorkingDay> nonWorkingDaysList = getNonWorkingDayForCompany(userBean.getUser().getCompanyId());
+        for (NonWorkingDay nonWorkingDay : nonWorkingDaysList) {
+            if (nonWorkingDay.getActive() == 1 && nonWorkingDay.getDay() == sqlStartDate) {
+                cloner.deepClone(nonWorkingDay);
+                Objects.requireNonNull(nonWorkingDay).setActive((byte)0);
+                return "Uspjesno";
+            }
+        }
+
+        return "Neuspjesno";
     }
 
 }

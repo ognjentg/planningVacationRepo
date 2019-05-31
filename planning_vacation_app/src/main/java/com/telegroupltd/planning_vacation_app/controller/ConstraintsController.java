@@ -53,12 +53,7 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
     public @ResponseBody
     Constraints findById(@PathVariable Integer id) {
         Constraints constraints = constraintsRepository.getByCompanyIdAndActive(id, (byte) 1);
-        // if (company != null ) {
-
         return constraints;
-        //} else {
-        //    throw new BadRequestException();
-        // }
     }
 
     @Override
@@ -88,18 +83,15 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         throw new BadRequestException(badRequestInsert);
     }
 
-    //Obzirom da imam jedan aktivan zapis za jednu firmu, da li u update trebam samo update-ovati taj zapis
-    // ili da stari zapis obrisem(setujem active), a ubacim novi zapis?
-
-    // trebalo bi tako, nema smisla da se ovo update-uje
     @Override
     @Transactional
-    public String update(Integer companyId, @RequestBody Constraints object) throws BadRequestException, ForbiddenException {
-        Constraints objectDb = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1);
-        if (objectDb != null) {
-            if (object.getActive() == null)
-                object.setActive(objectDb.getActive());
-            return super.update(companyId,object);
+    public String update(Integer companyId, @RequestBody Constraints newConstraints) throws BadRequestException, ForbiddenException {
+        Constraints constraints = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1);
+        if (constraints != null) {
+            newConstraints.setActive(constraints.getActive());
+            return super.update(companyId, newConstraints);
+        } else {
+            insert(newConstraints);
         }
         throw new BadRequestException("Bad Request");
     }

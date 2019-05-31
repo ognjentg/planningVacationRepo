@@ -49,10 +49,11 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         return nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(),(byte) 1);
     }
 
-    @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
-    public List<NonWorkingDayInWeek> getNonWorkingDayInWeekForCompany(@PathVariable Integer companyId) {
-        return nonWorkingDayInWeekRepository.getNonWorkingDaysInWeekByCompanyId(companyId);
-    }
+//    @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
+//    public List<NonWorkingDayInWeek> getNonWorkingDayInWeekForCompany(@PathVariable Integer companyId) {
+//        return  nonWorkingDayInWeekRepository.getNonWorkingDaysInWeekByCompanyId(companyId);
+//    }
+
 
     @Override
     @Transactional
@@ -63,11 +64,11 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
 
         NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
 
-        // dohvatiti dayInWeek!!!
-        DayInWeek dayInWeek = null;
+        DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
         boolean flag = true;
         java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
         List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
+
         for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
             if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1) {
                 newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek1.getCompanyId());
@@ -81,7 +82,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
                     break;
                 } else {
                     throw new BadRequestException(badRequestInsert);
-                    // nasbdsha
                 }
             }
         }
@@ -103,12 +103,57 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         throw new BadRequestException(badRequestInsert);
     }
 
+    private DayInWeek getDayInWeek(NonWorkingDayInWeek nonWorkingDayInWeek) {
+        DayInWeek dayInWeek = new DayInWeek();
+        if (nonWorkingDayInWeek.getDayInWeekId() == 8) {
+            dayInWeek.setId(8);
+            dayInWeek.setDayKey("Ponedeljak");
+            dayInWeek.setJavaValue(1);
+            dayInWeek.setActive((byte)1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 9) {
+            dayInWeek.setId(9);
+            dayInWeek.setDayKey("Utorak");
+            dayInWeek.setJavaValue(2);
+            dayInWeek.setActive((byte)1);
+        }
+        else if (nonWorkingDayInWeek.getDayInWeekId() == 10) {
+            dayInWeek.setId(10);
+            dayInWeek.setDayKey("Srijeda");
+            dayInWeek.setJavaValue(3);
+            dayInWeek.setActive((byte)1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 11) {
+            dayInWeek.setId(11);
+            dayInWeek.setDayKey("Cetvrtak");
+            dayInWeek.setJavaValue(4);
+            dayInWeek.setActive((byte)1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 12) {
+            dayInWeek.setId(12);
+            dayInWeek.setDayKey("Petak");
+            dayInWeek.setJavaValue(5);
+            dayInWeek.setActive((byte)1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 13) {
+            dayInWeek.setId(13);
+            dayInWeek.setDayKey("Subota");
+            dayInWeek.setJavaValue(6);
+            dayInWeek.setActive((byte)1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 14) {
+            dayInWeek.setId(14);
+            dayInWeek.setDayKey("Nedelja");
+            dayInWeek.setJavaValue(7);
+            dayInWeek.setActive((byte)1);
+        }
+        return dayInWeek;
+    }
+
 
     @Override
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public @ResponseBody
     String update(@PathVariable Integer id, @RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException {
+
+
+
         if (nonWorkingDayInWeekRepository.saveAndFlush(nonWorkingDayInWeek) != null) {
             entityManager.refresh(nonWorkingDayInWeek);
             return "Success";
