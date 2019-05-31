@@ -263,15 +263,15 @@ var changePasswordView = {
                                         case 0:
                                         case 1:
                                         case 2:
-                                            $$("strength").setValue("Jacina lozinke: slabo");
+                                            $$("strength").setValue("Jačina lozinke: slabo");
                                             $$("strength").show();
                                             break;
                                         case 3:
-                                            $$("strength").setValue("Jacina lozinke: srednje");
+                                            $$("strength").setValue("Jačina lozinke: srednje");
                                             $$("strength").show();
                                             break;
                                         case 4:
-                                            $$("strength").setValue("Jacina lozinke: jako");
+                                            $$("strength").setValue("Jačina lozinke: jako");
                                             $$("strength").show();
                                             break;
                                     }
