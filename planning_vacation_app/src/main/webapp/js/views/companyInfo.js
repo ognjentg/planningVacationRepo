@@ -15,30 +15,58 @@ var companyInfoView = {
         name: "companyInfoDialog",
         position: "center",
         modal: true,
-        body: {
+        width:620,
+        body:
+            {
             rows:[
+    {
+        view:"toolbar",
+        cols:[
+            {
+                view: "label",
+                width: 400,
+                label: "<span class='webix_icon fa-briefcase'></span> Podaci o kompaniji"
+            },
+            {},
+            {
+                view: "icon",
+                icon: "close",
+                align: "right",
+                hotkey:"esc",
+                click: "util.dismissDialog('companyInfoDialog')"
+            }
+        ]
+    },
+            {
+            cols:[
                 {
-                    view:"toolbar",
-                    cols:[
+                    width:265,
+                    rows:[
                         {
-                            view: "label",
-                            width: 400,
-                            label: "<span class='webix_icon fa-briefcase'></span> Podaci o kompaniji"
+                            view:"toolbar",
+                            type:"MainBar",
+                            elements:[
+                                {view:"datepicker",   id:"nonWorkingDays", name: "select_date",  label: 'Odaberite neradni dan', labelWidth: 140 }
+                            ]
                         },
-                        {},
-                        {
-                            view: "icon",
-                            icon: "close",
-                            align: "right",
-                            hotkey:"esc",
-                            click: "util.dismissDialog('companyInfoDialog')"
-                        }
-                    ]
+                        { view:"datatable",
+                            adjust:true,
+                            columns:[
+                                { id:"#", hidden:true,  header:"", },
+                                { id:"title",   header:"Neradni dani",  width:264},
+                            ],
+                            data: [
+                                { id:1, title:"2019-05-03",},
+                                { id:2, title:"2019-05-02",}
+                            ]},]
                 },
+                {
+                    width:350,
+                    rows:[
                 {
                     view:"form",
                     id:"companyInfoForm",
-                    width:500,
+                    width:600,
                     elementsConfig: {
                         labelWidth: 140,
                         bottomPadding: 18
@@ -66,14 +94,6 @@ var companyInfoView = {
                             view:"text",
                             label:"Broj dana bolovanja:",
                             id:"sickDays",
-                        },
-                        {
-                            view:"datepicker",
-                          //  value:"2016-1-14, 2016-1-16, 2016-1-18",
-                            multiselect:"touch",
-                            stringResult:true,
-                            label:"Odabir neradnih dana",
-                            id:"nonWorkingDays"
                         },
                         {
                             view:"multicombo",
@@ -149,21 +169,22 @@ var companyInfoView = {
                                     return false;
                                 }
                             }
-                        },
-                        {
-                            view:"button",
-                            label:"Sačuvaj izmjene",
-                            click:"companyInfoView.saveChanges",
-                            width:150,
-                            align:"right",
-                            hotkey:"enter"
-                        },
+                        },]},
+
                     ]
                 }
             ]
 
-        }
-    },
+        },
+                {
+                    view:"button",
+                    label:"Sačuvaj izmjene",
+                    click:"companyInfoView.saveChanges",
+                    width:150,
+                    align:"right",
+                    hotkey:"enter"
+                },],
+    }},
 
     showCompanyInfoDialog: function() {
 
