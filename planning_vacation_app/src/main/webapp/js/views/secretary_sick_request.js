@@ -1,6 +1,8 @@
 
 var my_format = webix.Date.strToDate("%Y-%m-%d");
 
+var URLAllSickLeave = "/hub/sickLeave/sickLeaveInfo";
+var URLBySickLeaveStatus =  "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/";
 var sickRequestsView = {
 
     selectPanel: function () {
@@ -30,7 +32,7 @@ var sickRequestsView = {
                             id: "filterRequestsComboBox",
                             label: "Vrsta zahtjeva",
                             labelWidth: 100,
-                            value: "4",
+                            value: "1",
                             on: {
                                 onChange(name) {
                                     $$("secretary_requestDT").clearAll();
@@ -166,7 +168,6 @@ var sickRequestsView = {
                                 var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovannje: ")));
                                 rejectLeaveBox.callback = function (result) {
                                     if (result == 1) {
-                                   //     refreshSecretaryData();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
@@ -177,32 +178,28 @@ var sickRequestsView = {
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
-                                        //webix.$$("secretary_requestDT").getItem(id).refresh();
-                                        item.refresh();
+                                        var comboItemId = $$("filterRequestsComboBox").getValue();
+                                       refreshOnData();
                                     }
-                                  //  refreshSecretaryData();
+
                                 };
                                 webix.confirm(rejectLeaveBox);
                             } else if (action === "accept" && userData.userGroupId === 4) {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
-                                     //   refreshSecretaryData();
-                                        //secretary_requestDT.refresh();
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
                                             if (text) {
                                                 $$("secretary_requestDT").update(id);
                                                 util.messages.showMessage("Zahtjev opravdan");
-                                                //animateValue($$("t1"), 0, companies.length, 1000);
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
-                                        item.refresh();
                                     }
-                                   // refreshSecretaryData();
+                                    refreshOnData();
                                 };
                                 webix.confirm(acceptLeaveBox);
                             }
@@ -259,33 +256,64 @@ var sickRequestsView = {
 
 };
 
-function refreshSecretaryData() {
+function refreshOnData() {
     console.log("refresh data");
 
 
     webix.extend($$("secretary_requestDT"), webix.ProgressBar);
 
     var table = webix.$$("secretary_requestDT");
+    var comboItemId = $$("filterRequestsComboBox").getValue();
+    var URLCurrentUrl = null;
 
-    webix.ajax("/hub/sickLeave/sickLeaveInfo", {
+    if(comboItemId == 4){
+        URLCurrentUrl = URLAllSickLeave;
+    } else {
+        URLCurrentUrl = URLBySickLeaveStatus;
+    }
 
-        error: function (text, data, xhr) {
-            if (xhr.status != 200) {
-                alert("No data to load! Check your internet connection and try again.");
-                table.hideProgress();
-            }
-        },
-        success: function (text, data, xhr) {
-            if (xhr.status === 200) {
-                if (data.json() != null) {
-                    console.log("loaded data with success");
+    if(comboItemId == 4) {
+        webix.ajax(URLCurrentUrl, {
 
-                    table.clearAll();
-                    table.load("/hub/sickLeave/sickLeaveInfo");
-                    table.refresh();
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl);
+                        table.refresh();
+                    }
                 }
             }
-        }
-    });
+        });
+    } else {
+        webix.ajax(URLCurrentUrl+comboItemId, {
+
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl+comboItemId);
+                        table.refresh();
+                    }
+                }
+            }
+        });
+    }
 }
 
