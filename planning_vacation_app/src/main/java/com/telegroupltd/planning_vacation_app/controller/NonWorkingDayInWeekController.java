@@ -49,8 +49,8 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     @Override
     @Transactional
     public List<NonWorkingDayInWeek> getAll() throws ForbiddenException {
-        if (userBean.getUser() == null)
-            System.out.println(null + " ===================================");
+//        if (userBean.getUser() == null)
+//            System.out.println(null + " ===================================");
          return nonWorkingDayInWeekRepository.getAllByActiveIs((byte) 1);
     }
 
@@ -68,14 +68,15 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     NonWorkingDayInWeek insert(@RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException, ForbiddenException {
         NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
 
-        System.out.println(nonWorkingDayInWeek.getCompanyId() + " dnsadnsajndsjandasmdkas======================");
+        System.out.println(nonWorkingDayInWeek.getCompanyId() + " ======================");
         DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
         boolean flag = true;
         java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
-        System.out.println(currentDate);
+        System.out.println("Current date = " + currentDate);
         List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
 
         for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
+            System.out.println(nonWorkingDayInWeek1.getCompanyId());
             if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
             && nonWorkingDayInWeek1.getCompanyId() == userBean.getUser().getCompanyId()) {
 //                newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek1.getCompanyId());

@@ -85,7 +85,11 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
                     baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()) {
                 return constraints;
             } else {
-                update(constraints.getCompanyId(), constraints);
+                update(constraints.getCompanyId(), baseConstraints);
+                if (repo.saveAndFlush(newConstraints) != null) {
+                    entityManager.refresh(newConstraints);
+                    return newConstraints;
+                }
             }
         } else {
             if (repo.saveAndFlush(newConstraints) != null) {
@@ -93,8 +97,6 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
                 return newConstraints;
             }
         }
-
-
 
         throw new BadRequestException(badRequestInsert);
     }
