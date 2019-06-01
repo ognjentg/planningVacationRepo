@@ -37,10 +37,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     private String badRequestUpdate;
 
 
-   // public NonWorkingDayInWeekController(JpaRepository<NonWorkingDayInWeek, Integer> repo) {
-   //     super(repo);
-    //}
-
     public NonWorkingDayInWeekController(NonWorkingDayInWeekRepository nonWorkingDayInWeekRepository) {
         super(nonWorkingDayInWeekRepository);
         this.nonWorkingDayInWeekRepository = nonWorkingDayInWeekRepository;
@@ -48,9 +44,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
 
     @Override
     @Transactional
-    public List<NonWorkingDayInWeek> getAll() throws ForbiddenException {
-//        if (userBean.getUser() == null)
-//            System.out.println(null + " ===================================");
+    public List<NonWorkingDayInWeek> getAll() {
          return nonWorkingDayInWeekRepository.getAllByActiveIs((byte) 1);
     }
 
@@ -68,39 +62,31 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     NonWorkingDayInWeek insert(@RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException, ForbiddenException {
         NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
 
-        System.out.println(nonWorkingDayInWeek.getCompanyId() + " ======================");
         DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
         boolean flag = true;
         java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
         System.out.println("Current date = " + currentDate);
+        System.out.println(nonWorkingDayInWeek.getFromDate());
+        System.out.println("id = "  + nonWorkingDayInWeek.getCompanyId());
         List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
 
         for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
-            System.out.println(nonWorkingDayInWeek1.getCompanyId());
+
+            System.out.println("companyID = " + nonWorkingDayInWeek1.getCompanyId());
+            System.out.println("From = " + nonWorkingDayInWeek1.getFromDate());
+            System.out.println("To = " + nonWorkingDayInWeek1.getToDate());
             if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
-            && nonWorkingDayInWeek1.getCompanyId() == userBean.getUser().getCompanyId()) {
-//                newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek1.getCompanyId());
-//                newNonWorkingDayInWeek.setActive((byte)0);
-//                newNonWorkingDayInWeek.setFrom(nonWorkingDayInWeek1.getFrom());
-//                newNonWorkingDayInWeek.setTo(currentDate);
-//                newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
-//                newNonWorkingDayInWeek.setId(nonWorkingDayInWeek1.getId());
-                nonWorkingDayInWeek1.setTo(currentDate);
+                        && nonWorkingDayInWeek1.getCompanyId() == nonWorkingDayInWeek.getCompanyId()) {
+                nonWorkingDayInWeek1.setToDate(currentDate);
                 if (repo.saveAndFlush(nonWorkingDayInWeek1) != null)
                     return nonWorkingDayInWeek1;
-                    //if ("Success".equals(update(nonWorkingDayInWeek1.getId(), newNonWorkingDayInWeek))) {
-//                    flag = false;
-//                    break;
-//                } else {
-//                    throw new BadRequestException(badRequestInsert);
-//                }
             }
         }
         if (flag) {
-            newNonWorkingDayInWeek.setCompanyId(userBean.getUser().getCompanyId());
+            newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek.getCompanyId());
             newNonWorkingDayInWeek.setActive((byte)1);
-            newNonWorkingDayInWeek.setFrom(currentDate);
-            newNonWorkingDayInWeek.setTo(null);
+            newNonWorkingDayInWeek.setFromDate(currentDate);
+            newNonWorkingDayInWeek.setToDate(null);
             newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
 
             if (repo.saveAndFlush(newNonWorkingDayInWeek) != null) {

@@ -10,8 +10,8 @@ import java.util.Objects;
 @Table(name = "non_working_day_in_week", schema = "planning_vacation_db", catalog = "")
 public class NonWorkingDayInWeek  implements HasActive {
     private Integer id;
-    private Date from;
-    private Date to;
+    private Date fromDate;
+    private Date toDate;
     private Integer dayInWeekId;
     private Integer companyId;
     private Byte active;
@@ -28,23 +28,23 @@ public class NonWorkingDayInWeek  implements HasActive {
     }
 
     @Basic
-    @Column(name = "from", nullable = false)
-    public Date getFrom() {
-        return from;
+    @Column(name = "from_date", nullable = false)
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setFrom(Date from) {
-        this.from = from;
+    public void setFromDate(Date from) {
+        this.fromDate = from;
     }
 
     @Basic
-    @Column(name = "to", nullable = true)
-    public Date getTo() {
-        return to;
+    @Column(name = "to_date", nullable = true)
+    public Date getToDate() {
+        return toDate;
     }
 
-    public void setTo(Date to) {
-        this.to = to;
+    public void setToDate(Date to) {
+        this.toDate = to;
     }
 
     @Basic
@@ -83,8 +83,8 @@ public class NonWorkingDayInWeek  implements HasActive {
         if (o == null || getClass() != o.getClass()) return false;
         NonWorkingDayInWeek that = (NonWorkingDayInWeek) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(from, that.from) &&
-                Objects.equals(to, that.to) &&
+                Objects.equals(fromDate, that.fromDate) &&
+                Objects.equals(toDate, that.toDate) &&
                 Objects.equals(dayInWeekId, that.dayInWeekId) &&
                 Objects.equals(companyId, that.companyId) &&
                 Objects.equals(active, that.active);
@@ -92,6 +92,6 @@ public class NonWorkingDayInWeek  implements HasActive {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, from, to, dayInWeekId, companyId, active);
+        return Objects.hash(id, fromDate, toDate, dayInWeekId, companyId, active);
     }
 }
