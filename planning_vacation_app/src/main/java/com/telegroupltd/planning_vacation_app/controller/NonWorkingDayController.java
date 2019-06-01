@@ -57,13 +57,13 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
 
     @Override
     @Transactional
-    public List<NonWorkingDay> getAll() throws ForbiddenException {
-        return nonWorkingDayRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(),(byte) 1);
+    public List<NonWorkingDay> getAll() {
+        return nonWorkingDayRepository.getAllByActiveIs((byte)1);
     }
 
     @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
     public List<NonWorkingDay> getNonWorkingDayForCompany(@PathVariable Integer companyId) {
-        return nonWorkingDayRepository.getNonWorkingDaysByCompanyId(companyId);
+        return nonWorkingDayRepository.getAllByActiveAndCompanyId((byte) 1, companyId);
     }
 
     @Override

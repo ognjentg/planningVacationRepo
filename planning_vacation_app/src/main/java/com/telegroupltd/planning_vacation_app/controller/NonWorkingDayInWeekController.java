@@ -50,7 +50,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
 
     @RequestMapping(value = "/getNonWorkingDayInWeekByCompany/{companyId}", method = RequestMethod.GET)
     public List<NonWorkingDayInWeek> getNonWorkingDayInWeekForCompany(@PathVariable Integer companyId) {
-        return  nonWorkingDayInWeekRepository.getNonWorkingDayInWeekByCompanyId(companyId);
+        return  nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
     }
 
 
@@ -78,6 +78,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
             if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
                         && nonWorkingDayInWeek1.getCompanyId() == nonWorkingDayInWeek.getCompanyId()) {
                 nonWorkingDayInWeek1.setToDate(currentDate);
+                nonWorkingDayInWeek1.setActive((byte) 0);
                 if (repo.saveAndFlush(nonWorkingDayInWeek1) != null)
                     return nonWorkingDayInWeek1;
             }
