@@ -225,20 +225,24 @@ var companyInfoView = {
             function (text, data, xhr) {
              if(text){
               //   alert(33);
+                 nonWorkingDays = data.json();
+         //        for( i = 0; i < nonWorkingDays.length; i++)
+       //          alert(nonWorkingDays[i].day);
              }
-            nonWorkingDays = data.json();
                 //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
                 //tu listu i oznacavanje u DTP tih dana
                 //$$("nonWorkingDays").setValue();
             });
 
         connection.sendAjax("GET",
-            "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
+            "/hub/nonWorkingDayInWeek/getNonWorkingDayInWeekByCompany/" + companyId,
             function (text, data, xhr) {
                 if(text){
-                //    alert(34);
+                    daysInWeek = data.json();
+                    for( i = 0; i < daysInWeek.length; i++)
+                             alert(daysInWeek[i].dayInWeekId);
+
                 }
-                daysInWeek = data.json();
 
                //staviti cekirano u comb ako je neradni dan
             });
@@ -279,10 +283,7 @@ var companyInfoView = {
           //      button.enable();
             }, company);
 
-        var dayId = $$("nonWorkingDaysInWeek").getValue(); //8
-        //var dayInWeek = "Utorak"// napraviti metodu koja na osnovu id vraca naziv dana
-        // daysInWeek.getById(dayId);
-
+        var dayId = $$("nonWorkingDaysInWeek").getValue();
         var nonWorkingDayInWeek = {
           dayInWeekId: dayId,
           companyId: companyId,
@@ -291,9 +292,8 @@ var companyInfoView = {
           to: null,
         };
          
-    /*   connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
+       connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
             function (text, data, xhr) {
-                alert(2)
                 if (text) {
                     alert(2)
                 } else {
@@ -303,8 +303,8 @@ var companyInfoView = {
             }, function (text, data, xhr) {
                 alert(text);
       //          button.enable();
-            }, nonWorkingDayInWeek);*/
- //otkomentarisati kad se ispravi greska na backend strani
+            }, nonWorkingDayInWeek);
+
 
       /*  var date = new Date($$("nonWorkingDays").getValue());
         var nonWorkingDayInYear = {
