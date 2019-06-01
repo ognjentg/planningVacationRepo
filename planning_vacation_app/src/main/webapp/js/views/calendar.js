@@ -1,3 +1,5 @@
+var chosenCategory=null; //here will be setted chosen category  - but there must be value from database...
+
 var calendarView = {
     panel: {
         id: "calendarPanel",
@@ -68,22 +70,87 @@ var calendarView = {
                         "\t<div class=\"dhx_cal_data\">\n" +
                         "\t</div>\n" +
                         "</div>"
+                    },{
+                    width: 10
                     },
                     {
-                        view: "template",
-                        rows: [
-                            {
+                       // view: "template",
+                        rows: [{
                                 view: "label",
-                                label: "TODO",
-                                width: 140,
+                                label: "Zahtjev za godisnjim odmorom",
+                                  css:{"font-style": "bold", "font-size": "150%"},
+                                type: "header",
+                                width: 400,
                                 height: 70
-                            }
-                        ]
+                            },{
+                                 view: "form",
+                                 id: "createRequestForm",
+                                 elements: [{
+                                     //Tabela
+                                    view: "datatable",
+                                    id: "periodsDT",
+                                    invalidMessage: "Niste odabrali period.",
+
+                                    margin: 10,
+                                    tooltip: true,
+                                    columns: [{
+                                                id: "startDate",
+                                                fillspace: true,
+                                                editable: false,
+                                                sort: "date",
+                                                //width:210,
+                                                header: ["<span class='webix_icon fa fa-calendar'/>Od"]
+                                        },{
+                                                 id: "endDate",
+                                                 fillspace: true,
+                                                 editable: false,
+                                                 sort: "date",
+                                                 //width:210,
+                                                 header: ["<span class='webix_icon fa fa-calendar'/>Do"]
+                                         }],
+                                         rules: {
+                                               startDate:notEmpty,
+                                               endDate:notEmpty
+                                                                                                           },
+                                 },{
+                                 height:10
+                                 },{
+                                 view: "label",
+                                  label: "Komentar:"},
+                                 {
+                                 //2.element-comment section
+                                           view:"textarea",
+                                           id: "comment",
+                                          // label:"Komentar",
+                                           labelAlign:"left",
+                                          // height:200,  //without setted height, we can do resizeing
+                                           width: 400,
+                                           tooltip:"U komentaru možete objasniti detalje Vašeg zahtjeva.",
+                                           placeholder:"Ovdje unesite komentar ako imate"
+                                 },{
+                                 height:10
+                                 },{
+                                     id:"sendRequestButton",
+                                    view:"button",
+                                     type: "iconButton",
+                                     hotkey: "enter",
+                                    //icon: "",
+                                    label:"Posalji zahtjev",
+                                    height:40,
+                                    css: "companyButton",
+                                    click:'calendarView.showSendDialog'
+                                 }]/*,
+                                 rules: {
+
+                                 }*/
+                             },{view: "label", //this is making a line from bottom
+                                 width: 5,
+                                 height:10
+                               }]
+                    },{
+                       width:10 //this is making right line
                     }]
-            }
-
-
-        ]
+                    }]
     },
     selectPanel: function() {
         $$("main").removeView(rightPanel);
@@ -114,10 +181,11 @@ var calendarView = {
             zones: "fullday"
         });
         scheduler.attachEvent("onLimitViolation", function  (id, obj){
-            dhtmlx.message('Praznik!');
+            dhtmlx.message('Neradni dan ili praznik.');
         });
         calendarView.refreshCounter();
 
+//<<<<<<< HEAD
     },
     refreshCounter: function () {
         webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
@@ -137,6 +205,33 @@ var calendarView = {
                 }
             }
         });
+//=======
+        animateValue($$("t1"), 0, 20, 300);
+
+    },
+    showSendDialog: function () {
+     webix.message("TODO.");
+var form = $$("createRequestForm");
+        if (form.validate()) {
+            var newRequest = {
+                category: chosenCategory,
+                 sender_comment: form.getValues().comment,
+                 sender_user_id:userData.id,
+        //approver_user_id: //todo: find out id from sector managager if this user has sector - or id from director from his company
+                //
+                //
+                companyId: companyData.id,
+            };
+            console.log(newUser);
+
+            //TODO: POST...
+
+//>>>>>>> Added form for sending requests in calendar.js
     }
 }
 
+}
+
+function notEmpty(value){
+  return value != "";
+};
