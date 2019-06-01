@@ -203,7 +203,7 @@ var companyInfoView = {
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
             function (text, data, xhr) {
              if(text){
-                 alert(33);
+              //   alert(33);
              }
             nonWorkingDays = data.json();
                 //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
@@ -215,7 +215,7 @@ var companyInfoView = {
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
             function (text, data, xhr) {
                 if(text){
-                    alert(34);
+                //    alert(34);
                 }
                 daysInWeek = data.json();
 
@@ -270,7 +270,7 @@ var companyInfoView = {
           to: null,
         };
          
- /*       connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
+    /*   connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
             function (text, data, xhr) {
                 alert(2)
                 if (text) {
@@ -285,13 +285,13 @@ var companyInfoView = {
             }, nonWorkingDayInWeek);*/
  //otkomentarisati kad se ispravi greska na backend strani
 
-        var date = new Date($$("nonWorkingDays").getValue());
+      /*  var date = new Date($$("nonWorkingDays").getValue());
         var nonWorkingDayInYear = {
            day:date,
            companyId:companyId,
            active:0
-        }
-
+        }*/
+/*
         connection.sendAjax("POST", "hub/nonWorkingDay/",
             function (text, data, xhr) {
                 if (text) {
@@ -303,6 +303,27 @@ var companyInfoView = {
             }, function (text, data, xhr) {
                 alert(text);
             }, nonWorkingDayInYear);
+        */
+
+        var constraints = {
+            companyId:companyId,
+            maxVacationDays:numberOfVacationDays,
+            vacationPeriodLength:1,
+            sickLeaveJustificationPeriodLength:numberOfSickDays
+        }
+
+        connection.sendAjax("POST", "/hub/constraints",
+            function (text, data, xhr) {
+                if (text) {
+                    alert(2)
+                } else {
+                    //alert("Greška u dodavanju neradnog dana.");
+                    //button.enable();
+                }
+            }, function (text, data, xhr) {
+                alert(text);
+            }, constraints);
+
 
         util.dismissDialog('companyInfoDialog');
  //       var validation = $$("companyInfoDialog").validate();
