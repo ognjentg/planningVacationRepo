@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -72,7 +73,7 @@ public class GenericController<T, ID extends Serializable> extends GenericLogger
     @Transactional
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public T insert(@RequestBody T object) throws BadRequestException, ForbiddenException {
+    public T insert(@RequestBody T object) throws BadRequestException, ForbiddenException, ParseException {
         T ret = null;
         if ((ret = repo.saveAndFlush(object)) != null) {
             entityManager.refresh(ret);

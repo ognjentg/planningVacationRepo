@@ -71,7 +71,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    NonWorkingDay insert(@RequestBody NonWorkingDay nonWorkingDay) throws BadRequestException, ForbiddenException {
+    NonWorkingDay insert(@RequestBody NonWorkingDay nonWorkingDay) throws BadRequestException, ForbiddenException, ParseException {
 
         NonWorkingDay newNonWorkingDay = new NonWorkingDay();
         newNonWorkingDay.setDay(nonWorkingDay.getDay());
@@ -80,9 +80,11 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         List<NonWorkingDay> nonWorkingDayList = getAll();
         boolean isExist = false;
         for (NonWorkingDay nonWorkingDay1 : nonWorkingDayList) {
-            if (nonWorkingDay1.getActive() == 1 && nonWorkingDay1.getDay() == newNonWorkingDay.getDay()
-            && nonWorkingDay1.getCompanyId() == newNonWorkingDay.getCompanyId())
+            if (nonWorkingDay1.getActive() == 1 && nonWorkingDay1.getDay().compareTo(newNonWorkingDay.getDay()) == 0
+            && nonWorkingDay1.getCompanyId() == newNonWorkingDay.getCompanyId()) {
                 isExist = true;
+                delete(nonWorkingDay);
+            }
         }
 
         if (!isExist) {
@@ -105,18 +107,18 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         return "Uspjesno";
     }
 
-    @RequestMapping(value = "/deleteNonWorkingDay/{date}",method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public @ResponseBody
-    String delete(@PathVariable String date) throws BadRequestException, ParseException {
-        date = "07-04-2008";
-        SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
-        java.util.Date baseDate = sdf1.parse(date);
-        java.sql.Date sqlStartDate = new java.sql.Date(baseDate.getTime());
-        System.out.println(sqlStartDate);
+    String delete(@PathVariable NonWorkingDay nonWorkingDay1) throws BadRequestException, ParseException {
+//        date = "07-04-2008";
+//        SimpleDateFormat sdf1 = new SimpleDateFormat("MM-dd-yyyy");
+//        java.util.Date baseDate = sdf1.parse(date);
+//        java.sql.Date sqlStartDate = new java.sql.Date(baseDate.getTime());
+//        System.out.println(sqlStartDate);
         List<NonWorkingDay> nonWorkingDaysList = getNonWorkingDayForCompany(userBean.getUser().getCompanyId());
         for (NonWorkingDay nonWorkingDay : nonWorkingDaysList) {
             System.out.println(nonWorkingDay.getDay());
-            if (nonWorkingDay.getActive() == 1 && nonWorkingDay.getDay().compareTo(sqlStartDate) == 0) {
+            if (nonWorkingDay.getActive() == 1 && nonWorkingDay.getDay().compareTo(nonWorkingDay1.getDay()) == 0) {
                 nonWorkingDay.setActive((byte)0);
                 if (repo.saveAndFlush(nonWorkingDay) != null)
                     return "Uspjesno";

@@ -61,7 +61,7 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    Constraints insert(@RequestBody Constraints constraints) throws BadRequestException {
+    Constraints insert(@RequestBody Constraints constraints) throws BadRequestException, ForbiddenException {
 
         Constraints newConstraints = new Constraints();
         newConstraints.setMaxVacationDays(constraints.getMaxVacationDays());
@@ -76,20 +76,38 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         System.out.println(newConstraints.getVacationPeriodLength());
         System.out.println(newConstraints.getActive());
 
-        if (repo.saveAndFlush(newConstraints) != null) {
-            entityManager.refresh(newConstraints);
-            return newConstraints;
+        Constraints baseConstraints = findById(constraints.getCompanyId());
+
+        if (baseConstraints != null) {
+
+            if (baseConstraints.getMaxVacationDays() == constraints.getMaxVacationDays() &&
+                    baseConstraints.getSickLeaveJustificationPeriodLength() == constraints.getSickLeaveJustificationPeriodLength() &&
+                    baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()) {
+                return constraints;
+            } else {
+                update(constraints.getCompanyId(), constraints);
+            }
+        } else {
+            if (repo.saveAndFlush(newConstraints) != null) {
+                entityManager.refresh(newConstraints);
+                return newConstraints;
+            }
         }
+
+
+
         throw new BadRequestException(badRequestInsert);
     }
 
     @Override
     @Transactional
+    @RequestMapping(method = RequestMethod.PUT)
     public String update(Integer companyId, @RequestBody Constraints newConstraints) throws BadRequestException, ForbiddenException {
         Constraints constraints = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1);
         if (constraints != null) {
-            newConstraints.setActive(constraints.getActive());
-            return super.update(companyId, newConstraints);
+            newConstraints.setActive((byte) 0);
+            if (repo.saveAndFlush(newConstraints) != null)
+                return "uspjesno";
         } else {
             insert(newConstraints);
         }

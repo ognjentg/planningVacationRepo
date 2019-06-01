@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface NonWorkingDayInWeekRepository extends JpaRepository<NonWorkingDayInWeek, Integer>, HasActiveRepository<NonWorkingDayInWeek, Integer> {
     //List<NonWorkingDayInWeek> getAllByCompanyIdAndActive(Integer companyID, Byte active);
+    List<NonWorkingDayInWeek> getNonWorkingDayInWeekByCompanyId(Integer companyId);
 }
