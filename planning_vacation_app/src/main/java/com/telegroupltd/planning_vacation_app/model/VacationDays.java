@@ -3,14 +3,13 @@ package com.telegroupltd.planning_vacation_app.model;
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
-import java.time.Year;
 import java.util.Objects;
 
 @Entity
 @Table(name = "vacation_days", schema = "planning_vacation_db", catalog = "")
 public class VacationDays implements HasActive {
     private Integer id;
-    private Year year;
+    private Integer year;
     private Integer usedDays;
     private Integer totalDays;
     private Integer userId;
@@ -28,11 +27,11 @@ public class VacationDays implements HasActive {
 
     @Basic
     @Column(name = "year", nullable = false)
-    public Year getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(Year year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 

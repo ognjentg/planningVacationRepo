@@ -16,7 +16,7 @@ var calendarView = {
                         template: "<span class='fa fa-briefcase'></span> Kalendar"
                     },
                     {
-                        css: "companies-counter",
+                        css: "admin-counter",
                         rows: [
                             {
                                 view: "template",
@@ -48,13 +48,8 @@ var calendarView = {
                                 type: "header",
                                 css: "companies-counter"
                             },
-
                         ]
-
-
                     }
-
-
                 ]
             },
             {
@@ -126,27 +121,21 @@ var calendarView = {
     },
     refreshCounter: function () {
         webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
-
             error: function (text, data, xhr) {
-
                 if (xhr.status != 200) {
                     alert("No data to load! Check your internet connection and try again.");
-                    table.hideProgress();
                 }
-
             },
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
-                        var vacation_days;
-                        vacation_days = data.json();
-                        animateValue($$("t1"), 0, vacation_days.total_days - vacation_days.used_days, 300);
-                        animateValue($$("t2"), 0, vacation_days.total_days, 300);
+                        var vacationDays = data.json();
+                        console.log("DAYS: " + vacationDays.totalDays);
+                        animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
+                        animateValue($$("t2"), 0, vacationDays.totalDays, 700);
                     }
                 }
-
             }
-
         });
     }
 }
