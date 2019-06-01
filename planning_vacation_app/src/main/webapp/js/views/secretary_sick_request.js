@@ -36,11 +36,30 @@ var sickRequestsView = {
                             on: {
                                 onChange(name) {
                                     $$("secretary_requestDT").clearAll();
+
+
                                     if(name === 4){
+                                        $$("secretary_requestDT").hideColumn("accept");
+                                        $$("secretary_requestDT").hideColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                    } else {
+                                    }else if(name === 3){
+                                        $$("secretary_requestDT").hideColumn("accept");
+                                        $$("secretary_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").detachEvent("onBeforeDelete");
+                                    }else if(name === 2){
+                                        $$("secretary_requestDT").hideColumn("accept");
+                                        $$("secretary_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        $$("secretary_requestDT").detachEvent("onBeforeDelete");
+                                    }
+                                    else {
+                                        $$("secretary_requestDT").showColumn("accept");
+                                        $$("secretary_requestDT").showColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
@@ -171,35 +190,29 @@ var sickRequestsView = {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
-                                            if (text) {
-                                                $$("secretary_requestDT").update(id);
-                                                util.messages.showMessage("Zahtjev neopravdan");
-                                            }
+                                            $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                                            util.messages.showMessage("Zahtjev neopravdan");
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
-                                        var comboItemId = $$("filterRequestsComboBox").getValue();
-                                       refreshOnData();
                                     }
 
                                 };
                                 webix.confirm(rejectLeaveBox);
-                            } else if (action === "accept" && userData.userGroupId === 4) {
+                            } else if (action === "accept" && userData.userGroupId === 4 && $$("filterRequestsComboBox").getValue() === 1) {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
-                                            if (text) {
-                                                $$("secretary_requestDT").update(id);
+                                                $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
                                                 util.messages.showMessage("Zahtjev opravdan");
-                                            }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
                                     }
-                                    refreshOnData();
+                                    //refreshOnData();
                                 };
                                 webix.confirm(acceptLeaveBox);
                             }
@@ -229,6 +242,7 @@ var sickRequestsView = {
 
         }
     },
+
 
     rejectLeaveConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;

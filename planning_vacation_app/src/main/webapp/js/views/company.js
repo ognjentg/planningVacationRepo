@@ -223,13 +223,14 @@ var companyView = {
                     id: "id",
                     header: "#",
                     width: 50,
-                    cssFormat: checkBoxStatus
+                    cssFormat: checkBoxStatus,
                 },
 
                 {
                     id: "logo",
                     header: "Logo",
                     cssFormat: checkBoxStatus,
+                    text: "Nema slike",
                     fillspace: true, template: function (obj) {
                         return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
                     }
