@@ -87,6 +87,10 @@ public class UserController extends GenericController<User, Integer> {
         this.companyRepository=companyRepository;
         this.userGroupRepository=userGroupRepository;
     }
+    //Used to send login information to the added user
+    @Autowired
+    Notification notification;
+
 //Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
 //Implementirati metode: login*, logout*, ...
 
@@ -316,7 +320,7 @@ public class UserController extends GenericController<User, Integer> {
                 entityManager.refresh(newUser);
                 logCreateAction(newUser);
                 if(user.getUserGroupId()!=superAdmin) {
-                    Notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
+                   notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                 }
                 return newUser;
             }
