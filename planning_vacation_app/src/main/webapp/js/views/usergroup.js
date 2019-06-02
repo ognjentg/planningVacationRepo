@@ -81,7 +81,7 @@ usergroupView = {
                             id:"addUserButton",
                             view:"button",
                              type: "iconButton",
-                             hotkey: "enter",
+                             //hotkey: "enter",
                             icon: "plus-circle",
                             label:"Dodaj korisnika",
                             width: 200,
@@ -101,10 +101,10 @@ usergroupView = {
                              align:"left",
                              click:'usergroupView.showDeleteSelectedDialog'
                         },{
-                            id:"changeSectorOfSelectedButton",
+                             id:"changeSectorOfSelectedButton",
                              view:"button",
                              type: "iconButton",
-                             hotkey: "enter",
+                            // hotkey: "enter",
                              icon: "users",
                              label:"Promijeni sektor",
                              width: 200,
@@ -269,6 +269,7 @@ usergroupView = {
                             if (state == "on") {
                                 selectedItems.push(rowId);
                                 $$("deleteSelectedButton").enable();
+                                $$("changeSectorOfSelectedButton").enable();
                                 this.select(rowId);
                             } else {
                                 var index = selectedItems.indexOf(rowId);
@@ -276,8 +277,10 @@ usergroupView = {
                                     selectedItems.splice(index, 1);
                                     this.unselect(rowId);
                                 }
-                                if(selectedItems.length == 0)
+                                if(selectedItems.length == 0) {
                                     $$("deleteSelectedButton").disable();
+                                    $$("changeSectorOfSelectedButton").disable();
+                                }
                             }
                         }
                     },
@@ -297,6 +300,9 @@ usergroupView = {
                             if (action == "delete") {
                                 usergroupView.deleteEmployee();
                             }
+                            if(action == "sector")
+                                usergroupView.showChangeSectorOfSelectedDialog();
+
                         }
                     }
                 }]
@@ -428,6 +434,95 @@ usergroupView = {
                 }]
         }
     },
+
+    changeSectorDialog: {
+        view: "window",
+        id: "changeSectorDialog",
+        position: "center",
+        modal: true,
+        move: true,
+        body: {
+            id: "addUserInside",
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-users'></span> Promjena sektora zaposlenom",
+                        autoWidth: true,
+                    }, {}, {
+                        view: "icon",
+                        icon: "close",
+                        hotkey: "esc",
+                        align: "right",
+                        click: "util.dismissDialog('changeSectorDialog');"
+                    }]
+                }, {
+                    view: "form",
+                    // rules: {},
+                    id: "addUserForm",
+                    elements: [{
+                        height:15
+                    }, {
+                        cols:[{ view: "combo",
+                            id: "choseSectorCombo",
+                            placeholder:"Sektor",
+                            name: "choseSectorCombo",
+                            invalidMessage: "Obavezan je izbor sektora.",
+                            width:250,
+                            align:"center",
+                            required: true},
+                            {
+
+                                id: "save",
+                                view: "button",
+                                value: "Promijeni",
+                                width: 125,
+                                icon: "plus-circle",
+                                hotkey: "enter",
+                                align:"center",
+                                click: 'usergroupView.changeSector'
+                            }]
+
+
+                    }],
+                    width: 400,
+                    rules: {
+                        "email": function (value) {
+                            if (!value) {
+                                $$('addUserForm').elements.email.config.invalidMessage = 'Obavezan je unos e-mail adrese zaposlenog.';
+                                return false;
+                            }
+                            if (value.length > 100) {
+                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100';
+                                return false;
+                            }
+                            if (!webix.rules.isEmail(value)) {
+                                $$('addUserForm').elements.email.config.invalidMessage = 'E-mail nije u validnom formatu.';
+                                return false;
+                            }
+
+                            return true;
+                        },
+                        "startDate": function (value) {
+                            if (!value) {
+                                $$('addUserForm').elements.startDate.config.invalidMessage = 'Obavezan je unos datuma početka.';
+                                return false;
+                            }
+                            return true;
+                        },  //
+                        "choseUserGroupCombo": function (value) {
+                            if (!value) {
+                                $$('addUserForm').elements.choseUserGroupCombo.config.invalidMessage = 'Obavezno je izabrati poziciju.';
+                                return false;
+                            }
+                            return true;
+                        }
+                    }
+                }]
+        }
+    },
+
 
     changeUserGroupDialog: {
         view: "window",
@@ -658,6 +753,31 @@ usergroupView = {
         }
     },
 
+    changeSector:function(){
+        var user = $$("usergroupDT").getSelectedItem();
+        var sectorId = $$("choseSectorCombo").getValue();
+
+        var changeSectorInformation = {
+            id:user.id,
+            sectorId:sectorId
+        };
+        if($$("choseSectorCombo").validate()) {
+            util.messages.showErrorMessage(sectorId);
+            connection.sendAjax("POST", "hub/user/changeSector",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Uspješna promjena sektora.");
+                        usergroupView.refreshDatatable();
+                    } else
+                        util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                }, changeSectorInformation);
+            util.dismissDialog('changeSectorDialog');
+        }
+
+    },
+
     createDatatableContextMenu: function () {
         webix.ui({
             view: "contextmenu",  //na desni klik opcije
@@ -709,6 +829,8 @@ usergroupView = {
         //Funkcija za prikazivanje profila korisnika
     },
 
+
+
     deleteEmployee: function () {
         var delBox = (webix.copy(commonViews.deleteConfirm("zaposlenog")));
         delBox.callback = function (result) {
@@ -756,6 +878,31 @@ usergroupView = {
 
 ////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
+        webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
+        webix.ajax().get("hub/user_group").then(function (data) {
+            //response text
+            console.log(data.text());
+            if (data.json() != null) {
+                console.log("loaded data with success");
+                var userGroups = data.json();
+
+                userGroups.forEach(function (userGroup) {
+                    usergroupView.userGroups.push({
+                        id: userGroup.id,
+                        value: userGroup.key
+                    });
+                });
+                $$("choseSectorCombo").define("options", usergroupView.userGroups);
+                $$("choseSectorCombo").refresh();
+                $$("choseSectorCombo").define("options", usergroupView.userGroups);
+                $$("choseSectorCombo").refresh();
+            } else {
+                util.messages.showErrorMessage("Neuspješno učitavanje korisničkih grupa.");
+            }
+
+        });
+
+
 
     },
 

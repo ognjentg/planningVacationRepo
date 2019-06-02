@@ -398,6 +398,21 @@ public class UserController extends GenericController<User, Integer> {
             throw new BadRequestException(badRequestUpdate);
     }
 
+    @RequestMapping(value = "/changeSector", method = RequestMethod.POST)
+    public @ResponseBody
+    String changeSector(@RequestBody ChangeSectorInformation changeSectorInformation) throws BadRequestException{
+        User user = userRepository.findById(changeSectorInformation.getId()).orElse(null);
+        if(user!=null){
+            user.setSectorId(changeSectorInformation.getSectorId());
+            if(repo.saveAndFlush(user) != null){
+                return "Success";
+            }
+        }else{
+            return "Error";
+        }
+        return new String();
+    }
+
 
     @RequestMapping(value = "/custom/bySector/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
