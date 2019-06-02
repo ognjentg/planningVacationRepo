@@ -5,3 +5,10 @@
 .good_day .dhx_month_head{
     background-color: #DDDDDD;
 }
+/* Boja danjašnjeg dana */
+.today .dhx_month_head{
+    background-color: #E989A3 !important;
+}
+.today .dhx_month_body{
+    background-color: #E989A3 !important;
+}

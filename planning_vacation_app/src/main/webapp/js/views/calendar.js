@@ -161,9 +161,14 @@ var calendarView = {
         //Mogućnost promjene vec izabranih intervala
         scheduler.config.resize_month_events = true;
 
-        //Da neradni dani budu sive boje (samo za vikende)
         scheduler.config.xml_date="%Y-%m-%d %H:%i";
+
+        //Boja neradnih dana i današnjeg dana
         scheduler.templates.month_date_class=function(date,today){
+            //Današnji dan
+            if(date.getDate() == today.getDate())
+                return  "today";
+            //Neradni dani
             if (date.getDay() == 0|| date.getDay() == 6)
                 return "good_day";
             return "";
@@ -183,7 +188,8 @@ var calendarView = {
 
 
         //Inicijalizacija i postavljanje na trenutni datum
-        scheduler.init('scheduler_here', new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()), "month");
+        var date = new Date();
+        scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
         //Limitovanje
         scheduler.blockTime({
