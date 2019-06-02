@@ -8,6 +8,5 @@ import javax.validation.constraints.Max;
 import java.util.List;
 
 public interface ConstraintsRepository extends JpaRepository<Constraints, Integer>, HasActiveRepository<Constraints,Integer> {
-
     Constraints getByCompanyIdAndActive(Integer companyId, byte active);
 }

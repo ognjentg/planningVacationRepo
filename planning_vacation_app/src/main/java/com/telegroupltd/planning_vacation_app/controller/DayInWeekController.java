@@ -37,7 +37,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
 
     @Override
     @Transactional
-    public List<DayInWeek> getAll() throws ForbiddenException {
+    public List<DayInWeek> getAll() {
         return dayInWeekRepository.getAllByActiveIs((byte) 1);
     }
 
@@ -63,8 +63,6 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
         newDayInWeek.setDayKey(dayInWeek.getDayKey());
         newDayInWeek.setJavaValue(dayInWeek.getJavaValue());
         newDayInWeek.setActive((byte)1);
-        System.out.println(newDayInWeek.getJavaValue());
-        System.out.println(newDayInWeek.getDayKey());
 
         if (repo.saveAndFlush(newDayInWeek) != null) {
             entityManager.refresh(newDayInWeek);

@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -65,16 +62,11 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
         boolean flag = true;
         java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
-        System.out.println("Current date = " + currentDate);
         System.out.println(nonWorkingDayInWeek.getFromDate());
-        System.out.println("id = "  + nonWorkingDayInWeek.getCompanyId());
         List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
 
         for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
 
-            System.out.println("companyID = " + nonWorkingDayInWeek1.getCompanyId());
-            System.out.println("From = " + nonWorkingDayInWeek1.getFromDate());
-            System.out.println("To = " + nonWorkingDayInWeek1.getToDate());
             if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
                         && nonWorkingDayInWeek1.getCompanyId() == nonWorkingDayInWeek.getCompanyId()) {
                 nonWorkingDayInWeek1.setToDate(currentDate);
@@ -141,19 +133,4 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         }
         return dayInWeek;
     }
-
-
-//    @Override
-//    @Transactional
-//    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-//    public @ResponseBody
-//    String update(@PathVariable Integer id, @RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException {
-//
-//        if (nonWorkingDayInWeekRepository.saveAndFlush(nonWorkingDayInWeek) != null) {
-//            entityManager.refresh(nonWorkingDayInWeek);
-//            return "Success";
-//        }
-//        throw new BadRequestException(badRequestUpdate);
-//    }
-//
 }

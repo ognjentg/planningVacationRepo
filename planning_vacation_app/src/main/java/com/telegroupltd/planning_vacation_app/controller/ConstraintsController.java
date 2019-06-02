@@ -40,8 +40,8 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
     @Override
     @Transactional
-    public List<Constraints> getAll() throws ForbiddenException {
-        throw new ForbiddenException("Forbidden");
+    public List<Constraints> getAll() {
+        return  constraintsRepository.getAllByActiveIs((byte) 1);
     }
 
 //    @Override
@@ -69,12 +69,6 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         newConstraints.setVacationPeriodLength(constraints.getVacationPeriodLength());
         newConstraints.setCompanyId(constraints.getCompanyId());
         newConstraints.setActive((byte)1);
-
-        System.out.println(newConstraints.getCompanyId());
-        System.out.println(newConstraints.getMaxVacationDays());
-        System.out.println(newConstraints.getSickLeaveJustificationPeriodLength());
-        System.out.println(newConstraints.getVacationPeriodLength());
-        System.out.println(newConstraints.getActive());
 
         Constraints baseConstraints = findById(constraints.getCompanyId());
 
