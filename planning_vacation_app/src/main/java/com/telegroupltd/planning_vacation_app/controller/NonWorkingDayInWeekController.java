@@ -51,45 +51,45 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     }
 
 
-    @Override
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/addNonWorkingDaysInWeek", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    NonWorkingDayInWeek insert(@RequestBody NonWorkingDayInWeek nonWorkingDayInWeek) throws BadRequestException, ForbiddenException {
-        NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
+    void insert(@RequestBody List<NonWorkingDayInWeek> nonWorkingDaysInWeek) throws BadRequestException, ForbiddenException {
+        for (NonWorkingDayInWeek nonWorkingDayInWeek : nonWorkingDaysInWeek) {
+            NonWorkingDayInWeek newNonWorkingDayInWeek = new NonWorkingDayInWeek();
 
-        DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
-        boolean flag = true;
-        java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
-        System.out.println(nonWorkingDayInWeek.getFromDate());
-        List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
+            DayInWeek dayInWeek = getDayInWeek(nonWorkingDayInWeek);
+            boolean flag = true;
+            java.sql.Date currentDate = new java.sql.Date(Calendar.getInstance().getTime().getTime());
+            List<NonWorkingDayInWeek> nonWorkingDayInWeekList = getAll();
 
-        for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
+            for (NonWorkingDayInWeek nonWorkingDayInWeek1 : nonWorkingDayInWeekList) {
 
-            if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
+                if (nonWorkingDayInWeek1.getDayInWeekId() == dayInWeek.getId() && nonWorkingDayInWeek1.getActive() == 1
                         && nonWorkingDayInWeek1.getCompanyId() == nonWorkingDayInWeek.getCompanyId()) {
-                nonWorkingDayInWeek1.setToDate(currentDate);
-                nonWorkingDayInWeek1.setActive((byte) 0);
-                if (repo.saveAndFlush(nonWorkingDayInWeek1) != null)
-                    return nonWorkingDayInWeek1;
+                    nonWorkingDayInWeek1.setToDate(currentDate);
+                    nonWorkingDayInWeek1.setActive((byte) 0);
+                    if (repo.saveAndFlush(nonWorkingDayInWeek1) != null) {
+                        flag = false;
+                        System.out.println("Update");
+                    }
+                }
+            }
+            if (flag) {
+                newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek.getCompanyId());
+                newNonWorkingDayInWeek.setActive((byte) 1);
+                newNonWorkingDayInWeek.setFromDate(currentDate);
+                newNonWorkingDayInWeek.setToDate(null);
+                newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
+
+                if (repo.saveAndFlush(newNonWorkingDayInWeek) != null) {
+                    entityManager.refresh(newNonWorkingDayInWeek);
+                    System.out.println("post");
+
+                }
             }
         }
-        if (flag) {
-            newNonWorkingDayInWeek.setCompanyId(nonWorkingDayInWeek.getCompanyId());
-            newNonWorkingDayInWeek.setActive((byte)1);
-            newNonWorkingDayInWeek.setFromDate(currentDate);
-            newNonWorkingDayInWeek.setToDate(null);
-            newNonWorkingDayInWeek.setDayInWeekId(dayInWeek.getId());
-
-            if (repo.saveAndFlush(newNonWorkingDayInWeek) != null) {
-                entityManager.refresh(newNonWorkingDayInWeek);
-
-                return newNonWorkingDayInWeek;
-            }
-        }
-
-        throw new BadRequestException(badRequestInsert);
     }
 
     private DayInWeek getDayInWeek(NonWorkingDayInWeek nonWorkingDayInWeek) {
