@@ -60,7 +60,7 @@ var sectorInfoView = {
                             name: "max_absent_people",
                             label: "Maksimalan broj istovremeno odsutnih zaposlenih",
                             invalidMessage: "Niste unijeli maksimalan broj istovremeno odsutnih zaposlenih.",
-                            labelWidth: 150,
+                            labelWidth: 330,
                             height: 35
                         },
                         {
@@ -70,7 +70,7 @@ var sectorInfoView = {
                             name: "max_percentage_absent_people",
                             label: "Maksimalan procenat istovremeno odsutnih zaposlenih",
                             invalidMessage: "Niste unijeli maksimalan procenat istovremeno odsutnih zaposlenih.",
-                            labelWidth: 150,
+                            labelWidth: 330,
                             height: 35
                         },
 
