@@ -1,4 +1,4 @@
-var daysInWeek =[
+var days =[
     {"id":8,"value":"Ponedjeljak"},
     {"id":9,"value": "Utorak"},
     {"id":10,"value":"Srijeda"},
@@ -46,19 +46,41 @@ var companyInfoView = {
                             view:"toolbar",
                             type:"MainBar",
                             elements:[
-                                {view:"datepicker",   id:"nonWorkingDays", name: "select_date",  label: 'Odaberite neradni dan', labelWidth: 140 }
+                                {view:"datepicker",   id:"nonWorkingDaysDTP", name: "select_date",stringResult:true, format:"%d %M %Y", label: 'Odaberite neradni dan', labelWidth: 140 }
                             ]
                         },
-                        { view:"datatable",
+                        {
+                            view:"datatable",
+                            id:"nonWorkingDaysDT",
                             adjust:true,
+                            select: "row",
+                            navigation: true,
                             columns:[
                                 { id:"#", hidden:true,  header:"", },
-                                { id:"title",   header:"Neradni dani",  width:264},
+                                { id:"day",   header:"Neradni dani",  width:227},
+                                {
+                                    id: "delete",
+                                    header: "&nbsp;",
+                                    width: 35,
+                                    cssFormat: checkBoxStatus,
+                                    template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                },
                             ],
-                            data: [
-                                { id:1, title:"2019-05-03",},
-                                { id:2, title:"2019-05-02",}
-                            ]},]
+
+                            onClick: {
+                                webix_icon: function (e, id) {
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("ukloniti dan iz liste neradnih dana")));
+                                    delBox.callback = function (result) {
+                                        if (result == 1) {
+                                            var item = $$("nonWorkingDaysDT").getItem(id);
+                                            //alert(item.day);
+                                            $$("nonWorkingDaysDT").remove(id);
+                                        }
+                                    };
+                                    webix.confirm(delBox);
+                                }}
+                                },]
                 },
                 {
                     width:350,
@@ -95,15 +117,15 @@ var companyInfoView = {
                             label:"Broj dana bolovanja:",
                             id:"sickDays",
                         },
-                        {
+                         {
                             view:"multicombo",
                             id:"nonWorkingDaysInWeek",
                             name:"nonWorkingDaysInWeek",
-                            value:"",
-                            label: "Sedmični neradni dani",
+                            value: "",
+                            label: "Sedmični neradni dani:",
                             placeholder:"Neradni dani u sedmici",
                             newValues: true,
-                            options: daysInWeek
+                            suggest: days
                         },
                         {
                             view: "uploader",
@@ -187,9 +209,15 @@ var companyInfoView = {
     }},
 
     showCompanyInfoDialog: function() {
-
         webix.ui(webix.copy(companyInfoView.companyInfoDialog));
         companyInfoView.setValues();
+        $$("nonWorkingDaysDTP").attachEvent("onChange", function() {
+            dateAndTime = $$("nonWorkingDaysDTP").getValue();//.getFullYear()
+            //date = new Date(dateAndTime.getFullYear(),dateAndTime.getMonth(), dateAndTime.getDay());//.parse()
+            //year = date.substring(0, 4);
+           // month = date.substring(5, 7);
+            alert(dateAndTime);
+        });
         setTimeout(function() {
             $$("companyInfoDialog").show();
         }, 0);
@@ -224,10 +252,9 @@ var companyInfoView = {
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
             function (text, data, xhr) {
              if(text){
-              //   alert(33);
                  nonWorkingDays = data.json();
-         //        for( i = 0; i < nonWorkingDays.length; i++)
-       //          alert(nonWorkingDays[i].day);
+                 for( i = 0; i < nonWorkingDays.length; i++)
+                     $$("nonWorkingDaysDT").add(nonWorkingDays[i]);
              }
                 //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
                 //tu listu i oznacavanje u DTP tih dana
@@ -239,9 +266,15 @@ var companyInfoView = {
             function (text, data, xhr) {
                 if(text){
                     daysInWeek = data.json();
-                    for( i = 0; i < daysInWeek.length; i++)
-                             alert(daysInWeek[i].dayInWeekId);
+                    var values="";
+                   for(var i = 0; i < daysInWeek.length; i++)
+                    {
+                        for(var j = 0; j < days.length; j++)
+                        if(daysInWeek[i].dayInWeekId == days[j].id){
+                            values+= days[j].id + ",";
+                        }}
 
+                    $$('nonWorkingDaysInWeek').setValue(values);
                 }
 
                //staviti cekirano u comb ako je neradni dan
@@ -259,7 +292,6 @@ var companyInfoView = {
 
      var numberOfVacationDays = $$("vacationDays").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
-     var nonWorkingDays =  $$("nonWorkingDays").getValue();
      var companyPin = $$("companyPin").getValue();
 
         var  company= {
