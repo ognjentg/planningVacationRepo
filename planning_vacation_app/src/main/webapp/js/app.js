@@ -10,7 +10,7 @@ var menuState = MENU_STATES.COLLAPSED;
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sektor", icon: "code"},
-    {id:"usergroup",value:"Zaposleni",icon:"list"},
+    {id:"usergroup",value:"Zaposleni",icon:"users"},
     {id: "company", value: "Kompanije", icon: "fa fa-briefcase"},
     {id: "calendar", value: "Kalendar", icon: "code"},
     {id:"constraints", value: "Ograničenja", icon: "briefcase"},
@@ -66,7 +66,7 @@ var menuAdmin=[
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "list"
+           icon: "users"
       },
       {
            id: "sector",
@@ -95,7 +95,7 @@ var menuDirector=[
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "list"
+           icon: "users"
       },
       {
            id: "sector",
@@ -114,7 +114,7 @@ var menuSecretary=[
      {
             id: "calendar",
              value: "Kalendar",
-             icon: "briefcase"
+             icon: "fa fa-calendar"
      },
 
      {
@@ -130,7 +130,7 @@ var menuSecretary=[
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "lisz"
+           icon: "users"
       },
             {
                  id: "sector",
@@ -141,24 +141,19 @@ var menuSecretary=[
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
            icon: "briefcase"
-      },
-      {
-            id: "sickLeave",
-            value: "Bolovanja",
-            icon: "briefcase"
-       }*/
+      }*/
 ];
 
 var menuSectorManager=[
     {
         id: "calendar",
         value: "Kalendar",
-        icon: "code"
+        icon: "fa fa-calendar"
     },
      {
            id: "usergroup",
            value: "Zaposleni",
-           icon: "list"
+           icon: "users"
       },
       {
             id: "sectorInfo",
@@ -171,7 +166,7 @@ var menuWorker=[
     {
         id: "calendar",
         value: "Kalendar",
-        icon: "code"
+        icon: "fa fa-calendar"
     }
 ];
 var settingsMenu=[

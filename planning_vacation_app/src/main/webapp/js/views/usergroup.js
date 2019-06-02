@@ -44,20 +44,19 @@ usergroupView = {
                     width: 200,
                     height: 70,
                     css: "companyPanelToolbar",
-                    template: "<span class='fa fa-list'></span> Zaposleni"
+                    template: "<span class='fa fa-users'></span> Zaposleni"
                 }, {}, {}, {},
 
                     {
                         css: "employee-counter",
                         rows: [
-                            {view: "template", id: "t3", css: "employee-counter",},
+                            {view: "template", id: "t3", css: "employee-counter"},
                             {
                                 view: "label",
                                 label: "Broj zaposlenih u sektoru",
                                 type: "header",
                                 css: "employee-counter"
                             },
-
                         ]
                     }, {
                         id: "btn",
@@ -212,7 +211,7 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:220,
-                            header: "<span class='webix_icon fa fa-address-card'/>Pozicija"
+                            header: "<span class='webix_icon fas fa-briefcase'></span> Pozicija"
                         },
                         {
                             id: "sector_name",
@@ -220,7 +219,7 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:220,
-                            header: ["<span class='webix_icon fa fa-users'/>Sektor",
+                            header: ["<span class='webix_icon fas fa-briefcase'/>Sektor",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]

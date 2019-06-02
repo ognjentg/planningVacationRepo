@@ -23,7 +23,7 @@ var sectorInfoView = {
                         {
                             view: "label",
                             width: 400,
-                            label: "<span class='webix_icon fas fa-user'></span> Sektor"
+                            label: "<span class='webix_icon fas fa-briefcase'></span> Sektor"
                         },
                         {},
                         {
