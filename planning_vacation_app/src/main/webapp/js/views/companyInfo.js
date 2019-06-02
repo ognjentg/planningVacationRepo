@@ -7,7 +7,7 @@ var days =[
     {"id":13,"value":"Subota"},
     {"id":14,"value":"Nedjelja"}];
 
-var updatedDays;
+var updatedDays = [];
 
 var companyInfoView = {
 
@@ -84,11 +84,12 @@ var companyInfoView = {
                                     var delBox = (webix.copy(commonViews.deleteConfirm("ukloniti dan iz liste neradnih dana")));
                                     delBox.callback = function (result) {
                                         if (result == 1) {
-                                            var item = $$("nonWorkingDaysDT").getItem(id);
-                                    //        if(updatedDays.includes(item))
-                                  //              updatedDays.pop(item);
-                                      //      else
-                                        //        updatedDays.push(item);
+                                            var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+
+                                            if(updatedDays.includes(dataTableValue))
+                                                updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day});
+                                            else
+                                                updatedDays.push(dataTableValue);
                                             $$("nonWorkingDaysDT").remove(id);
                                         }
                                     };
@@ -228,6 +229,7 @@ var companyInfoView = {
 
         $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
             var date = webix.Date.dateToStr("%d.%m.%Y.")(newValue);
+            var updatedDate = webix.Date.dateToStr("yyyy-MM-dd")(newValue);
             var editBox = (webix.copy(commonViews.confirmOkCancel("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + date + " kao neradni dan?")));
             var dataTableValue;
 
@@ -237,12 +239,11 @@ var companyInfoView = {
                     dataTableValue = {
                       day: date
                     };
-            updatedDays.push(dataTableValue);
-            updatedDays.remove()
-                    //        if(updatedDays.includes(item))
-                    //              updatedDays.pop(item);
-                    //      else
-                    //        updatedDays.push(item);
+
+                    if(updatedDays.includes(updatedDate))
+                        updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day;});
+                          else
+                            updatedDays.push(dataTableValue);
 
                     $$("nonWorkingDaysDT").add(dataTableValue);
                 }
@@ -358,9 +359,11 @@ var companyInfoView = {
                 }
             }, function (text, data, xhr) {
            alert(text);
-            }, nonWorkingDaysInWeek[0]);
+            }, nonWorkingDaysInWeek);
 
 
+        for(var i = 0; i < updatedDays.length; i++)
+            alert(updatedDays[i].day);
       /*  var date = new Date($$("nonWorkingDays").getValue());
         var nonWorkingDayInYear = {
            day:date,
