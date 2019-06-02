@@ -131,7 +131,7 @@ usergroupView = {
                                       console.log("id sektora je"+id);
                                       webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
                                       $$("usergroupDT").clearAll();
-                                      connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                                      //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
                                       $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
                                       $$("usergroupDT").detachEvent("onBeforeDelete");
                                       if(sectorID == -1) {
@@ -780,19 +780,57 @@ usergroupView = {
         webix.ui({
             view: "contextmenu",  //na desni klik opcije
             id: "usergroupCntMenu",
-            width: 200,
-            data: [{
-                id: "1",
-                value: "Promijeni grupu",
-                icon: "pencil"
-            }],
+            width: 205,
+            data: [
+                {
+                    id: "1",
+                    value: "Izbriši zaposlenog",
+                    icon: "trash"
+                },
+                {
+                    id: "2",
+                    value: "Informacije o zaposlenom",
+                    icon: "eye"
+                },
+                {
+                    id: "3",
+                    value: "Promijeni grupu",
+                    icon: "pencil"
+                },
+                {
+                    id: "4",
+                    value: "Promijeni sektor",
+                    icon: "users"
+                },
+                {
+                    id: "5",
+                    value: "Prikaži kalendar",
+                    icon: "calendar"
+                }
+            ],
             master: $$("usergroupDT"),
             on: {
                 onItemClick: function (id) {
                     var context = this.getContext();
                     switch (id) {
                         case "1": {
+                            usergroupView.deleteEmployee();
+                            break;
+                        }
+                        case "2": {
+                            //TODO
+                            break;
+                        }
+                        case "3": {
                             usergroupView.showChangeUserGroupDialog();
+                            break;
+                        }
+                        case "4": {
+                            usergroupView.showChangeSectorOfSelectedDialog();
+                            break;
+                        }
+                        case "5": {
+                            //TODO
                             break;
                         }
                     }
