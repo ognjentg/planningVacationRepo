@@ -1,4 +1,6 @@
 var chosenCategory=null; //here will be setted chosen category  - but there must be value from database...
+var schedulerEvents = [];
+
 
 var calendarView = {
     panel: {
@@ -74,7 +76,6 @@ var calendarView = {
                     width: 10
                     },
                     {
-                       // view: "template",
                         rows: [{
                                 view: "label",
                                 label: "Zahtjev za godisnjim odmorom",
@@ -109,7 +110,7 @@ var calendarView = {
                                                  header: ["<span class='webix_icon fa fa-calendar'/>Do"]
                                          }],
                                          rules: {
-                                               startDate:notEmpty,
+                                               startDate:notEmpty, //todo-maybe this doesn't work,because method notEmpty work for String...
                                                endDate:notEmpty
                                                                                                            },
                                  },{
@@ -121,7 +122,6 @@ var calendarView = {
                                  //2.element-comment section
                                            view:"textarea",
                                            id: "comment",
-                                          // label:"Komentar",
                                            labelAlign:"left",
                                           // height:200,  //without setted height, we can do resizeing
                                            width: 400,
@@ -134,15 +134,12 @@ var calendarView = {
                                     view:"button",
                                      type: "iconButton",
                                      hotkey: "enter",
-                                    //icon: "",
+                                    //icon: "", //todo
                                     label:"Posalji zahtjev",
                                     height:40,
                                     css: "companyButton",
                                     click:'calendarView.showSendDialog'
-                                 }]/*,
-                                 rules: {
-
-                                 }*/
+                                 }]
                              },{view: "label", //this is making a line from bottom
                                  width: 5,
                                  height:10
@@ -172,6 +169,19 @@ var calendarView = {
             return "";
         }
 
+        // 1. custom
+       scheduler.config.lightbox.sections=[
+           {name:"time", height:50, type:"time", map_to:"auto", time_format:[ "%d", "%m", "%Y"]}
+       ]
+
+        //2. started working...
+        schedulerEvents.push(scheduler.attachEvent("onClick", function (id, e) {
+        //dhtmlx.message("proba");
+           // calendarView.showEventInfo(id);
+           console.log(schedulerEvents);
+        }));
+
+
         //Inicijalizacija i postavljanje na trenutni datum
         scheduler.init('scheduler_here', new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()), "month");
 
@@ -184,8 +194,6 @@ var calendarView = {
             dhtmlx.message('Neradni dan ili praznik.');
         });
         calendarView.refreshCounter();
-
-//<<<<<<< HEAD
     },
     refreshCounter: function () {
         webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
@@ -205,31 +213,26 @@ var calendarView = {
                 }
             }
         });
-//=======
         animateValue($$("t1"), 0, 20, 300);
 
     },
     showSendDialog: function () {
      webix.message("TODO.");
-var form = $$("createRequestForm");
+        var form = $$("createRequestForm");
         if (form.validate()) {
             var newRequest = {
                 category: chosenCategory,
                  sender_comment: form.getValues().comment,
                  sender_user_id:userData.id,
-        //approver_user_id: //todo: find out id from sector managager if this user has sector - or id from director from his company
+                //approver_user_id: //todo: find out id from sector managager if this user has sector - or id from director from his company
                 //
                 //
                 companyId: companyData.id,
             };
             console.log(newUser);
-
             //TODO: POST...
-
-//>>>>>>> Added form for sending requests in calendar.js
     }
 }
-
 }
 
 function notEmpty(value){
