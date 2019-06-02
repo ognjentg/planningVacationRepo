@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -47,7 +48,17 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
 
     @RequestMapping(value = "/getNonWorkingDayInWeekByCompany/{companyId}", method = RequestMethod.GET)
     public List<NonWorkingDayInWeek> getNonWorkingDayInWeekForCompany(@PathVariable Integer companyId) {
-        return  nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+        return nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+    }
+
+    @RequestMapping(value = "/getNonWorkingDayInWeekByCompanyString/{companyId}", method = RequestMethod.GET)
+    public List<String> getNonWorkingDayInWeekForCompanyString(@PathVariable Integer companyId) {
+        List<NonWorkingDayInWeek> nonWorkingDayInWeekList = nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+        List<String> nonWorkingDay = new ArrayList<>();
+        for (NonWorkingDayInWeek nonWorkingDayInWeek : nonWorkingDayInWeekList) {
+            nonWorkingDay.add(getDayInWeek(nonWorkingDayInWeek).getDayKey());
+        }
+        return  nonWorkingDay;
     }
 
 
