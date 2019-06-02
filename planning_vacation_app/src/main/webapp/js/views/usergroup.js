@@ -483,8 +483,6 @@ usergroupView = {
                                 align:"center",
                                 click: 'usergroupView.changeSector'
                             }]
-
-
                     }],
                     width: 400,
                     rules: {
@@ -762,12 +760,12 @@ usergroupView = {
             sectorId:sectorId
         };
         if($$("choseSectorCombo").validate()) {
-            util.messages.showErrorMessage(sectorId);
             connection.sendAjax("POST", "hub/user/changeSector",
                 function (text, data, xhr) {
                     if (text) {
                         util.messages.showMessage("Uspješna promjena sektora.");
                         usergroupView.refreshDatatable();
+
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
                 }, function (text, data, xhr) {
