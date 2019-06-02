@@ -7,6 +7,8 @@ var days =[
     {"id":13,"value":"Subota"},
     {"id":14,"value":"Nedjelja"}];
 
+var updatedDays;
+
 var companyInfoView = {
 
     companyInfoDialog : {
@@ -16,6 +18,7 @@ var companyInfoView = {
         position: "center",
         modal: true,
         width:620,
+        height:500,
         body:
             {
             rows:[
@@ -46,7 +49,15 @@ var companyInfoView = {
                             view:"toolbar",
                             type:"MainBar",
                             elements:[
-                                {view:"datepicker",   id:"nonWorkingDaysDTP", name: "select_date",stringResult:true, format:"%d %M %Y", label: 'Odaberite neradni dan', labelWidth: 140 }
+                                {
+                                    view:"datepicker",
+                                    id:"nonWorkingDaysDTP",
+                                    name: "nonWorkingDaysDTP",
+                                    stringResult:true,
+                                    format:"%d %m %y",
+                                    label: 'Odaberite neradni dan',
+                                    labelWidth: 140
+                                }
                             ]
                         },
                         {
@@ -74,7 +85,10 @@ var companyInfoView = {
                                     delBox.callback = function (result) {
                                         if (result == 1) {
                                             var item = $$("nonWorkingDaysDT").getItem(id);
-                                            //alert(item.day);
+                                    //        if(updatedDays.includes(item))
+                                  //              updatedDays.pop(item);
+                                      //      else
+                                        //        updatedDays.push(item);
                                             $$("nonWorkingDaysDT").remove(id);
                                         }
                                     };
@@ -134,7 +148,7 @@ var companyInfoView = {
                             invalidMessage: "Niste odabrali logo.",
                             width: 110,
                             height: 60,
-                            css: "upload-logo",
+                            css: "upload-logo-company",
                             template: "<span class='webix fa fa-upload' />Dodajte logo</span>",
                             on: {
                                 onBeforeFileAdd: function (upload) {
@@ -211,12 +225,31 @@ var companyInfoView = {
     showCompanyInfoDialog: function() {
         webix.ui(webix.copy(companyInfoView.companyInfoDialog));
         companyInfoView.setValues();
-        $$("nonWorkingDaysDTP").attachEvent("onChange", function() {
-            dateAndTime = $$("nonWorkingDaysDTP").getValue();//.getFullYear()
-            //date = new Date(dateAndTime.getFullYear(),dateAndTime.getMonth(), dateAndTime.getDay());//.parse()
-            //year = date.substring(0, 4);
-           // month = date.substring(5, 7);
-            alert(dateAndTime);
+
+        $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
+            var date = webix.Date.dateToStr("%d.%m.%Y.")(newValue);
+            var editBox = (webix.copy(commonViews.confirmOkCancel("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + date + " kao neradni dan?")));
+            var dataTableValue;
+
+            if("" != date){
+            editBox.callback = function (result) {
+                if (result == 1) {
+                    dataTableValue = {
+                      day: date
+                    };
+            updatedDays.push(dataTableValue);
+            updatedDays.remove()
+                    //        if(updatedDays.includes(item))
+                    //              updatedDays.pop(item);
+                    //      else
+                    //        updatedDays.push(item);
+
+                    $$("nonWorkingDaysDT").add(dataTableValue);
+                }
+            };
+            webix.confirm(editBox);
+            $$("nonWorkingDaysDTP").setValue("");
+            }
         });
         setTimeout(function() {
             $$("companyInfoDialog").show();
@@ -225,25 +258,23 @@ var companyInfoView = {
     setValues: function(){
         var companyId = userData.companyId;
 
-
         connection.sendAjax("GET",
             "hub/company/" + companyId, function (text, data, xhr) {
-            //provjera svega
-             company = data.json();
+             var company = data.json();
              $$("companyName").setValue(company.name);
              $$("companyPin").setValue(company.pin);
                 var newDocument = {
                     name: '',
                     content: company.logo,
-                }; 
-             $$("companyLogoList").clearAll();
-             $$("companyLogoList").add(newDocument);
+                };
+
+                $$("companyLogoList").clearAll();
+                $$("companyLogoList").add(newDocument);
              });
 
         connection.sendAjax("GET",
             "hub/constraints/" + companyId, function (text, data, xhr) {
-                constraints = data.json();
-             //   $$("daysInWeekCombo").setValue();
+                var constraints = data.json();
                 $$("vacationDays").setValue(constraints.maxVacationDays);
                 $$("sickDays").setValue(constraints.sickLeaveJustificationPeriodLength);
             });
@@ -252,20 +283,17 @@ var companyInfoView = {
             "/hub/nonWorkingDay/getNonWorkingDayByCompany/" + companyId,
             function (text, data, xhr) {
              if(text){
-                 nonWorkingDays = data.json();
+                 var nonWorkingDays = data.json();
                  for( i = 0; i < nonWorkingDays.length; i++)
                      $$("nonWorkingDaysDT").add(nonWorkingDays[i]);
              }
-                //dobijam listu neradnih dana, jedna od ideja je prolazenje kroz
-                //tu listu i oznacavanje u DTP tih dana
-                //$$("nonWorkingDays").setValue();
             });
 
         connection.sendAjax("GET",
             "/hub/nonWorkingDayInWeek/getNonWorkingDayInWeekByCompany/" + companyId,
             function (text, data, xhr) {
                 if(text){
-                    daysInWeek = data.json();
+                    var daysInWeek = data.json();
                     var values="";
                    for(var i = 0; i < daysInWeek.length; i++)
                     {
@@ -276,24 +304,17 @@ var companyInfoView = {
 
                     $$('nonWorkingDaysInWeek').setValue(values);
                 }
-
-               //staviti cekirano u comb ako je neradni dan
-            });
-
-
-
+       });
     },
     saveChanges: function () {
      var logo = $$("companyLogoList");
      var companyId = userData.companyId;
      var companyName = $$("companyName").getValue();
-     //var companyLogo = $$("photoUploader").getValue();
-    // var nonWorkingDayInWeek = $$("nonWorkingDaysInWeek").getValue();
-
      var numberOfVacationDays = $$("vacationDays").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
      var companyPin = $$("companyPin").getValue();
 
+        //       var validation = $$("companyInfoDialog").validate();
         var  company= {
          id: companyId,
          name: companyName,
@@ -302,40 +323,42 @@ var companyInfoView = {
          logo: logo.getItem(logo.getLastId()).content
      };
 
-
         connection.sendAjax("PUT", "hub/company/" + companyId,
             function (text, data, xhr) {
                 if (text) {
                 } else {
-                    //alert("Greška u dodavanju admina.");
-                //    button.enable();
-                }
-            }, function (text, data, xhr) {
-            //    alert(text);
-          //      button.enable();
-            }, company);
-
-        var dayId = $$("nonWorkingDaysInWeek").getValue();
-        var nonWorkingDayInWeek = {
-          dayInWeekId: dayId,
-          companyId: companyId,
-          from: null,
-          active:0,
-          to: null,
-        };
-         
-       connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
-            function (text, data, xhr) {
-                if (text) {
-                    alert(2)
-                } else {
-                    alert("Greška u dodavanju neradnih dana u sedmici .");
-                    //    button.enable();
+                    alert("Greška u izmjeni podataka o kompaniji.");
                 }
             }, function (text, data, xhr) {
                 alert(text);
-      //          button.enable();
-            }, nonWorkingDayInWeek);
+            }, company);
+
+        var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
+        var nonWorkingDaysInWeek = [];
+        var dayId;
+        var nonWorkingDayInWeek;
+
+        for(var i = 0; i < selectedDays.length; i++) {
+            dayId = selectedDays[i];
+            nonWorkingDayInWeek = {
+                dayInWeekId: dayId,
+                companyId: companyId,
+                from: null,
+                active: 0,
+                to: null,
+            };
+            nonWorkingDaysInWeek.push(nonWorkingDayInWeek);
+        }
+
+       connection.sendAjax("POST", "hub/nonWorkingDayInWeek/",
+            function (text, data, xhr) {
+                if (text) {
+                } else {
+                    alert("Greška u dodavanju neradnih dana u sedmici .");
+                }
+            }, function (text, data, xhr) {
+           alert(text);
+            }, nonWorkingDaysInWeek[0]);
 
 
       /*  var date = new Date($$("nonWorkingDays").getValue());
@@ -368,20 +391,15 @@ var companyInfoView = {
         connection.sendAjax("POST", "/hub/constraints",
             function (text, data, xhr) {
                 if (text) {
-                    alert(2)
                 } else {
-                    //alert("Greška u dodavanju neradnog dana.");
-                    //button.enable();
+                    alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
                 }
             }, function (text, data, xhr) {
                 alert(text);
             }, constraints);
 
-
+        alert("Uspješno izvršena izmjena podataka o kompaniji");
         util.dismissDialog('companyInfoDialog');
- //       var validation = $$("companyInfoDialog").validate();
-            //pozvati metodu, snimiti, ispisati poruku
-
     }
 };
 
