@@ -20,6 +20,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,11 +68,29 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
         return nonWorkingDayRepository.getAllByActiveAndCompanyId((byte) 1, companyId);
     }
 
+    @RequestMapping(value = "/getNonWorkingDayByCompanyString/{companyId}", method = RequestMethod.GET)
+    public List<String> getNonWorkingDayForCompanyString(@PathVariable Integer companyId) throws ParseException {
+        List<String> dates = new ArrayList<>();
+        List<NonWorkingDay> nonWorkingDayList = nonWorkingDayRepository.getAllByActiveAndCompanyId((byte) 1, companyId);
+        for (NonWorkingDay nonWorkingDay : nonWorkingDayList) {
+            String startDate = nonWorkingDay.getDay().toString();
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = simpleDateFormat.parse(startDate);
+
+            String patter = "dd.MM.yyyy";
+            SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat(patter);
+            String dateString = simpleDateFormat1.format(date);
+            System.out.println(dateString);
+            dates.add(dateString);
+        }
+        return dates;
+    }
+
     @Transactional
     @RequestMapping(value = "/addNonWorkingDays", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    void insert(@RequestBody List<NonWorkingDay> nonWorkingDays) {
+    void insert(@RequestBody List<NonWorkingDay> nonWorkingDays) throws ParseException {
 
         for (NonWorkingDay nonWorkingDay : nonWorkingDays) {
             NonWorkingDay newNonWorkingDay = new NonWorkingDay();
@@ -112,7 +132,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
 
     @RequestMapping(method = RequestMethod.DELETE)
     public @ResponseBody
-    String delete(@PathVariable NonWorkingDay nonWorkingDay1) {
+    String delete(@PathVariable NonWorkingDay nonWorkingDay1) throws ParseException {
 
         List<NonWorkingDay> nonWorkingDaysList = getNonWorkingDayForCompany(nonWorkingDay1.getCompanyId());
         for (NonWorkingDay nonWorkingDay : nonWorkingDaysList) {
