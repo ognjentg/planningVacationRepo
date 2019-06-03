@@ -56,6 +56,8 @@ var companyInfoView = {
                                     id:"nonWorkingDaysDTP",
                                     name: "nonWorkingDaysDTP",
                                     stringResult:true,
+                                    css:"non-working-day-dtp",
+                                    // icon: "plus-circle",
                                     format:"%d %m %y",
                                     label: 'Odaberite neradni dan',
                                     labelWidth: 140
@@ -142,11 +144,7 @@ var companyInfoView = {
                             placeholder:"Neradni dani u sedmici",
                             newValues: true,
                             suggest: days,
-                             on:{
-                                 onItemClick: function(id){
-                                     webix.message(id);
-                                 }
-                            }
+                            on:{}
                         },
                         {
                             view: "uploader",
@@ -233,10 +231,8 @@ var companyInfoView = {
         webix.ui(webix.copy(companyInfoView.companyInfoDialog));
         companyInfoView.setValues();
 
-
         $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
             var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
-         //   var updatedDate = webix.Date.dateToStr("yyyy-MM-dd")(newValue);
             var editBox = (webix.copy(commonViews.confirmOkCancel("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + date + " kao neradni dan?")));
             var dataTableValue;
 
@@ -246,7 +242,6 @@ var companyInfoView = {
                     dataTableValue = {
                       day: date
                     };
-
 
                     if(updatedDays.includes(date))
                         updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day;});
@@ -355,7 +350,7 @@ var companyInfoView = {
              daysId.push(startedSelectedValues[i]); //svi dani koji su bili selektovani, a sada nisu
         }
 
-        var nonWorkingDaysInWeek = [];
+        var nonWorkingDaysInWeek = []; //saljem samo dane koji nisu bili cekirani ili dane u sedmici koji su otcekirani pri pokretanju aplikacije
         var dayId;
         var nonWorkingDayInWeek;
 
@@ -377,9 +372,9 @@ var companyInfoView = {
                  alert(text);
             }, nonWorkingDaysInWeek);
 
-        var nonWorkingDaysInYear = [];
-        for(var i = 0; i < updatedDays.length; i++) {
+        var nonWorkingDaysInYear = []; //saljem samo dane koji nisu bili cekirani ili dane koji su otcekirani pri pokretanju aplikacije
 
+        for(var i = 0; i < updatedDays.length; i++) {
             var nonWorkingDayInYear = {
                 day: updatedDays[i].day,
                 companyId: companyId,
@@ -387,7 +382,7 @@ var companyInfoView = {
             }
             nonWorkingDaysInYear.push(nonWorkingDayInYear);
         }
-
+        updatedDays = [];
         connection.sendAjax("POST", "/hub/nonWorkingDay/addNonWorkingDays/",
             function (text, data, xhr) {
             }, function (text, data, xhr) {

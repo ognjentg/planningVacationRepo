@@ -169,18 +169,28 @@ var menuWorker=[
         icon: "fa fa-calendar"
     }
 ];
-var settingsMenu=[
-    {id: "0", value: "O kompaniji", icon: "info-circle"},
-    {$template: "Separator"},
+var settingsMenu = [];/*=[
+    {id: "stavkaK", value: "O kompaniji", icon: "info-circle"},
+    {id:"sep1", $template: "Separator"},
     {id: "1", value: "O programu", icon: "info-circle"},
-    {$template: "Separator"},
+    {id:"sep2", $template: "Separator"},
     {id: "2", value: "Promjena lozinke", icon: "lock"},
-    {$template: "Separator"},
+    {id:"sep3", $template: "Separator"},
     {id: "3", value: "Profil", icon: "user"},
-    {$template: "Separator"},
+    {id:"sep4", $template: "Separator"},
     {id: "4", value: "Odjava", icon: "sign-out"}
-    ];
-
+    ];*/
+var submenuOptions = [
+    {id: "0", value: "O kompaniji", icon: "info-circle"},
+    {id:"sep1", $template: "Separator"},
+    {id: "1", value: "O programu", icon: "info-circle"},
+    {id:"sep2", $template: "Separator"},
+    {id: "2", value: "Promjena lozinke", icon: "lock"},
+    {id:"sep3", $template: "Separator"},
+    {id: "3", value: "Profil", icon: "user"},
+    {id:"sep4", $template: "Separator"},
+    {id: "4", value: "Odjava", icon: "sign-out"}
+]
 var settingsMenuActions=function (id) {
     switch (id) {
         case "0":
@@ -266,12 +276,14 @@ var mainLayout = {
                         view: "menu",
                         width: 45,
                         icon: "cog",
+                        id:"settingsMenu",
+                        name:"settingsMenu",
                         css: "settingsMenu",
                         align: "right",
                         submenuConfig: {width: 180},
-                        data: [{
-                            id: "settingsMenu", icon: "cog", value: "", submenu: settingsMenu
-                        }],
+                       data: [{
+                           id: "settingsSubMenu", icon: "cog", value: "", submenu: settingsMenu
+                       }],
                         openAction: "click",
                         on: {
                             onMenuItemClick: settingsMenuActions
@@ -320,6 +332,29 @@ var menuEvents = {
 }
 var mainApp;
 var showApp = function () {
+    var companyInfoItems = [
+        {id: "0", value: "O kompaniji", icon: "info-circle"},
+        {id:"sep1", $template: "Separator"}];
+
+    var subMenuItems = [
+        {id: "1", value: "O programu", icon: "info-circle"},
+        {id:"sep2", $template: "Separator"},
+        {id: "2", value: "Promjena lozinke", icon: "lock"},
+        {id:"sep3", $template: "Separator"},
+        {id: "3", value: "Profil", icon: "user"},
+        {id:"sep4", $template: "Separator"},
+        {id: "4", value: "Odjava", icon: "sign-out"}
+    ]
+
+    if (userData.userGroupId == 2 || userData.userGroupId == 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+    {
+        for(var i = 0; i < companyInfoItems.length; i++)
+        settingsMenu.push(companyInfoItems[i]);
+    }
+
+    for(var i = 0; i < subMenuItems.length; i++)
+        settingsMenu.push(subMenuItems[i]);
+
     var main = webix.copy(mainLayout);
     mainApp = webix.ui(main, panel);
     panel = $$("app");
@@ -328,7 +363,10 @@ var showApp = function () {
     var localMenuData = null;
 
     //if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
-
+  //  alert(settingsMenu[0].id);
+//    $$("settingsMenu").define("submenu",settingsMenu);
+  //$$("settingsMenu").refresh();
+//    $$("settingsSubMenu").add(settingsMenu[0]);
     if(userData!=null)
     {
     switch (userData.userGroupId) {
