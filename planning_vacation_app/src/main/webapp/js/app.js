@@ -6,7 +6,7 @@ var MENU_STATES = {
 var menuState = MENU_STATES.COLLAPSED;
 
 //menu configuration - EDITABLE
-
+var settingsMenu = [];
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sektor", icon: "code"},
