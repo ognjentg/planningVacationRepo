@@ -121,7 +121,9 @@ usergroupView = {
                             id:"choseSectorCombo",
                             align:"left",
                             width:400,
-                           // value: "Svi sektori",
+                            tooltip: "Izaberite sektor u kome želite vidjeti zaposlene",
+                            value: "Svi sektori",
+                            placeholder:"Svi sektori",
                               on:{
                              // var input= $$("choseSectorCombo").getInputNode().value;
                                   onChange(id){
@@ -139,6 +141,7 @@ usergroupView = {
                                           $$("addUserButton").show();
                                       }
                                   }
+
                                 }
                             }
                     ]
@@ -611,11 +614,17 @@ usergroupView = {
                                                           console.log(data.text());
                                                      $$("choseSectorCombo").define("options", usergroupView.sectors);
                                                      $$("choseSectorCombo").refresh();
+
                                                    }else {
                                                     util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
                                                    }
 
                      });
+                                                   //  $$("choseSectorCombo").attachEvent("onAfterRender", webix.once(function(){
+                                                     //                         console.log('called once after first rendering:');
+                                                       //                   });
+                        $$("choseSectorCombo").setValue("Svi sektori");
+                     $$("usergroupDT").define("url", "hub/user/custom/bySector/"+-1);
     },
 
     showAddDialog: function () {
