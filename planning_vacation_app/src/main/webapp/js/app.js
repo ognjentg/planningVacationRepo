@@ -169,28 +169,6 @@ var menuWorker=[
         icon: "fa fa-calendar"
     }
 ];
-var settingsMenu = [];/*=[
-    {id: "stavkaK", value: "O kompaniji", icon: "info-circle"},
-    {id:"sep1", $template: "Separator"},
-    {id: "1", value: "O programu", icon: "info-circle"},
-    {id:"sep2", $template: "Separator"},
-    {id: "2", value: "Promjena lozinke", icon: "lock"},
-    {id:"sep3", $template: "Separator"},
-    {id: "3", value: "Profil", icon: "user"},
-    {id:"sep4", $template: "Separator"},
-    {id: "4", value: "Odjava", icon: "sign-out"}
-    ];*/
-var submenuOptions = [
-    {id: "0", value: "O kompaniji", icon: "info-circle"},
-    {id:"sep1", $template: "Separator"},
-    {id: "1", value: "O programu", icon: "info-circle"},
-    {id:"sep2", $template: "Separator"},
-    {id: "2", value: "Promjena lozinke", icon: "lock"},
-    {id:"sep3", $template: "Separator"},
-    {id: "3", value: "Profil", icon: "user"},
-    {id:"sep4", $template: "Separator"},
-    {id: "4", value: "Odjava", icon: "sign-out"}
-]
 var settingsMenuActions=function (id) {
     switch (id) {
         case "0":

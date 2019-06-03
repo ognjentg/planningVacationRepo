@@ -6,11 +6,8 @@ var days =[
     {"id":12,"value":"Petak"},
     {"id":13,"value":"Subota"},
     {"id":14,"value":"Nedjelja"}];
-
 var updatedDays = [];
 var startedSelectedValues = [];
-var selectedDaysInWeekId = [];
-
 var companyInfoView = {
 
     companyInfoDialog : {
@@ -19,8 +16,8 @@ var companyInfoView = {
         name: "companyInfoDialog",
         position: "center",
         modal: true,
-        width:620,
-        height:500,
+        width:650,
+        height:520,
         body:
             {
             rows:[
@@ -56,9 +53,7 @@ var companyInfoView = {
                                     id:"nonWorkingDaysDTP",
                                     name: "nonWorkingDaysDTP",
                                     stringResult:true,
-                                    css:"non-working-day-dtp",
-                                    // icon: "plus-circle",
-                                    format:"%d %m %y",
+                                    format:"%d.%m.%Y.",
                                     label: 'Odaberite neradni dan',
                                     labelWidth: 140
                                 }
@@ -71,8 +66,16 @@ var companyInfoView = {
                             select: "row",
                             navigation: true,
                             columns:[
-                                { id:"#", hidden:true,  header:"", },
-                                { id:"day",   header:"Neradni dani",  width:227},
+                                {
+                                    id:"#",
+                                    hidden:true,
+                                    header:"",
+                                },
+                                {
+                                    id:"day",
+                                    header:"Neradni dani",
+                                    width:227
+                                },
                                 {
                                     id: "delete",
                                     header: "&nbsp;",
@@ -85,14 +88,22 @@ var companyInfoView = {
 
                             onClick: {
                                 webix_icon: function (e, id) {
-                                    var delBox = (webix.copy(commonViews.deleteConfirm("ukloniti dan iz liste neradnih dana")));
+
+                                    var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+                                    var day = dataTableValue.day;
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
                                     delBox.callback = function (result) {
                                         if (result == 1) {
-                                            var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+                                            var format = webix.Date.strToDate("%d.%m.%Y.");
+                                            var string = format(day);
+                                            var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                            var newDate = newFormat(string); //datum u formatu kakav je potreban za backend stranu
+                                            dataTableValue.day = newDate;
                                             if(updatedDays.includes(dataTableValue))
                                                 updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day});
-                                            else
+                                            else {
                                                 updatedDays.push(dataTableValue);
+                                            }
                                             $$("nonWorkingDaysDT").remove(id);
                                         }
                                     };
@@ -106,6 +117,7 @@ var companyInfoView = {
                 {
                     view:"form",
                     id:"companyInfoForm",
+                    name:"companyInfoForm",
                     width:600,
                     elementsConfig: {
                         labelWidth: 140,
@@ -115,6 +127,7 @@ var companyInfoView = {
                         {
                             view:"text",
                             id:"companyName",
+                            name:"companyName",
                             label:"Naziv kompanije:",
                             required:true,
                             invalidMessage: "Niste unijeli naziv kompanije",
@@ -232,28 +245,45 @@ var companyInfoView = {
         companyInfoView.setValues();
 
         $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
+
             var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
-            var editBox = (webix.copy(commonViews.confirmOkCancel("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + date + " kao neradni dan?")));
+            var dateInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+            var isDaySelected = 0;
+            $$("nonWorkingDaysDT").eachRow(function(row){
+                var record = $$("nonWorkingDaysDT").getItem(row);
+                if( dateInDTFormat == record.day) //provjeravamo da li se dan vec nalazi u tabeli
+                    isDaySelected = 1;
+            });
+
+            if(isDaySelected == 1)
+                alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+            else{
+            var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
             var dataTableValue;
+            var updatedValue;
 
             if("" != date){
             editBox.callback = function (result) {
                 if (result == 1) {
                     dataTableValue = {
-                      day: date
+                      day: dateInDTFormat
                     };
+                    $$("nonWorkingDaysDT").add(dataTableValue);
 
-                    if(updatedDays.includes(date))
-                        updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day;});
-                          else
-                            updatedDays.push(dataTableValue);
+                    updatedValue = {
+                        day: date
+                    }
 
-                        $$("nonWorkingDaysDT").add(dataTableValue);
-                }
+                    if(updatedDays.includes(dateInDTFormat))
+                        updatedDays = updatedDays.filter(function(element){return element.day !== dateInDTFormat;});
+                          else {
+                        updatedDays.push(updatedValue);
+                    }
+               }
             };
             webix.confirm(editBox);
+            }}
             $$("nonWorkingDaysDTP").setValue("");
-            }
         });
         setTimeout(function() {
             $$("companyInfoDialog").show();
@@ -288,8 +318,12 @@ var companyInfoView = {
             function (text, data, xhr) {
              if(text){
                  var nonWorkingDays = data.json();
-                 for(var i = 0; i < nonWorkingDays.length; i++)
+                 var date;
+                 for(var i = 0; i < nonWorkingDays.length; i++) {
+                     date = webix.Date.dateToStr("%d.%m.%Y.")(nonWorkingDays[i].day);
+                     nonWorkingDays[i].day = date;
                      $$("nonWorkingDaysDT").add(nonWorkingDays[i]);
+                 }
              }
             });
 
@@ -319,7 +353,8 @@ var companyInfoView = {
      var numberOfSickDays = $$("sickDays").getValue();
      var companyPin = $$("companyPin").getValue();
 
-        //       var validation = $$("companyInfoDialog").validate();
+     var validation = $$("companyInfoForm").validate();
+     if(validation){
         var  company= {
          id: companyId,
          name: companyName,
@@ -408,6 +443,6 @@ var companyInfoView = {
 
         alert("Uspješno izvršena izmjena podataka o kompaniji");
         util.dismissDialog('companyInfoDialog');
-    }
+    }}
 };
 
