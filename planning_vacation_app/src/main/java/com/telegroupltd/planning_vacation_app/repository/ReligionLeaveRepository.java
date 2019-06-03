@@ -5,4 +5,5 @@ import com.telegroupltd.planning_vacation_app.repository.genericRepository.HasAc
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReligionLeaveRepository extends JpaRepository<ReligionLeave, Integer>, HasActiveRepository<ReligionLeave, Integer> {
+    ReligionLeave getByUserIdAndActive(Integer userId, byte active);
 }

@@ -32,11 +32,8 @@ var calendarView = {
                                 label: "Ukupan godišnji",
                                 type: "header",
                                 css: "companies-counter"
-                            },
-
+                            }
                         ]
-
-
                     },
                     {
                         css: "companies-counter",
@@ -52,6 +49,23 @@ var calendarView = {
                                 type: "header",
                                 css: "companies-counter"
                             },
+                        ]
+                    },
+                    {
+                        css: "companies-counter",
+                        rows: [
+                            {
+                                view: "template",
+                                id: "t3",
+                                css: "companies-counter",
+                            },
+                            {
+                                view: "label",
+                                label: "Preostalo plaćeno odsustvo",
+                                type: "header",
+                                css: "companies-counter"
+                            },
+
                         ]
                     }
                 ]
@@ -155,6 +169,25 @@ var calendarView = {
         var panelCopy = webix.copy(this.panel);
         $$("main").addView(webix.copy(panelCopy));
 
+        var nonWorkingDays = [];
+
+        //Dohvatanje neradnih dana
+        webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        nonWorkingDays = data.json();
+                    }
+                }
+            }
+        });
+
+
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
 
@@ -169,7 +202,7 @@ var calendarView = {
             if(date.getDate() == today.getDate())
                 return  "today";
             //Neradni dani
-            if (date.getDay() == 0|| date.getDay() == 6)
+            if (date.getDay() == 0 || date.getDay() == 6)
                 return "good_day";
             return "";
         }
@@ -202,6 +235,7 @@ var calendarView = {
         calendarView.refreshCounter();
     },
     refreshCounter: function () {
+        //Dohvatanje dana godišnjeg odmora
         webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -212,15 +246,28 @@ var calendarView = {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
                         var vacationDays = data.json();
-                        console.log("DAYS: " + vacationDays.totalDays);
                         animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
                         animateValue($$("t2"), 0, vacationDays.totalDays, 700);
                     }
                 }
             }
         });
-        animateValue($$("t1"), 0, 20, 300);
-
+        //Dohvatanje slobodnih dana za religijske praznike
+        webix.ajax("hub/religion_leave/byUserId/" + userData.id, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        var religionLeave = data.json();
+                        animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
+                    }
+                }
+            }
+        });
     },
     showSendDialog: function () {
      webix.message("TODO.");

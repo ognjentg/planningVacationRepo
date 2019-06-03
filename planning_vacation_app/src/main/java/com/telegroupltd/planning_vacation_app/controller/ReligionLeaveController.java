@@ -6,10 +6,13 @@ import com.telegroupltd.planning_vacation_app.repository.ReligionLeaveRepository
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping(value="/religion_leave")
-@Controller
+@RequestMapping(value="/hub/religion_leave")
+@RestController
 @Scope("request")
 public class ReligionLeaveController extends GenericHasActiveController<ReligionLeave,Integer> {
     private final ReligionLeaveRepository religionLeaveRepository;
@@ -19,4 +22,10 @@ public class ReligionLeaveController extends GenericHasActiveController<Religion
         super(religionLeaveRepository);
         this.religionLeaveRepository = religionLeaveRepository;
     }
+
+    @RequestMapping(value = "/byUserId/{userId}", method = RequestMethod.GET)
+    ReligionLeave getByUserId(@PathVariable Integer userId){
+        return religionLeaveRepository.getByUserIdAndActive(userId, (byte)1);
+    }
+
 }
