@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping(value="leave_request_status")
+import java.util.List;
+
+@RequestMapping(value="/hub/leave_request_status")
 @Controller
 @Scope("request")
 public class LeaveRequestStatusController extends GenericHasActiveController<LeaveRequestStatus,Integer> {
@@ -18,5 +21,12 @@ public class LeaveRequestStatusController extends GenericHasActiveController<Lea
     {
         super(leaveRequestStatusRepository);
         this.leaveRequestStatusRepository = leaveRequestStatusRepository;
+    }
+
+    @Override
+    public @ResponseBody
+    List<LeaveRequestStatus> getAll() {
+        List<LeaveRequestStatus> leaveRequestStatuses = cloner.deepClone(leaveRequestStatusRepository.getAllByActiveIs((byte)1));
+        return leaveRequestStatuses;
     }
 }

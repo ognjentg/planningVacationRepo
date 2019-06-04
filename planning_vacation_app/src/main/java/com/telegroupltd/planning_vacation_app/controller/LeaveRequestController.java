@@ -4,6 +4,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestExcept
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping(value = "hub/leave_request")
 @Controller
@@ -26,6 +28,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @Value("Ažuriranje nije moguće")
     private String badRequestUpdate;
+
+    @Value("Brisanje nije moguće.")
+    private String badRequestDelete;
 
     @Autowired
     public LeaveRequestController(LeaveRequestRepository leaveRequestRepository) {
@@ -62,6 +67,50 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     List<LeaveRequest> getAll(){
         return leaveRequestRepository.getAllByActiveIs((byte)1);
+    }
+
+    @Override
+    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    public @ResponseBody
+    String delete(@PathVariable Integer id) throws BadRequestException {
+        LeaveRequest leaveRequest = leaveRequestRepository.findById(id).orElse(null);
+        cloner.deepClone(leaveRequest);
+        Objects.requireNonNull(leaveRequest).setActive((byte)0);
+        if(leaveRequestRepository.getByIdAndActive(id,(byte)1) == null){
+            logDeleteAction(leaveRequest);
+            return "Success";
+        }
+        else throw new BadRequestException(badRequestDelete);
+    }
+
+    @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation(){
+        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUser().getId());
+    }
+
+    @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(){
+        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationForWait(userBean.getUser().getId());
+    }
+
+    @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
+        return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUser().getId(), key);
+    }
+
+    @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId){
+        leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId);
+    }
+
+    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId){
+        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId);
     }
 }
 
