@@ -400,17 +400,49 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/changeSector", method = RequestMethod.POST)
     public @ResponseBody
-    String changeSector(@RequestBody ChangeSectorInformation changeSectorInformation) throws BadRequestException{
+    String changeSector(@RequestBody ChangeSectorInformation changeSectorInformation) throws BadRequestException {
         User user = userRepository.findById(changeSectorInformation.getId()).orElse(null);
-        if(user!=null){
+        if (user != null) {
             user.setSectorId(changeSectorInformation.getSectorId());
-            if(repo.saveAndFlush(user) != null){
+            if (repo.saveAndFlush(user) != null) {
                 return "Success";
             }
-        }else{
+        } else {
             return "Error";
         }
         return new String();
+    }
+
+    @RequestMapping(value = "/changeToManager/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String changeUserGroupToManager(@PathVariable("id")Integer id) throws BadRequestException{
+        User oldUser = userRepository.findById(id).orElse(null);
+        if(oldUser == null)
+            throw new BadRequestException(badRequestNoUser);
+        User userTemp = cloner.deepClone(oldUser);
+        userTemp.setUserGroupId(sectorManager);
+        if(repo.saveAndFlush(userTemp) != null){
+            logUpdateAction(userTemp, oldUser);
+            return "Success";
+        }
+        else
+            throw new BadRequestException(badRequestUpdate);
+    }
+
+    @RequestMapping(value = "/changeToWorker/{id}", method = RequestMethod.PUT)
+    public @ResponseBody
+    String changeUserGroupToWorker(@PathVariable("id")Integer id) throws BadRequestException{
+        User oldUser = userRepository.findById(id).orElse(null);
+        if(oldUser == null)
+            throw new BadRequestException(badRequestNoUser);
+        User userTemp = cloner.deepClone(oldUser);
+        userTemp.setUserGroupId(worker);
+        if(repo.saveAndFlush(userTemp) != null){
+            logUpdateAction(userTemp, oldUser);
+            return "Success";
+        }
+        else
+            throw new BadRequestException(badRequestUpdate);
     }
 
 

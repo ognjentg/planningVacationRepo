@@ -27,7 +27,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
 //<<<<<<< HEAD
 
-    private static final String SQL_GETALL_BY_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id=? AND u.user_group_id=6 AND u.active=1";
+    private static final String SQL_GETALL_BY_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id=? AND (u.user_group_id=6  OR u.user_group_id=5 ) AND u.active=1";
     private static final String SQL_GET_ALL_WITHOUT_SECTOR="SELECT * FROM user u WHERE u.company_id=? AND u.sector_id is null AND u.user_group_id=6 AND u.active=1";
 //=======
     //

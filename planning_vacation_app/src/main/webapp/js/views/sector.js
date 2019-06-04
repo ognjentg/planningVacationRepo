@@ -546,127 +546,155 @@ var sectorView = {
 
     },
 
-    editDialog:{
-        view: "fadeInWindow",
-        id: "editSectorDialog",
-        move: true,
-        position: "center",
-        modal: true,
-        body: {
-            id: "editSectorInside",
-            rows: [
-                {
-                    view: "toolbar",
-                    cols: [{
-                        view: "label",
-                        label: "<span class='webix_icon fa-briefcase'></span> Izmjena sektora",
-                        width: 400,
-                        height: 50
-                    }, {}, {
-                        hotkey: 'esc',
-                        view: "icon",
-                        icon: "close",
-                        align: "right",
-                        click: function () {
-                            this.getTopParentView().hide();
-                        },
-                    }]
-                },
-                {
-                    view: "form",
-                    id: "editSectorForm",
-                    width: 660,
-                    height: 200,
-                    elementsConfig: {
-                        labelWidth: 200,
-                        bottomPadding: 20
+    editDialog: function(sectorId) {
+        return  {
+            view: "fadeInWindow",
+            id: "editSectorDialog",
+            move: true,
+            position: "center",
+            modal: true,
+            body: {
+                id: "editSectorInside",
+                rows: [
+                    {
+                        view: "toolbar",
+                        cols: [{
+                            view: "label",
+                            label: "<span class='webix_icon fa-briefcase'></span> Izmjena sektora",
+                            width: 400,
+                            height: 50
+                        }, {}, {
+                            hotkey: 'esc',
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            click: function () {
+                                this.getTopParentView().hide();
+                            },
+                        }]
                     },
-                    elements:[
-                        {
-                            view: "text",
-                            id: "id",
-                            name: "id",
-                            label: "id:",
-                            //hidden: true,
-                            //editable: false
+                    {
+                        view: "form",
+                        id: "editSectorForm",
+                        width: 660,
+                        height: 200,
+                        elementsConfig: {
+                            labelWidth: 200,
+                            bottomPadding: 20
                         },
-                        {
-                            view: "text",
-                            id: "name",
-                            name: "name",
-                            label: "Naziv:",
-                            invalidMessage: "Naziv je obavezno unijeti.",
-                            required: true
-                        },
-                        {
-                            view: "combo",
-                            id:"managerCombo",
-                            name:"managerCombo",
-                            label:"Rukovodilac",
-                            options:{
-                                body: {
-                                    template: "#id# #firstName# #lastName#",
-                                    url: "hub/user"
-                                   // url: "hub/user/getAllUsersFromSectorByUserGroupId/"+$$("id").getValue(),
+                        elements:[
+                            {
+                                view: "text",
+                                id: "id",
+                                name: "id",
+                                label: "id:",
+                            },
+                            {
+                                view: "text",
+                                id: "name",
+                                name: "name",
+                                label: "Naziv:",
+                                invalidMessage: "Naziv je obavezno unijeti.",
+                                required: true
+                            },
+                            {
+                                view: "combo",
+                                id:"managerCombo",
+                                name:"managerCombo",
+                                label:"Rukovodilac",
+                                options:{
+                                    body: {
+                                        template: "#id# #firstName# #lastName#",
+                                        url: "/hub/user/getAllUsersFromSectorByUserGroupId/"+sectorId,
+                                    }
+                                },
+                                required:true
+                            },
+                            {
+                                id: "saveSector",
+                                view: "button",
+                                value: "Sačuvajte izmjene",
+                                type: "form",
+                                align: "right",
+                                click: "sectorView.saveUpdate",
+                                hotkey: "enter",
+                                width: 150
+
+                            }
+                        ],
+                        rules: {
+                            "name": function (value) {
+                                if (!value) {
+                                    $$('addSectorForm').elements.name.config.invalidMessage = 'Naziv je obavezno unijeti.';
+                                    return false;
+                                } else if (value.length > 45) {
+                                    $$('addSectorForm').elements.name.config.invalidMessage = 'Broj karaktera ne može biti veći od 45!';
+                                    return false;
+                                } else {
+                                    return true;
                                 }
                             },
-                            required:true
-                        },
-                        {
-                            id: "saveSector",
-                            view: "button",
-                            value: "Sačuvajte izmjene",
-                            type: "form",
-                            align: "right",
-                            click: "sectorView.saveUpdate",
-                            hotkey: "enter",
-                            width: 150
+                            "managerCombo": function (value) {
+                                if (!value) {
+                                    //$$('addSectorForm').elements.managerCombo.config.invalidMessage = 'Rukovodioca je obavezno odabrati.';
+                                    return false;
+                                }else {
+                                    return true;
+                                }
 
-                        }
-                    ],
-                    rules: {
-                        "name": function (value) {
-                            if (!value) {
-                                $$('addSectorForm').elements.name.config.invalidMessage = 'Naziv je obavezno unijeti.';
-                                return false;
-                            } else if (value.length > 45) {
-                                $$('addSectorForm').elements.name.config.invalidMessage = 'Broj karaktera ne može biti veći od 45!';
-                                return false;
-                            } else {
-                                return true;
                             }
-                        },
-                        "managerCombo": function (value) {
-                            if (!value) {
-                                //$$('addSectorForm').elements.managerCombo.config.invalidMessage = 'Rukovodioca je obavezno odabrati.';
-                                return false;
-                            }else {
-                                return true;
-                            }
-
                         }
                     }
-                }
-            ]
-        }
-    },
+                ]
+            }
+        }  },
 
     showEditDialog: function (sector) {
 
-        webix.ui(webix.copy(sectorView.editDialog)).show();
+        webix.ui(webix.copy(sectorView.editDialog(sector.id))).show();
         webix.UIManager.setFocus("name");
         var form = $$("editSectorForm");
-        form.elements.name.setValue(sector.name);
-        form.elements.id.setValue(sector.id);
-        form.elements.id.hide(true);
+        form.setValues(sector);
+        $$("id").hide(true);
         $$("managerCombo").setValue(sector.sectorManagerId);
 
     },
 
     saveUpdate: function(){
+
         var form = $$("editSectorForm");
         var validation = form.validate();
         if(validation){
+
+            /*var sector=null;
+            connection.sendAjax("GET", "hub/sector/" +form.getValues().id,
+                function (text, data, xhr) {
+                    if (text) {
+                    }
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, sector);
+
+            connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
+                function (text, data, xhr) {
+                    if (text) {
+                    }
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, sector.sectorManagerId);*/
+
+
+            connection.sendAjax("PUT", "hub/user/changeToManager/" +$$("managerCombo").getValue(),
+                function (text, data, xhr) {
+                    if (text) {
+                    }
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, $$("managerCombo").getValue());
+
             var newSector={
                 id:form.getValues().id,
                 name: form.getValues().name,
@@ -683,13 +711,15 @@ var sectorView = {
                     if (text) {
                         util.messages.showMessage("Sektor uspješno izmjenjen.");
                         util.dismissDialog('editDialog');
-                        $$("sectorDT").updateItem(newSector.id, newSector);
+                       // $$("sectorDT").updateItem(newSector.id, newSector);
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                     alert(text);
                 }, newSector);
+
+
         }
     }
 
