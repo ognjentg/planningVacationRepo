@@ -346,7 +346,8 @@ var companyView = {
                                     if (text) {
                                         $$("companyDT").remove(id);
                                         util.messages.showMessage("Uspjesno uklanjanje");
-                                        animateValue($$("t1"), 0, companies.length, 1000);
+                                        animateValue($$("t1"), 0, tmpCompaniesLength-1, 1000);
+                                        tmpCompaniesLength = tmpCompaniesLength - 1;
                                     }
                                 }, function (text, data, xhr) {
                                     util.messages.showErrorMessage(text);
@@ -701,6 +702,8 @@ var companyView = {
 
                         util.dismissDialog('addCompanyDialog');
                         alert("Kompanija uspješno dodata.");
+                        animateValue($$("t1"), 0, tmpCompaniesLength+1, 1000);
+                        tmpCompaniesLength = tmpCompaniesLength + 1;
 
                     }
                 }, function (text, data, xhr) {
@@ -1226,6 +1229,8 @@ function animateValue(id, start, end, duration) {
     }, stepTime);
 }
 
+var tmpCompaniesLength = 0;
+
 function refreshData() {
     $$("t1").setHTML(`<p>${0}</p>`);
     $$("t2").setHTML(`<p>${0}</p>`);
@@ -1258,6 +1263,7 @@ function refreshData() {
                     console.log("loaded data with success");
                     companies = data.json();
                     numberOfCompanies = companies.length;
+                    tmpCompaniesLength = numberOfCompanies;
                     table.hideProgress();
                     // counterAnimation(1130, 1130, 2230);
 
