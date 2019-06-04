@@ -199,7 +199,7 @@ var sickRequestsView = {
 
                                 };
                                 webix.confirm(rejectLeaveBox);
-                            } else if (action === "accept" && userData.userGroupId === 4 && $$("filterRequestsComboBox").getValue() === 1) {
+                            } else if (action === "accept" && userData.userGroupId === 4) {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
