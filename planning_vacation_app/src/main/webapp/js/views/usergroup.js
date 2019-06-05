@@ -474,9 +474,9 @@ usergroupView = {
                         height:15
                     }, {
                         cols:[{ view: "combo",
-                            id: "choseSectorCombo",
+                            id: "cuCombo",
                             placeholder:"Sektor",
-                            name: "choseSectorCombo",
+                            name: "cuCombo",
                             invalidMessage: "Obavezan je izbor sektora.",
                             width:250,
                             align:"center",
@@ -529,9 +529,9 @@ usergroupView = {
                         height:15
                     }, {
                         cols:[{ view: "combo",
-                            id: "choseSectorCombo",
+                            id: "cmuCombo",
                             placeholder:"Sektor",
-                            name: "choseSectorCombo",
+                            name: "cmuCombo",
                             invalidMessage: "Obavezan je izbor sektora.",
                             width:250,
                             align:"center",
@@ -789,67 +789,86 @@ usergroupView = {
     },
 
     changeSector:function(){
-        var user = $$("usergroupDT").getSelectedItem();
-        var sectorId = $$("choseSectorCombo").getValue();
 
-        var changeSectorInformation = {
-            id:user.id,
-            sectorId:sectorId
-        };
-        if($$("choseSectorCombo").validate()) {
-            connection.sendAjax("POST", "hub/user/changeSector",
-                function (text, data, xhr) {
-                    if (text) {
-                        util.messages.showMessage("Uspješna promjena sektora.");
-                        //usergroupView.refreshDatatable();
-                        var user = $$("usergroupDT").getSelectedItem();
-                        var sectorName;
-                        usergroupView.sectors.forEach(function (value) {
-                            if(value.id === sectorId){
-                                sectorName = value.value;
+        var user = $$("usergroupDT").getSelectedItem();
+        var sectorId = $$("cuCombo").getValue();
+        if(sectorId === -1 || sectorId === -2){
+            util.messages.showErrorMessage("Odabrani sektor ne postoji!");
+        }
+        else {
+            var changeSectorInformation = {
+                id: user.id,
+                sectorId: sectorId
+            };
+            if ($$("cuCombo").validate()) {
+                connection.sendAjax("POST", "hub/user/changeSector",
+                    function (text, data, xhr) {
+                        if (text) {
+                            util.messages.showMessage("Uspješna promjena sektora.");
+                            //usergroupView.refreshDatatable();
+                            if ($$("choseSectorCombo").getValue() === "Svi sektori") {
+                                var user = $$("usergroupDT").getSelectedItem();
+                                var sectorName;
+                                usergroupView.sectors.forEach(function (value) {
+                                    if (value.id === sectorId) {
+                                        sectorName = value.value;
+                                    }
+                                });
+                                user.sector_name = sectorName;
+                                $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
+                            } else {
+                                $$("usergroupDT").remove($$("usergroupDT").getSelectedId());
                             }
-                        });
-                        user.sector_name = sectorName;
-                        $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
-                    } else
-                        util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                }, changeSectorInformation);
-            util.dismissDialog('changeSectorDialog');
+                        } else
+                            util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
+                    }, function (text, data, xhr) {
+                        util.messages.showErrorMessage(text);
+                    }, changeSectorInformation);
+                util.dismissDialog('changeSectorDialog');
+            }
         }
 
     },
 
     changeMultipleUsersSector:function(){
-        var sectorId = $$("choseSectorCombo").getValue();
-        if($$("choseSectorCombo").validate()) {
-            selectedItems.forEach(function (element) {
-                var changeSectorInformation = {
-                    id: element,
-                    sectorId: sectorId
-                };
-                connection.sendAjax("POST", "hub/user/changeSector",
-                    function (text, data, xhr) {
-                        if (text) {
-                            util.messages.showMessage("Uspješna promjena sektora.");
-                            var user = $$("usergroupDT").getItem(element);
-                            var sectorName;
-                            usergroupView.sectors.forEach(function (value) {
-                                if(value.id === sectorId){
-                                    sectorName = value.value;
+        var sectorId = $$("cmuCombo").getValue();
+
+        if(sectorId === -1 || sectorId === -2){
+            util.messages.showErrorMessage("Odabrani sektor ne postoji!");
+        }
+        else {
+            if ($$("cmuCombo").validate()) {
+                selectedItems.forEach(function (element) {
+                    var changeSectorInformation = {
+                        id: element,
+                        sectorId: sectorId
+                    };
+                    connection.sendAjax("POST", "hub/user/changeSector",
+                        function (text, data, xhr) {
+                            if (text) {
+                                util.messages.showMessage("Uspješna promjena sektora.");
+                                if ($$("choseSectorCombo").getValue() === "Svi sektori") {
+                                    var user = $$("usergroupDT").getItem(element);
+                                    var sectorName;
+                                    usergroupView.sectors.forEach(function (value) {
+                                        if (value.id === sectorId) {
+                                            sectorName = value.value;
+                                        }
+                                    });
+                                    user.sector_name = sectorName;
+                                    $$("usergroupDT").updateItem(element, user);
+                                } else {
+                                    $$("usergroupDT").remove(element);
                                 }
-                            });
-                            user.sector_name = sectorName;
-                            $$("usergroupDT").updateItem(element, user);
-                        } else
-                            util.messages.showErrorMessage("Neuspješna promjena sektora.");
-                    }, function (text, data, xhr) {
-                        util.messages.showErrorMessage(text);
-                        alert(text);
-                    }, changeSectorInformation);
-            });
-            util.dismissDialog('changeMultipleUsersSectorDialog');
+                            } else
+                                util.messages.showErrorMessage("Neuspješna promjena sektora.");
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                            alert(text);
+                        }, changeSectorInformation);
+                });
+                util.dismissDialog('changeMultipleUsersSectorDialog');
+            }
         }
     },
 
@@ -1128,14 +1147,14 @@ usergroupView = {
 ////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
         webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
-        $$("choseSectorCombo").define("options", usergroupView.sectors);
-        $$("choseSectorCombo").refresh();
+        $$("cuCombo").define("options", usergroupView.sectors);
+        $$("cuCombo").refresh();
     },
 
     showChangeMultipleUsersSector: function () {
         webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
-                $$("choseSectorCombo").define("options", usergroupView.sectors);
-                $$("choseSectorCombo").refresh();
+                $$("cmuCombo").define("options", usergroupView.sectors);
+                $$("cmuCombo").refresh();
     },
 
     sectors: [],
