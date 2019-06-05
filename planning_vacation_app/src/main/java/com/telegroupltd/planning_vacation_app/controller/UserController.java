@@ -401,6 +401,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/changeSector", method = RequestMethod.POST)
     public @ResponseBody
     String changeSector(@RequestBody ChangeSectorInformation changeSectorInformation) throws BadRequestException {
+        System.out.println(changeSectorInformation.getId());
         User user = userRepository.findById(changeSectorInformation.getId()).orElse(null);
         if (user != null) {
             user.setSectorId(changeSectorInformation.getSectorId());
@@ -408,7 +409,7 @@ public class UserController extends GenericController<User, Integer> {
                 return "Success";
             }
         } else {
-            return "Error";
+            throw new BadRequestException("Neuspješna promjena sektora!");
         }
         return new String();
     }

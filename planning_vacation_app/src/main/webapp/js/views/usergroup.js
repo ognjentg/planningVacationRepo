@@ -697,10 +697,10 @@ usergroupView = {
                                                      sectors.forEach(function(sector){
                                                                         usergroupView.sectors.push({
                                                                             id: sector.id,
-                                                                            value: sector.name
+                                                                            value: sector.name,
+
                                                                          });
                                                                     });
-
                                                           console.log(data.text());
                                                      $$("choseSectorCombo").define("options", usergroupView.sectors);
                                                      $$("choseSectorCombo").refresh();
@@ -862,8 +862,10 @@ usergroupView = {
                 function (text, data, xhr) {
                     if (text) {
                         util.messages.showMessage("Uspješna promjena sektora.");
-                        usergroupView.refreshDatatable();
-
+                        //usergroupView.refreshDatatable();
+                        var user = $$("usergroupDT").getSelectedItem();
+                        user.sectorId = sectorId;
+                        $$("usergroupDT").update($$("usergroupDT").getSelectedItem().id, user);
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
                 }, function (text, data, xhr) {
@@ -875,7 +877,27 @@ usergroupView = {
     },
 
     changeMultipleUsersSector:function(){
-        util.messages.showErrorMessage("bla");
+        var sectorId = $$("choseSectorCombo").getValue();
+
+        selectedItems.forEach(function (element) {
+            var changeSectorInformation = {
+                id:element,
+                sectorId:sectorId
+            };
+            connection.sendAjax("POST", "hub/user/changeSector",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Uspješna promjena sektora.");
+                        usergroupView.refreshDatatable();
+                    } else
+                        util.messages.showErrorMessage("Neuspješna promjena sektora.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    alert(text);
+                }, changeSectorInformation);
+        });
+        util.dismissDialog('changeMultipleUsersSectorDialog');
+        usergroupView.refreshDatatable();
     },
 
     createDatatableContextMenu: function () {
@@ -1017,59 +1039,14 @@ usergroupView = {
 ////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
         webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
-        webix.ajax().get("hub/user_group").then(function (data) {
-            //response text
-            console.log(data.text());
-            if (data.json() != null) {
-                console.log("loaded data with success");
-                var userGroups = data.json();
-
-                userGroups.forEach(function (userGroup) {
-                    usergroupView.userGroups.push({
-                        id: userGroup.id,
-                        value: userGroup.key
-                    });
-                });
-                $$("choseSectorCombo").define("options", usergroupView.userGroups);
-                $$("choseSectorCombo").refresh();
-                $$("choseSectorCombo").define("options", usergroupView.userGroups);
-                $$("choseSectorCombo").refresh();
-            } else {
-                util.messages.showErrorMessage("Neuspješno učitavanje korisničkih grupa.");
-            }
-
-        });
-
-
-
+        $$("choseSectorCombo").define("options", usergroupView.sectors);
+        $$("choseSectorCombo").refresh();
     },
+
     showChangeMultipleUsersSector: function () {
         webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
-        webix.ajax().get("hub/user_group").then(function (data) {
-            //response text
-            console.log(data.text());
-            if (data.json() != null) {
-                console.log("loaded data with success");
-                var userGroups = data.json();
-
-                userGroups.forEach(function (userGroup) {
-                    usergroupView.userGroups.push({
-                        id: userGroup.id,
-                        value: userGroup.key
-                    });
-                });
-                $$("choseSectorCombo").define("options", usergroupView.userGroups);
+                $$("choseSectorCombo").define("options", usergroupView.sectors);
                 $$("choseSectorCombo").refresh();
-                $$("choseSectorCombo").define("options", usergroupView.userGroups);
-                $$("choseSectorCombo").refresh();
-            } else {
-                util.messages.showErrorMessage("Neuspješno učitavanje korisničkih grupa.");
-            }
-
-        });
-
-
-
     },
 
     sectors: [],
