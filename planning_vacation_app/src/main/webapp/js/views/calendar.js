@@ -181,8 +181,14 @@ var calendarView = {
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
-                        nonWorkingDays = data.json();
-                    }
+                        var dates = data.json();
+                        for(var i = 0; i < dates.length; i++){
+                            var tempDate = new Date(dates[i].day);
+                            tempDate.setHours(00, 00, 00);
+                            nonWorkingDays[i] = tempDate.getTime();
+                            scheduler.blockTime(tempDate, "fullday");
+                        }
+                        scheduler.setCurrentView();                    }
                 }
             }
         });
@@ -199,10 +205,10 @@ var calendarView = {
         //Boja neradnih dana i današnjeg dana
         scheduler.templates.month_date_class=function(date,today){
             //Današnji dan
-            if(date.getDate() == today.getDate())
+            if(date.getTime() == today.getTime())
                 return  "today";
             //Neradni dani
-            if (date.getDay() == 0 || date.getDay() == 6)
+            if (date.getDay() == 0 || date.getDay() == 6 || nonWorkingDays.includes(date.getTime()))
                 return "good_day";
             return "";
         }
@@ -218,7 +224,6 @@ var calendarView = {
            // calendarView.showEventInfo(id);
            console.log(schedulerEvents);
         }));
-
 
         //Inicijalizacija i postavljanje na trenutni datum
         var date = new Date();
