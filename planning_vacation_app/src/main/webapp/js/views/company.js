@@ -229,11 +229,19 @@ var companyView = {
                 {
                     id: "logo",
                     header: "Logo",
+                    css:{"text-align":"center",
+                        "font-size" :"20px",
+                        "font-weight":"bold",
+                        "color": "#000000"
+                    },
                     cssFormat: checkBoxStatus,
-                    text: "Nema slike",
                     fillspace: true, template: function (obj) {
-                        return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
-                    }
+                        if(obj.logo == null) {
+                            return "Nema slike"
+                        } else {
+                            return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
+                        }
+                    },
                 },
 
                 {
@@ -246,7 +254,7 @@ var companyView = {
                         "Naziv kompanije", {
                             content: "textFilter", value: ""
                         }
-                    ]
+                    ],
                 },
                 {
                     id: "pin",

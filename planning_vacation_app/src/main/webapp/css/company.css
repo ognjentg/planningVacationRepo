@@ -237,5 +237,12 @@
 .webix_cell img {
     margin: 0 auto;
 }
+.largeText {
+     font-size:15px !important;
+     text-align: center;
+ }
 
-
+.my_style {
+    font-weight:bold;
+    color: #000000;
+}
