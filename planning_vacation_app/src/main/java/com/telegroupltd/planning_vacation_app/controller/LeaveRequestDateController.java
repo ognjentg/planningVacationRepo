@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-@RequestMapping(value="leave_request_date")
+@RequestMapping(value="/hub/leave_request_date")
 @Controller
 @Scope("request")
 public class LeaveRequestDateController extends GenericHasActiveController<LeaveRequestDate,Integer> {

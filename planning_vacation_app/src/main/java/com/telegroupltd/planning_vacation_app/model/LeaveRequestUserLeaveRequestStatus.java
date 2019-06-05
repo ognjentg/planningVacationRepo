@@ -12,6 +12,12 @@ import javax.persistence.*;
                         @ColumnResult(name = "category", type = String.class),
                         @ColumnResult(name = "sender_comment", type = String.class),
                         @ColumnResult(name = "approver_comment", type = String.class),
+                        @ColumnResult(name = "sender_user_id", type = Integer.class),
+                        @ColumnResult(name = "approver_user_id", type = Integer.class),
+                        @ColumnResult(name = "leave_type_id", type = Integer.class),
+                        @ColumnResult(name = "leave_request_status_id", type = Integer.class),
+                        @ColumnResult(name = "company_id", type = Integer.class),
+                        @ColumnResult(name = "active", type = Byte.class),
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name",type = String.class),
                         @ColumnResult(name = "status_name", type = String.class)
@@ -25,11 +31,17 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private String firstName;
     private String lastName;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String statusName, String firstName, String lastName) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, Integer senderUserId, Integer approverUserId, Integer leaveTypeId, Integer leaveRequestStatusId, Integer companyId, Byte active, String firstName, String lastName,String statusName) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
         this.setApproverComment(approverComment);
+        this.setSenderUserId(senderUserId);
+        this.setApproverUserId(approverUserId);
+        this.setLeaveTypeId(leaveTypeId);
+        this.setLeaveRequestStatusId(leaveRequestStatusId);
+        this.setCompanyId(companyId);
+        this.setActive(active);
         this.statusName = statusName;
         this.firstName = firstName;
         this.lastName = lastName;
