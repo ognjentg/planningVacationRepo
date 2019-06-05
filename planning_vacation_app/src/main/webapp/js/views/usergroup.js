@@ -490,38 +490,6 @@ usergroupView = {
                             }]
                     }],
                     width: 400,
-                    rules: {
-                        "email": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'Obavezan je unos e-mail adrese zaposlenog.';
-                                return false;
-                            }
-                            if (value.length > 100) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100';
-                                return false;
-                            }
-                            if (!webix.rules.isEmail(value)) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'E-mail nije u validnom formatu.';
-                                return false;
-                            }
-
-                            return true;
-                        },
-                        "startDate": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.startDate.config.invalidMessage = 'Obavezan je unos datuma početka.';
-                                return false;
-                            }
-                            return true;
-                        },  //
-                        "choseUserGroupCombo": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.choseUserGroupCombo.config.invalidMessage = 'Obavezno je izabrati poziciju.';
-                                return false;
-                            }
-                            return true;
-                        }
-                    }
                 }]
         }
     },
@@ -577,38 +545,6 @@ usergroupView = {
                             }]
                     }],
                     width: 400,
-                    rules: {
-                        "email": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'Obavezan je unos e-mail adrese zaposlenog.';
-                                return false;
-                            }
-                            if (value.length > 100) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100';
-                                return false;
-                            }
-                            if (!webix.rules.isEmail(value)) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'E-mail nije u validnom formatu.';
-                                return false;
-                            }
-
-                            return true;
-                        },
-                        "startDate": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.startDate.config.invalidMessage = 'Obavezan je unos datuma početka.';
-                                return false;
-                            }
-                            return true;
-                        },  //
-                        "choseUserGroupCombo": function (value) {
-                            if (!value) {
-                                $$('addUserForm').elements.choseUserGroupCombo.config.invalidMessage = 'Obavezno je izabrati poziciju.';
-                                return false;
-                            }
-                            return true;
-                        }
-                    }
                 }]
         }
     },
@@ -878,26 +814,27 @@ usergroupView = {
 
     changeMultipleUsersSector:function(){
         var sectorId = $$("choseSectorCombo").getValue();
-
-        selectedItems.forEach(function (element) {
-            var changeSectorInformation = {
-                id:element,
-                sectorId:sectorId
-            };
-            connection.sendAjax("POST", "hub/user/changeSector",
-                function (text, data, xhr) {
-                    if (text) {
-                        util.messages.showMessage("Uspješna promjena sektora.");
-                        usergroupView.refreshDatatable();
-                    } else
-                        util.messages.showErrorMessage("Neuspješna promjena sektora.");
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    alert(text);
-                }, changeSectorInformation);
-        });
-        util.dismissDialog('changeMultipleUsersSectorDialog');
-        usergroupView.refreshDatatable();
+        if($$("choseSectorCombo").validate()) {
+            selectedItems.forEach(function (element) {
+                var changeSectorInformation = {
+                    id: element,
+                    sectorId: sectorId
+                };
+                connection.sendAjax("POST", "hub/user/changeSector",
+                    function (text, data, xhr) {
+                        if (text) {
+                            util.messages.showMessage("Uspješna promjena sektora.");
+                            usergroupView.refreshDatatable();
+                        } else
+                            util.messages.showErrorMessage("Neuspješna promjena sektora.");
+                    }, function (text, data, xhr) {
+                        util.messages.showErrorMessage(text);
+                        alert(text);
+                    }, changeSectorInformation);
+            });
+            util.dismissDialog('changeMultipleUsersSectorDialog');
+            usergroupView.refreshDatatable();
+        }
     },
 
     createDatatableContextMenu: function () {
