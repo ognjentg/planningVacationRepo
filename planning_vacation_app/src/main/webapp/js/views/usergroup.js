@@ -87,6 +87,7 @@ usergroupView = {
                             height:40,
                             css: "companyButton",
                             align:"left",
+                            disabled: true,
                             click:'usergroupView.showAddDialog'
                         },{
                             id:"deleteSelectedButton",
@@ -138,9 +139,9 @@ usergroupView = {
                                       $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
                                       $$("usergroupDT").detachEvent("onBeforeDelete");
                                       if(sectorID == -1) {
-                                          $$("addUserButton").hide();
+                                          $$("addUserButton").disable();
                                       } else {
-                                          $$("addUserButton").show();
+                                          $$("addUserButton").enable();
                                       }
                                   }
 
