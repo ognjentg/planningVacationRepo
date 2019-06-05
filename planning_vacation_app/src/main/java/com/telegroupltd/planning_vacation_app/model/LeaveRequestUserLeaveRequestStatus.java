@@ -25,7 +25,7 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private String firstName;
     private String lastName;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String statusName, String firstName, String lastName) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String firstName, String lastName,String statusName) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
