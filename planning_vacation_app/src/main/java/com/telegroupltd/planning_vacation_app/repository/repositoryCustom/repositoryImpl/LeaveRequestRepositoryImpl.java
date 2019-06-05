@@ -28,7 +28,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED = "UPDATE leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "SET lr.leave_request_status_id = 3 "+
+            "SET lr.leave_request_status_id = 3 , lr.approver_comment=?;"+
             "WHERE lr.id=?;";
 
     private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED = "UPDATE leave_request lr "+
@@ -55,9 +55,9 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
 
     @Override
     @Transactional
-    public void updateLeaveRequestStatusRejected(Integer leaveRequestId) {
+    public void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment) {
         try{
-            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter(1,leaveRequestId).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter("lr.id",leaveRequestId).setParameter("lr.approver_comment",approverComment).executeUpdate();
         }catch (Exception e){
             e.printStackTrace();
         }

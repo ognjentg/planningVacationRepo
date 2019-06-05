@@ -7,7 +7,7 @@ import java.util.List;
 public interface LeaveRequestRepositoryCustom {
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformation(Integer id);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id,Integer key);
-    void updateLeaveRequestStatusRejected(Integer sickLeaveId);
-    void updateLeaveRequestStatusApproved(Integer sickLeaveId);
+    void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment);
+    void updateLeaveRequestStatusApproved(Integer leaveRequestId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id);
 }
