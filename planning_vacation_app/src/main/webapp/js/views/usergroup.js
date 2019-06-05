@@ -286,6 +286,10 @@ usergroupView = {
                                     $$("changeSectorOfSelectedButton").disable();
                                 }
                             }
+                        },
+                        onAfterLoad: function () {
+                            var numberOfEmployees = $$("usergroupDT").count();
+                            animateValue($$("t3"), 0, numberOfEmployees, 1000);
                         }
                     },
                     onClick: {
@@ -299,7 +303,7 @@ usergroupView = {
                                 alert("Niste autorizovani da izvršite ovu radnju!");
                             }
                             if (action === "view") {
-                                usergroupView.employeeInfo();
+                                usergroupView.employeeInfo(id);
                             }
                             if (action == "delete") {
                                 usergroupView.deleteEmployee();
@@ -308,7 +312,7 @@ usergroupView = {
                                 usergroupView.showChangeSectorOfSelectedDialog();
 
                         }
-                    }
+                    },
                 }]
         }
     },
@@ -890,7 +894,7 @@ usergroupView = {
                             break;
                         }
                         case "2": {
-                            //TODO
+                            usergroupView.employeeInfo(id);
                             break;
                         }
                         case "3": {
@@ -933,8 +937,144 @@ usergroupView = {
         util.dismissDialog('changeUserGroupDialog');
     },
 
-    employeeInfo: function () {
-        //Funkcija za prikazivanje profila korisnika
+    employeeInfo: function (id) {
+        webix.ui(webix.copy(usergroupView.employeeInfoDialog));
+        var position = $$("usergroupDT").getItem(id.row).position;
+        connection.sendAjax("GET", "hub/user/" + id,
+            function (text, data, xhr) {
+                user = data.json();
+                $$("firstName").setValue(user.firstName);
+                $$("lastName").setValue(user.lastName);
+                $$("preview").setValues({src: "data:image/png;base64," + user.photo});
+                $$("email").setValue(user.email);
+                if(position === "direktor") {
+                    $$("startDate").hide();
+                } else {
+                    $$("startDate").setValue(user.startDate === null ? "" : webix.i18n.dateFormatStr(user.startDate.split("T")[0]));
+                }
+                $$("userGroup").setValue(position);
+                setTimeout(function () {
+                    $$("employeeInfoDialog").show();
+                }, 0);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
+    },
+
+    employeeInfoDialog: {
+        view: "popup",
+        id: "employeeInfoDialog",
+        name: "employeeInfoDialog",
+        position: "center",
+        modal: true,
+        body: {
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [
+                        {
+                            view: "label",
+                            width: 400,
+                            label: "<span class='webix_icon fas fa-user'></span> Podaci o zaposlenom"
+                        },
+                        {},
+                        {
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            hotkey: "esc",
+                            click: "util.dismissDialog('employeeInfoDialog')"
+                        }
+                    ]
+                },
+                {
+                    view: "form",
+                    id: "employeeInfoForm",
+                    width: 500,
+                    elementsConfig: {
+                        labelWidth: 140,
+                        bottomPadding: 18
+                    },
+                    elements: [
+                        {
+                            cols: [
+                                {},
+                                {
+                                    view: "template",
+                                    id: "preview",
+                                    name: "preview",
+                                    template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                                    height: 200,
+                                    width: 200,
+                                },
+                                {}
+                            ]
+                        },
+                        {
+                            view: "text",
+                            id: "firstName",
+                            name: "firstName",
+                            label: "Ime",
+                            disabled: true,
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            id: "lastName",
+                            name: "lastName",
+                            label: "Prezime",
+                            disabled: true,
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            id: "email",
+                            name: "email",
+                            label: "E-mail",
+                            disabled: true,
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            id: "userGroup",
+                            name: "userGroup",
+                            label: "Korisnička grupa",
+                            disabled: true,
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            view: "text",
+                            id: "startDate",
+                            name: "startDate",
+                            label: "Početak rada",
+                            disabled: true,
+                            labelWidth: 150,
+                            height: 35
+                        },
+                        {
+                            cols: [
+                                {},
+                                {
+                                    view: "button",
+                                    id: "closeEmployeeInfoButton",
+                                    name: "closeEmployeeInfoButton",
+                                    hotkey: "enter",
+                                    label: "Zatvori",
+                                    type: "iconButton",
+                                    icon: "close",
+                                    click: "util.dismissDialog('employeeInfoDialog')"
+                                },
+                                {}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
     },
 
 
