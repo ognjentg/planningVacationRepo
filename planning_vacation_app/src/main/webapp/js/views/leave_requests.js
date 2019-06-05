@@ -1,3 +1,5 @@
+var URLAllLeaveRequests = "/hub/leave_request/leaveRequestInfo";
+var URLByLeaveRequestStatus =  "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/";
 var leaveRequestsView={
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
@@ -32,29 +34,37 @@ var leaveRequestsView={
                                 if(name === 4){
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete")
                                 }else if(name === 3){
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }else if(name === 2){
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }
                                 else {
                                     $$("leave_requestDT").showColumn("accept");
                                     $$("leave_requestDT").showColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }
                             }
                         },
-                        options:[
-                           /* body:{
+                        options:{
+                           body:{
                                 template: '#name#',
                                 url: "hub/leave_request_status",
-                            }*/
-                        { id:1, value:"na čekanju" },
-                        { id:2, value:"odobren" },
-                        { id:3, value:"neodobren" },
-                            { id:4, value:"svi" }
-                        ],
+                            }}
+                        ,
                         required: true,}]
                 },{
 
@@ -67,19 +77,29 @@ var leaveRequestsView={
                     resizeColumn: true, // omogucen resize kolona korisniku
                     resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
-                    data:[
-                        {id:1,statusName:"proba"}
-                    ],
+                    scheme: {
+                        $init: function (obj) {
+                            if (obj.dateFrom)
+                                obj.dateFrom = new Date(obj.dateFrom);
+                            if (obj.dateTo)
+                                obj.dateTo = new Date(obj.dateTo);
+                        },
+                        $change: function (obj) {
+                            if (obj.dateFrom)
+                                obj.dateFrom = new Date(obj.dateFrom);
+                            if (obj.dateTo)
+                                obj.dateTo = new Date(obj.dateTo);
+                        }
+                    },
                     columns: [{
                         id: "id",
                         header: "#",
                         width: 50,
-                        hidden: "true",
+                       hidden: "true",
                     },{
                         id: "statusName",
                         sort: "string",
                         header: "Status",
-                        sort: "string"
                     },{
                         id: "firstName",
                         fillspace: true,
@@ -140,6 +160,7 @@ var leaveRequestsView={
                     ],
                     select: "row",
                     navigation: true,
+                    url: "/hub/leave_request/leaveRequestInfo",
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -162,6 +183,12 @@ var leaveRequestsView={
                                     if (result == 1) {
                                         var item = $$("leave_requestDT").getItem(id);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                        connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id, function (text, data, xhr) {
+                                            $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                                            util.messages.showMessage("Zahtjev odobren");
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, item);
                                     }
                                 };
                                 webix.confirm(acceptLeaveBox);
