@@ -452,7 +452,7 @@ usergroupView = {
                     view: "toolbar",
                     cols: [{
                         view: "label",
-                        label: "<span class='webix_icon fa-users'></span> Promjena sektora zaposlenom",
+                        label: "<span class='webix_icon fa-users'></span> Promjena sektora",
                         autoWidth: true,
                     }, {}, {
                         view: "icon",
@@ -464,7 +464,7 @@ usergroupView = {
                 }, {
                     view: "form",
                     // rules: {},
-                    id: "addUserForm",
+                    id: "changeSectorForm",
                     elements: [{
                         height:15
                     }, {
@@ -507,7 +507,7 @@ usergroupView = {
                     view: "toolbar",
                     cols: [{
                         view: "label",
-                        label: "<span class='webix_icon fa-users'></span> Promjena sektora zaposlenima",
+                        label: "<span class='webix_icon fa-users'></span> Promjena sektora",
                         autoWidth: true,
                     }, {}, {
                         view: "icon",
@@ -519,7 +519,7 @@ usergroupView = {
                 }, {
                     view: "form",
                     // rules: {},
-                    id: "addUserForm",
+                    id: "changeSectorForm",
                     elements: [{
                         height:15
                     }, {
@@ -531,9 +531,7 @@ usergroupView = {
                             width:250,
                             align:"center",
                             required: true
-                        },
-                            {
-
+                        }, {
                                 id: "save",
                                 view: "button",
                                 value: "Promijeni",
