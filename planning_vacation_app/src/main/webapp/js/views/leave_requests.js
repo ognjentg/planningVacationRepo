@@ -193,7 +193,7 @@ var leaveRequestsView={
                                 };
                                 webix.confirm(acceptLeaveBox);
                             }else if(action==="view"){
-                                var viewLeaveBox=(webix.copy(leaveRequestsView.showLeaveRequestInfo()));
+                                var viewLeaveBox=(webix.copy(leaveRequestsView.showLeaveRequestInfo($$("leave_requestDT").getSelectedId())));
                             }
                         }
                     }
@@ -242,21 +242,24 @@ var leaveRequestsView={
                         view:"label",
                         label:"Ime:"
                     },{},{
-                        //Ime iz tabele
+                        view:"label",
+                        id:"rejectFname"
                     }]
                 },{
                     cols:[{
                         view:"label",
                         label:"Prezime:"
                     },{},{
-                        //Prezime iz tabele
+                        view:"label",
+                        id:"rejectLname"
                     }]
                 },{
                     cols:[{
                         view:"label",
                         label:"Status:"
                     },{},{
-                        //status iz tabele
+                        view:"label",
+                        id:"rejectStatus"
                     }]
                 },
                 {
@@ -264,7 +267,8 @@ var leaveRequestsView={
                         view:"label",
                         label:"Komentar:",
                     },{
-                        view:"textarea"
+                        view:"textarea",
+                        id:"rejectComment"
                     }]
                 },{},{},{
                     cols:[{
@@ -309,21 +313,25 @@ var leaveRequestsView={
                     view:"label",
                     label:"Ime:"
                 },{},{
-                  //Ime iz tabele
+                  view:"label",
+                    id:"fname"
                 }]
                 },{
                     cols:[{
                         view:"label",
                         label:"Prezime:"
                     },{},{
-                        //Prezime iz tabele
+                        view:"label",
+                        id:"lname"
+
                     }]
                 },{
                     cols:[{
                         view:"label",
                         label:"Status:"
                     },{},{
-                        //status iz tabele
+                        view:"label",
+                        id:"status"
                     }]
                 },
                 {
@@ -331,15 +339,30 @@ var leaveRequestsView={
                         view:"label",
                         label:"Komentar:"
                     },{},{
-                        //KOMENTAR
+                        view:"text",
+                        id:"comment"
                     }]
                 }
             ]
         }
 
     },
-    showLeaveRequestInfo:function(){
-
+    showLeaveRequestInfo:function(id){
         webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo)).show();
+        setTimeout(function() {
+            connection.sendAjax("GET",
+                "hub/leave_request/leaveRequestInfo/" +id,
+                function (text, data, xhr) {
+                    user = data.json();
+                    $$("fname").setValue(user.firstName);
+                    $("lname").setValue(user.lastName);
+                    $$("status").setValue(user.status);
+                    $$("comment").setValue(user.comment);
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                });
+            $$("leaveRequestInfo").show();
+        }, 0);
+
     }
 }
