@@ -62,7 +62,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             throw new BadRequestException(badRequestInsert);
         return super.update(id, leaveRequest);
     }
-    
+
     @Override
     public @ResponseBody
     List<LeaveRequest> getAll(){
@@ -87,6 +87,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation(){
         return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUser().getId());
+    }
+
+    @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformationById(Integer id){
+        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(userBean.getUser().getId());
     }
 
     @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)

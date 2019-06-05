@@ -10,4 +10,5 @@ public interface LeaveRequestRepositoryCustom {
     void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment);
     void updateLeaveRequestStatusApproved(Integer leaveRequestId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id);
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id);
 }

@@ -41,7 +41,13 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "WHERE lr.active = 1 AND lrs.key?; ";
+            "WHERE lr.active = 1 AND lrs.key=?; ";
+
+    private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
+            "FROM leave_request lr "+
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
+            "JOIN user u ON lr.sender_user_id=u.id "+
+            "WHERE lr.active=1 AND lr.id=?;";
 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformation(Integer id) {
@@ -50,14 +56,14 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id, Integer key) {
-        return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS,"LeaveRequestUserLeaveRequestStatusMapping").getResultList();
+        return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS,"LeaveRequestUserLeaveRequestStatusMapping").setParameter(1,key).getResultList();
     }
 
     @Override
     @Transactional
     public void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment) {
         try{
-            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter("lr.id",leaveRequestId).setParameter("lr.approver_comment",approverComment).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter(1,leaveRequestId).setParameter(2,approverComment).executeUpdate();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -65,6 +71,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     }
 
     @Override
+    @Transactional
     public void updateLeaveRequestStatusApproved(Integer leaveRequestId) {
         try{
             entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED).setParameter(1,leaveRequestId).executeUpdate();
@@ -77,5 +84,10 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id) {
         return entityManager.createNativeQuery(SQL_SHOW_ON_WAIT_REQUESTS,"LeaveRequestUserLeaveRequestStatusMapping").getResultList();
+    }
+
+    @Override
+    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id){
+        return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_INFO_BY_ID, "LeaveRequestUserLeaveRequestStatusMapping").setParameter(1, id).getResultList();
     }
 }
