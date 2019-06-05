@@ -798,8 +798,14 @@ usergroupView = {
                         util.messages.showMessage("Uspješna promjena sektora.");
                         //usergroupView.refreshDatatable();
                         var user = $$("usergroupDT").getSelectedItem();
-                        user.sectorId = sectorId;
-                        $$("usergroupDT").update($$("usergroupDT").getSelectedItem().id, user);
+                        var sectorName;
+                        usergroupView.sectors.forEach(function (value) {
+                            if(value.id === sectorId){
+                                sectorName = value.value;
+                            }
+                        });
+                        user.sector_name = sectorName;
+                        $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
                 }, function (text, data, xhr) {
@@ -822,7 +828,15 @@ usergroupView = {
                     function (text, data, xhr) {
                         if (text) {
                             util.messages.showMessage("Uspješna promjena sektora.");
-                            usergroupView.refreshDatatable();
+                            var user = $$("usergroupDT").getItem(element);
+                            var sectorName;
+                            usergroupView.sectors.forEach(function (value) {
+                                if(value.id === sectorId){
+                                    sectorName = value.value;
+                                }
+                            });
+                            user.sector_name = sectorName;
+                            $$("usergroupDT").updateItem(element, user);
                         } else
                             util.messages.showErrorMessage("Neuspješna promjena sektora.");
                     }, function (text, data, xhr) {
@@ -831,7 +845,6 @@ usergroupView = {
                     }, changeSectorInformation);
             });
             util.dismissDialog('changeMultipleUsersSectorDialog');
-            usergroupView.refreshDatatable();
         }
     },
 
