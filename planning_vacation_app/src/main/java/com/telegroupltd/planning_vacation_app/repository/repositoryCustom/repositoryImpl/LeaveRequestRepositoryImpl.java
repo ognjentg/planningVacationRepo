@@ -13,11 +13,13 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final String SQL_ALL = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
+    private static final String SQL_ALL = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name,min(lrd.date) AS date_from, max(lrd.date) as date_to "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id=u.id "+
-            "WHERE lr.active=1";
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
+            "WHERE lr.active=1 "+
+            "GROUP BY lr.id ";
 
     private static final String SQL_SHOW_ON_WAIT_REQUESTS = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
             "FROM leave_request lr "+
@@ -28,26 +30,26 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED = "UPDATE leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "SET lr.leave_request_status_id = 3 , lr.approver_comment=?;"+
-            "WHERE lr.id=?;";
+            "SET lr.leave_request_status_id = 3 , lr.approver_comment=? "+
+            "WHERE lr.id=? ";
 
     private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED = "UPDATE leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
             "SET lr.leave_request_status_id = 2 "+
-            "WHERE lr.id=?;";
+            "WHERE lr.id=? ";
 
     private static final String SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "WHERE lr.active = 1 AND lrs.key=?; ";
+            "WHERE lr.active = 1 AND lrs.key=? ";
 
     private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id=u.id "+
-            "WHERE lr.active=1 AND lr.id=?;";
+            "WHERE lr.active=1 AND lr.id=? ";
 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformation(Integer id) {
@@ -63,7 +65,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @Transactional
     public void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment) {
         try{
-            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter(1,leaveRequestId).setParameter(2,approverComment).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED).setParameter(2,leaveRequestId).setParameter(1,approverComment).executeUpdate();
         }catch (Exception e){
             e.printStackTrace();
         }
