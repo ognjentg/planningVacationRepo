@@ -1,6 +1,7 @@
 var URLAllLeaveRequests = "/hub/leave_request/leaveRequestInfo";
 var URLByLeaveRequestStatus =  "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/";
-var leaveRequestsView={
+var leaveRequestsView;
+leaveRequestsView = {
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
         rightPanel = "requestPanel";
@@ -10,16 +11,16 @@ var leaveRequestsView={
     },
     getPanel: function () {
         return {
-            id:"leaveRequestsPanel",
-            rows:[
+            id: "leaveRequestsPanel",
+            rows: [
                 {
                     padding: 8,
                     view: "toolbar",
-                    cols:[{
+                    cols: [{
                         template: "<span class='webix_icon fa-book-medical'><\/span> Zahtjevi za odmor",
                         view: "label",
                         width: 400
-                    },{},{
+                    }, {}, {
                         view: "combo",
                         width: 250,
                         id: "filterLeaveRequestsComboBox",
@@ -31,19 +32,19 @@ var leaveRequestsView={
                                 $$("leave_requestDT").clearAll();
 
 
-                                if(name === 4){
+                                if (name === 4) {
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").detachEvent("onBeforeDelete")
-                                }else if(name === 3){
+                                } else if (name === 3) {
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                }else if(name === 2){
+                                } else if (name === 2) {
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
@@ -59,14 +60,16 @@ var leaveRequestsView={
                                 }
                             }
                         },
-                        options:{
-                           body:{
+                        options: {
+                            body: {
                                 template: '#name#',
-                                url: "hub/leave_request_status",
-                            }}
+                                url: "/hub/leave_request_status",
+                            }
+                        }
                         ,
-                        required: true,}]
-                },{
+                        required: true,
+                    }]
+                }, {
 
                     view: "datatable",
                     id: "leave_requestDT",
@@ -95,12 +98,12 @@ var leaveRequestsView={
                         id: "id",
                         header: "#",
                         width: 50,
-                       hidden: "true",
-                    },{
+                        hidden: "true",
+                    }, {
                         id: "statusName",
                         sort: "string",
                         header: "Status",
-                    },{
+                    }, {
                         id: "firstName",
                         fillspace: true,
                         editor: "text",
@@ -110,7 +113,7 @@ var leaveRequestsView={
                                 content: "textFilter", value: ""
                             }
                         ]
-                    },{
+                    }, {
                         id: "lastName",
                         fillspace: true,
                         editor: "text",
@@ -120,7 +123,7 @@ var leaveRequestsView={
                                 content: "textFilter", value: ""
                             }
                         ]
-                    },{
+                    }, {
                         id: "dateFrom",
                         fillspace: true,
                         sort: "date",
@@ -130,7 +133,7 @@ var leaveRequestsView={
                             }
                         ],
                         format: webix.Date.dateToStr("%d.%m.%Y.")
-                    },{
+                    }, {
                         id: "dateTo",
                         fillspace: true,
                         sort: "date",
@@ -139,7 +142,7 @@ var leaveRequestsView={
                                 content: "dateFilter"
                             }
                         ]
-                    },{
+                    }, {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
@@ -151,7 +154,7 @@ var leaveRequestsView={
                         width: 35,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>"
 
-                    },{
+                    }, {
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
@@ -168,14 +171,14 @@ var leaveRequestsView={
                         }
 
                     },
-                    onClick:{
+                    onClick: {
                         webix_icon: function (e, id) {
 
                             console.log(id["column"]);
                             var action = id["column"];
 
                             if (action === "reject") {
-                                var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest()));
+                                var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
                             } else if (action === "accept") {
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
@@ -192,8 +195,8 @@ var leaveRequestsView={
                                     }
                                 };
                                 webix.confirm(acceptLeaveBox);
-                            }else if(action==="view"){
-                                var viewLeaveBox=(webix.copy(leaveRequestsView.showLeaveRequestInfo(id)));
+                            } else if (action === "view") {
+                                var viewLeaveBox = (webix.copy(leaveRequestsView.showLeaveRequestInfo(id)));
                             }
                         }
                     }
@@ -201,8 +204,22 @@ var leaveRequestsView={
             ]
         }
     },
-    showRejectRequest: function () {
-        webix.ui(webix.copy(leaveRequestsView.rejectRequest)).show();
+    showRejectRequest: function (id) {
+        webix.ui(webix.copy(leaveRequestsView.rejectRequest));
+        connection.sendAjax("GET",
+            "/hub/leave_request/leaveRequestInfo/" + id,
+            function (text, data, xhr) {
+                user = data.json();
+                $$("rejectFname").setValue(user.firstName);
+                $$("rejectLname").setValue(user.lastName);
+                $$("rejectStatus").setValue(user.statusName);
+                setTimeout(function () {
+                    $$("rejectRequestInfoId").show();
+                }, 0);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
+
     },
     acceptLeaveConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;
@@ -215,14 +232,14 @@ var leaveRequestsView={
             text: "Da li ste sigurni da želite prihvatiti " + text + "?"
         };
     },
-    rejectRequest:{
-        view:"window",
-        id:"rejectRequestInfoId",
-        position:"center",
+    rejectRequest: {
+        view: "window",
+        id: "rejectRequestInfoId",
+        position: "center",
         modal: true,
         move: true,
         body: {
-            padding:15,
+            padding: 15,
             rows: [
                 {
                     view: "toolbar",
@@ -237,47 +254,48 @@ var leaveRequestsView={
                         align: "right",
                         click: 'util.dismissDialog(\'rejectRequestInfoId\');'
                     }]
-                },{
-                    cols:[{
-                        view:"label",
-                        label:"Ime:"
-                    },{},{
-                        view:"label",
-                        id:"rejectFname"
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Ime:"
+                    }, {}, {
+                        view: "label",
+                        id: "rejectFname"
                     }]
-                },{
-                    cols:[{
-                        view:"label",
-                        label:"Prezime:"
-                    },{},{
-                        view:"label",
-                        id:"rejectLname"
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Prezime:"
+                    }, {}, {
+                        view: "label",
+                        id: "rejectLname"
                     }]
-                },{
-                    cols:[{
-                        view:"label",
-                        label:"Status:"
-                    },{},{
-                        view:"label",
-                        id:"rejectStatus"
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Status:"
+                    }, {}, {
+                        view: "label",
+                        id: "rejectStatus"
                     }]
                 },
                 {
-                    cols:[{
-                        view:"label",
-                        label:"Komentar:",
-                    },{
-                        view:"textarea",
-                        id:"rejectComment"
+                    cols: [{
+                        view: "label",
+                        label: "Komentar:",
+                    }, {
+                        view: "textarea",
+                        id: "rejectComment"
                     }]
-                },{},{},{
-                    cols:[{
-                        view:"button",
-                        label:"Odbij",
-                        click: 'util.dismissDialog(\'rejectRequestInfoId\');'
-                    },{},{
-                        view:"button",
-                        label:"Otkaži",
+                }, {}, {}, {
+                    cols: [{
+                        view: "button",
+                        label: "Odbij",
+                        id:"rejectButton",
+                        click:'leaveRequestsView.saveRejectedLeaveRequest'
+                    }, {}, {
+                        view: "button",
+                        label: "Otkaži",
                         click: 'util.dismissDialog(\'rejectRequestInfoId\');'
 
                     }]
@@ -286,14 +304,14 @@ var leaveRequestsView={
         }
 
     },
-    leaveRequestInfo:{
-        view:"window",
-        id:"leaveRequestInfoId",
-        position:"center",
+    leaveRequestInfo: {
+        view: "window",
+        id: "leaveRequestInfoId",
+        position: "center",
         modal: true,
         move: true,
         body: {
-            padding:15,
+            padding: 15,
             rows: [
                 {
                     view: "toolbar",
@@ -308,64 +326,77 @@ var leaveRequestsView={
                         align: "right",
                         click: 'util.dismissDialog(\'leaveRequestInfoId\');'
                     }]
-                },{
-                cols:[{
-                    view:"label",
-                    label:"Ime:"
-                },{},{
-                  view:"label",
-                    id:"fname"
-                }]
-                },{
-                    cols:[{
-                        view:"label",
-                        label:"Prezime:"
-                    },{},{
-                        view:"label",
-                        id:"lname"
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Ime:"
+                    }, {}, {
+                        view: "label",
+                        id: "fname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Prezime:"
+                    }, {}, {
+                        view: "label",
+                        id: "lname"
 
                     }]
-                },{
-                    cols:[{
-                        view:"label",
-                        label:"Status:"
-                    },{},{
-                        view:"label",
-                        id:"status"
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Status:"
+                    }, {}, {
+                        view: "label",
+                        id: "status"
                     }]
                 },
                 {
-                    cols:[{
-                        view:"label",
-                        label:"Komentar:"
-                    },{},{
-                        view:"text",
-                        id:"comment"
+                    cols: [{
+                        view: "label",
+                        label: "Komentar:"
+                    }, {}, {
+                        view: "label",
+                        id: "comment"
                     }]
                 }
             ]
         }
 
     },
-    showLeaveRequestInfo:function(id){
+    showLeaveRequestInfo: function (id) {
         webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo));
 
-            connection.sendAjax("GET",
-                "/hub/leave_request/leaveRequestInfo/"+id,
-                function (text, data, xhr) {
-                    user = data.json();
-                    $$("fname").setValue(user.firstName);
-                    $$("lname").setValue(user.lastName);
-                    $$("status").setValue(user.statusName);
-                    $$("comment").setValue(user.senderComment);
-                    setTimeout(function () {
-                        $$("leaveRequestInfoId").show();
-                    },0);
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                });
+        connection.sendAjax("GET",
+            "/hub/leave_request/leaveRequestInfo/" + id,
+            function (text, data, xhr) {
+                user = data.json();
+                $$("fname").setValue(user.firstName);
+                $$("lname").setValue(user.lastName);
+                $$("status").setValue(user.statusName);
+                $$("comment").setValue(user.senderComment);
+                setTimeout(function () {
+                    $$("leaveRequestInfoId").show();
+                }, 0);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
 
 
+    },
+    saveRejectedLeaveRequest: function () {
+        id=$$("leave_requestDT").getSelectedId();
 
+        comment=$$("rejectComment").getValue();
+
+       connection.sendAjax("PUT",
+            "/hub/leave_request/updateLeaveRequestStatusRejected/" + id.toString() + "/comment/" + comment.toString(),function (text, data, xhr) {
+               $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+               util.messages.showMessage("Zahtjev odbijen");}
+            , function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
+        util.dismissDialog("rejectRequestInfoId");
     }
-}
+};
