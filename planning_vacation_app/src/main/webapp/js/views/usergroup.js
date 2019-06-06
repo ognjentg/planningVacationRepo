@@ -312,7 +312,7 @@ usergroupView = {
                             if (action == "sector")
                                 usergroupView.showChangeSectorOfSelectedDialog();
                             if (action == "calendar")
-                                usergroupView.showEmployeeVacationInfoDialog();
+                                usergroupView.showEmployeeVacationInfoDialog(id);
 
                         }
                     },
@@ -604,10 +604,10 @@ usergroupView = {
     },
     employeeVacationInfoDialog: {
         view: "window",
-        id: "leaveRequestInfoId",
+        id: "employeeVacationInfoDialog",
+        name: "employeeVacationInfoDialog",
         position: "center",
         modal: true,
-        move: true,
         body: {
             padding: 15,
             rows: [
@@ -622,7 +622,7 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: 'util.dismissDialog(\'leaveRequestInfoId\');'
+                        click: 'util.dismissDialog(\'employeeVacationInfoDialog\');'
                     }]
                 }, {
                     cols: [{
@@ -976,7 +976,7 @@ usergroupView = {
                             break;
                         }
                         case "5": {
-                            //TODO
+                            usergroupView.showEmployeeVacationInfoDialog(id);
                             break;
                         }
                     }
@@ -1241,8 +1241,24 @@ usergroupView = {
         }
 
     ,
-    showEmployeeVacationInfoDialog: function () {
-        webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog)).show();
+    showEmployeeVacationInfoDialog: function (id) {
+        webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog));
+        var employee = $$("usergroupDT").getItem(id.row);
+        connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
+            function (text, data, xhr) {
+                var days = data.json();
+                var daysLeft = days.totalDays - days.usedDays;
+                if (!webix.rules.isNumber(daysLeft)) {
+                    $$("vacation_days").setValue("Broj preostalih dana godišnjeg: ");
+                } else
+                    $$("vacation_days").setValue("Broj preostalih dana godišnjeg: " + daysLeft);
+
+                setTimeout(function () {
+                    $$("employeeVacationInfoDialog").show();
+                }, 0);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
 
     }
 };
