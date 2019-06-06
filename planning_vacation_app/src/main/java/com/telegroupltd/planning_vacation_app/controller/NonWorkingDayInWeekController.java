@@ -62,6 +62,16 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     }
 
 
+    @RequestMapping(value = "/getNonWorkingDayInWeekByCompanyJavaValue/{companyId}", method = RequestMethod.GET)
+    public List<Integer> getNonWorkingDayInWeekForCompanyJavaValue(@PathVariable Integer companyId) {
+        List<NonWorkingDayInWeek> nonWorkingDayInWeekList = nonWorkingDayInWeekRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+        List<Integer> nonWorkingDays = new ArrayList<>();
+        for (NonWorkingDayInWeek nonWorkingDayInWeek : nonWorkingDayInWeekList) {
+            nonWorkingDays.add(getDayInWeek(nonWorkingDayInWeek).getJavaValue());
+        }
+        return  nonWorkingDays;
+    }
+
     @Transactional
     @RequestMapping(value = "/addNonWorkingDaysInWeek", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)

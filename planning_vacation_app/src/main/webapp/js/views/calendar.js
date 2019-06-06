@@ -170,6 +170,7 @@ var calendarView = {
         $$("main").addView(webix.copy(panelCopy));
 
         var nonWorkingDays = [];
+        var nonWorkingDaysInWeek = [];
 
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
@@ -188,11 +189,35 @@ var calendarView = {
                             nonWorkingDays[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
-                        scheduler.setCurrentView();                    }
+                        scheduler.setCurrentView();
+                    }
                 }
             }
         });
-
+        //Dohvatanje neradnih dana u sedmici
+        webix.ajax("hub/nonWorkingDayInWeek/getNonWorkingDayInWeekByCompanyJavaValue/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        nonWorkingDaysInWeek = data.json();
+                        for(var i = 0; i < nonWorkingDaysInWeek.length; i++){
+                            if(nonWorkingDaysInWeek[i] == 7)
+                                nonWorkingDaysInWeek[i] = 0;
+                        }
+                        scheduler.blockTime({
+                            days: nonWorkingDaysInWeek,
+                            zones: "fullday"
+                        });
+                        scheduler.setCurrentView();
+                    }
+                }
+            }
+        });
 
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
@@ -208,7 +233,7 @@ var calendarView = {
             if(date.getTime() == today.getTime())
                 return  "today";
             //Neradni dani
-            if (date.getDay() == 0 || date.getDay() == 6 || nonWorkingDays.includes(date.getTime()))
+            if (nonWorkingDaysInWeek.includes(date.getDay()) || nonWorkingDays.includes(date.getTime()))
                 return "good_day";
             return "";
         }
@@ -229,11 +254,7 @@ var calendarView = {
         var date = new Date();
         scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
-        //Limitovanje
-        scheduler.blockTime({
-            days: [0, 6],
-            zones: "fullday"
-        });
+
         scheduler.attachEvent("onLimitViolation", function  (id, obj){
             dhtmlx.message('Neradni dan ili praznik.');
         });
