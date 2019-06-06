@@ -76,77 +76,77 @@ usergroupView = {
                     paddingX: 5,
                     paddingY: 5,
                     height: 60,
-                        cols:[{
-                            id:"addUserButton",
-                            view:"button",
-                             type: "iconButton",
-                             //hotkey: "enter",
-                            icon: "plus-circle",
-                            label:"Dodaj korisnika",
-                            width: 200,
-                            height:40,
-                            css: "companyButton",
-                            align:"left",
-                            disabled: true,
-                            click:'usergroupView.showAddDialog'
-                        },{
-                            id:"deleteSelectedButton",
-                             view:"button",
-                             type:"iconButton",
-                             label:"Izbrisi zaposlene",
-                             icon: "trash",
-                             width: 200,
-                             height:40,
-                             css: "companyButton",
-                             align:"left",
-                            disabled:true,
-                             click:'usergroupView.showDeleteSelectedDialog'
-                        },{
-                             id:"changeSectorOfSelectedButton",
-                             view:"button",
-                             type: "iconButton",
-                            // hotkey: "enter",
-                             icon: "users",
-                             label:"Promijeni sektor",
-                             width: 200,
-                             height:40,
-                             css: "companyButton",
-                             align:"left",
-                            disabled:true,
-                             click:'usergroupView.showChangeMultipleUsersSector'
-                        },{
-                            view:"label",
-                            id:"izaberiLabel",
-                            label:"Izaberi sektor:",
-                            align:"right"
-                        },{
-                            view:"combo",
-                            id:"choseSectorCombo",
-                            align:"left",
-                            width:400,
-                            tooltip: "Izaberite sektor u kome želite vidjeti zaposlene",
-                            value: "Svi sektori",
-                            placeholder:"Svi sektori",
-                              on:{
-                             // var input= $$("choseSectorCombo").getInputNode().value;
-                                  onChange(id){
-                                 //'onItemClick': function(id){
-                                      sectorID = id;
-                                      console.log("id sektora je"+id);
-                                      webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/ );
-                                      $$("usergroupDT").clearAll();
-                                      //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
-                                      $$("usergroupDT").define("url", "hub/user/custom/bySector/"+id);
-                                      $$("usergroupDT").detachEvent("onBeforeDelete");
-                                      if(sectorID == -1) {
-                                          $$("addUserButton").disable();
-                                      } else {
-                                          $$("addUserButton").enable();
-                                      }
-                                  }
-
+                    cols: [{
+                        id: "addUserButton",
+                        view: "button",
+                        type: "iconButton",
+                        //hotkey: "enter",
+                        icon: "plus-circle",
+                        label: "Dodaj korisnika",
+                        width: 200,
+                        height: 40,
+                        css: "companyButton",
+                        align: "left",
+                        disabled: true,
+                        click: 'usergroupView.showAddDialog'
+                    }, {
+                        id: "deleteSelectedButton",
+                        view: "button",
+                        type: "iconButton",
+                        label: "Izbrisi zaposlene",
+                        icon: "trash",
+                        width: 200,
+                        height: 40,
+                        css: "companyButton",
+                        align: "left",
+                        disabled: true,
+                        click: 'usergroupView.showDeleteSelectedDialog'
+                    }, {
+                        id: "changeSectorOfSelectedButton",
+                        view: "button",
+                        type: "iconButton",
+                        // hotkey: "enter",
+                        icon: "users",
+                        label: "Promijeni sektor",
+                        width: 200,
+                        height: 40,
+                        css: "companyButton",
+                        align: "left",
+                        disabled: true,
+                        click: 'usergroupView.showChangeMultipleUsersSector'
+                    }, {
+                        view: "label",
+                        id: "izaberiLabel",
+                        label: "Izaberi sektor:",
+                        align: "right"
+                    }, {
+                        view: "combo",
+                        id: "choseSectorCombo",
+                        align: "left",
+                        width: 400,
+                        tooltip: "Izaberite sektor u kome želite vidjeti zaposlene",
+                        value: "Svi sektori",
+                        placeholder: "Svi sektori",
+                        on: {
+                            // var input= $$("choseSectorCombo").getInputNode().value;
+                            onChange(id) {
+                                //'onItemClick': function(id){
+                                sectorID = id;
+                                console.log("id sektora je" + id);
+                                webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
+                                $$("usergroupDT").clearAll();
+                                //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                                $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
+                                $$("usergroupDT").detachEvent("onBeforeDelete");
+                                if (sectorID == -1) {
+                                    $$("addUserButton").disable();
+                                } else {
+                                    $$("addUserButton").enable();
                                 }
                             }
+
+                        }
+                    }
                     ]
                 },
                 {
@@ -260,7 +260,7 @@ usergroupView = {
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-calendar'></span>"
                         }
-                        ],
+                    ],
                     select: "row",
                     multiselect: false,
                     checkboxRefresh: true,
@@ -282,7 +282,7 @@ usergroupView = {
                                     selectedItems.splice(index, 1);
                                     this.unselect(rowId);
                                 }
-                                if(selectedItems.length == 0) {
+                                if (selectedItems.length == 0) {
                                     $$("deleteSelectedButton").disable();
                                     $$("changeSectorOfSelectedButton").disable();
                                 }
@@ -309,8 +309,10 @@ usergroupView = {
                             if (action == "delete") {
                                 usergroupView.deleteEmployee();
                             }
-                            if(action == "sector")
+                            if (action == "sector")
                                 usergroupView.showChangeSectorOfSelectedDialog();
+                            if (action == "calendar")
+                                usergroupView.showEmployeeVacationInfoDialog();
 
                         }
                     },
@@ -471,15 +473,16 @@ usergroupView = {
                     // rules: {},
                     id: "changeSectorForm",
                     elements: [{
-                        height:15
+                        height: 15
                     }, {
-                        cols:[{ view: "combo",
+                        cols: [{
+                            view: "combo",
                             id: "cuCombo",
-                            placeholder:"Sektor",
+                            placeholder: "Sektor",
                             name: "cuCombo",
                             invalidMessage: "Obavezan je izbor sektora.",
-                            width:250,
-                            align:"center",
+                            width: 250,
+                            align: "center",
                             required: true
                         },
                             {
@@ -490,7 +493,7 @@ usergroupView = {
                                 width: 125,
                                 icon: "plus-circle",
                                 hotkey: "enter",
-                                align:"center",
+                                align: "center",
                                 click: 'usergroupView.changeSector'
                             }]
                     }],
@@ -526,26 +529,27 @@ usergroupView = {
                     // rules: {},
                     id: "changeSectorForm",
                     elements: [{
-                        height:15
+                        height: 15
                     }, {
-                        cols:[{ view: "combo",
+                        cols: [{
+                            view: "combo",
                             id: "cmuCombo",
-                            placeholder:"Sektor",
+                            placeholder: "Sektor",
                             name: "cmuCombo",
                             invalidMessage: "Obavezan je izbor sektora.",
-                            width:250,
-                            align:"center",
+                            width: 250,
+                            align: "center",
                             required: true
                         }, {
-                                id: "save",
-                                view: "button",
-                                value: "Promijeni",
-                                width: 125,
-                                icon: "plus-circle",
-                                hotkey: "enter",
-                                align:"center",
-                                click: 'usergroupView.changeMultipleUsersSector'
-                            }]
+                            id: "save",
+                            view: "button",
+                            value: "Promijeni",
+                            width: 125,
+                            icon: "plus-circle",
+                            hotkey: "enter",
+                            align: "center",
+                            click: 'usergroupView.changeMultipleUsersSector'
+                        }]
                     }],
                     width: 400,
                 }]
@@ -598,13 +602,56 @@ usergroupView = {
                 }]
         }
     },
+    employeeVacationInfoDialog: {
+        view: "window",
+        id: "leaveRequestInfoId",
+        position: "center",
+        modal: true,
+        move: true,
+        body: {
+            padding: 15,
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Informacije o zahtjevu:",
+                        width: 400,
+                    }, {}, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: 'util.dismissDialog(\'leaveRequestInfoId\');'
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        id: "vacation_days",
+                        name: "vacation_days",
+                        label: "Broj preostalih dana godišnjeg:",
+                        width: 300
+                    }, {}]
+                }, {
+                    cols: [{
+                        view: "label",
+                        id: "current_status",
+                        name: "current_status",
+                        label: "Trenutni status:"
+                    }]
+                }
+            ]
+        }
+
+    }
+    ,
 
     selectPanel: function () {
         util.selectPanel(this.getPanel());
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
             $$("addUserButton").hide();
-           // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
+            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
             // $$("companyDT").refreshColumns();
@@ -617,54 +664,55 @@ usergroupView = {
         console.log("u selectPanel");
 
 
-       usergroupView.sectors= [];
+        usergroupView.sectors = [];
 
-                     webix.ajax().get("hub/sector").then(function(data){
-                         //response text
-                         console.log(data.text());
-                                                 if (data.json() != null) {
-                                                     console.log("loaded data with success");
-                                                     var sectors = data.json();
-                                                        usergroupView.sectors.push({
-                                                                              id: -2,
-                                                                              value: "Bez sektora"
-                                                          });
-                                                        usergroupView.sectors.push({
-                                                                              id: -1,
-                                                                              value: "Svi sektori"
-                                                          });
-                                                     sectors.forEach(function(sector){
-                                                                        usergroupView.sectors.push({
-                                                                            id: sector.id,
-                                                                            value: sector.name,
+        webix.ajax().get("hub/sector").then(function (data) {
+            //response text
+            console.log(data.text());
+            if (data.json() != null) {
+                console.log("loaded data with success");
+                var sectors = data.json();
+                usergroupView.sectors.push({
+                    id: -2,
+                    value: "Bez sektora"
+                });
+                usergroupView.sectors.push({
+                    id: -1,
+                    value: "Svi sektori"
+                });
+                sectors.forEach(function (sector) {
+                    usergroupView.sectors.push({
+                        id: sector.id,
+                        value: sector.name,
 
-                                                                         });
-                                                                    });
-                                                          console.log(data.text());
-                                                     $$("choseSectorCombo").define("options", usergroupView.sectors);
-                                                     $$("choseSectorCombo").refresh();
+                    });
+                });
+                console.log(data.text());
+                $$("choseSectorCombo").define("options", usergroupView.sectors);
+                $$("choseSectorCombo").refresh();
 
-                                                   }else {
-                                                    util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
-                                                   }
+            } else {
+                util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
+            }
 
-                     });
-                                                   //  $$("choseSectorCombo").attachEvent("onAfterRender", webix.once(function(){
-                                                     //                         console.log('called once after first rendering:');
-                                                       //                   });
-                        $$("choseSectorCombo").setValue("Svi sektori");
-                     $$("usergroupDT").define("url", "hub/user/custom/bySector/"+-1);
-    },
+        });
+        //  $$("choseSectorCombo").attachEvent("onAfterRender", webix.once(function(){
+        //                         console.log('called once after first rendering:');
+        //                   });
+        $$("choseSectorCombo").setValue("Svi sektori");
+        $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
+    }
+    ,
 
     showAddDialog: function () {
         var options = [];
         webix.ui(webix.copy(usergroupView.addDialog)).show();
         webix.UIManager.setFocus("email");
-        if(sectorID !== -2) {
+        if (sectorID !== -2) {
             $$("choseUserGroupCombo").hide();
             $$("choseUserGroupComboLabel").hide();
         }
-        if(sectorID == null) {
+        if (sectorID == null) {
             $$("choseUserGroupCombo").show();
             $$("choseUserGroupComboLabel").show();
         }
@@ -732,7 +780,8 @@ usergroupView = {
         });
 
 
-    },
+    }
+    ,
 
 //! ovo se poziva kad se klikne na dugme
     addNewUser: function () { //dodavanje novog zaposlenog
@@ -746,7 +795,7 @@ usergroupView = {
                 pauseFlag: form.getValues().checkPauseFlag,
                 startDate: form.getValues().startDate
             };
-            if(sectorID === -2) {
+            if (sectorID === -2) {
                 newUser.userGroupId = $$("choseUserGroupCombo").getValue();
                 newUser.sectorId = null;
             }
@@ -786,16 +835,16 @@ usergroupView = {
 
             //util.dismissDialog('addUserDialog');
         }
-    },
+    }
+    ,
 
-    changeSector:function(){
+    changeSector: function () {
 
         var user = $$("usergroupDT").getSelectedItem();
         var sectorId = $$("cuCombo").getValue();
-        if(sectorId === -1 || sectorId === -2){
+        if (sectorId === -1 || sectorId === -2) {
             util.messages.showErrorMessage("Odabrani sektor ne postoji!");
-        }
-        else {
+        } else {
             var changeSectorInformation = {
                 id: user.id,
                 sectorId: sectorId
@@ -828,15 +877,15 @@ usergroupView = {
             }
         }
 
-    },
+    }
+    ,
 
-    changeMultipleUsersSector:function(){
+    changeMultipleUsersSector: function () {
         var sectorId = $$("cmuCombo").getValue();
 
-        if(sectorId === -1 || sectorId === -2){
+        if (sectorId === -1 || sectorId === -2) {
             util.messages.showErrorMessage("Odabrani sektor ne postoji!");
-        }
-        else {
+        } else {
             if ($$("cmuCombo").validate()) {
                 selectedItems.forEach(function (element) {
                     var changeSectorInformation = {
@@ -870,7 +919,8 @@ usergroupView = {
                 util.dismissDialog('changeMultipleUsersSectorDialog');
             }
         }
-    },
+    }
+    ,
 
     createDatatableContextMenu: function () {
         webix.ui({
@@ -933,7 +983,8 @@ usergroupView = {
                 }
             }
         });
-    },
+    }
+    ,
     /*
         filter:function(){
         //funkcija koja ce na osnovu selektovanog sektora izlistati zaposlene iz liste
@@ -945,17 +996,19 @@ usergroupView = {
 //    $$("list").select($$("list").getFirstId();)
 //};
 
-    //   },*/
+//   },*/
 
 //nakon klika na desni dio misa, pa kad se iyabere "Promijeni grupu"
     showChangeUserGroupDialog: function () {
         webix.ui(webix.copy(usergroupView.changeUserGroupDialog)).show();
-    },
+    }
+    ,
 
     saveChanges: function () {
         util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
         util.dismissDialog('changeUserGroupDialog');
-    },
+    }
+    ,
 
     employeeInfo: function (id) {
         webix.ui(webix.copy(usergroupView.employeeInfoDialog));
@@ -967,7 +1020,7 @@ usergroupView = {
                 $$("lastName").setValue(user.lastName);
                 $$("preview").setValues({src: "data:image/png;base64," + user.photo});
                 $$("email").setValue(user.email);
-                if(position === "direktor") {
+                if (position === "direktor") {
                     $$("startDate").hide();
                 } else {
                     $$("startDate").setValue(user.startDate === null ? "" : webix.i18n.dateFormatStr(user.startDate.split("T")[0]));
@@ -979,124 +1032,130 @@ usergroupView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
-    },
+    }
+    ,
 
     employeeInfoDialog: {
         view: "popup",
-        id: "employeeInfoDialog",
-        name: "employeeInfoDialog",
-        position: "center",
-        modal: true,
-        body: {
-            rows: [
-                {
-                    view: "toolbar",
-                    cols: [
-                        {
-                            view: "label",
-                            width: 400,
-                            label: "<span class='webix_icon fas fa-user'></span> Podaci o zaposlenom"
-                        },
-                        {},
-                        {
-                            view: "icon",
-                            icon: "close",
-                            align: "right",
-                            hotkey: "esc",
-                            click: "util.dismissDialog('employeeInfoDialog')"
-                        }
-                    ]
-                },
-                {
-                    view: "form",
-                    id: "employeeInfoForm",
-                    width: 500,
-                    elementsConfig: {
-                        labelWidth: 140,
-                        bottomPadding: 18
+        id:
+            "employeeInfoDialog",
+        name:
+            "employeeInfoDialog",
+        position:
+            "center",
+        modal:
+            true,
+        body:
+            {
+                rows: [
+                    {
+                        view: "toolbar",
+                        cols: [
+                            {
+                                view: "label",
+                                width: 400,
+                                label: "<span class='webix_icon fas fa-user'></span> Podaci o zaposlenom"
+                            },
+                            {},
+                            {
+                                view: "icon",
+                                icon: "close",
+                                align: "right",
+                                hotkey: "esc",
+                                click: "util.dismissDialog('employeeInfoDialog')"
+                            }
+                        ]
                     },
-                    elements: [
-                        {
-                            cols: [
-                                {},
-                                {
-                                    view: "template",
-                                    id: "preview",
-                                    name: "preview",
-                                    template: "<img style='height: 100%; width: 100%;' src='#src#'>",
-                                    height: 200,
-                                    width: 200,
-                                },
-                                {}
-                            ]
+                    {
+                        view: "form",
+                        id: "employeeInfoForm",
+                        width: 500,
+                        elementsConfig: {
+                            labelWidth: 140,
+                            bottomPadding: 18
                         },
-                        {
-                            view: "text",
-                            id: "firstName",
-                            name: "firstName",
-                            label: "Ime",
-                            disabled: true,
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            id: "lastName",
-                            name: "lastName",
-                            label: "Prezime",
-                            disabled: true,
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            id: "email",
-                            name: "email",
-                            label: "E-mail",
-                            disabled: true,
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            id: "userGroup",
-                            name: "userGroup",
-                            label: "Korisnička grupa",
-                            disabled: true,
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            view: "text",
-                            id: "startDate",
-                            name: "startDate",
-                            label: "Početak rada",
-                            disabled: true,
-                            labelWidth: 150,
-                            height: 35
-                        },
-                        {
-                            cols: [
-                                {},
-                                {
-                                    view: "button",
-                                    id: "closeEmployeeInfoButton",
-                                    name: "closeEmployeeInfoButton",
-                                    hotkey: "enter",
-                                    label: "Zatvori",
-                                    type: "iconButton",
-                                    icon: "close",
-                                    click: "util.dismissDialog('employeeInfoDialog')"
-                                },
-                                {}
-                            ]
-                        }
-                    ]
-                }
-            ]
-        }
-    },
-
+                        elements: [
+                            {
+                                cols: [
+                                    {},
+                                    {
+                                        view: "template",
+                                        id: "preview",
+                                        name: "preview",
+                                        template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                                        height: 200,
+                                        width: 200,
+                                    },
+                                    {}
+                                ]
+                            },
+                            {
+                                view: "text",
+                                id: "firstName",
+                                name: "firstName",
+                                label: "Ime",
+                                disabled: true,
+                                labelWidth: 150,
+                                height: 35
+                            },
+                            {
+                                view: "text",
+                                id: "lastName",
+                                name: "lastName",
+                                label: "Prezime",
+                                disabled: true,
+                                labelWidth: 150,
+                                height: 35
+                            },
+                            {
+                                view: "text",
+                                id: "email",
+                                name: "email",
+                                label: "E-mail",
+                                disabled: true,
+                                labelWidth: 150,
+                                height: 35
+                            },
+                            {
+                                view: "text",
+                                id: "userGroup",
+                                name: "userGroup",
+                                label: "Korisnička grupa",
+                                disabled: true,
+                                labelWidth: 150,
+                                height: 35
+                            },
+                            {
+                                view: "text",
+                                id: "startDate",
+                                name: "startDate",
+                                label: "Početak rada",
+                                disabled: true,
+                                labelWidth: 150,
+                                height: 35
+                            },
+                            {
+                                cols: [
+                                    {},
+                                    {
+                                        view: "button",
+                                        id: "closeEmployeeInfoButton",
+                                        name: "closeEmployeeInfoButton",
+                                        hotkey: "enter",
+                                        label: "Zatvori",
+                                        type: "iconButton",
+                                        icon: "close",
+                                        click: "util.dismissDialog('employeeInfoDialog')"
+                                    },
+                                    {}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+    }
+    ,
 
 
     deleteEmployee: function () {
@@ -1120,11 +1179,12 @@ usergroupView = {
         };
         webix.confirm(delBox);
 
-    },
+    }
+    ,
 
 //brise oznacene korisnike iz tabele
     deleteSelected: function () {
-        if(selectedItems.length > 0){
+        if (selectedItems.length > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
             delBox.callback = function (result) {
                 if (result == 1) {
@@ -1142,36 +1202,48 @@ usergroupView = {
             };
             webix.confirm(delBox);
         }
-    },
+    }
+    ,
 
 ////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
         webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
         $$("cuCombo").define("options", usergroupView.sectors);
         $$("cuCombo").refresh();
-    },
+    }
+    ,
 
     showChangeMultipleUsersSector: function () {
         webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
-                $$("cmuCombo").define("options", usergroupView.sectors);
-                $$("cmuCombo").refresh();
-    },
+        $$("cmuCombo").define("options", usergroupView.sectors);
+        $$("cmuCombo").refresh();
+    }
+    ,
 
     sectors: [],
-    userGroups: [],
+    userGroups:
+        [],
 
-    refreshDatatable: function () {
-        var table1 = $$("usergroupDT");
-        console.log("usao u refreshdatatable");
-        webix.extend(table1, webix.ProgressBar);
+    refreshDatatable:
 
-        table1.showProgress();
+        function () {
+            var table1 = $$("usergroupDT");
+            console.log("usao u refreshdatatable");
+            webix.extend(table1, webix.ProgressBar);
+
+            table1.showProgress();
 
 
-        table1.clearAll();
+            table1.clearAll();
 
-        console.log(sectorID);
-        table1.define("url", "url", "hub/user/custom/bySector/" + sectorID);
+            console.log(sectorID);
+            table1.define("url", "url", "hub/user/custom/bySector/" + sectorID);
+        }
+
+    ,
+    showEmployeeVacationInfoDialog: function () {
+        webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog)).show();
+
     }
 };
 
