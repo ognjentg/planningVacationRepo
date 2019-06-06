@@ -58,7 +58,7 @@ var companyView = {
                     css: "companyPanelToolbar",
                     template: "<span class='fa fa-briefcase'></span> Kompanije"
                 },
-                
+
                 {
                     css: "admin-counter",
                     rows: [
@@ -156,24 +156,50 @@ var companyView = {
                     label: "Arhivirajte",
                     width: 100, css: "companyButton",
                     on: {
-                        onItemClick: function (id) {
-                            webix.toPDF(webix.$$("companyDT"));
+                        onItemClick: function () {
+                            // webix.toPDF(webix.$$("companyDT"));
+                            webix.toPDF($$("companyDT"), {
+                                    docHeader: {
+                                        text: "Pregled kompanija",
+                                        textAlign: "center",
+
+                                    },
+
+                                    columns: {
+                                        "id": {header: "id", width: 60},
+                                        "name": {header: "Naziv", width: 400},
+                                        "pin": {header: "PIN", width: 50}
+                                    }
+                                }
+                            );
 
                         }
                     }
                 },
+                // {
+                //     view: "button",
+                //     type: "iconButton",
+                //     icon: "fas fa-print",
+                //     label: "Štampajte",
+                //     width: 100,
+                //     css: "companyButton",
+                //     click: function (id) {
+                //         console.log("print data");
+                //         webix.print($$("companyDT"), {fit: "page"});
+                //     }
+                // },
                 {
                     view: "button",
+                    id: "delete-selected",
                     type: "iconButton",
-                    icon: "fas fa-print",
-                    label: "Štampajte",
-                    width: 100,
+                    icon: "fas fa-trash",
+                    label: "Izbrišite označene",
+                    width: 150,
                     css: "companyButton",
-                    click: function (id) {
-                        console.log("print data");
-                        webix.print($$("companyDT"), {fit: "page"});
-                    }
+                    click: deleteSelected
+
                 },
+
                 {
                     view: "button",
                     type: "iconButton",
@@ -202,7 +228,7 @@ var companyView = {
             view: "datatable",
             css: "companyDatatable",
             margin: 10,
-            editable: true,
+            editable: false,
             editaction: "dblclick",
             multiselect: false,
             resizeColumn: true,
@@ -213,14 +239,25 @@ var companyView = {
             data: companies,
 
             columns: [{
-                id: "id",
-                hidden: true,
-                fillspace: true,
-                height: 35,
-
+                id: "status", header: [{content: "masterCheckbox", contentId: "mc1"}],
+                checkValue: 'on',
+                uncheckValue: 'off',
+                template: "{common.checkbox()}",
+                width: 35,
+                cssFormat: checkBoxStatus
             },
+
                 {
                     id: "id",
+                    hidden: true,
+                    fillspace: true,
+                    height: 35,
+
+                },
+
+                {
+                    id: "id",
+                    hidden: true,
                     header: "#",
                     width: 50,
                     cssFormat: checkBoxStatus,
@@ -229,14 +266,15 @@ var companyView = {
                 {
                     id: "logo",
                     header: "Logo",
-                    css:{"text-align":"center",
-                        "font-size" :"20px",
-                        "font-weight":"bold",
+                    css: {
+                        "text-align": "center",
+                        "font-size": "20px",
+                        "font-weight": "bold",
                         "color": "#000000"
                     },
                     cssFormat: checkBoxStatus,
                     fillspace: true, template: function (obj) {
-                        if(obj.logo == null) {
+                        if (obj.logo == null) {
                             return "Nema slike"
                         } else {
                             return "<img style='display:block; ' src='data:image/jpeg;base64, " + obj.logo + "'/>"
@@ -284,31 +322,32 @@ var companyView = {
                     cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                 },
+
                 {
                     id: "admins",
                     header: "&nbsp;",
                     width: 35,
                     cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
-                },
-                {
-                    id: "status",
-                    header: "",
-                    checkValue: 'on',
-                    uncheckValue: 'off',
-                    template: "{common.checkbox()}",
-                    width: 35,
-                    cssFormat: checkBoxStatus
-
-
-                },
-
-                {
-                    id: "delete-selected",
-                    header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
-                    width: 35,
-
                 }
+                // {
+                //     id: "status",
+                //     header: "",
+                //     checkValue: 'on',
+                //     uncheckValue: 'off',
+                //     template: "{common.checkbox()}",
+                //     width: 35,
+                //     cssFormat: checkBoxStatus
+                //
+                //
+                // },
+
+                // {
+                //     id: "delete-selected",
+                //     header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
+                //     width: 35,
+                //
+                // }
 
             ],
             select: "row",
@@ -354,7 +393,7 @@ var companyView = {
                                     if (text) {
                                         $$("companyDT").remove(id);
                                         util.messages.showMessage("Uspjesno uklanjanje");
-                                        animateValue($$("t1"), 0, tmpCompaniesLength-1, 1000);
+                                        animateValue($$("t1"), 0, tmpCompaniesLength - 1, 1000);
                                         tmpCompaniesLength = tmpCompaniesLength - 1;
                                     }
                                 }, function (text, data, xhr) {
@@ -379,38 +418,38 @@ var companyView = {
                         webix.ui(webix.copy(adminsView.showAdminsDialogForSuperadmin($$("companyDT").getItem(id.row).id)));
                     }
 
-                    if (action === "delete-selected" && selectedItemsCheckBox.length) {
-                        console.log("delete selected");
-
-                        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
-                        delBox.callback = function (result) {
-                            if (result == 1) {
-
-                                $$("companyDT").detachEvent("onBeforeDelete");
-
-                                selectedItemsCheckBox.forEach(function (item) {
-
-                                    connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
-                                        if (text) {
-                                            $$("companyDT").remove(item);
-
-
-                                        }
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, item);
-
-
-                                });
-
-                                $$("companyDT").refresh();
-                                selectedItemsCheckBox = [];
-
-                            }
-                        };
-                        webix.confirm(delBox);
-
-                    }
+                    // if (action === "delete-selected" && selectedItemsCheckBox.length) {
+                    //     console.log("delete selected");
+                    //
+                    //     var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                    //     delBox.callback = function (result) {
+                    //         if (result == 1) {
+                    //
+                    //             $$("companyDT").detachEvent("onBeforeDelete");
+                    //
+                    //             selectedItemsCheckBox.forEach(function (item) {
+                    //
+                    //                 connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
+                    //                     if (text) {
+                    //                         $$("companyDT").remove(item);
+                    //
+                    //
+                    //                     }
+                    //                 }, function (text, data, xhr) {
+                    //                     util.messages.showErrorMessage(text);
+                    //                 }, item);
+                    //
+                    //
+                    //             });
+                    //
+                    //             $$("companyDT").refresh();
+                    //             selectedItemsCheckBox = [];
+                    //
+                    //         }
+                    //     };
+                    //     webix.confirm(delBox);
+                    //
+                    // }
 
                 }
             }
@@ -428,13 +467,24 @@ var companyView = {
                     size: 20,
                     height: 35,
                     group: 5,
+                    on: {
+                        onItemClick: function (ids, e, node) {
+                            var control = $$("companyDT").getHeaderContent("mc1");
+
+                            var state = control.isChecked();
+
+                            control.uncheck();
+
+
+                        }
+                    },
                     animate: {
                         direction: "top"
-                    },
+                    }
                 }
                 ]
             }
-        ],
+        ]
 
     },
 
@@ -457,6 +507,28 @@ var companyView = {
         if (userData.userGroupId === 2) {
             $$("employee-counter").hide();
         }
+
+        webix.ui.datafilter.masterCheckbox = webix.extend({
+            refresh: function (master, node, config) {
+                node.onclick = function () {
+                    this.getElementsByTagName("input")[0].checked = config.checked = !config.checked;
+
+                    var column = master.getColumnConfig(config.columnId);
+                    var checked = config.checked ? column.checkValue : column.uncheckValue;
+                    master.data.each(function (obj) {
+
+
+                        if (obj && master.getItemNode(obj.id)) {
+
+                            obj[config.columnId] = checked;
+                            master.callEvent("onCheck", [obj.id, config.columnId, checked]);
+
+                        }
+                    });
+                    master.refresh();
+                };
+            }
+        }, webix.ui.datafilter.masterCheckbox);
 
         refreshData();
 
@@ -710,7 +782,7 @@ var companyView = {
 
                         util.dismissDialog('addCompanyDialog');
                         alert("Kompanija uspješno dodata.");
-                        animateValue($$("t1"), 0, tmpCompaniesLength+1, 1000);
+                        animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
                         tmpCompaniesLength = tmpCompaniesLength + 1;
 
                     }
@@ -779,7 +851,6 @@ var companyView = {
                         id: "pin",
                         invalidMessage: "PIN kompanije je obavezno unijeti.",
                         name: "pin",
-                        type: "password",
                         editable: true,
                         stringResult: true,
                         label: "PIN kompanije:",
@@ -1231,7 +1302,7 @@ function animateValue(id, start, end, duration) {
     var timer = setInterval(function () {
         current += increment;
         id.setHTML(`<p>${current}</p>`);
-        if (current == end) {
+        if (current === end) {
             clearInterval(timer);
         }
     }, stepTime);
@@ -1257,8 +1328,8 @@ function refreshData() {
 
         error: function (text, data, xhr) {
 
-            if (xhr.status != 200) {
-                alert("No data to load! Check your internet connection and try again.");
+            if (xhr.status !== 200) {
+                alert("Nema dostupnih podataka! Provjerite internet konekciju.");
                 table.hideProgress();
             }
 
@@ -1307,6 +1378,12 @@ function refreshData() {
 
     });
 
+    var control = $$("companyDT").getHeaderContent("mc1");
+
+    var state = control.isChecked();
+
+    control.uncheck();
+
 
 }
 
@@ -1329,5 +1406,55 @@ function isThereInternetConnection() {
     }
 
     return false;
+
+}
+
+function deleteSelected() {
+
+    console.log("delete selected");
+
+    if (selectedItemsCheckBox.length) {
+
+        alert(selectedItemsCheckBox);
+
+        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+
+        delBox.callback = function (result) {
+
+            if (result == 1) {
+
+                $$("companyDT").detachEvent("onBeforeDelete");
+
+                selectedItemsCheckBox.forEach(function (item) {
+
+                    connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
+
+                        if (text) {
+                            $$("companyDT").remove(item);
+
+
+                        }
+                    }, function (text, data, xhr) {
+
+                        util.messages.showErrorMessage(text);
+
+                    }, item);
+
+
+                });
+
+                $$("companyDT").refresh();
+
+                selectedItemsCheckBox = [];
+
+            }
+        };
+        webix.confirm(delBox);
+
+    } else {
+
+        alert("Nema selektovanih kompanija.");
+    }
+
 
 }
