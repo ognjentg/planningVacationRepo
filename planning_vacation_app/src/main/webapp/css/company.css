@@ -178,12 +178,12 @@
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
 }
 
-.fa-print {
+.fa-trash {
     -webkit-transform: rotate(0deg);
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
 }
 
-.webix_el_box :hover .fa-print {
+.webix_el_box :hover .fa-trash {
     -webkit-transform: rotate(360deg);
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
 }

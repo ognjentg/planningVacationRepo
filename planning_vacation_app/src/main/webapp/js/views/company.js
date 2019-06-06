@@ -192,8 +192,8 @@ var companyView = {
                     view: "button",
                     id: "delete-selected",
                     type: "iconButton",
-                    icon: "fas fa-trash",
-                    label: "Izbrišite označene",
+                    icon: "fa fa-trash",
+                    label: "Brišite označene",
                     width: 150,
                     css: "companyButton",
                     click: deleteSelected
@@ -1373,16 +1373,16 @@ function refreshData() {
                 }
             }
 
+            var control = $$("companyDT").getHeaderContent("mc1");
 
+            var state = control.isChecked();
+
+            control.uncheck();
         }
 
     });
 
-    var control = $$("companyDT").getHeaderContent("mc1");
 
-    var state = control.isChecked();
-
-    control.uncheck();
 
 
 }
