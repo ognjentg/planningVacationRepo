@@ -13,7 +13,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @PersistenceContext
     private EntityManager entityManager;
 
-    private static final String SQL_ALL = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name,min(lrd.date) AS date_from, max(lrd.date) as date_to "+
+    private static final String SQL_ALL = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id=u.id "+
@@ -39,16 +39,19 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "SET lr.leave_request_status_id = 2 "+
             "WHERE lr.id=? ";
 
-    private static final String SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
+    private static final String SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) as date_to  "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "WHERE lr.active = 1 AND lrs.key=? ";
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
+            "WHERE lr.active = 1 AND lrs.key=? "+
+            "GROUP BY lr.id ";
 
-    private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name "+
+    private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to  "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id=u.id "+
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
             "WHERE lr.active=1 AND lr.id=? ";
 
     @Override

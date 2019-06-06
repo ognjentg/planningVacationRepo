@@ -4,6 +4,8 @@ package com.telegroupltd.planning_vacation_app.model;
 import javax.persistence.*;
 
 import java.sql.Timestamp;
+import java.util.Date;
+
 
 @SqlResultSetMapping(
         name = "LeaveRequestUserLeaveRequestStatusMapping",
@@ -17,8 +19,8 @@ import java.sql.Timestamp;
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name",type = String.class),
                         @ColumnResult(name = "status_name", type = String.class),
-                        @ColumnResult(name = "date_from", type = Timestamp.class),
-                        @ColumnResult(name = "date_to", type = Timestamp.class)
+                        @ColumnResult(name = "date_from"),
+                        @ColumnResult(name = "date_to")
                 }
         )
 )
@@ -31,7 +33,7 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private Timestamp dateFrom;
     private Timestamp dateTo;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String firstName, String lastName,String statusName, Timestamp dateFrom, Timestamp dateTo) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
@@ -39,8 +41,8 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
         this.statusName = statusName;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dateFrom=dateFrom;
-        this.dateTo=dateTo;
+        this.setDateFrom(dateFrom == null ? null : new Timestamp(dateFrom.getTime()));
+        this.setDateTo(dateTo == null ? null : new Timestamp(dateTo.getTime()));
     }
 
     public String getStatusName() {

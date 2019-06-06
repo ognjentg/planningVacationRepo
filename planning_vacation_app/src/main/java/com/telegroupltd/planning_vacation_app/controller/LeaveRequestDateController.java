@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-@RequestMapping(value="leave_request_date")
+import java.util.List;
+
+@RequestMapping(value="/hub/leave_request_date")
 @Controller
 @Scope("request")
 public class LeaveRequestDateController extends GenericHasActiveController<LeaveRequestDate,Integer> {
@@ -18,5 +21,11 @@ public class LeaveRequestDateController extends GenericHasActiveController<Leave
     {
         super(leaveRequestDateRepository);
         this.leaveRequestDateRepository = leaveRequestDateRepository;
+    }
+
+    @Override
+    public @ResponseBody
+    List<LeaveRequestDate> getAll(){
+        return leaveRequestDateRepository.getAllByActiveIs((byte)1);
     }
 }

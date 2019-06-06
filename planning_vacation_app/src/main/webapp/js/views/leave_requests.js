@@ -141,7 +141,9 @@ leaveRequestsView = {
                             "Datum do", {
                                 content: "dateFilter"
                             }
-                        ]
+                        ],
+                        format: webix.Date.dateToStr("%d.%m.%Y.")
+
                     }, {
                         id: "accept",
                         header: "&nbsp;",
@@ -391,7 +393,7 @@ leaveRequestsView = {
         comment=$$("rejectComment").getValue();
 
        connection.sendAjax("PUT",
-            "/hub/leave_request/updateLeaveRequestStatusRejected/" + id.toString() + "/comment/" + comment.toString(),function (text, data, xhr) {
+            "/hub/leave_request/updateLeaveRequestStatusRejected/" + id+ "/comment/" + comment,function (text, data, xhr) {
                $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                util.messages.showMessage("Zahtjev odbijen");}
             , function (text, data, xhr) {
