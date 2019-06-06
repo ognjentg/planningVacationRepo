@@ -193,7 +193,7 @@ var leaveRequestsView={
                                 };
                                 webix.confirm(acceptLeaveBox);
                             }else if(action==="view"){
-                                var viewLeaveBox=(webix.copy(leaveRequestsView.showLeaveRequestInfo($$("leave_requestDT").getSelectedId())));
+                                var viewLeaveBox=(webix.copy(leaveRequestsView.showLeaveRequestInfo(id)));
                             }
                         }
                     }
@@ -348,21 +348,24 @@ var leaveRequestsView={
 
     },
     showLeaveRequestInfo:function(id){
-        webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo)).show();
-        setTimeout(function() {
+        webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo));
+
             connection.sendAjax("GET",
-                "hub/leave_request/leaveRequestInfo/" +id,
+                "/hub/leave_request/leaveRequestInfo/"+id,
                 function (text, data, xhr) {
                     user = data.json();
                     $$("fname").setValue(user.firstName);
-                    $("lname").setValue(user.lastName);
-                    $$("status").setValue(user.status);
-                    $$("comment").setValue(user.comment);
+                    $$("lname").setValue(user.lastName);
+                    $$("status").setValue(user.statusName);
+                    $$("comment").setValue(user.senderComment);
+                    setTimeout(function () {
+                        $$("leaveRequestInfoId").show();
+                    },0);
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 });
-            $$("leaveRequestInfo").show();
-        }, 0);
+
+
 
     }
 }

@@ -91,8 +91,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformationById(Integer id){
-        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(userBean.getUser().getId());
+    LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id){
+        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
+        System.out.println(lrs.getFirstName());
+        return lrs;
     }
 
     @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)
@@ -103,7 +105,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable Integer key ){
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUser().getId(), key);
     }
 
