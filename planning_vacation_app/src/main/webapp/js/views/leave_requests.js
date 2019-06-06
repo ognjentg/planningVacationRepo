@@ -26,7 +26,8 @@ leaveRequestsView = {
                         id: "filterLeaveRequestsComboBox",
                         label: "Vrsta zahtjeva",
                         labelWidth: 100,
-                        value: "1",
+                        value: "4",
+                        editable:false,
                         on: {
                             onChange(name) {
                                 $$("leave_requestDT").clearAll();
@@ -51,7 +52,7 @@ leaveRequestsView = {
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }
-                                else {
+                                else  if (name===1){
                                     $$("leave_requestDT").showColumn("accept");
                                     $$("leave_requestDT").showColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
@@ -147,6 +148,7 @@ leaveRequestsView = {
                     }, {
                         id: "accept",
                         header: "&nbsp;",
+                        hidden:true,
                         width: 35,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>"
 
@@ -154,6 +156,7 @@ leaveRequestsView = {
                         id: "reject",
                         header: "&nbsp;",
                         width: 35,
+                        hidden:true,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>"
 
                     }, {
@@ -179,10 +182,10 @@ leaveRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject") {
+                            if (action === "reject"&&(userData.userGroupId === 2 || userData.userGroupId === 3 || userData.userGroupId === 5)) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
-                            } else if (action === "accept") {
+                            } else if (action === "accept"&&(userData.userGroupId === 2 || userData.userGroupId === 3 || userData.userGroupId === 5)) {
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
@@ -362,6 +365,29 @@ leaveRequestsView = {
                         view: "label",
                         id: "comment"
                     }]
+                },{
+                    cols: [{
+                        view: "label",
+                        label: "Datum od:"
+                    }, {}, {
+                        view: "label",
+                        width:200,
+                        id: "dateFromId",
+                        format: webix.Date.dateToStr("%d.%m.%Y.")
+                    }]
+
+                },{
+
+                    cols: [{
+                        view: "label",
+                        label: "Datum do:"
+
+                    }, {}, {
+                        view: "label",
+                        width:200,
+                        id: "dateToId",
+                        format: webix.Date.dateToStr("%d.%m.%Y.")
+                    }]
                 }
             ]
         }
@@ -378,6 +404,9 @@ leaveRequestsView = {
                 $$("lname").setValue(user.lastName);
                 $$("status").setValue(user.statusName);
                 $$("comment").setValue(user.senderComment);
+
+                $$("dateFromId").setValue(new Date(user.dateFrom));
+                $$("dateToId").setValue(new Date(user.dateTo));
                 setTimeout(function () {
                     $$("leaveRequestInfoId").show();
                 }, 0);
