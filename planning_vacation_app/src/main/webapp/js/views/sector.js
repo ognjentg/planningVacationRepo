@@ -493,7 +493,7 @@ var sectorView = {
                             label:"Rukovodilac",
                             options:{
                                 body:{
-                                    template: "#id# #firstName# #lastName#",
+                                    template: "#firstName# #lastName#",
                                     url: "hub/user/getAllUsersWithoutSector",
                                 }
                             },
@@ -567,14 +567,14 @@ var sectorView = {
                     active:1
                 }
 
-                var sector=null;
+               // var sector=null;
 
                 console.log(newSector.id);
                connection.sendAjax("POST", "/hub/sector",
                     function (text, data, xhr) {
                         if (text) {
                             $$("sectorDT").add(newSector);
-                            sector=newSector;
+                           // sector=newSector;
                             util.dismissDialog('addSectorDialog');
                             alert("Sektor uspješno dodat.");
                             sectorsNumber=sectorsNumber+1;
@@ -654,7 +654,7 @@ var sectorView = {
                                 label:"Rukovodilac",
                                 options:{
                                     body: {
-                                        template: "#id# #firstName# #lastName#",
+                                        template: "#firstName# #lastName#",
                                         url: "/hub/user/getAllUsersFromSectorByUserGroupId/"+sector.id,
                                     }
                                 },
