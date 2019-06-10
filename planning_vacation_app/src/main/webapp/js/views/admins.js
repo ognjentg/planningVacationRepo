@@ -322,7 +322,7 @@ var adminsView = {
                             type: "form",
                             click: "adminsView.addNewAdmin",
                             align: "right",
-                            hotkey: "esc",
+                            hotkey: "enter",
                             width: 150,
                             margin: 50
                         }
