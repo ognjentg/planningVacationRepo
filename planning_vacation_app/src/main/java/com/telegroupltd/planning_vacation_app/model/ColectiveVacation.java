@@ -4,6 +4,7 @@ import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -16,7 +17,8 @@ public class ColectiveVacation implements HasActive {
     private Byte active;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
     }
