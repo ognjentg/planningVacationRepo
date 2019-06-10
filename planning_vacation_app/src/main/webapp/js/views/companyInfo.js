@@ -7,6 +7,7 @@ var days =[
     {"id":13,"value":"Subota"},
     {"id":14,"value":"Nedjelja"}];
 var updatedDays = [];
+var updatedCollectiveVacations = [];
 var startedSelectedValues = [];
 var companyInfoView = {
 
@@ -147,7 +148,7 @@ var companyInfoView = {
                         },
                         {
                             view:"datatable",
-                            id:"vacationDT",
+                            id:"collectiveVacationDT",
                             adjust:true,
                             select: "row",
                             navigation: true,
@@ -179,23 +180,31 @@ var companyInfoView = {
 
                             onClick: {
                                 webix_icon: function (e, id) {
-
-                                    var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
-                                    var day = dataTableValue.day;
-                                    var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
+                                    var dataTableValue = $$("collectiveVacationDT").getItem(id);
+                                    var dateFrom = dataTableValue.dateFrom;
+                                    var dateTo = dataTableValue.dateTo;
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("kolektivnog godišnjeg odmora", "period " + dateFrom + " - " + dateTo + " iz liste kolektivnih godišnjih odmora")));
                                     delBox.callback = function (result) {
                                         if (result == 1) {
                                             var format = webix.Date.strToDate("%d.%m.%Y.");
-                                            var string = format(day);
+                                            var stringDateFrom = format(dateFrom);
+                                            var stringDateTo = format(dateTo);
                                             var newFormat = webix.Date.dateToStr("%Y-%m-%d");
-                                            var newDate = newFormat(string); //datum u formatu kakav je potreban za backend stranu
-                                            dataTableValue.day = newDate;
+                                            var newDateFrom = newFormat(stringDateFrom); //datum u formatu kakav je potreban za backend stranu
+                                            var newDateTo = newFormat(stringDateTo);
+                                            dataTableValue.dateFrom = newDateFrom;
+                                            dataTableValue.dateTo = newDateTo;
+
                                             if(updatedDays.includes(dataTableValue))
-                                                updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day});
-                                            else {
-                                                updatedDays.push(dataTableValue);
+                                            {
+                                                updatedCollectiveVacations = updatedCollectiveVacations.filter(function(element){
+                                                    return element.dateFrom !== dateFrom && element.dateTo !== dateTo;
+                                                });
                                             }
-                                            $$("nonWorkingDaysDT").remove(id);
+                                            else {
+                                                updatedCollectiveVacations.push(dataTableValue);
+                                            }
+                                            $$("collectiveVacationDT").remove(id);
                                         }
                                     };
                                     webix.confirm(delBox);
@@ -436,6 +445,23 @@ var companyInfoView = {
                     startedSelectedValues = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
                 }
        });
+
+       connection.sendAjax("GET",
+            "/hub/colectiveVacation/getColectiveVacationByCompany/" + companyId, function (text, data, xhr) {
+               if(text){
+                   var collectiveVacationPeriods = data.json();
+                   var dateFrom;
+                   var dateTo;
+                   for(var i = 0; i < collectiveVacationPeriods.length; i++)
+                   {
+                       dateFrom = webix.Date.dateToStr("%d.%m.%Y.")(collectiveVacationPeriods[i].dateFrom);
+                       dateTo = webix.Date.dateToStr("%d.%m.%Y.")(collectiveVacationPeriods[i].dateTo);
+                       collectiveVacationPeriods[i].dateFrom = dateFrom;
+                       collectiveVacationPeriods[i].dateTo = dateTo;
+                       $$("collectiveVacationDT").add(collectiveVacationPeriods[i]);
+                   }
+            }});
+
     },
     addCollectiveVacation: function(){
         var dateFromValue = $$("collectiveVacationFromDTP").getValue();
@@ -445,18 +471,41 @@ var companyInfoView = {
         var dateFromInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(dateFromValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
         var dateToInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(dateToValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
         var companyId = userData.companyId;
-     //   if(dateFrom.compare(dateTo))
-       //     alert("Ne može datum od biti veći od datuma do.")
-     //   alert(dateTo);
-       // alert(dateToInDTFormat);
-
+        if("" == dateFromValue || "" == dateToValue)
+            alert("Niste izabrali jedan od datuma!");
+        else if(dateFrom > dateTo)
+            alert("Datum od ne može biti prije datuma do!");
+        else{
         var collectiveVacation = {
             dateFrom: dateFromInDTFormat,
             dateTo:  dateToInDTFormat,
             companyId: companyId
         }
-        $$("vacationDT").add(collectiveVacation);
 
+        var isDaySelected = 0;
+        $$("collectiveVacationDT").eachRow(function(row){
+            var record = $$("collectiveVacationDT").getItem(row);
+            if( dateFromInDTFormat == record.dateFrom && dateToInDTFormat == record.dateTo) //provjeravamo da li se dan vec nalazi u tabeli
+                isDaySelected = 1;
+        });
+
+        if(isDaySelected == 1)
+            alert("Period " + dateFromInDTFormat + " - " + dateToInDTFormat + " je već označen kao kolektivni godišnji odmor.");
+        else{
+            $$("collectiveVacationDT").add(collectiveVacation);
+            collectiveVacation.dateFrom =  dateFrom;
+            collectiveVacation.dateTo = dateTo;
+            if(updatedCollectiveVacations.includes(collectiveVacation))
+                 updatedCollectiveVacations = updatedCollectiveVacations.filter(function(element){
+                     return element.dateFrom !== dateFrom && element.dateTo !== dateTo;
+                 });
+            else {
+                updatedCollectiveVacations.push(collectiveVacation);
+            }
+        }
+        $$("collectiveVacationFromDTP").setValue("");
+        $$("collectiveVacationToDTP").setValue("");
+        }
     },
     saveChanges: function () {
      var logo = $$("companyLogoList");
@@ -553,6 +602,38 @@ var companyInfoView = {
             }, function (text, data, xhr) {
                 alert(text);
             }, constraints);
+
+         var collectiveVacations = [];
+
+        /* for(var i = 0; i < updatedDays.length; i++) {
+             var collectiveVacation = {
+                 dateTo:
+                 dateFrom: updatedDays[i].day,
+                 companyId: companyId,
+                 }
+             collectiveVacations.push(collectiveVacation);
+         }*/
+
+        /* var dateFromValue = $$("collectiveVacationFromDTP").getValue();
+         var dateToValue = $$("collectiveVacationToDTP").getValue();
+         var dateFrom = webix.Date.dateToStr("%Y-%m-%d")(dateFromValue);
+         var dateTo = webix.Date.dateToStr("%Y-%m-%d")(dateToValue);*/
+
+         for (var i = 0; i < updatedCollectiveVacations.length; i++){
+
+         var collectiveVacation = {
+             dateFrom: updatedCollectiveVacations[i].dateFrom,
+             dateTo: updatedCollectiveVacations[i].dateTo,
+             companyId: companyId
+        }
+         collectiveVacations.push(collectiveVacation);
+        }
+         updatedCollectiveVacations = [];
+         connection.sendAjax("POST", " /hub/colectiveVacation/addColectiveVacations",
+             function (text, data, xhr) {
+             }, function (text, data, xhr) {
+                 alert(text);
+             }, collectiveVacations);
 
         alert("Uspješno izvršena izmjena podataka o kompaniji");
         util.dismissDialog('companyInfoDialog');
