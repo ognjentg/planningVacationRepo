@@ -16,7 +16,7 @@ var companyInfoView = {
         name: "companyInfoDialog",
         position: "center",
         modal: true,
-        width:650,
+        width:950,
         height:520,
         body:
             {
@@ -42,7 +42,7 @@ var companyInfoView = {
             {
             cols:[
                 {
-                    width:265,
+                    width:350,
                     rows:[
                         {
                             view:"toolbar",
@@ -79,7 +79,7 @@ var companyInfoView = {
                                 {
                                     id: "delete",
                                     header: "&nbsp;",
-                                    width: 35,
+                                    fillspace:true,
                                     cssFormat: checkBoxStatus,
                                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
@@ -109,7 +109,99 @@ var companyInfoView = {
                                     };
                                     webix.confirm(delBox);
                                 }}
-                                },]
+                        },
+                        {
+                        cols:[
+                            {
+
+                            view: "datepicker",
+                            id: "collectiveVacationFromDTP",
+                            name: "collectiveVacationFromDTP",
+                            stringResult: true,
+                            format: "%d.%m.%Y.",
+                            label: 'Od:',
+                            labelWidth: 30
+                        },
+                        {
+                                view: "datepicker",
+                                id: "collectiveVacationToDTP",
+                                name: "collectiveVacationToDTP",
+                                stringResult: true,
+                                format: "%d.%m.%Y.",
+                                label: 'Do:',
+                                labelWidth: 30
+                        },
+                            {
+                                id: "addCollectiveVacationBtn",
+                                view: "button",
+                                type: "iconButton",
+                                icon: "plus-circle",
+                                css: "companyButton",
+                                view:"button",
+                                click:"companyInfoView.addCollectiveVacation",
+                                width:40,
+                                align:"center",
+                                hotkey:"enter"
+                            }
+                        ]
+                        },
+                        {
+                            view:"datatable",
+                            id:"vacationDT",
+                            adjust:true,
+                            select: "row",
+                            navigation: true,
+                            columns:[
+                                {
+                                    id:"#",
+                                    hidden:true,
+                                    header:"",
+                                },
+                                {
+                                    id:"dateFrom",
+                                    header:"Od",
+                                    width:115
+                                },
+                                {
+                                    id:"dateTo",
+                                    header:"Do",
+                                    width:115
+                                },
+                                {
+                                    id: "delete",
+                                    header: "&nbsp;",
+                                    fillspace:true,
+                                    cssFormat: checkBoxStatus,
+                                    template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                },
+                            ],
+
+                            onClick: {
+                                webix_icon: function (e, id) {
+
+                                    var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+                                    var day = dataTableValue.day;
+                                    var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
+                                    delBox.callback = function (result) {
+                                        if (result == 1) {
+                                            var format = webix.Date.strToDate("%d.%m.%Y.");
+                                            var string = format(day);
+                                            var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                            var newDate = newFormat(string); //datum u formatu kakav je potreban za backend stranu
+                                            dataTableValue.day = newDate;
+                                            if(updatedDays.includes(dataTableValue))
+                                                updatedDays = updatedDays.filter(function(element){return element.day !== dataTableValue.day});
+                                            else {
+                                                updatedDays.push(dataTableValue);
+                                            }
+                                            $$("nonWorkingDaysDT").remove(id);
+                                        }
+                                    };
+                                    webix.confirm(delBox);
+                                }}
+                        },
+                    ]
                 },
                 {
                     width:350,
@@ -344,6 +436,27 @@ var companyInfoView = {
                     startedSelectedValues = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
                 }
        });
+    },
+    addCollectiveVacation: function(){
+        var dateFromValue = $$("collectiveVacationFromDTP").getValue();
+        var dateToValue = $$("collectiveVacationToDTP").getValue();
+        var dateFrom = webix.Date.dateToStr("%Y-%m-%d")(dateFromValue);
+        var dateTo = webix.Date.dateToStr("%Y-%m-%d")(dateToValue);
+        var dateFromInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(dateFromValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+        var dateToInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(dateToValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+        var companyId = userData.companyId;
+     //   if(dateFrom.compare(dateTo))
+       //     alert("Ne može datum od biti veći od datuma do.")
+     //   alert(dateTo);
+       // alert(dateToInDTFormat);
+
+        var collectiveVacation = {
+            dateFrom: dateFromInDTFormat,
+            dateTo:  dateToInDTFormat,
+            companyId: companyId
+        }
+        $$("vacationDT").add(collectiveVacation);
+
     },
     saveChanges: function () {
      var logo = $$("companyLogoList");
