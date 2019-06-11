@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -65,7 +67,18 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
 
     @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
     public List<NonWorkingDay> getNonWorkingDayForCompany(@PathVariable Integer companyId) {
-        return nonWorkingDayRepository.getAllByActiveAndCompanyId((byte) 1, companyId);
+        List<NonWorkingDay> nonWorkingDayList = nonWorkingDayRepository.getAllByActiveAndCompanyId((byte) 1, companyId);
+        List<NonWorkingDay> result = new ArrayList<>();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String currentDate = dateFormat.format(date);
+        for (NonWorkingDay nonWorkingDay : nonWorkingDayList) {
+            String nonWorkingDate = nonWorkingDay.getDay().toString();
+            if (currentDate.compareTo(nonWorkingDate) <= 0) {
+                result.add(nonWorkingDay);
+            }
+        }
+        return  result;
     }
 
     @RequestMapping(value = "/getNonWorkingDayByCompanyString/{companyId}", method = RequestMethod.GET)

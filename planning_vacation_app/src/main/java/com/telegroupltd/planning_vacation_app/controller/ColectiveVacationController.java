@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -50,7 +54,18 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
 
     @RequestMapping(value = "/getColectiveVacationByCompany/{companyId}", method = RequestMethod.GET)
     public List<ColectiveVacation> getColectiveVacationForCompany(@PathVariable Integer companyId) {
-        return colectiveVacationRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+        List<ColectiveVacation> result = new ArrayList<>();
+        List<ColectiveVacation> colectiveVacationList = colectiveVacationRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        String currentDate = dateFormat.format(date);
+        for (ColectiveVacation colectiveVacation : colectiveVacationList) {
+            String colectiveVacationDateTo = colectiveVacation.getDateTo().toString();
+            if (currentDate.compareTo(colectiveVacationDateTo) <= 0) {
+                result.add(colectiveVacation);
+            }
+        }
+        return result;
     }
 
     @Transactional
