@@ -3,6 +3,7 @@ var schedulerEvents = [];
 
 
 var calendarView = {
+    freeDays: 0,
     panel: {
         id: "calendarPanel",
         adjust: true,
@@ -109,20 +110,33 @@ var calendarView = {
                                     margin: 10,
                                     tooltip: true,
                                     columns: [{
-                                                id: "startDate",
-                                                fillspace: true,
-                                                editable: false,
-                                                sort: "date",
+                                                id: "id",
+                                                hidden: true,
+                                                fillspace: true
+                                                //editable: false,
+                                                //sort: "date",
                                                 //width:210,
-                                                header: ["<span class='webix_icon fa fa-calendar'/>Od"]
+                                               // header: ["<span class='webix_icon fa fa-calendar'/>Od"]
                                         },{
-                                                 id: "endDate",
+                                                 id: "date",
                                                  fillspace: true,
                                                  editable: false,
                                                  sort: "date",
                                                  //width:210,
-                                                 header: ["<span class='webix_icon fa fa-calendar'/>Do"]
-                                         }],
+                                                 header: ["<span class='webix_icon fa fa-calendar'/>Datum"]
+                                         },
+                                        {
+                                            id: "deleteDate",
+                                            header: "&nbsp;",
+                                            width: 35,
+                                            template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>"
+                                        }],
+                                     onClick: {
+                                         webix_icon: function (e, id) {
+                                            $$("periodsDT").remove(id);
+                                            scheduler.deleteEvent(id);
+                                         }
+                                     },
                                          rules: {
                                                startDate:notEmpty, //todo-maybe this doesn't work,because method notEmpty work for String...
                                                endDate:notEmpty
@@ -237,12 +251,29 @@ var calendarView = {
                 return "good_day";
             return "";
         }
-
+        //skrivanje lightboxa
+        scheduler.attachEvent("onBeforeLightbox", function (id){
+            return false;
+        });
         // 1. custom
-       scheduler.config.lightbox.sections=[
+      /* scheduler.config.lightbox.sections=[
            {name:"time", height:50, type:"time", map_to:"auto", time_format:[ "%d", "%m", "%Y"]}
-       ]
-
+       ]*/
+      //Provjera da li ima godišnjeg
+        scheduler.attachEvent("onBeforeEventCreated", function (e){
+            if($$("periodsDT").count() < calendarView.freeDays)
+                return true;
+            util.messages.showErrorMessage("Nemate pravo na više dana");
+            return false;
+        });
+        scheduler.attachEvent("onEventCreated", function(id,e){
+            var event = scheduler.getEvent(id);
+            var tableData = {
+                id: id,
+                date: event.start_date.toDateString()
+            }
+            $$("periodsDT").parse(tableData);
+        });
         //2. started working...
         schedulerEvents.push(scheduler.attachEvent("onClick", function (id, e) {
         //dhtmlx.message("proba");
@@ -272,6 +303,7 @@ var calendarView = {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
                         var vacationDays = data.json();
+                        calendarView.freeDays = vacationDays.totalDays - vacationDays.usedDays;
                         animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
                         animateValue($$("t2"), 0, vacationDays.totalDays, 700);
                     }
