@@ -124,6 +124,7 @@ usergroupView = {
                         width:200,
                         height:40,
                         align:"left",
+                        disabled:true,
                         css:"companyButton",
                         click: 'usergroupView.showChangeManagerDialog'
                     }, {
@@ -155,6 +156,9 @@ usergroupView = {
                                 } else {
                                     $$("addUserButton").enable();
                                 }
+                                if(sectorID == -2 || sectorID == -1){
+                                    $$("changeManagerBtn").disable();F
+                                }else $$("changeManagerBtn").enable()
                             }
 
                         }
@@ -495,39 +499,18 @@ usergroupView = {
                     height:250,
                     width:600,
                     tooltip: true,
+                    select: "row",
+                    multiselect: false,
+                    checkboxRefresh: true,
+                    onContext: {},
+                    navigation: true,
                     //url:"hub/user/custom/bySector/-1",
                     on: {
                         onAfterContextMenu: function (item) {
                             this.select(item.row);
                         }
-                        ,onCheck: function (rowId, colId, state) {
-                            if (state == "on") {
-                                $$("changeManagerButton").enable();
-                                selectedManager.push(rowId);
-                                this.select(rowId);
-                            } else {
-
-                                var index = selectedManager.indexOf(rowId);
-                                if (index > -1) {
-                                    selectedManager.splice(index, 1);
-                                    this.unselect(rowId);
-                                }
-                                if (selectedManager.length == 0) {
-                                    $$("changeManagerButton").disable();
-                                }
-                            }
-                        }
                     },
                     columns:[
-                        {
-                            id: "checkbox",
-                            header: "",
-                            checkValue: 'on',
-                            uncheckValue: 'off',
-                            template: "{common.checkbox()}",
-                            width: 35,
-                            //cssFormat: checkBoxStatus
-                        },
                         {
                             id: "id",
                             hidden: true
@@ -792,8 +775,8 @@ usergroupView = {
     },
 
     changeManager:function(){
-    if(selectedManager.length!=1){
-        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzera.");
+    if($$("changeManagerTable").getSelectedItem().id==="undefined"){
+        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzeraaa.");
     } else {
         var employe;
         $$("changeManagerTable").eachRow(
@@ -803,9 +786,8 @@ usergroupView = {
                 }
             }
         );
-
         var changeManagerInformation = {
-            newManager: selectedManager[0],
+            newManager: $$("changeManagerTable").getSelectedItem().id,
             newEmployee: employe
         };
         connection.sendAjax("POST", "hub/user/changeManager",
@@ -840,7 +822,6 @@ usergroupView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, changeManagerInformation);
-        selectedManager = [];
     }
     },
 
