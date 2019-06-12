@@ -5,6 +5,7 @@ var user = null; //logged in user
 var sectorID = null; // if there is sector manager
 //int numberOfSectors; //when sector is changed
 var selectedItems = [];
+var selectedManager = [];
 
 usergroupView = {
     getPanel: function () {
@@ -114,6 +115,17 @@ usergroupView = {
                         align: "left",
                         disabled: true,
                         click: 'usergroupView.showChangeMultipleUsersSector'
+                    },{
+                       view:"button",
+                        id:"changeManagerBtn",
+                        type:"iconButton",
+                        icon:"user",
+                        label:"Promijeni menadžera",
+                        width:200,
+                        height:40,
+                        align:"left",
+                        css:"companyButton",
+                        click: 'usergroupView.showChangeManagerDialog'
                     }, {
                         view: "label",
                         id: "izaberiLabel",
@@ -320,6 +332,8 @@ usergroupView = {
         }
     },
 
+
+
     addDialog: {
         view: "window",
         id: "addUserDialog",
@@ -444,6 +458,121 @@ usergroupView = {
                     }
                 }]
         }
+    },
+
+    changeManagerDialog:{
+        view:"window",
+        width:600,
+        id:"changeManagerDialog",
+        position:"center",
+        modal:"true",
+        move:"true",
+        select: "row",
+        multiselect: false,
+        checkboxRefresh: true,
+        onContext: {},
+        navigation: true,
+        body:{
+            rows:[
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Promjena menadzera u sektoru",
+                        autoWidth: true,
+                    }, {}, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: 'util.dismissDialog(\'changeManagerDialog\');'
+                    }]
+                },
+                {
+                    view: "datatable",
+                    id: "changeManagerTable",
+                    margin: 10,
+                    tooltip: true,
+                    //url:"hub/user/custom/bySector/-1",
+                    on: {
+                        onAfterContextMenu: function (item) {
+                            this.select(item.row);
+                        }
+                        ,onCheck: function (rowId, colId, state) {
+                            if (state == "on") {
+                                $$("changeManagerButton").enable();
+                                selectedManager.push(rowId);
+                                this.select(rowId);
+                            } else {
+
+                                var index = selectedManager.indexOf(rowId);
+                                if (index > -1) {
+                                    selectedManager.splice(index, 1);
+                                    this.unselect(rowId);
+                                }
+                                if (selectedManager.length == 0) {
+                                    $$("changeManagerButton").disable();
+                                    util.messages.showErrorMessage("0");
+                                }
+                            }
+                        }
+                    },
+                    columns:[
+                        {
+                            id: "checkbox",
+                            header: "",
+                            checkValue: 'on',
+                            uncheckValue: 'off',
+                            template: "{common.checkbox()}",
+                            width: 35,
+                            //cssFormat: checkBoxStatus
+                        },
+                        {
+                            id: "id",
+                            hidden: true
+                        },
+                        {
+                            id: "firstName",
+                            fillspace: true,
+                            editable: false,
+                            sort: "string",
+                            header: ["<span class='webix_icon fa fa-user'/>Ime",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
+                        }, {
+                            id: "lastName",
+                            fillspace: true,
+                            editable: false,
+                            sort: "string",
+                            header: ["<span class='webix_icon fa fa-user'/>Prezime",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
+                        }, {
+                            id: "position",
+                            fillspace: true,
+                            editable: false,
+                            sort: "string",
+                            header: ["<span class='webix_icon fa fa-user'/>Pozicija",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
+                        }
+
+                        ]
+
+                },
+                {
+                    view:"button",
+                    label:"Promijeni",
+                    id:"changeManagerButton",
+                    align:"left",
+                    click:"usergroupView.changeManager"
+                }
+            ]
+        }
+
     },
 
     changeSectorDialog: {
@@ -645,6 +774,72 @@ usergroupView = {
 
     }
     ,
+
+    showChangeManagerDialog:function(){
+        webix.ui(webix.copy(usergroupView.changeManagerDialog));
+        var sector = $$("choseSectorCombo").getValue();
+        if(sector === -1 || sector === -2 || sector === "Svi sektori" ){
+            util.messages.showErrorMessage("Odabir sektora nije validan.")
+        }
+        else {
+            $$("changeManagerTable").define("url", "hub/user/custom/bySector/" + sector);
+            $$("changeManagerDialog").show();
+        }
+    },
+
+    changeManager:function(){
+    if(selectedManager.length!=1){
+        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzera.");
+    } else {
+        var employe;
+        $$("changeManagerTable").eachRow(
+            function(row){
+                if($$("changeManagerTable").getItem(row).position==="menadzer"){
+                   employe = row;
+                }
+            }
+        );
+
+        var changeManagerInformation = {
+            newManager: selectedManager[0],
+            newEmployee: employe
+        };
+        connection.sendAjax("POST", "hub/user/changeManager",
+            function (text, data, xhr) {
+                if (text) {
+                    util.messages.showMessage("Uspješna promjena pozicije zaposlenom.");
+                    $$("changeManagerTable").eachRow(
+                        function(row){
+                            if($$("changeManagerTable").getItem(row).position==="menadzer"){
+                                var user1 = $$("changeManagerTable").getItem(row);
+                                user1.position = "zaposleni";
+                                $$("changeManagerTable").updateItem(row, user1);
+                            }
+                        }
+                    );
+                    $$("usergroupDT").eachRow(
+                        function(row){
+                            if($$("usergroupDT").getItem(row).position==="menadzer"){
+                                var user1 = $$("usergroupDT").getItem(row);
+                                user1.position = "zaposleni";
+                                $$("usergroupDT").updateItem(row, user1);
+                            }
+                        }
+                    );
+                    var user = $$("changeManagerTable").getItem(changeManagerInformation.newManager);
+                    user.position = "menadzer";
+                    $$("changeManagerTable").updateItem(changeManagerInformation.newManager, user);
+                    $$("usergroupDT").updateItem(changeManagerInformation.newManager, user);
+
+                } else
+                    util.messages.showErrorMessage("Neuspješna promjena pozicije zaposlenom.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, changeManagerInformation);
+        selectedManager = [];
+    }
+    },
+
 
     selectPanel: function () {
         util.selectPanel(this.getPanel());

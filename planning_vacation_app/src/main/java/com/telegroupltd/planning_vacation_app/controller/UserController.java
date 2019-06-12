@@ -413,6 +413,31 @@ public class UserController extends GenericController<User, Integer> {
         return new String();
     }
 
+    @RequestMapping(value = "/changeManager", method = RequestMethod.POST)
+    public @ResponseBody
+    String changeManager(@RequestBody ChangeManagerInformation changeManagerInformation) throws BadRequestException {
+        User user = userRepository.findById(changeManagerInformation.getNewManager()).orElse(null);
+        User user1 = userRepository.findById(changeManagerInformation.getNewEmployee()).orElse(null);
+        System.out.println(changeManagerInformation.getNewEmployee());
+        if (user != null) {
+
+            user.setUserGroupId(5);
+            if (repo.saveAndFlush(user) == null) {
+                throw new BadRequestException("Neuspješna promjena pozicije!");
+            }
+        }
+        if (user1 != null) {
+            user1.setUserGroupId(6);
+            if (repo.saveAndFlush(user1) != null) {
+                return "Success";
+            }
+        } else {
+            throw new BadRequestException("Neuspješna promjena pozicije!");
+        }
+
+        return new String();
+    }
+
     @RequestMapping(value = "/changeToManager/{id}", method = RequestMethod.PUT)
     public @ResponseBody
     String changeUserGroupToManager(@PathVariable("id")Integer id) throws BadRequestException{
