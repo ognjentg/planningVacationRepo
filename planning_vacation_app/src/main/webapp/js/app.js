@@ -236,20 +236,25 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    webix.ajax().get("hub/company/" + userData.companyId, {
-                        success: function (text, data, xhr) {
-                            var company = data.json();
-                            if (company != null) {
-                                companyData = company;
-                                showApp();
-                            } else {
+                    if (userData.userGroupId == 1) {
+                        companyData = null;
+                        showApp();
+                    } else {
+                        webix.ajax().get("hub/company/" + userData.companyId, {
+                            success: function (text, data, xhr) {
+                                var company = data.json();
+                                if (company != null) {
+                                    companyData = company;
+                                    showApp();
+                                } else {
+                                    showLogin();
+                                }
+                            },
+                            error: function (text, data, xhr) {
                                 showLogin();
                             }
-                        },
-                        error: function (text, data, xhr) {
-                            showLogin();
-                        }
-                    });
+                        });
+                    }
                     //showApp();
                     // showLogin();
                 }
@@ -388,7 +393,11 @@ var showApp = function () {
 //    $$("settingsSubMenu").add(settingsMenu[0]);
     if(userData!=null)
     {
-        $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
+        if(userData.userGroupId !== 1) {
+            $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
+        } else {
+            $$("companyLogoImage").setValues({src: "img/telegroup-logo.png"});
+        }
         switch (userData.userGroupId) {
         case 1:
             localMenuData = webix.copy(menuSuperAdmin);
