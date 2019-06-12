@@ -236,7 +236,21 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    showApp();
+                    webix.ajax().get("hub/company/" + userData.companyId, {
+                        success: function (text, data, xhr) {
+                            var company = data.json();
+                            if (company != null) {
+                                companyData = company;
+                                showApp();
+                            } else {
+                                showLogin();
+                            }
+                        },
+                        error: function (text, data, xhr) {
+                            showLogin();
+                        }
+                    });
+                    //showApp();
                     // showLogin();
                 }
             }
@@ -251,12 +265,13 @@ var mainLayout = {
     rows: [
         {
             cols: [{
+                id: "companyLogoImage",
+                name: "companyLogoImage",
                 view: "template",
                 width: 220,
                 css: "logoInside",
-                template: function () {
-                    return '<img src="img/telegroup-logo-inside.png"/>';
-                }
+                template: "<img src='#src#'/>",
+                data: { src: null }
             }, {
                 view: "toolbar",
                 css: "mainToolbar",
@@ -357,6 +372,8 @@ var showApp = function () {
     for(var i = 0; i < subMenuItems.length; i++)
         settingsMenu.push(subMenuItems[i]);
 
+    console.log("Company data: ");
+    console.log(companyData);
     var main = webix.copy(mainLayout);
     mainApp = webix.ui(main, panel);
     panel = $$("app");
@@ -371,7 +388,8 @@ var showApp = function () {
 //    $$("settingsSubMenu").add(settingsMenu[0]);
     if(userData!=null)
     {
-    switch (userData.userGroupId) {
+        $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
+        switch (userData.userGroupId) {
         case 1:
             localMenuData = webix.copy(menuSuperAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
