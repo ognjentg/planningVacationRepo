@@ -461,7 +461,7 @@ usergroupView = {
     },
 
     changeManagerDialog:{
-        view:"window",
+        view:"popup",
         width:600,
         id:"changeManagerDialog",
         position:"center",
@@ -492,6 +492,8 @@ usergroupView = {
                     view: "datatable",
                     id: "changeManagerTable",
                     margin: 10,
+                    height:250,
+                    width:600,
                     tooltip: true,
                     //url:"hub/user/custom/bySector/-1",
                     on: {
@@ -512,7 +514,6 @@ usergroupView = {
                                 }
                                 if (selectedManager.length == 0) {
                                     $$("changeManagerButton").disable();
-                                    util.messages.showErrorMessage("0");
                                 }
                             }
                         }
@@ -554,7 +555,7 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            header: ["<span class='webix_icon fa fa-user'/>Pozicija",
+                            header: ["<span class='webix_icon fa fa-briefcase'/>Pozicija",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -562,13 +563,16 @@ usergroupView = {
 
                         ]
 
+                },{
+                height:15
                 },
                 {
                     view:"button",
                     label:"Promijeni",
                     id:"changeManagerButton",
-                    align:"left",
-                    click:"usergroupView.changeManager"
+                    align:"right",
+                    click:"usergroupView.changeManager",
+                    width:200
                 }
             ]
         }
