@@ -16,6 +16,7 @@ import java.util.Date;
                         @ColumnResult(name = "category", type = String.class),
                         @ColumnResult(name = "sender_comment", type = String.class),
                         @ColumnResult(name = "approver_comment", type = String.class),
+                        @ColumnResult(name = "sender_user_id", type = Integer.class),
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name",type = String.class),
                         @ColumnResult(name = "status_name", type = String.class),
@@ -33,11 +34,12 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private Timestamp dateFrom;
     private Timestamp dateTo;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment,Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
         this.setApproverComment(approverComment);
+        this.setSenderUserId(senderUserId);
         this.statusName = statusName;
         this.firstName = firstName;
         this.lastName = lastName;
