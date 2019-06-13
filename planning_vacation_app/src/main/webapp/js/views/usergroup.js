@@ -178,7 +178,8 @@ usergroupView = {
                     // resizeRow: true,
                     //checkboxRefresh: true,
                     //onContext: {},
-                    //pager: "pagerA",  sa ovim nema tabele...
+                    pager: "pagerB",
+                    //data:users, Kako uzeti podatke o users
                     //url:"hub/user",
                     on: {
                         onAfterContextMenu: function (item) {
@@ -345,6 +346,34 @@ usergroupView = {
 
                         }
                     },
+                }, {
+                    view: "toolbar",
+                    css: "highlighted_header header6",
+                    paddingX: 5,
+                    paddingY: 5,
+                    height: 40,
+                    cols: [{
+                        view: "pager", id: "pagerB",
+                        template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
+                        size: 20,
+                        height: 35,
+                        group: 5,
+                        on: {
+                            onItemClick: function (ids, e, node) {
+                                var control = $$("usergroupDT").getHeaderContent("mc1");
+
+                                var state = control.isChecked();
+
+                                control.uncheck();
+
+
+                            }
+                        },
+                        animate: {
+                            direction: "top"
+                        }
+                    }
+                    ]
                 }]
         }
     },
@@ -774,6 +803,15 @@ usergroupView = {
                         name: "current_status",
                         label: "Trenutni status:"
                     }]
+                },
+                {
+                    view: "calendar",
+                    id: "calendarDays",
+                    name: "calendarDays",
+                    weekHeader: true,
+                    width: 350,
+                    height: 250,
+                    disabled:true
                 }
             ]
         }
@@ -1460,12 +1498,19 @@ var numberOfEmployees = $$("usergroupDT").count();
                 } else
                     $$("vacation_days").setValue("Broj preostalih dana godišnjeg: " + daysLeft);
 
-                setTimeout(function () {
-                    $$("employeeVacationInfoDialog").show();
-                }, 0);
+
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
+        connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
+            function (text, data, xhr) {
+                util.messages.showMessage("proslo");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage("NIJE PROSLO");
+            },
+            setTimeout(function () {
+                $$("employeeVacationInfoDialog").show();
+            }, 0));
 
     }
 };
@@ -1499,5 +1544,95 @@ function getUserGroups() {
                 }
             }
         }
+    });
+}
+
+function animateValue(id, start, end, duration) {
+    console.log("counter start");
+    var range = end - start;
+    var current = start;
+    var increment = end > start ? 1 : -1;
+    var stepTime = Math.abs(Math.floor(duration / range));
+    var timer = setInterval(function () {
+        current += increment;
+        id.setHTML(`<p>${current}</p>`);
+        if (current === end) {
+            clearInterval(timer);
+        }
+    }, stepTime);
+}
+
+var tmpCompaniesLength = 0;
+
+function refreshData() {
+    $$("t1").setHTML(`<p>${0}</p>`);
+    $$("t2").setHTML(`<p>${0}</p>`);
+    $$("t3").setHTML(`<p>${0}</p>`);
+    console.log("refresh data");
+
+
+    webix.extend($$("companyDT"), webix.ProgressBar);
+
+    var table = webix.$$("companyDT");
+    table.clearAll();
+    table.showProgress();
+
+
+    webix.ajax("hub/user_group", {
+
+        error: function (text, data, xhr) {
+
+            if (xhr.status !== 200) {
+                alert("Nema dostupnih podataka! Provjerite internet konekciju.");
+                table.hideProgress();
+            }
+
+        },
+
+        success: function (text, data, xhr) {
+
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+                    var users = data.json();
+                    var numberOfUsers = users.length;
+                    tmpCompaniesLength = numberOfUsers;
+                    table.hideProgress();
+                    // counterAnimation(1130, 1130, 2230);
+
+                    if (userData.userGroupId === 2) {
+
+                        $$("addCompanyBtn").hide();
+
+
+                        // var table = webix.$$("companyDT");
+
+                        // table.clearAll();
+
+                        companies = companies.slice(0, 1);
+
+                        table.parse(companies);
+
+                        animateValue($$("t1"), 0, numberOfCompanies, 100);
+                        animateValue($$("t2"), 0, 100, 100);
+                        animateValue($$("t3"), 0, 100, 100);
+
+                    } else {
+                        table.parse(companies);
+                        animateValue($$("t1"), 0, numberOfCompanies, 1000);
+                        animateValue($$("t2"), 0, 100, 900);
+                        animateValue($$("t3"), 0, 100, 900);
+
+                    }
+                }
+            }
+
+            var control = $$("companyDT").getHeaderContent("mc1");
+
+            var state = control.isChecked();
+
+            control.uncheck();
+        }
+
     });
 }

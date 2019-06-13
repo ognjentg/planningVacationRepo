@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,11 +44,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @ResponseStatus(HttpStatus.CREATED)
     @Override
     public @ResponseBody
-    LeaveRequest insert(@RequestBody LeaveRequest leaveRequest) throws BadRequestException{
+    LeaveRequest insert(@RequestBody LeaveRequest leaveRequest) throws BadRequestException {
         //Check if category length is equal or greater than 45
-        if(leaveRequest.getCategory().length() >= 45)
+        if (leaveRequest.getCategory().length() >= 45)
             throw new BadRequestException(badRequestInsert);
-        if(repo.saveAndFlush(leaveRequest) == null)
+        if (repo.saveAndFlush(leaveRequest) == null)
             throw new BadRequestException(badRequestInsert);
         logCreateAction(leaveRequest);
         return leaveRequest;
@@ -58,40 +59,39 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Override
     public @ResponseBody
     String update(@PathVariable Integer id, @RequestBody LeaveRequest leaveRequest) throws BadRequestException, ForbiddenException {
-        if(leaveRequest.getCategory().length() >= 45)
+        if (leaveRequest.getCategory().length() >= 45)
             throw new BadRequestException(badRequestInsert);
         return super.update(id, leaveRequest);
     }
 
     @Override
     public @ResponseBody
-    List<LeaveRequest> getAll(){
-        return leaveRequestRepository.getAllByActiveIs((byte)1);
+    List<LeaveRequest> getAll() {
+        return leaveRequestRepository.getAllByActiveIs((byte) 1);
     }
 
     @Override
-    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public @ResponseBody
     String delete(@PathVariable Integer id) throws BadRequestException {
         LeaveRequest leaveRequest = leaveRequestRepository.findById(id).orElse(null);
         cloner.deepClone(leaveRequest);
-        Objects.requireNonNull(leaveRequest).setActive((byte)0);
-        if(leaveRequestRepository.getByIdAndActive(id,(byte)1) == null){
+        Objects.requireNonNull(leaveRequest).setActive((byte) 0);
+        if (leaveRequestRepository.getByIdAndActive(id, (byte) 1) == null) {
             logDeleteAction(leaveRequest);
             return "Success";
-        }
-        else throw new BadRequestException(badRequestDelete);
+        } else throw new BadRequestException(badRequestDelete);
     }
 
     @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation(){
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
         return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUser().getId());
     }
 
     @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id){
+    LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id) {
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
         System.out.println(lrs.getFirstName());
         return lrs;
@@ -99,26 +99,48 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(){
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait() {
         return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationForWait(userBean.getUser().getId());
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable Integer key ){
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable Integer key) {
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUser().getId(), key);
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment){
-        leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId,approverComment);
+    void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
+        leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId){
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId) {
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId);
+    }
+
+    @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId) {
+
+        ArrayList<Integer> removeIndex = new ArrayList<>();
+        List<LeaveRequestUserLeaveRequestStatus> leaveRequests =
+                leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userId, key);
+        System.out.println("USER ID " + userId.toString());
+        for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests) {
+            System.out.println("ID "+lr.getSenderUserId()+" COMMENT: "+lr.getApproverComment());
+            if (lr.getSenderUserId() != userId) {
+                System.out.println(lr.getFirstName());
+                removeIndex.add(leaveRequests.indexOf(lr));
+            }
+        }
+        for (Integer index : removeIndex)
+            leaveRequests.remove(index);
+        for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests)
+            System.out.println(lr.getFirstName());
+        return leaveRequests;
     }
 }
 
