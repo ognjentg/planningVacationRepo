@@ -479,7 +479,7 @@ var companyView = {
                         }
                     },
                     animate: {
-                        direction: "top"
+                        direction: "left"
                     }
                 }
                 ]

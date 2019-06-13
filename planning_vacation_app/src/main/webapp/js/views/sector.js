@@ -118,6 +118,8 @@ var sectorView = {
                     {
                         id: "id",
                         header: "#",
+                        hidden: true,
+                        fillspace: true,
                         width: 50,
                         cssFormat: checkCheckBoxStatus
                     },
@@ -289,7 +291,7 @@ var sectorView = {
                     height: 35,
                     group: 5,
                     animate: {
-                        direction: "top"
+                        direction: "right"
                     },
                 }
                 ]
