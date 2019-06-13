@@ -4,7 +4,7 @@ var leaveRequestsView;
 leaveRequestsView = {
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
-        rightPanel = "requestPanel";
+        rightPanel = "leaveRequestsPanel";
 
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
@@ -20,7 +20,7 @@ leaveRequestsView = {
                         template: "<span class='webix_icon fa-book-medical'><\/span> Zahtjevi za odmor",
                         view: "label",
                         width: 400
-                    }, {}, {
+                    },{}, {
                         view: "combo",
                         width: 250,
                         id: "filterLeaveRequestsComboBox",
@@ -34,18 +34,21 @@ leaveRequestsView = {
 
 
                                 if (name === 4) {
+                                    $$("leave_requestDT").hideColumn("typeId");
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").detachEvent("onBeforeDelete")
                                 } else if (name === 3) {
+                                    $$("leave_requestDT").hideColumn("typeId");
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 } else if (name === 2) {
+                                    $$("leave_requestDT").showColumn("typeId");
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
@@ -53,6 +56,7 @@ leaveRequestsView = {
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }
                                 else  if (name===1){
+                                    $$("leave_requestDT").hideColumn("typeId");
                                     $$("leave_requestDT").showColumn("accept");
                                     $$("leave_requestDT").showColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
@@ -104,6 +108,11 @@ leaveRequestsView = {
                         id: "statusName",
                         sort: "string",
                         header: "Status",
+                    }, {
+                        id: "typeId",
+                        sort: "string",
+                        header: "Tip",
+                        hidden:"true"
                     }, {
                         id: "firstName",
                         fillspace: true,
@@ -186,9 +195,17 @@ leaveRequestsView = {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
                             } else if (action === "accept"&&(userData.userGroupId === 2 || userData.userGroupId === 3 || userData.userGroupId === 5)) {
+
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
+                                        var paidLeaveBox=(webix.copy(leaveRequestsView.paidLeaveConfirm("Tip odsustva: ")));
+                                        paidLeaveBox.callback = function (result) {
+                                            if (result == 1) {
+
+                                            }else if(result==2){}
+                                        };
+                                        webix.confirm(paidLeaveBox);
                                         var item = $$("leave_requestDT").getItem(id);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id, function (text, data, xhr) {
@@ -225,6 +242,15 @@ leaveRequestsView = {
                 util.messages.showErrorMessage(text);
             });
 
+    },
+    paidLeaveConfirm: function (titleEntity) {
+        return {
+            title: titleEntity,
+            ok: "Plaćeno",
+            cancel: "Neplaćeno",
+            width: 500,
+            text:"Odaberite tip odsustva:"
+        };
     },
     acceptLeaveConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;
