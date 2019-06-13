@@ -50,7 +50,7 @@ var sectorView = {
                         type: "iconButton",
                         label: " Statistika  ",
                         icon: "fas fa-line-chart",
-                        css: "companyButton",
+                        css: "companyButton floatMeRight",
                         autowidth: true
                     }
                 ]
