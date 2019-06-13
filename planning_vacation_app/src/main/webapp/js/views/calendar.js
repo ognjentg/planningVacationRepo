@@ -110,9 +110,9 @@ var calendarView = {
                                     margin: 10,
                                     tooltip: true,
                                     columns: [{
-                                                id: "id",
+                                                id: "eventId",
                                                 hidden: true,
-                                                fillspace: true
+                                                //fillspace: true
                                                 //editable: false,
                                                 //sort: "date",
                                                 //width:210,
@@ -133,8 +133,9 @@ var calendarView = {
                                         }],
                                      onClick: {
                                          webix_icon: function (e, id) {
+                                             var eventId = $$("periodsDT").getItem(id).eventId;
                                             $$("periodsDT").remove(id);
-                                            scheduler.deleteEvent(id);
+                                            scheduler.deleteEvent(eventId);
                                          }
                                      },
                                          rules: {
@@ -260,20 +261,23 @@ var calendarView = {
            {name:"time", height:50, type:"time", map_to:"auto", time_format:[ "%d", "%m", "%Y"]}
        ]*/
       //Provjera da li ima godišnjeg
-        scheduler.attachEvent("onBeforeEventCreated", function (e){
+       /* scheduler.attachEvent("onBeforeEventCreated", function (e){
             if($$("periodsDT").count() < calendarView.freeDays)
                 return true;
             util.messages.showErrorMessage("Nemate pravo na više dana");
             return false;
-        });
-        scheduler.attachEvent("onEventCreated", function(id,e){
+        });*/
+       /* scheduler.attachEvent("onEventCreated", function(id,e){
             var event = scheduler.getEvent(id);
+            var dates = getDates(event.start_date, event.end_date);
+            //console.log("dates " + event.start_date.toDateString() + " | " + event.end_date.toDateString());
+            //dates.forEach(function (value) { console.log("date " + value.toDateString()); });
             var tableData = {
                 id: id,
                 date: event.start_date.toDateString()
             }
             $$("periodsDT").parse(tableData);
-        });
+        });*/
         //2. started working...
         schedulerEvents.push(scheduler.attachEvent("onClick", function (id, e) {
         //dhtmlx.message("proba");
@@ -286,7 +290,17 @@ var calendarView = {
         scheduler.locale = locale_sr_latin; // Change the locale to Serbian Latin.
         scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
-
+        scheduler.attachEvent("onBeforeEventChanged", function(ev, e, is_new, original){
+            if($$("periodsDT").count() >= calendarView.freeDays){
+                util.messages.showErrorMessage("Nemate pravo na više dana");
+                return false;
+            }
+            var dates = getDates(ev.start_date, ev.end_date);
+            var tableData = [];
+            dates.forEach(function (value) { tableData.push({eventId: ev.id, date: value.toDateString()}) });
+            $$("periodsDT").parse(tableData);
+            return true;
+        });
         scheduler.attachEvent("onLimitViolation", function  (id, obj){
             dhtmlx.message('Neradni dan ili praznik.');
         });
@@ -331,6 +345,25 @@ var calendarView = {
     showSendDialog: function () {
      webix.message("TODO.");
         var form = $$("createRequestForm");
+        var leaveRequest = {
+            senderUserId: userData.id,
+            leaveTypeId: 1,
+            leaveRequestStatusId: 1,
+            companyId: userData.companyId,
+            senderComment: $$("comment").getValue(),
+            category: "Godisnji",
+        }
+        connection.sendAjax("POST", "hub/leave_request/",
+            function (text, data, xhr) {
+                if (text) {
+                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                } else
+                    util.messages.showErrorMessage("Neuspješno slanje.");
+            }, function (text, data, xhr) {
+                alert(text);
+            }, leaveRequest);
+
+
         if (form.validate()) {
             var newRequest = {
                 category: chosenCategory,
@@ -350,3 +383,19 @@ var calendarView = {
 function notEmpty(value){
   return value != "";
 };
+
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+function getDates(startDate, stopDate) {
+    var dateArray = new Array();
+    var currentDate = startDate;
+    while (currentDate < stopDate) {
+        dateArray.push(new Date (currentDate));
+        currentDate = currentDate.addDays(1);
+    }
+    return dateArray;
+}
