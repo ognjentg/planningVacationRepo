@@ -81,6 +81,9 @@ var calendarView = {
                         "\t\t<div class=\"dhx_cal_next_button\">&nbsp;</div>\n" +
                         "\t\t<div class=\"dhx_cal_today_button\"></div>\n" +
                         "\t\t<div class=\"dhx_cal_date\"></div>\n" +
+                        "\t\t<div class=\"dhx_cal_tab\" name=\"Godišnji odmor_tab\" style=\"right:904px;\"></div>\n"+
+                        "\t\t<div class=\"dhx_cal_tab\" name=\"Odsustvo_tab\" style=\"right:120px;\"></div>\n"+
+                        "\t\t<div class=\"dhx_cal_tab\" name=\"Bolovanje_tab\" style=\"right:56px;\"></div>\n"+
                         "\t</div>\n" +
                         "\t<div class=\"dhx_cal_header\">\n" +
                         "\t</div>\n" +

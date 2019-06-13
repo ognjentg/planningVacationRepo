@@ -347,12 +347,14 @@ var sectorView = {
 
         $$("main").addView(webix.copy(panelCopy));
 
+        $$("deleteSectorsBtn").disable();
         if(userData.userGroupId == 4){
             $$("sectorDT").hideColumn("delete");
             $$("sectorDT").hideColumn("edit");
             $$("sectorDT").hideColumn("status");
+            $$("deleteSectorsBtn").hide();
+            $$("addSectorBtn").hide();
         }
-        $$("deleteSectorsBtn").disable();
 
         refreshSectorData();
 
@@ -439,6 +441,7 @@ var sectorView = {
                 }
             }
         })
+        $$("sectorDT").define("url", "hub/sector/sectorInfo");
     },
 
 
@@ -567,14 +570,13 @@ var sectorView = {
                     active:1
                 }
 
-               // var sector=null;
-
+                var sector=null;
                 console.log(newSector.id);
                connection.sendAjax("POST", "/hub/sector",
                     function (text, data, xhr) {
                         if (text) {
-                            $$("sectorDT").add(newSector);
-                           // sector=newSector;
+                            sector=data.json();
+                            $$("sectorDT").add(sector);
                             util.dismissDialog('addSectorDialog');
                             alert("Sektor uspješno dodat.");
                             sectorsNumber=sectorsNumber+1;
@@ -585,6 +587,21 @@ var sectorView = {
                             alert("Izabrani naziv već postoji. Unesite drugi naziv.");
                         }
                     }, newSector);
+
+               //promijeniti sektor menadzeru-ne radi iz nekog razloga
+                var changeSectorInformation = {
+                    id: $$("managerCombo").getValue(),
+                    sectorId: sector.id
+                };
+                connection.sendAjax("POST", "hub/user/changeSector",
+                    function (text, data, xhr) {
+                    if(text){}
+
+                    }, function (text, data, xhr) {
+                        util.messages.showErrorMessage(text);
+                    }, changeSectorInformation);
+
+
             }
         }
     },
@@ -751,7 +768,7 @@ var sectorView = {
                     if (text) {
                         util.dismissDialog('editDialog');
                         alert("Sektor uspješno izmjenjen.");
-                       // $$("sectorDT").updateItem(form.getValues().id,newSector);
+                        $$("sectorDT").updateItem(newSector.id,newSector);
 
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
