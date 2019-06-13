@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@RequestMapping(value="/hub/leave_request_controller")
+@RequestMapping(value="/hub/leave_request_type")
 @Controller
 @Scope("request")
 public class LeaveRequestTypeController extends GenericHasActiveController<LeaveRequestType,Integer> {
