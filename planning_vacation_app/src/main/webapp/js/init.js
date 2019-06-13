@@ -12,7 +12,7 @@ var scriptsToLoad = [
     {
         "section": "common",
         "path": "js/common/",
-        "files": ["authentication", "pagination_setup", "create_pdf", "connection", "util", "view_components"]
+        "files": ["authentication", "pagination_setup", "create_pdf", "connection", "util", "view_components", "locale_sr_latin"]
     },
     {
         "section": "views",

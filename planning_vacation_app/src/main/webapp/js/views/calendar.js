@@ -122,8 +122,8 @@ var calendarView = {
                                                  fillspace: true,
                                                  editable: false,
                                                  sort: "date",
-                                                 //width:210,
-                                                 header: ["<span class='webix_icon fa fa-calendar'/>Datum"]
+                                                 //width:"100%",
+                                                 header: ["<span class='webix_icon fa fa-calendar'/>&nbsp;Datum"]
                                          },
                                         {
                                             id: "deleteDate",
@@ -283,6 +283,7 @@ var calendarView = {
 
         //Inicijalizacija i postavljanje na trenutni datum
         var date = new Date();
+        scheduler.locale = locale_sr_latin; // Change the locale to Serbian Latin.
         scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
 
