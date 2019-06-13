@@ -341,7 +341,69 @@ var mainLayout = {
                 {id: "emptyRightPanel"}
             ]
         }
-    ]
+    ] ,
+
+    saveUserFirstAndLastNameFunction : function (){
+        var form = $$("addFirstAndLastNameForm");
+
+        if (!isThereInternetConnection()) {
+            alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+        } else {
+
+            var validation = form.validate();
+            if (validation) {
+                var newUser;
+
+                userData.firstName = $$('firstname').getValue();
+                userData.lastName = $$('lastname').getValue();
+
+                newUser = {
+                    id: userData.id,
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                };
+
+                switch (userData.userGroupId){
+                    case 1:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
+                        break;
+                    case 2:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
+                        break;
+                    case 3:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
+                        break;
+                    case 4:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
+                        break;
+                    case 5:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
+                        break;
+                    case 6:
+                        $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
+                        break;
+                }
+
+               // $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName +
+               //     ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
+                $$("usernameHolder").refresh();
+
+                console.log(newUser.id);
+                connection.sendAjax("PUT", "hub/user/" + newUser.id,
+                    function (text, data, xhr) {
+                        if (text) {
+
+                             util.dismissDialog('addFirstAndLastNameDialog');
+                             alert("Ime i prezime  uspješno dodano.");
+                        } else
+                            util.messages.showErrorMessage("Neuspješno dodavanje.");
+                    }, function (text, data, xhr) {
+                        util.messages.showErrorMessage(text);
+                        alert(text);
+                    }, newUser);
+            }
+        }
+    },
 };
 
 var menuEvents = {
@@ -402,26 +464,44 @@ var showApp = function () {
         case 1:
             localMenuData = webix.copy(menuSuperAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
         case 2:
             localMenuData = webix.copy(menuAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
         case 3:
             localMenuData = webix.copy(menuDirector);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
         case 4:
             localMenuData = webix.copy(menuSecretary);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
         case 5:
             localMenuData = webix.copy(menuSectorManager);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
         case 6:
             localMenuData = webix.copy(menuWorker);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
+            if(userData.firstName == null || userData.lastName == null){
+                showAddFirstAndLastNameDialog();
+            }
             break;
     }}
 
@@ -787,6 +867,86 @@ console.log($$("loginForm").getValues());
         });
     }
 };
+
+var addDialogFirstAndLastName = function () {
+
+    return {
+        view: "popup",
+        id: "addFirstAndLastNameDialog",
+        move: true,
+        position: "center",
+        padding: 0,
+        type: "clean",
+        modal: true,
+        body: {
+            id: "aboutInside",
+            css: "aboutInside",
+            width: 450,
+            margin: 0,
+            type: "clean",
+            rows: [{
+                view: "toolbar",
+                cols: [{
+                    view: "label",
+                    label: "<span class='webix_icon fa-briefcase'></span> Unesite ime i prezime",
+                    width: 400,
+                    height: 50
+                }, {},]
+            },
+                {
+                    view: "form",
+                    id: "addFirstAndLastNameForm",
+                    width: 660,
+                    height: 200,
+                    elementsConfig: {
+                        labelWidth: 200,
+                        bottomPadding: 20
+                    },
+                    elements: [
+                        {
+                            view: "text",
+                            id: "firstname",
+                            name: "name",
+                            label: "Ime:",
+                            invalidMessage: "Ime je obavezno unijeti.",
+                            required: true
+                        },
+                        {
+                            view: "text",
+                            id: "lastname",
+                            name: "surname",
+                            label: "Prezimeme:",
+                            invalidMessage: "Prezime je obavezno unijeti.",
+                            required: true
+                        },
+                        {
+                            margin: 5,
+                            cols: [{}, {
+                                id: "saveUserFirstAndLastName",
+                                view: "button",
+                                value: "U redu",
+                                type: "form",
+                                align: "right",
+                                click: "mainLayout.saveUserFirstAndLastNameFunction",
+                                //hotkey: "enter",
+                                width: 150
+                            },]
+                        },
+                    ],
+                }
+            ]
+        }
+    };
+};
+
+
+showAddFirstAndLastNameDialog = function () {
+        webix.ui(webix.copy(addDialogFirstAndLastName()));
+        setTimeout(function () {
+            $$("addFirstAndLastNameDialog").show();
+        }, 0);
+};
+
 
 
 //main call
