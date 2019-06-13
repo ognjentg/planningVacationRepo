@@ -39,7 +39,6 @@ usergroupView = {
                 padding: 10,
                 autowidth: true,
                 css: "companyPanelToolbarTop",
-
                 cols: [{
                     view: "label",
                     width: 200,
@@ -65,7 +64,7 @@ usergroupView = {
                         type: "iconButton",
                         label: " Statistika  ",
                         icon: "fas fa-line-chart",
-                        css: "companyButton",
+                        css: "companyButton floatMeRight",
                         align: "right",
                         autowidth: true
                     }

@@ -56,6 +56,9 @@
     /*font-family: 'Open Sans',Tahoma;*/
 
 }
+.floatMeRight {
+    float:right;
+}
 .webix_img_btn_abs  {
 
     border: 1px solid #268fd5  !important;
