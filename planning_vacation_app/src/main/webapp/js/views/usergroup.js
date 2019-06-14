@@ -234,11 +234,10 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            //width:220,
-                            header: ["<span class='webix_icon fa fa-user'/>Pozicija",
-                                {
-                                    content: "textFilter", value: "", icon: "wxi-search"
-                                }]
+                             header: ["<span class='webix_icon fas fa-briefcase'/>Pozicija",
+                              {
+                                   content: "textFilter", value: "", icon: "wxi-search"
+                             }]
                         },
                         {
                             id: "sector_name",
@@ -919,35 +918,6 @@ usergroupView = {
 
 
         usergroupView.userGroups = [];
-        /*    webix.ajax("hub/user_group", {
-                error: function (text, data, xhr) {
-                    if (xhr.status != 200) {
-                        alert("No data to load! Check your internet connection and try again.");
-                       // table.hideProgress();
-                    }
-                },
-                success: function (text, data, xhr) {
-                    if (xhr.status === 200) {
-                        if (data.json() != null) {
-                            console.log("loaded data with success");
-                            var userGroups = data.json();
-                            //var userGroups=JSON.parse(data);
-                           // numberOfCompanies = companies.length;
-                            var options=[];
-                           userGroups.forEach(function(userGroup)){
-                                               options.push({
-                                                   id: userGroup.id,
-                                                   value: userGroup.key
-                                                });
-                                           }
-                            $$("choseUserGroupCombo").define("options", options );
-                            $$("choseUserGroupCombo").refresh();
-                          }else {
-                           util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
-                          }
-                    }
-                }
-        });*/
 
         webix.ajax().get("hub/user_group").then(function (data) {
             //response text
@@ -1482,32 +1452,6 @@ usergroupView = {
 function getUserGroups() {
     usergroupView.userGroups = [];
     //pokupim sve moguce user grupe:
-
-    /*    webix.ajax().get("hub/user_group").then(function(result) {
-            if(result.text()){
-            var userGroups=JSON.parse(result.text());
-                userGroups.forEach(function(userGroup)){
-                    usergroupView.userGroups.push({
-                        id: userGroup.id,
-                        value: userGroup.key
-                     });
-                }
-                //$$("choseUserGroupCombo").define("options", usergroupView.userGroups);
-                //$$("choseUserGroupCombo").refresh();
-                //$$("choseUserGroupCombo1").define("options", usergroupView.userGroups);
-                //$$("choseUserGroupCombo1").refresh();
-            }
-            //console.log("uslo u usergroupview");
-
-        }).fail(function (err) {
-            //util.messages.showErrorMessage(err.responseText);
-            alert("No data to load! Check your internet connection and try again.");
-            });
-    */
-
-
-    //var table = webix.$$("usergroupDT");
-    // table.clearAll();
 
     webix.ajax("hub/user_group", {
 
