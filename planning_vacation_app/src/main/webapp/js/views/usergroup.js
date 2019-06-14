@@ -1354,7 +1354,8 @@ usergroupView = {
                         util.messages.showErrorMessage(text);
                         alert(text);
                     }, id);
-
+var numberOfEmployees = $$("usergroupDT").count();
+                            animateValue($$("t3"), 0, numberOfEmployees, 1000);
             }
         };
         webix.confirm(delBox);
@@ -1376,6 +1377,7 @@ usergroupView = {
             var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
             delBox.callback = function (result) {
                 if (result == 1) {
+
                     selectedItems.forEach(function (element) {
                         connection.sendAjax("PUT", "hub/user/deleteUser/" + element,
                             function (text, data, xhr) {
@@ -1386,9 +1388,14 @@ usergroupView = {
                             }, element);
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
+          var numberOfEmployees = $$("usergroupDT").count();
+                                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
                 }
+                          var numberOfEmployees = $$("usergroupDT").count();
+                                                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
             };
             webix.confirm(delBox);
+
         }
     }
     ,
