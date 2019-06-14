@@ -182,6 +182,7 @@ var adminsView = {
                             icon: "close",
                             align: "right",
                             click: function () {
+                                $$("addAdminButton").enable();
                                 this.getTopParentView().hide();
                             }
                         }
@@ -299,6 +300,7 @@ var adminsView = {
                             icon: "close",
                             align: "right",
                             click: function () {
+                                $$("addNewAdminButton").enable();
                                 this.getTopParentView().hide();
                             }
                         }
@@ -359,11 +361,13 @@ var adminsView = {
         //connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
     },
     showChooseAdminDialog: function () {
+        $$("addAdminButton").disable();
         webix.ui(webix.copy(adminsView.chooseAdminDialog)).show();
         $$("chooseAdminDT").define("url", adminsView.nonAdminsURL);
        // connection.attachAjaxEvents("chooseAdminDT", adminsView.nonAdminsURL);
     },
     showAddNewAdminDialog: function () {
+        $$("addNewAdminButton").disable();
         webix.ui(webix.copy(adminsView.addNewAdminDialog)).show();
         webix.UIManager.setFocus("email");
     },

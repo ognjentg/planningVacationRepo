@@ -151,12 +151,15 @@ var companyView = {
                 },
                 {
                     view: "button",
+                    id: "archiveBtn",
+                    name: "archiveBtn",
                     type: "iconButton",
                     icon: "external-link",
                     label: "Arhivirajte",
                     width: 100, css: "companyButton",
                     on: {
                         onItemClick: function () {
+                            $$("archiveBtn").disable();
                             // webix.toPDF(webix.$$("companyDT"));
                             webix.toPDF($$("companyDT"), {
                                     docHeader: {
@@ -172,6 +175,7 @@ var companyView = {
                                     }
                                 }
                             );
+                            $$("archiveBtn").enable();
 
                         }
                     }
@@ -622,6 +626,7 @@ var companyView = {
                     icon: "close",
                     align: "right",
                     click: function () {
+                        $$("addCompanyBtn").enable();
                         this.getTopParentView().hide();
                     },
                 }]
@@ -671,7 +676,6 @@ var companyView = {
                         hidden: true,
                         click: function () {
                             webix.ui(webix.copy(adminsView.showAddNewAdminDialog()));
-
                         }
 
 
@@ -696,6 +700,7 @@ var companyView = {
                             type: "danger",
                             align: "right",
                             click: function () {
+                                $$("addCompanyBtn").enable();
                                 this.getTopParentView().hide();
                             },
                             hotkey: "esc",
@@ -750,7 +755,7 @@ var companyView = {
     },
 
     showAddDialog: function () {
-
+        $$("addCompanyBtn").disable();
         webix.ui(webix.copy(companyView.addDialog)).show();
         webix.UIManager.setFocus("name");
 
@@ -781,6 +786,7 @@ var companyView = {
                         $$("companyDT").add(newCompany);
 
                         util.dismissDialog('addCompanyDialog');
+                        $$("addCompanyBtn").enable();
                         alert("Kompanija uspješno dodata.");
                         animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
                         tmpCompaniesLength = tmpCompaniesLength + 1;
@@ -1232,7 +1238,7 @@ var companyView = {
 
 
     saveChangedCompany: function () {
-
+        $$("changeCompany").disable();
         if (userData.userGroupId === 2) {
             var form = $$("adminChangeCompanyForm");
         } else {
@@ -1282,9 +1288,10 @@ var companyView = {
                     alert(text);
                 }, newCompany);
             if (userData.userGroupId == 2) {
+                $$("changeCompany").enable();
                 util.dismissDialog('adminChangeCompanyDialog');
             }
-
+            $$("changeCompany").enable();
             util.dismissDialog('changeCompanyDialog');
         }
 

@@ -159,6 +159,7 @@ var profileView = {
     save: function () {
         var profileForm = $$("profileForm");
         if (profileForm.validate()) {
+            $$("saveProfileButton").disable();
             var dataToSend = $$("profileForm").getValues();
             var objectToSend = {
                 firstName: dataToSend.firstName,
@@ -171,6 +172,7 @@ var profileView = {
                 "Content-type": "application/json"
             }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
                 error: function (text, data, xhr) {
+                    $$("saveProfileButton").enable();
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {

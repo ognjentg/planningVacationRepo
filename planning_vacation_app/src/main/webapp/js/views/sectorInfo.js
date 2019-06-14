@@ -112,6 +112,7 @@ var sectorInfoView = {
     },
 
     save: function () {
+        $$("saveSectorInfoButton").disable();
         sector.name = $$("name").getValue();
         sector.maxAbsentPeople = $$("max_absent_people").getValue();
         sector.maxPercentageAbsentPeople = $$("max_percentage_absent_people").getValue();
@@ -121,6 +122,7 @@ var sectorInfoView = {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                $$("saveSectorInfoButton").enable();
             }, sector);
     }
 }

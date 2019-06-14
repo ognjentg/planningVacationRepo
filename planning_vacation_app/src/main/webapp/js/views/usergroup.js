@@ -370,7 +370,10 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: 'util.dismissDialog(\'addUserDialog\');'
+                        click: function() {
+                            $$("addUserButton").enable();
+                            util.dismissDialog("addUserDialog");
+                        }
                     }]
                 }, {
                     view: "form",
@@ -501,7 +504,10 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: 'util.dismissDialog(\'changeManagerDialog\');'
+                        click: function() {
+                            $$("changeManagerBtn").enable();
+                            util.dismissDialog("changeManagerDialog");
+                        }
                     }]
                 },
                 {
@@ -781,6 +787,7 @@ usergroupView = {
             util.messages.showErrorMessage("Odabir sektora nije validan.")
         }
         else {
+            $$("changeManagerBtn").disable();
             $$("changeManagerTable").define("url", "hub/user/custom/bySector/" + sector);
             $$("changeManagerDialog").show();
         }
@@ -898,6 +905,7 @@ usergroupView = {
 
     showAddDialog: function () {
         var options = [];
+        $$("addUserButton").disable();
         webix.ui(webix.copy(usergroupView.addDialog)).show();
         webix.UIManager.setFocus("email");
         if (sectorID !== -2) {
@@ -950,6 +958,7 @@ usergroupView = {
     addNewUser: function () { //dodavanje novog zaposlenog
         var form = $$("addUserForm");
         if (form.validate()) {
+            $$("save").disable();
             var newUser = {
                 email: form.getValues().email,
                 sectorId: sectorID,
@@ -969,6 +978,7 @@ usergroupView = {
                     console.log(text);
                     if (text) {
                         util.messages.showMessage("Zaposleni uspješno dodan.");
+                        $$("addUserButton").enable();
                         util.dismissDialog('addUserDialog');
                         $$("usergroupDT").add(newUser);
                         $$("usergroupDT").refresh();
@@ -976,6 +986,7 @@ usergroupView = {
                     } else
                         alert("Greška u dodavanju zaposlenog.");
                 }, function (text, data, xhr) {
+                    $$("save").enable();
                     util.messages.showErrorMessage(text);
                 }, newUser);
 

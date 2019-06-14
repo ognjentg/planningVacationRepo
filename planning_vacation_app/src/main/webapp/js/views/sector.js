@@ -469,6 +469,7 @@ var sectorView = {
                         icon: "close",
                         align: "right",
                         click: function () {
+                            $$("addSectorBtn").enable();
                             this.getTopParentView().hide();
                         },
                     }]
@@ -579,6 +580,7 @@ var sectorView = {
                         if (text) {
                             sector=data.json();
                             $$("sectorDT").add(sector);
+                            $$("addSectorBtn").enable();
                             util.dismissDialog('addSectorDialog');
                             alert("Sektor uspješno dodat.");
                             sectorsNumber=sectorsNumber+1;
@@ -609,7 +611,7 @@ var sectorView = {
     },
 
     showAddDialog: function () {
-
+        $$("addSectorBtn").disable();
         webix.ui(webix.copy(sectorView.addDialog)).show();
         webix.UIManager.setFocus("name");
 
