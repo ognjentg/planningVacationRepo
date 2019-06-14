@@ -346,7 +346,10 @@ var calendarView = {
         });
     },
     showSendDialog: function () {
-     webix.message("TODO.");
+        if($$("periodsDT").count() == 0){
+            util.messages.showErrorMessage("Nisu odabrani dani za odsustvo");
+            return;
+        }
         var form = $$("createRequestForm");
         var leaveRequest = {
             senderUserId: userData.id,

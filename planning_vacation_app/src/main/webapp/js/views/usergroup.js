@@ -100,7 +100,7 @@ usergroupView = {
                         css: "companyButton",
                         align: "left",
                         disabled: true,
-                        click: 'usergroupView.showDeleteSelectedDialog'
+                        click: 'usergroupView.deleteSelected'
                     }, {
                         id: "changeSectorOfSelectedButton",
                         view: "button",
@@ -224,7 +224,10 @@ usergroupView = {
                             editable: false,
                             sort: "text",
                             //width:220,
-                            header: "<span class='webix_icon fa fa-envelope'/>Email"
+                            header: ["<span class='webix_icon fa fa-user'/>Email",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
                         },
                         {
                             id: "position",
@@ -232,7 +235,10 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:220,
-                            header: "<span class='webix_icon fas fa-briefcase'></span> Pozicija"
+                            header: ["<span class='webix_icon fa fa-user'/>Pozicija",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
                         },
                         {
                             id: "sector_name",
@@ -257,13 +263,13 @@ usergroupView = {
                             tooltip: "Informacije o zaposlenom",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
-                        }, {
+                        }, /*{
                             id: "pencil", //mijenjanje korisnicke grupe, od strane direktora i admina
                             header: "&nbsp;",
                             tooltip: "Mijenjanje radne pozicije zaposlenog",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
-                        }, {
+                        },*/ {
                             id: "sector", //mijenjanje sektora, od strane direktora i admina
                             header: "&nbsp;",
                             tooltip: "Mijenjanje sektora zaposlenog.",
@@ -322,10 +328,18 @@ usergroupView = {
                                 usergroupView.employeeInfo(id);
                             }
                             if (action == "delete") {
-                                usergroupView.deleteEmployee();
+                                if($$("usergroupDT").getItem(id).position != "menadzer")
+                                    usergroupView.deleteEmployee();
+                                else
+                                    util.messages.showErrorMessage("Nije moguće izbrisati menadžera.");
                             }
-                            if (action == "sector")
-                                usergroupView.showChangeSectorOfSelectedDialog();
+                            if (action == "sector"){
+                                if($$("usergroupDT").getItem(id).position == "zaposleni")
+                                    usergroupView.showChangeSectorOfSelectedDialog();
+                                else
+                                    util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
+
+                            }
                             if (action == "calendar")
                                 usergroupView.showEmployeeVacationInfoDialog(id);
 
@@ -1117,11 +1131,11 @@ usergroupView = {
                     value: "Informacije o zaposlenom",
                     icon: "eye"
                 },
-                {
+                /*{
                     id: "3",
                     value: "Promijeni grupu",
                     icon: "pencil"
-                },
+                },*/
                 {
                     id: "4",
                     value: "Promijeni sektor",
@@ -1139,11 +1153,14 @@ usergroupView = {
                     var context = this.getContext();
                     switch (id) {
                         case "1": {
-                            usergroupView.deleteEmployee();
+                            if($$("usergroupDT").getSelectedItem().position != "menadzer")
+                                usergroupView.deleteEmployee();
+                            else
+                                util.messages.showErrorMessage("Nije moguće izbrisati menadžera");
                             break;
                         }
                         case "2": {
-                            usergroupView.employeeInfo(id);
+                            usergroupView.employeeInfo($$("usergroupDT").getSelectedId());
                             break;
                         }
                         case "3": {
@@ -1151,7 +1168,10 @@ usergroupView = {
                             break;
                         }
                         case "4": {
-                            usergroupView.showChangeSectorOfSelectedDialog();
+                            if($$("usergroupDT").getSelectedItem().position == "zaposleni")
+                                usergroupView.showChangeSectorOfSelectedDialog();
+                            else
+                                util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
                             break;
                         }
                         case "5": {
@@ -1363,7 +1383,15 @@ usergroupView = {
 
 //brise oznacene korisnike iz tabele
     deleteSelected: function () {
-        if (selectedItems.length > 0) {
+        var validate = true;
+        selectedItems.forEach(function (value) {
+            if($$("usergroupDT").getItem(value).position == "menadzer"){
+                validate = false;
+            }
+        })
+        if(validate == false)
+            util.messages.showErrorMessage("Nije moguće izbrisati menadžera");
+        else if (selectedItems.length > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
             delBox.callback = function (result) {
                 if (result == 1) {
@@ -1393,9 +1421,18 @@ usergroupView = {
     ,
 
     showChangeMultipleUsersSector: function () {
-        webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
-        $$("cmuCombo").define("options", usergroupView.sectors);
-        $$("cmuCombo").refresh();
+        var validate = true;
+        selectedItems.forEach(function (value) {
+            if($$("usergroupDT").getItem(value).position != "zaposleni")
+                validate = false;
+        })
+        if(validate){
+            webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
+            $$("cmuCombo").define("options", usergroupView.sectors);
+            $$("cmuCombo").refresh();
+        }
+        else
+            util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom");
     }
     ,
 
