@@ -8,9 +8,19 @@ import com.telegroupltd.planning_vacation_app.repository.SickLeaveRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +29,9 @@ import java.util.Objects;
 @Scope("request")
 public class SickLeaveController extends GenericHasActiveController<SickLeave,Integer> {
     private final SickLeaveRepository sickLeaveRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Value("Brisanje nije moguće.")
     private String badRequestDelete;
@@ -54,6 +67,37 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
         return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUser().getId(), key);
     }
+
+    @Transactional
+    @RequestMapping(value = "/addSickLeaveRequest", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody
+    String insert(@RequestBody List<Date> dates) throws ParseException {
+        if (dates.size() > 0) {
+            dates.sort(Comparator.comparing(Date::toLocalDate));
+
+            Calendar cal = Calendar.getInstance();
+            cal.roll(Calendar.DATE, -1);
+            if (dates.get(0).before(cal.getTime())) {
+                SickLeave sickLeave = new SickLeave();
+                sickLeave.setActive((byte) 1);
+                sickLeave.setUserId(userBean.getUser().getId());
+                sickLeave.setDateFrom(new Timestamp(dates.get(0).getTime()));
+                sickLeave.setDateTo(new Timestamp(dates.get(dates.size() - 1).getTime()));
+                sickLeave.setSickLeaveStatusId(1);
+                if (repo.saveAndFlush(sickLeave) != null) {
+                    entityManager.refresh(sickLeave);
+                    return "Zahtjev poslat.";
+                } else {
+                    return "Zahtjev nije poslat. Pokušajte ponovo.";
+                }
+            }
+            return "Datum mora biti stariji od današnjeg datuma.";
+        } else {
+            return "Morate odabrati minimalno dva datuma.";
+        }
+    }
+
 
     @RequestMapping(value = "/updateSickLeaveStatusUnjustified/{sickLeaveId}", method = RequestMethod.PUT)
     public @ResponseBody

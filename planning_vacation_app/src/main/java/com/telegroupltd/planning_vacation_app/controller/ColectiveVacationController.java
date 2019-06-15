@@ -117,7 +117,6 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
                 if (!isExist) {
                     if (repo.saveAndFlush(newColectiveVacation) != null) {
                         entityManager.refresh(newColectiveVacation);
-
                     }
                 }
             }

@@ -112,6 +112,11 @@ var companyInfoView = {
                                 }}
                         },
                         {
+                            view:"label",
+                            label: "Kolektivni godisnji odmori:",
+                            align:"left"
+                        },
+                        {
                         cols:[
                             {
 
@@ -146,9 +151,11 @@ var companyInfoView = {
                             }
                         ]
                         },
+
                         {
                             view:"datatable",
                             id:"collectiveVacationDT",
+                            label:"Kolektivni godišnji odmor:",
                             adjust:true,
                             select: "row",
                             navigation: true,
