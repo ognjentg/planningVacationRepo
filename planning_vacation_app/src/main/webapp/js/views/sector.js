@@ -238,6 +238,16 @@ var sectorView = {
                                 if (result == 1) {
                                     var item = $$("sectorDT").getItem(id);
                                     $$("sectorDT").detachEvent("onBeforeDelete");
+                                    var managerId= item.sectorManagerId;
+
+                                    connection.sendAjax("PUT", "hub/user/changeToWorker/" + managerId,
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                            alert(text);
+                                        }, managerId);
 
                                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+id,
                                         function (text, data, xhr) {
@@ -311,6 +321,16 @@ var sectorView = {
 
                 selectedItems.forEach(function (item) {
 
+                    var sector=$$("sectorDT").getItem(item);
+                    connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
+                        function (text, data, xhr) {
+                            if (text) {
+                            }
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                            alert(text);
+                        }, sector.sectorManagerId);
+
                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
                         function (text, data, xhr) {
                             if (text) {
@@ -322,7 +342,6 @@ var sectorView = {
                     connection.sendAjax("DELETE", "hub/sector/" + item, function (text, data, xhr) {
                         if (text) {
                             $$("sectorDT").remove(item);
-                            sectorsNumber=sectorsNumber-1;
                         }
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
@@ -337,6 +356,7 @@ var sectorView = {
             }
         };
         webix.confirm(delBox);
+        sectorsNumber = sectorsNumber - selectedItems.length;
         animateSectorValue($$("t1"), 0, sectorsNumber, 1000);
     },
 
@@ -412,6 +432,16 @@ var sectorView = {
                                 if (result == 1) {
                                     var item = $$("sectorDT").getItem(context.id.row);
                                     $$("sectorDT").detachEvent("onBeforeDelete");
+
+                                    var sector=$$("sectorDT").getItem(item);
+                                    connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                            alert(text);
+                                        }, sector.sectorManagerId);
 
                                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
                                         function (text, data, xhr) {
@@ -552,6 +582,8 @@ var sectorView = {
             var validation = form.validate();
             if(validation){
 
+                //$$("addSectorForm").getElementById("saveSector").disable();
+                $$("saveSector").disable();
 
                 connection.sendAjax("PUT", "hub/user/changeToManager/" +$$("managerCombo").getValue(),
                     function (text, data, xhr) {
@@ -597,7 +629,7 @@ var sectorView = {
                     id: $$("managerCombo").getValue(),
                     sectorId: sector.id
                 };
-                connection.sendAjax("POST", "hub/user/changeSector",
+                connection.sendAjax("PUT", "hub/user/changeSectorMilica",
                     function (text, data, xhr) {
                     if(text){}
 
@@ -770,10 +802,9 @@ var sectorView = {
             connection.sendAjax("PUT", "hub/sector/" + newSector.id,
                 function (text, data, xhr) {
                     if (text) {
-                        util.dismissDialog('editDialog');
-                        alert("Sektor uspješno izmjenjen.");
                         $$("sectorDT").updateItem(newSector.id,newSector);
-
+                        alert("Sektor uspješno izmjenjen.");
+                        util.dismissDialog('editDialog');
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
@@ -792,6 +823,7 @@ function animateSectorValue(id, start, end, duration) {
     var range = end - start;
     var current = start;
     var increment = end > start ? 1 : -1;
+    increment = end == start ? start: increment;
     var stepTime = Math.abs(Math.floor(duration / range));
     var timer = setInterval(function () {
         current += increment;
@@ -852,8 +884,12 @@ function refreshSectorData() {
                 if (data.json() != null) {
                     console.log("loaded data with success");
                     sectors = data.json();
-                    numberOfSectors = sectors.length;
-                    sectorsNumber= sectors.length;
+                    if(sectors.length>0){
+                        sectorsNumber= sectors.length;
+                        animateSectorValue($$("t1"), 0, sectorsNumber, 100);
+                    }else{
+                        animateSectorValue($$("t1"), 0, 0, 100);
+                    }
                     table.hideProgress();
 
                     if(userData.userGroupId == 4){
@@ -864,7 +900,7 @@ function refreshSectorData() {
 
                     $$("sectorDT").hideColumn("delete-selected");
                     table.parse(sectors);
-                    animateSectorValue($$("t1"), 0, numberOfSectors, 100);
+                    //animateSectorValue($$("t1"), 0, sectorsNumber, 100);
                 }
             }
 

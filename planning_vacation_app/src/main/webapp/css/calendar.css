@@ -12,3 +12,50 @@
 .today .dhx_month_body{
     background-color: #CCCCCC !important;
 }
+
+
+
+
+.vacationButton {
+    background-color: #268fd5  !important;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    padding: auto 6px;
+}
+
+.leaveButton{
+    background-color:#E989A3 !important;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 13px;
+    padding: auto 6px;
+}
+
+.sickLeaveButton{
+    background-color: #00b3b3  !important;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    color:#fff;
+    font-size: 13px;
+    padding: auto 6px;
+}
+
+.unpickedButton{
+    background-color: #8c8c8c !important;
+    border-radius: 6px;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    color:#fff;
+    font-size: 13px;
+    padding: auto 6px;
+}

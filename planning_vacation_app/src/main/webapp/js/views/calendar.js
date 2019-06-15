@@ -1,6 +1,6 @@
 var chosenCategory=null; //here will be setted chosen category  - but there must be value from database...
 var schedulerEvents = [];
-
+var selectedButton=null;
 
 var calendarView = {
     freeDays: 0,
@@ -81,9 +81,6 @@ var calendarView = {
                         "\t\t<div class=\"dhx_cal_next_button\">&nbsp;</div>\n" +
                         "\t\t<div class=\"dhx_cal_today_button\"></div>\n" +
                         "\t\t<div class=\"dhx_cal_date\"></div>\n" +
-                        "\t\t<div class=\"dhx_cal_tab\" name=\"Godišnji odmor_tab\" style=\"right:904px;\"></div>\n"+
-                        "\t\t<div class=\"dhx_cal_tab\" name=\"Odsustvo_tab\" style=\"right:120px;\"></div>\n"+
-                        "\t\t<div class=\"dhx_cal_tab\" name=\"Bolovanje_tab\" style=\"right:56px;\"></div>\n"+
                         "\t</div>\n" +
                         "\t<div class=\"dhx_cal_header\">\n" +
                         "\t</div>\n" +
@@ -95,6 +92,33 @@ var calendarView = {
                     },
                     {
                         rows: [{
+                            cols:[
+                                {
+                                    id: "vacationBtn",
+                                    view: "button",
+                                    label: "Godišnji odmor",
+                                    css: "vacationButton",
+                                    click: "calendarView.vacation",
+                                    autowidth: true
+                                },{},
+                                {
+                                    id: "leaveBtn",
+                                    view: "button",
+                                    label: "Odsustvo",
+                                    css: "leaveButton",
+                                    click:"calendarView.leave",
+                                    autowidth: true
+                                },{},
+                                {
+                                    id: "sickLeaveBtn",
+                                    view: "button",
+                                    label: "Bolovanje",
+                                    css: "sickLeaveButton",
+                                    click:"calendarView.sickLeave",
+                                    autowidth: true
+                                }
+                            ]
+                        },{
                                 view: "label",
                                 label: "Zahtjev za godisnjim odmorom",
                                   css:{"font-style": "bold", "font-size": "150%"},
@@ -186,6 +210,8 @@ var calendarView = {
         rightPanel = "calendarPanel";
         var panelCopy = webix.copy(this.panel);
         $$("main").addView(webix.copy(panelCopy));
+
+
 
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
@@ -383,7 +409,16 @@ var calendarView = {
             console.log(newUser);
             //TODO: POST...
     }
-}
+},
+    vacation: function(){
+        selectedButton=1;
+    },
+    leave: function(){
+        selectedButton=2;
+    },
+    sickLeave: function () {
+        selectedButton=3;
+    }
 }
 
 function notEmpty(value){

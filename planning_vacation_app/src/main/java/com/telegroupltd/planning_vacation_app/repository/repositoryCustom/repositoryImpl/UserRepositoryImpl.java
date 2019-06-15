@@ -40,6 +40,8 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             "FROM user u LEFT JOIN sector s on u.sector_id=s.id JOIN user_group ug ON u.user_group_id=ug.id " +
             "WHERE u.company_id=? AND u.active=1 " ;
 
+
+    private static final String SQL_CHANGE_SECTOR="UPDATE user u SET u.sector_id=? WHERE u.id=?";
 //>>>>>>> 1)Implemented adding new user in selected sector in usergroup.js  2)Changed usergroup.js-added option "Bez sektora" to combo, added tooltips, added rules for adding new user, added refresing datatable after adding new user,...  3)fixed on backend-getting all sectors by companyId for admin, director and secretary 4)Fixed User model class, so it knows there exists some inheritance 5)Fixed adding new user in UserController
 
     @PersistenceContext
@@ -82,6 +84,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     public List<UserUserGroupSector> getAllByCompanyIdAllSectorsAndActive(Integer companyId) {
         return entityManager.createNativeQuery(SQL_GET_ALL_EXTENDED, "UserUserGroupSectorMapping").setParameter(1, companyId).getResultList();
 //>>>>>>> 1)Implemented adding new user in selected sector in usergroup.js  2)Changed usergroup.js-added option "Bez sektora" to combo, added tooltips, added rules for adding new user, added refresing datatable after adding new user,...  3)fixed on backend-getting all sectors by companyId for admin, director and secretary 4)Fixed User model class, so it knows there exists some inheritance 5)Fixed adding new user in UserController
+    }
+
+    @Override
+    public void changeSectorMilica(Integer userId, Integer sectorId){
+        entityManager.createNativeQuery(SQL_CHANGE_SECTOR).setParameter(1,sectorId).setParameter(2,userId).executeUpdate();
     }
 
 }
