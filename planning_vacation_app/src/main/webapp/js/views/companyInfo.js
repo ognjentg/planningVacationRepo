@@ -265,10 +265,9 @@ var companyInfoView = {
                             id: "photoUploader",
                             required:true,
                             invalidMessage: "Niste odabrali logo.",
-                            width: 110,
-                            height: 60,
-                            css: "upload-logo-company",
-                            template: "<span class='webix fa fa-upload' />Dodajte logo</span>",
+                            width: 400,
+                            height: 50,
+                            value: "Dodajte logo",
                             on: {
                                 onBeforeFileAdd: function (upload) {
                                     var type = upload.type.toLowerCase();
