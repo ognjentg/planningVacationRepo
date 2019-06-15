@@ -144,20 +144,21 @@ usergroupView = {
                             onChange(id) {
                                 //'onItemClick': function(id){
                                 sectorID = id;
-                                console.log("id sektora je" + id);
-                                webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
-                                $$("usergroupDT").clearAll();
-                                //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
-                                $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
-                                $$("usergroupDT").detachEvent("onBeforeDelete");
                                 if (sectorID == -1) {
                                     $$("addUserButton").disable();
                                 } else {
                                     $$("addUserButton").enable();
                                 }
                                 if(sectorID == -2 || sectorID == -1){
-                                    $$("changeManagerBtn").disable();F
+                                    $$("changeManagerBtn").disable();
                                 }else $$("changeManagerBtn").enable()
+                                console.log("id sektora je" + id);
+                                //webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
+                                $$("usergroupDT").clearAll();
+                                //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
+                                $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
+                                $$("usergroupDT").detachEvent("onBeforeDelete");
+
                             }
 
                         }
