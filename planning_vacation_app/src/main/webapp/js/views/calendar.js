@@ -3,7 +3,7 @@ var schedulerEvents = [];
 var selectedButton=null;
 
 var calendarView = {
-    freeDays: 0,
+    freeDays: 20,
     panel: {
         id: "calendarPanel",
         adjust: true,
@@ -215,6 +215,7 @@ var calendarView = {
 
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
+        var selectedDays = [];
 
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
@@ -278,12 +279,34 @@ var calendarView = {
                 return  "today";
             //Neradni dani
             if (nonWorkingDaysInWeek.includes(date.getDay()) || nonWorkingDays.includes(date.getTime()))
-                return "good_day";
+                return "good_day"
+            //Odabrani dan
+            if(selectedDays.includes(date.getTime())) {
+                return "selected_day";
+            }
             return "";
         }
         //skrivanje lightboxa
         scheduler.attachEvent("onBeforeLightbox", function (id){
             return false;
+        });
+        scheduler.attachEvent("onDoubleClick", function (id, e) {
+            return false;
+        });
+        scheduler.config.dblclick_create = false;
+        scheduler.config.drag_create = false;
+        scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
+            if(!selectedDays.includes(selectedDate.getTime()) &&
+                !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
+                !nonWorkingDays.includes(selectedDate.getTime())) {
+                selectedDays.push(selectedDate.getTime());
+                selectedDays.sort(function (a, b) { return a - b; })
+            }
+            scheduler.setCurrentView();
+            $$("periodsDT").clearAll();
+            var tableData = [];
+            selectedDays.forEach(function (value) { tableData.push({eventId: e.id, date: new Date(value).toDateString()}) });
+            $$("periodsDT").parse(tableData);
         });
         // 1. custom
       /* scheduler.config.lightbox.sections=[
@@ -333,6 +356,12 @@ var calendarView = {
         scheduler.attachEvent("onLimitViolation", function  (id, obj){
             dhtmlx.message('Neradni dan ili praznik.');
         });
+        scheduler.templates.event_bar_text = function(start, end, event) {
+            return "";
+        }
+        scheduler.templates.event_class = function(start, end, ev) {
+            return "today";
+        }
         calendarView.refreshCounter();
     },
     refreshCounter: function () {

@@ -12,7 +12,13 @@
 .today .dhx_month_body{
     background-color: #CCCCCC !important;
 }
-
+/* Boja za selektovane dane */
+.selected_day .dhx_month_head {
+    background-color: #0d8bf2;
+}
+.selected_day .dhx_month_body {
+    background-color: #0d8bf2;
+}
 
 
 
