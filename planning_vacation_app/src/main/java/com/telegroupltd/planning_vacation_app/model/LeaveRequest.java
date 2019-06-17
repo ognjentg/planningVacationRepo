@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "leave_request", schema = "planning_vacation_db", catalog = "")
 public class LeaveRequest implements HasActive {
     private Integer id;
@@ -111,7 +112,7 @@ public class LeaveRequest implements HasActive {
     }
 
     @Basic
-    @Column(name = "active", nullable = false)
+    @Column(name = "active", nullable = false, insertable = false)
     public Byte getActive() {
         return active;
     }

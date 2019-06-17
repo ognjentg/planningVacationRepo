@@ -27,6 +27,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t2",
                                 css: "companies-counter",
+                                template: "<p>Učitavanje</p>"
                             },
                             {
                                 view: "label",
@@ -43,6 +44,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t1",
                                 css: "companies-counter",
+                                template: "<p>Učitavanje</p>"
                             },
                             {
                                 view: "label",
@@ -59,6 +61,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t3",
                                 css: "companies-counter",
+                                template: "<p>Učitavanje</p>"
                             },
                             {
                                 view: "label",
@@ -221,7 +224,7 @@ var calendarView = {
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
                 }
             },
             success: function (text, data, xhr) {
@@ -243,7 +246,7 @@ var calendarView = {
         webix.ajax("hub/nonWorkingDayInWeek/getNonWorkingDayInWeekByCompanyJavaValue/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
                 }
             },
             success: function (text, data, xhr) {
@@ -349,7 +352,7 @@ var calendarView = {
             }
             var dates = getDates(ev.start_date, ev.end_date);
             var tableData = [];
-            dates.forEach(function (value) { tableData.push({eventId: ev.id, date: value.toDateString()}) });
+            dates.forEach(function (value) { tableData.push({eventId: ev.id, date: value.toISOString().split("T")[0]}) });
             $$("periodsDT").parse(tableData);
             return true;
         });
@@ -369,7 +372,7 @@ var calendarView = {
         webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
                 }
             },
             success: function (text, data, xhr) {
@@ -380,6 +383,9 @@ var calendarView = {
                         animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
                         animateValue($$("t2"), 0, vacationDays.totalDays, 700);
                     }
+                    else{
+                        calendarView.freeDays = 0;
+                    }
                 }
             }
         });
@@ -387,15 +393,18 @@ var calendarView = {
         webix.ajax("hub/religion_leave/byUserId/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
                 }
             },
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
+                    var religionLeave;
                     if (data.json() != null) {
-                        var religionLeave = data.json();
-                        animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
+                        religionLeave = data.json();
                     }
+                    else
+                        religionLeave = 0;
+                    animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
                 }
             }
         });
@@ -403,7 +412,7 @@ var calendarView = {
     showSendDialog: function () {
         if($$("periodsDT").count() == 0){
             util.messages.showErrorMessage("Nisu odabrani dani za odsustvo");
-            return;
+            //return;
         }
         var form = $$("createRequestForm");
         var leaveRequest = {
@@ -412,19 +421,41 @@ var calendarView = {
             leaveRequestStatusId: 1,
             companyId: userData.companyId,
             senderComment: $$("comment").getValue(),
-            category: "Godisnji",
+            category: "Godisnji"
         }
         connection.sendAjax("POST", "hub/leave_request/",
             function (text, data, xhr) {
                 if (text) {
+                    var tempData = JSON.parse(text);
+                    console.log("TEXT" + text + " ID: " + tempData.id);
+                    var dates = $$("periodsDT").serialize();
+                    console.log("DATA " + dates[0].date);
+                    dates.forEach(function (value) {
+                        var date ={
+                            date: value.date,
+                            leaveRequestId: tempData.id,
+                            canceled: 0,
+                            paid: 1
+                        }
+                        connection.sendAjax("POST", "hub/leave_request_date/",
+                            function (text, data, xhr) {
+                                if (text) {
+
+                                } else
+                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            }, function (text, data, xhr) {
+                                util.messages.showErrorMessage(text);
+                            }, date);
+                    })
                     util.messages.showMessage("Zahtjev uspjesno poslan");
+                    console.log("return " + data + " " + data.category);
                 } else
-                    util.messages.showErrorMessage("Neuspješno slanje.");
+                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
             }, function (text, data, xhr) {
-                alert(text);
+                util.messages.showErrorMessage(text);
             }, leaveRequest);
 
-
+/*
         if (form.validate()) {
             var newRequest = {
                 category: chosenCategory,
@@ -438,6 +469,8 @@ var calendarView = {
             console.log(newUser);
             //TODO: POST...
     }
+
+ */
 },
     vacation: function(){
         selectedButton=1;

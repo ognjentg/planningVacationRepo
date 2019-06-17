@@ -17,6 +17,7 @@ public class LeaveRequestDate implements HasActive {
     private Byte active;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;
@@ -67,7 +68,7 @@ public class LeaveRequestDate implements HasActive {
     }
 
     @Basic
-    @Column(name = "active", nullable = false)
+    @Column(name = "active", nullable = false, insertable = false)
     public Byte getActive() {
         return active;
     }
