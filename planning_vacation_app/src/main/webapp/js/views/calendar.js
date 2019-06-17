@@ -308,7 +308,7 @@ var calendarView = {
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
             var tableData = [];
-            selectedDays.forEach(function (value) { tableData.push({eventId: e.id, date: new Date(value).toDateString()}) });
+            selectedDays.forEach(function (value) { tableData.push({eventId: e.id, date: new Date(value).toISOString().split("T")[0]}) });
             $$("periodsDT").parse(tableData);
         });
         // 1. custom
