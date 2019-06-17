@@ -149,10 +149,10 @@ usergroupView = {
                                 } else {
                                     $$("addUserButton").enable();
                                 }
-<<<<<<< HEAD
-                                if(sectorID == -2 || sectorID == -1){
+
+                                if (sectorID == -2 || sectorID == -1) {
                                     $$("changeManagerBtn").disable();
-                                }else $$("changeManagerBtn").enable()
+                                } else $$("changeManagerBtn").enable()
                                 console.log("id sektora je" + id);
                                 //webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
                                 $$("usergroupDT").clearAll();
@@ -160,12 +160,11 @@ usergroupView = {
                                 $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
                                 $$("usergroupDT").detachEvent("onBeforeDelete");
 
-=======
+
                                 if (sectorID == -2 || sectorID == -1) {
                                     $$("changeManagerBtn").disable();
                                     F
                                 } else $$("changeManagerBtn").enable()
->>>>>>> Added status of employee (present/absent), added class for dates of leaves
                             }
 
                         }
@@ -187,12 +186,7 @@ usergroupView = {
                     //onContext: {},
                     pager: "pagerB",
                     //data:users, Kako uzeti podatke o users
-                    //url:"hub/user",
-                    on: {
-                        onAfterContextMenu: function (item) {
-                            this.select(item.row);
-                        }
-                    },
+                    url: "hub/user",
                     columns: [
                         {
                             id: "checkboxRow",
@@ -243,10 +237,10 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                             header: ["<span class='webix_icon fas fa-briefcase'/>Pozicija",
-                              {
-                                   content: "textFilter", value: "", icon: "wxi-search"
-                             }]
+                            header: ["<span class='webix_icon fas fa-briefcase'/>Pozicija",
+                                {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }]
                         },
                         {
                             id: "sector_name",
@@ -336,13 +330,13 @@ usergroupView = {
                                 usergroupView.employeeInfo(id);
                             }
                             if (action == "delete") {
-                                if($$("usergroupDT").getItem(id).position != "menadzer")
+                                if ($$("usergroupDT").getItem(id).position != "menadzer")
                                     usergroupView.deleteEmployee();
                                 else
                                     util.messages.showErrorMessage("Nije moguće izbrisati menadžera.");
                             }
-                            if (action == "sector"){
-                                if($$("usergroupDT").getItem(id).position == "zaposleni")
+                            if (action == "sector") {
+                                if ($$("usergroupDT").getItem(id).position == "zaposleni")
                                     usergroupView.showChangeSectorOfSelectedDialog();
                                 else
                                     util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
@@ -368,17 +362,10 @@ usergroupView = {
                         on: {
                             onItemClick: function (ids, e, node) {
                                 util.messages.showErrorMessage("PAGER");
-                                var control = $$("usergroupDT").getHeaderContent("mc1");
-
-                                var state = control.isChecked();
-
-                                control.uncheck();
-
-
                             }
                         },
                         animate: {
-                            direction: "top"
+                            direction: "left"
                         }
                     }
                     ]
@@ -407,7 +394,7 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: function() {
+                        click: function () {
                             $$("addUserButton").enable();
                             util.dismissDialog("addUserDialog");
                         }
@@ -541,7 +528,7 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: function() {
+                        click: function () {
                             $$("changeManagerBtn").enable();
                             util.dismissDialog("changeManagerDialog");
                         }
@@ -812,12 +799,20 @@ usergroupView = {
                     }]
                 },
                 {
-                    view: "calendar",
-                    id: "calendarDays",
-                    name: "calendarDays",
-                    weekHeader: true,
-                    width: 350,
-                    height: 250
+                    view: "template",
+                    gravity: 2.5,
+                    template: "<div id=\"employeeCalendar\" class=\"dhx_cal_container\" style='width:100%; height:100%;'>\n" +
+                        "\t<div class=\"dhx_cal_navline\">\n" +
+                        "\t\t<div class=\"dhx_cal_prev_button\">&nbsp;</div>\n" +
+                        "\t\t<div class=\"dhx_cal_next_button\">&nbsp;</div>\n" +
+                        "\t\t<div class=\"dhx_cal_today_button\"></div>\n" +
+                        "\t\t<div class=\"dhx_cal_date\"></div>\n" +
+                        "\t</div>\n" +
+                        "\t<div class=\"dhx_cal_header\">\n" +
+                        "\t</div>\n" +
+                        "\t<div class=\"dhx_cal_data\">\n" +
+                        "\t</div>\n" +
+                        "</div>"
                 }
             ]
         }
@@ -946,6 +941,7 @@ usergroupView = {
         //                   });
         $$("choseSectorCombo").setValue("Svi sektori");
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
+
     }
     ,
 
@@ -1180,7 +1176,7 @@ usergroupView = {
                     var context = this.getContext();
                     switch (id) {
                         case "1": {
-                            if($$("usergroupDT").getSelectedItem().position != "menadzer")
+                            if ($$("usergroupDT").getSelectedItem().position != "menadzer")
                                 usergroupView.deleteEmployee();
                             else
                                 util.messages.showErrorMessage("Nije moguće izbrisati menadžera");
@@ -1195,7 +1191,7 @@ usergroupView = {
                             break;
                         }
                         case "4": {
-                            if($$("usergroupDT").getSelectedItem().position == "zaposleni")
+                            if ($$("usergroupDT").getSelectedItem().position == "zaposleni")
                                 usergroupView.showChangeSectorOfSelectedDialog();
                             else
                                 util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
@@ -1400,8 +1396,8 @@ usergroupView = {
                         util.messages.showErrorMessage(text);
                         alert(text);
                     }, id);
-var numberOfEmployees = $$("usergroupDT").count();
-                            animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                var numberOfEmployees = $$("usergroupDT").count();
+                animateValue($$("t3"), 0, numberOfEmployees, 1000);
             }
         };
         webix.confirm(delBox);
@@ -1413,11 +1409,11 @@ var numberOfEmployees = $$("usergroupDT").count();
     deleteSelected: function () {
         var validate = true;
         selectedItems.forEach(function (value) {
-            if($$("usergroupDT").getItem(value).position == "menadzer"){
+            if ($$("usergroupDT").getItem(value).position == "menadzer") {
                 validate = false;
             }
         })
-        if(validate == false)
+        if (validate == false)
             util.messages.showErrorMessage("Nije moguće izbrisati menadžera");
         else if (selectedItems.length > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm(selectedItems.length + " zaposlenih")));
@@ -1434,11 +1430,11 @@ var numberOfEmployees = $$("usergroupDT").count();
                             }, element);
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
-          var numberOfEmployees = $$("usergroupDT").count();
-                                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                    var numberOfEmployees = $$("usergroupDT").count();
+                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
                 }
-                          var numberOfEmployees = $$("usergroupDT").count();
-                                                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                var numberOfEmployees = $$("usergroupDT").count();
+                animateValue($$("t3"), 0, numberOfEmployees, 1000);
             };
             webix.confirm(delBox);
 
@@ -1457,15 +1453,14 @@ var numberOfEmployees = $$("usergroupDT").count();
     showChangeMultipleUsersSector: function () {
         var validate = true;
         selectedItems.forEach(function (value) {
-            if($$("usergroupDT").getItem(value).position != "zaposleni")
+            if ($$("usergroupDT").getItem(value).position != "zaposleni")
                 validate = false;
         })
-        if(validate){
+        if (validate) {
             webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
             $$("cmuCombo").define("options", usergroupView.sectors);
             $$("cmuCombo").refresh();
-        }
-        else
+        } else
             util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom");
     }
     ,
@@ -1518,9 +1513,9 @@ var numberOfEmployees = $$("usergroupDT").count();
                 else
                     status = "Prisutan";
                 $$("current_status").setValue("Trenutni status: " + status);
-                var reqs=webix.toArray(leaves.leaves);
+                var reqs = webix.toArray(leaves.leaves);
                 reqs.forEach(function (element) {
-                    util.messages.showErrorMessage("From "+ element.dateFrom+" to "+ element.dateTo);
+                    util.messages.showErrorMessage("From " + element.dateFrom + " to " + element.dateTo);
                 })
 
             }, function (text, data, xhr) {
@@ -1528,6 +1523,13 @@ var numberOfEmployees = $$("usergroupDT").count();
             setTimeout(function () {
                 $$("employeeVacationInfoDialog").show();
             }, 0));
+        var date = new Date();
+        scheduler.setCurrentView();
+        scheduler.config.multi_day = true;
+        scheduler.config.full_day = true;
+        scheduler.config.xml_date="%Y-%m-%d %H:%i";
+        scheduler.locale = locale_sr_latin;
+        scheduler.init('employeeCalendar',new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
     }
 };
@@ -1579,77 +1581,4 @@ function animateValue(id, start, end, duration) {
     }, stepTime);
 }
 
-var tmpCompaniesLength = 0;
 
-function refreshData() {
-    $$("t1").setHTML(`<p>${0}</p>`);
-    $$("t2").setHTML(`<p>${0}</p>`);
-    $$("t3").setHTML(`<p>${0}</p>`);
-    console.log("refresh data");
-
-
-    webix.extend($$("companyDT"), webix.ProgressBar);
-
-    var table = webix.$$("companyDT");
-    table.clearAll();
-    table.showProgress();
-
-
-    webix.ajax("hub/user_group", {
-
-        error: function (text, data, xhr) {
-
-            if (xhr.status !== 200) {
-                alert("Nema dostupnih podataka! Provjerite internet konekciju.");
-                table.hideProgress();
-            }
-
-        },
-
-        success: function (text, data, xhr) {
-
-            if (xhr.status === 200) {
-                if (data.json() != null) {
-                    console.log("loaded data with success");
-                    var users = data.json();
-                    var numberOfUsers = users.length;
-                    tmpCompaniesLength = numberOfUsers;
-                    table.hideProgress();
-                    // counterAnimation(1130, 1130, 2230);
-
-                    if (userData.userGroupId === 2) {
-
-                        $$("addCompanyBtn").hide();
-
-
-                        // var table = webix.$$("companyDT");
-
-                        // table.clearAll();
-
-                        companies = companies.slice(0, 1);
-
-                        table.parse(companies);
-
-                        animateValue($$("t1"), 0, numberOfCompanies, 100);
-                        animateValue($$("t2"), 0, 100, 100);
-                        animateValue($$("t3"), 0, 100, 100);
-
-                    } else {
-                        table.parse(companies);
-                        animateValue($$("t1"), 0, numberOfCompanies, 1000);
-                        animateValue($$("t2"), 0, 100, 900);
-                        animateValue($$("t3"), 0, 100, 900);
-
-                    }
-                }
-            }
-
-            var control = $$("companyDT").getHeaderContent("mc1");
-
-            var state = control.isChecked();
-
-            control.uncheck();
-        }
-
-    });
-}
