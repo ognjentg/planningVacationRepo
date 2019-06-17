@@ -5,6 +5,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenExcepti
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
+import com.telegroupltd.planning_vacation_app.model.Leaves;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -123,24 +127,33 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId) {
+    Leaves getLeaveRequestFilteredByLeaveRequestStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId) {
 
-        ArrayList<Integer> removeIndex = new ArrayList<>();
-        List<LeaveRequestUserLeaveRequestStatus> leaveRequests =
+        boolean isAbsent = false;
+        ArrayList<LeaveRequestUserLeaveRequestStatus> removeReq = new ArrayList<>();
+        ArrayList<LeaveRequestUserLeaveRequestStatus> leaveRequests = (ArrayList<LeaveRequestUserLeaveRequestStatus>)
                 leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userId, key);
-        System.out.println("USER ID " + userId.toString());
+        Date now = new Date();
         for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests) {
-            System.out.println("ID "+lr.getSenderUserId()+" COMMENT: "+lr.getApproverComment());
             if (lr.getSenderUserId() != userId) {
-                System.out.println(lr.getFirstName());
-                removeIndex.add(leaveRequests.indexOf(lr));
+                removeReq.add(lr);
             }
         }
-        for (Integer index : removeIndex)
-            leaveRequests.remove(index);
-        for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests)
+        for (LeaveRequestUserLeaveRequestStatus req : removeReq)
+            leaveRequests.remove(req);
+
+        System.out.println("IZBRISANI osim " + userId);
+        for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests) {
             System.out.println(lr.getFirstName());
-        return leaveRequests;
+            if (now.after(lr.getDateFrom()) && now.before(lr.getDateTo())) {
+                System.out.println("na godisnjem");
+                isAbsent = true;
+                break;
+            } else
+                System.out.println("nije na godisnjem");
+        }
+        Leaves leaves = new Leaves(leaveRequests, isAbsent);
+        return leaves;
     }
 }
 

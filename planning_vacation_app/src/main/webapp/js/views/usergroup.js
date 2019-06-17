@@ -114,17 +114,17 @@ usergroupView = {
                         align: "left",
                         disabled: true,
                         click: 'usergroupView.showChangeMultipleUsersSector'
-                    },{
-                       view:"button",
-                        id:"changeManagerBtn",
-                        type:"iconButton",
-                        icon:"user",
-                        label:"Promijeni menadžera",
-                        width:200,
-                        height:40,
-                        align:"left",
-                        disabled:true,
-                        css:"companyButton",
+                    }, {
+                        view: "button",
+                        id: "changeManagerBtn",
+                        type: "iconButton",
+                        icon: "user",
+                        label: "Promijeni menadžera",
+                        width: 200,
+                        height: 40,
+                        align: "left",
+                        disabled: true,
+                        css: "companyButton",
                         click: 'usergroupView.showChangeManagerDialog'
                     }, {
                         view: "label",
@@ -149,6 +149,7 @@ usergroupView = {
                                 } else {
                                     $$("addUserButton").enable();
                                 }
+<<<<<<< HEAD
                                 if(sectorID == -2 || sectorID == -1){
                                     $$("changeManagerBtn").disable();
                                 }else $$("changeManagerBtn").enable()
@@ -159,6 +160,12 @@ usergroupView = {
                                 $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
                                 $$("usergroupDT").detachEvent("onBeforeDelete");
 
+=======
+                                if (sectorID == -2 || sectorID == -1) {
+                                    $$("changeManagerBtn").disable();
+                                    F
+                                } else $$("changeManagerBtn").enable()
+>>>>>>> Added status of employee (present/absent), added class for dates of leaves
                             }
 
                         }
@@ -360,6 +367,7 @@ usergroupView = {
                         group: 5,
                         on: {
                             onItemClick: function (ids, e, node) {
+                                util.messages.showErrorMessage("PAGER");
                                 var control = $$("usergroupDT").getHeaderContent("mc1");
 
                                 var state = control.isChecked();
@@ -377,7 +385,6 @@ usergroupView = {
                 }]
         }
     },
-
 
 
     addDialog: {
@@ -509,20 +516,20 @@ usergroupView = {
         }
     },
 
-    changeManagerDialog:{
-        view:"popup",
-        width:600,
-        id:"changeManagerDialog",
-        position:"center",
-        modal:"true",
-        move:"true",
+    changeManagerDialog: {
+        view: "popup",
+        width: 600,
+        id: "changeManagerDialog",
+        position: "center",
+        modal: "true",
+        move: "true",
         select: "row",
         multiselect: false,
         checkboxRefresh: true,
         onContext: {},
         navigation: true,
-        body:{
-            rows:[
+        body: {
+            rows: [
                 {
                     view: "toolbar",
                     cols: [{
@@ -544,8 +551,8 @@ usergroupView = {
                     view: "datatable",
                     id: "changeManagerTable",
                     margin: 10,
-                    height:250,
-                    width:600,
+                    height: 250,
+                    width: 600,
                     tooltip: true,
                     select: "row",
                     multiselect: false,
@@ -558,7 +565,7 @@ usergroupView = {
                             this.select(item.row);
                         }
                     },
-                    columns:[
+                    columns: [
                         {
                             id: "id",
                             hidden: true
@@ -592,18 +599,18 @@ usergroupView = {
                                 }]
                         }
 
-                        ]
+                    ]
 
-                },{
-                height:15
+                }, {
+                    height: 15
                 },
                 {
-                    view:"button",
-                    label:"Promijeni",
-                    id:"changeManagerButton",
-                    align:"right",
-                    click:"usergroupView.changeManager",
-                    width:200
+                    view: "button",
+                    label: "Promijeni",
+                    id: "changeManagerButton",
+                    align: "right",
+                    click: "usergroupView.changeManager",
+                    width: 200
                 }
             ]
         }
@@ -810,8 +817,7 @@ usergroupView = {
                     name: "calendarDays",
                     weekHeader: true,
                     width: 350,
-                    height: 250,
-                    disabled:true
+                    height: 250
                 }
             ]
         }
@@ -819,68 +825,67 @@ usergroupView = {
     }
     ,
 
-    showChangeManagerDialog:function(){
+    showChangeManagerDialog: function () {
         webix.ui(webix.copy(usergroupView.changeManagerDialog));
         var sector = $$("choseSectorCombo").getValue();
-        if(sector === -1 || sector === -2 || sector === "Svi sektori" ){
+        if (sector === -1 || sector === -2 || sector === "Svi sektori") {
             util.messages.showErrorMessage("Odabir sektora nije validan.")
-        }
-        else {
-            $$("changeManagerBtn").disable();
+
+        } else {
             $$("changeManagerTable").define("url", "hub/user/custom/bySector/" + sector);
             $$("changeManagerDialog").show();
         }
     },
 
-    changeManager:function(){
-    if($$("changeManagerTable").getSelectedItem().id==="undefined"){
-        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzeraaa.");
-    } else {
-        var employe;
-        $$("changeManagerTable").eachRow(
-            function(row){
-                if($$("changeManagerTable").getItem(row).position==="menadzer"){
-                   employe = row;
+    changeManager: function () {
+        if ($$("changeManagerTable").getSelectedItem().id === "undefined") {
+            util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzeraaa.");
+        } else {
+            var employe;
+            $$("changeManagerTable").eachRow(
+                function (row) {
+                    if ($$("changeManagerTable").getItem(row).position === "menadzer") {
+                        employe = row;
+                    }
                 }
-            }
-        );
-        var changeManagerInformation = {
-            newManager: $$("changeManagerTable").getSelectedItem().id,
-            newEmployee: employe
-        };
-        connection.sendAjax("POST", "hub/user/changeManager",
-            function (text, data, xhr) {
-                if (text) {
-                    util.messages.showMessage("Uspješna promjena pozicije zaposlenom.");
-                    $$("changeManagerTable").eachRow(
-                        function(row){
-                            if($$("changeManagerTable").getItem(row).position==="menadzer"){
-                                var user1 = $$("changeManagerTable").getItem(row);
-                                user1.position = "zaposleni";
-                                $$("changeManagerTable").updateItem(row, user1);
+            );
+            var changeManagerInformation = {
+                newManager: $$("changeManagerTable").getSelectedItem().id,
+                newEmployee: employe
+            };
+            connection.sendAjax("POST", "hub/user/changeManager",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Uspješna promjena pozicije zaposlenom.");
+                        $$("changeManagerTable").eachRow(
+                            function (row) {
+                                if ($$("changeManagerTable").getItem(row).position === "menadzer") {
+                                    var user1 = $$("changeManagerTable").getItem(row);
+                                    user1.position = "zaposleni";
+                                    $$("changeManagerTable").updateItem(row, user1);
+                                }
                             }
-                        }
-                    );
-                    $$("usergroupDT").eachRow(
-                        function(row){
-                            if($$("usergroupDT").getItem(row).position==="menadzer"){
-                                var user1 = $$("usergroupDT").getItem(row);
-                                user1.position = "zaposleni";
-                                $$("usergroupDT").updateItem(row, user1);
+                        );
+                        $$("usergroupDT").eachRow(
+                            function (row) {
+                                if ($$("usergroupDT").getItem(row).position === "menadzer") {
+                                    var user1 = $$("usergroupDT").getItem(row);
+                                    user1.position = "zaposleni";
+                                    $$("usergroupDT").updateItem(row, user1);
+                                }
                             }
-                        }
-                    );
-                    var user = $$("changeManagerTable").getItem(changeManagerInformation.newManager);
-                    user.position = "menadzer";
-                    $$("changeManagerTable").updateItem(changeManagerInformation.newManager, user);
-                    $$("usergroupDT").updateItem(changeManagerInformation.newManager, user);
+                        );
+                        var user = $$("changeManagerTable").getItem(changeManagerInformation.newManager);
+                        user.position = "menadzer";
+                        $$("changeManagerTable").updateItem(changeManagerInformation.newManager, user);
+                        $$("usergroupDT").updateItem(changeManagerInformation.newManager, user);
 
-                } else
-                    util.messages.showErrorMessage("Neuspješna promjena pozicije zaposlenom.");
-            }, function (text, data, xhr) {
-                util.messages.showErrorMessage(text);
-            }, changeManagerInformation);
-    }
+                    } else
+                        util.messages.showErrorMessage("Neuspješna promjena pozicije zaposlenom.");
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                }, changeManagerInformation);
+        }
     },
 
 
@@ -1493,6 +1498,7 @@ var numberOfEmployees = $$("usergroupDT").count();
             function (text, data, xhr) {
                 var days = data.json();
                 var daysLeft = days.totalDays - days.usedDays;
+                console.log(daysLeft);
                 if (!webix.rules.isNumber(daysLeft)) {
                     $$("vacation_days").setValue("Broj preostalih dana godišnjeg: ");
                 } else
@@ -1504,9 +1510,20 @@ var numberOfEmployees = $$("usergroupDT").count();
             });
         connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
             function (text, data, xhr) {
-                util.messages.showMessage("proslo");
+
+                var leaves = data.json();
+                var status = "";
+                if (leaves.isAbsent == true)
+                    status = "Odsutan";
+                else
+                    status = "Prisutan";
+                $$("current_status").setValue("Trenutni status: " + status);
+                var reqs=webix.toArray(leaves.leaves);
+                reqs.forEach(function (element) {
+                    util.messages.showErrorMessage("From "+ element.dateFrom+" to "+ element.dateTo);
+                })
+
             }, function (text, data, xhr) {
-                util.messages.showErrorMessage("NIJE PROSLO");
             },
             setTimeout(function () {
                 $$("employeeVacationInfoDialog").show();
