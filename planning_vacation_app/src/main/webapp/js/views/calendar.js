@@ -1,6 +1,7 @@
 var chosenCategory=null; //here will be setted chosen category  - but there must be value from database...
 var schedulerEvents = [];
 var selectedButton=null;
+var selectedDays = [];
 
 var calendarView = {
     freeDays: 20,
@@ -164,6 +165,11 @@ var calendarView = {
                                      onClick: {
                                          webix_icon: function (e, id) {
                                              var eventId = $$("periodsDT").getItem(id).eventId;
+                                             var value = $$("periodsDT").getItem(id).date;
+                                             var date = new Date(value + "T22:00:00.000Z");
+                                             var index = selectedDays.indexOf(date.getTime());
+                                             selectedDays.splice(index, 1);
+                                             scheduler.setCurrentView();
                                             $$("periodsDT").remove(id);
                                             scheduler.deleteEvent(eventId);
                                          }
@@ -218,7 +224,6 @@ var calendarView = {
 
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
-        var selectedDays = [];
 
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
@@ -304,6 +309,9 @@ var calendarView = {
                 !nonWorkingDays.includes(selectedDate.getTime())) {
                 selectedDays.push(selectedDate.getTime());
                 selectedDays.sort(function (a, b) { return a - b; })
+            } else if(selectedDays.includes(selectedDate.getTime())) {
+                var index = selectedDays.indexOf(selectedDate.getTime());
+                selectedDays.splice(index, 1);
             }
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
