@@ -198,10 +198,10 @@ leaveRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject"&&(userData.keyUserGroup === "admin" || userData.keyUserGroup === "direktor" || userData.keyUserGroup === "menadzer")) {
+                            if (action === "reject"&&(userData.userGroupId ==2 || userData.userGroupId ==3 || userData.userGroupId ==5)) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
-                            } else if (action === "accept"&&(userData.keyUserGroup === "admin" || userData.keyUserGroup === "direktor" || userData.keyUserGroup === "menadzer")) {
+                            } else if (action === "accept"&&(userData.userGroupId ==2 || userData.userGroupId ==3 || userData.userGroupId ==5)) {
 
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
