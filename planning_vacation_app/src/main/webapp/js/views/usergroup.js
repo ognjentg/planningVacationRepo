@@ -10,17 +10,17 @@ var selectedManager = [];
 usergroupView = {
     getPanel: function () {
         console.log("uslo u usergroupview");
-        switch (userData.keyUserGroup) {
-            case "admin":
+        switch (userData.userGroupId) {
+            case 2:
                 user = "admin";
                 break;
-            case "direktor":
+            case 3:
                 user = "director";
                 break;
-            case "sekretar":
+            case 4:
                 user = "secretary";
                 break;
-            case "menadzer":
+            case 5:
                 user = "manager";
                 sectorID = userData.sectorId;
                 console.log(sectorID);

@@ -146,7 +146,7 @@ var profileView = {
         setTimeout(function () {
             $$("firstName").setValue(userData.firstName);
             $$("lastName").setValue(userData.lastName);
-            if (userData.keyUserGroup === "admin") {
+            if (userData.userGroupId == 2) {
                 $$("receiveMail").hide();
             }
             $$("receiveMail").setValue(userData.receiveMail);
