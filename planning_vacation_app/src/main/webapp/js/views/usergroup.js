@@ -10,7 +10,7 @@ var selectedManager = [];
 usergroupView = {
     getPanel: function () {
         console.log("uslo u usergroupview");
-        switch (userData.key) {
+        switch (userData.keyUserGroup) {
             case "admin":
                 user = "admin";
                 break;
@@ -998,7 +998,7 @@ usergroupView = {
                 userGroups.forEach(function (userGroup) {
                     usergroupView.userGroups.push({
                         id: userGroup.id,
-                        value: userGroup.key
+                        value: userGroup.keyUserGroup
                     });
                 });
                 $$("choseUserGroupCombo").define("options", usergroupView.userGroups);

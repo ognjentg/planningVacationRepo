@@ -397,11 +397,11 @@ var companyView = {
                         // alert("Niste autorizovani da izbrišete kompaniju!");
                         util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                    if (action === "delete" && userData.key === "admin") {
+                    if (action === "delete" && userData.keyUserGroup === "admin") {
                         alert("Niste autorizovani da izbrišete kompaniju!");
 
                     }
-                    if (action === "delete" && userData.key === "superadmin") {
+                    if (action === "delete" && userData.keyUserGroup === "superadmin") {
                         var delBox = (webix.copy(commonViews.deleteConfirm("company")));
                         delBox.callback = function (result) {
                             if (result === 1) {
@@ -507,7 +507,7 @@ var companyView = {
     },
 
     selectPanel: function () {
-        console.log(userData.key === "superadmin");
+        console.log(userData.keyUserGroup === "superadmin");
 
         $$("main").removeView(rightPanel);
         rightPanel = "companyPanel";
@@ -517,12 +517,12 @@ var companyView = {
         $$("main").addView(webix.copy(panelCopy));
 
 
-        if (userData.key === "superadmin") {
+        if (userData.keyUserGroup === "superadmin") {
             $$("statisticsBtn").hide();
             $$("employee-counter").hide();
         }
 
-        if (userData.key === "admin") {
+        if (userData.keyUserGroup === "admin") {
             $$("employee-counter").hide();
         }
 
@@ -595,7 +595,7 @@ var companyView = {
                                 // alert("Niste autorizovani da izbrišete kompaniju!");
                                 util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                            if (userData.key === "admin") {
+                            if (userData.keyUserGroup === "admin") {
                                 alert("Niste autorizovani da izbrišete kompaniju!");
 
                                 break;
@@ -1196,7 +1196,7 @@ var companyView = {
 
 
     showChangeCompanyDialog: function (company) {
-        if (userData.key === "admin") {
+        if (userData.keyUserGroup === "admin") {
             webix.ui(webix.copy(companyView.adminChangeCompanyDialog));
             var form = $$("adminChangeCompanyForm");
 
@@ -1263,7 +1263,7 @@ var companyView = {
 
     saveChangedCompany: function () {
         $$("changeCompany").disable();
-        if (userData.key === "admin") {
+        if (userData.keyUserGroup === "admin") {
             var form = $$("adminChangeCompanyForm");
         } else {
             var form = $$("changeCompanyForm");
@@ -1275,7 +1275,7 @@ var companyView = {
         var validation = form.validate();
         if (validation) {
             var newCompany;
-            if (userData.key === "admin") {
+            if (userData.keyUserGroup === "admin") {
                 newCompany = {
                     id: form.getValues().id,
                     name: form.getValues().name,
@@ -1315,7 +1315,7 @@ var companyView = {
 
             if (userData.userGroupId === 2) {
 
-            if (userData.key == "admin") {
+            if (userData.keyUserGroup == "admin") {
 
                 $$("changeCompany").enable();
                 util.dismissDialog('adminChangeCompanyDialog');
@@ -1392,7 +1392,7 @@ function refreshData() {
                     table.hideProgress();
                     // counterAnimation(1130, 1130, 2230);
 
-                    if (userData.key === "admin") {
+                    if (userData.keyUserGroup === "admin") {
 
                         $$("addCompanyBtn").hide();
 

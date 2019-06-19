@@ -236,7 +236,7 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    if (userData.key == "superadmin") {
+                    if (userData.keyUserGroup == "superadmin") {
                         companyData = null;
                         showApp();
                     } else {
@@ -363,7 +363,7 @@ var mainLayout = {
                     lastName: userData.lastName,
                 };
 
-                switch (userData.key){
+                switch (userData.keyUserGroup){
                     case "superadmin":
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
                         break;
@@ -430,7 +430,7 @@ var showApp = function () {
         {id: "4", value: "Odjava", icon: "sign-out"}
     ]
 
-    if (userData.key == "admin" || userData.key == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+    if (userData.keyUserGroup == "admin" || userData.keyUserGroup == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
         for(var i = 0; i < companyInfoItems.length; i++)
         settingsMenu.push(companyInfoItems[i]);
@@ -455,12 +455,12 @@ var showApp = function () {
 //    $$("settingsSubMenu").add(settingsMenu[0]);
     if(userData!=null)
     {
-        if(userData.key !== "superadmin") {
+        if(userData.keyUserGroup !== "superadmin") {
             $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
         } else {
             $$("companyLogoImage").setValues({src: "img/telegroup-logo.png"});
         }
-        switch (userData.key) {
+        switch (userData.keyUserGroup) {
         case "superadmin":
             localMenuData = webix.copy(menuSuperAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
@@ -841,7 +841,7 @@ console.log($$("loginForm").getValues());
                    userData = data.json();
                     console.log(userData.userGroupId);
 
-                    if (userData.key == "superadmin") {
+                    if (userData.keyUserGroup == "superadmin") {
                         companyData = null;
                         showApp();
                     } else {
