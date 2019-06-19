@@ -19,10 +19,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RequestMapping(value="/hub/sickLeave")
 @RestController
@@ -131,5 +128,13 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         else throw new BadRequestException(badRequestDelete);
     }
 
+    @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatus/{key}/{userId}", method = RequestMethod.GET)
+    public @ResponseBody
+    void getSickLeaveFilteredBySickLeaveStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId){
+        ArrayList<SickLeave> leaves =(ArrayList) getAll();
+        for (SickLeave sl: leaves) {
+            System.out.println("user id " + sl.getUserId()+ " i jos " + sl.getSickLeaveStatusId());
+        }
+    }
 }
 

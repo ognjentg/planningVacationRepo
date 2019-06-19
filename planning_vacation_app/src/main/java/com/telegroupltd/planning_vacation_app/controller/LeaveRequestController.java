@@ -165,15 +165,13 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         for (LeaveRequestUserLeaveRequestStatus req : removeReq)
             leaveRequests.remove(req);
 
-        System.out.println("IZBRISANI osim " + userId);
         for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests) {
-            System.out.println(lr.getFirstName());
+            System.out.println(lr.getDateFrom() + "  -  "+lr.getDateTo());
+            System.out.println(lr.getCategory());
             if (now.after(lr.getDateFrom()) && now.before(lr.getDateTo())) {
-                System.out.println("na godisnjem");
                 isAbsent = true;
                 break;
-            } else
-                System.out.println("nije na godisnjem");
+            }
         }
         Leaves leaves = new Leaves(leaveRequests, isAbsent);
         return leaves;

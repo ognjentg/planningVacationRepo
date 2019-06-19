@@ -778,6 +778,7 @@ usergroupView = {
         modal: true,
         body: {
             padding: 15,
+
             rows: [
                 {
                     view: "toolbar",
@@ -811,6 +812,8 @@ usergroupView = {
                 {
                     view: "template",
                     gravity: 2.5,
+                    height: 550,
+                    width: 550,
                     template: "<div id=\"employeeCalendar\" class=\"dhx_cal_container\" style='width:100%; height:100%;'>\n" +
                         "\t<div class=\"dhx_cal_navline\">\n" +
                         "\t\t<div class=\"dhx_cal_prev_button\">&nbsp;</div>\n" +
@@ -826,6 +829,7 @@ usergroupView = {
                 }
             ]
         }
+
 
     }
     ,
@@ -972,8 +976,6 @@ usergroupView = {
         if (sectorID === -1) {
             $$("choseUserGroupCombo").show();
             $$("choseUserGroupComboLabel").show();
-
-
 
 
         }
@@ -1518,12 +1520,13 @@ usergroupView = {
     ,
     showEmployeeVacationInfoDialog: function (id) {
         webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog));
+        var vacationDays = [];
+        var daysOff = [];
         var employee = $$("usergroupDT").getItem(id.row);
         connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
             function (text, data, xhr) {
                 var days = data.json();
                 var daysLeft = days.totalDays - days.usedDays;
-                console.log(daysLeft);
                 if (!webix.rules.isNumber(daysLeft)) {
                     $$("vacation_days").setValue("Broj preostalih dana godišnjeg: ");
                 } else
@@ -1533,6 +1536,7 @@ usergroupView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
+        var startDate;
         connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
             function (text, data, xhr) {
 
@@ -1545,21 +1549,60 @@ usergroupView = {
                 $$("current_status").setValue("Trenutni status: " + status);
                 var reqs = webix.toArray(leaves.leaves);
                 reqs.forEach(function (element) {
-                    util.messages.showErrorMessage("From " + element.dateFrom + " to " + element.dateTo);
-                })
+                    startDate = new Date(element.dateFrom);
+                    var endDate = new Date(element.dateTo);
+                    console.log("Tip: " + element.category);
+                    var dates = getDatesFromRange(startDate, endDate);
+                    if (element.category === "Godisnji") {
+                        dates.forEach(function (value) {
+                            vacationDays.push(value);
+                        });
+                    } else if (element.category === "Slobodno")
+                        dates.forEach(function (value) {
+                            daysOff.push(value);
+                        });
+                    scheduler.config.multi_day = true;
+                    scheduler.config.full_day = true;
+
+                    scheduler.templates.month_date_class = function (date) {
+                        var has = false;
+                        vacationDays.forEach(function (value) {
+                            if (webix.Date.equal(value, date))
+                                has = true;
+                        });
+                        if (has == true)
+                            return "vacation_day";
+
+                        daysOff.forEach(function (value) {
+                            if (webix.Date.equal(value, date))
+                                has = true;
+                        });
+                        if (has == true)
+                            return "day_off";
+                    };
+                });
 
             }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
+        connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + 2 + "/" + employee.id,
+            function (text, data, xhr) {
+                util.messages.showErrorMessage("proslo");
             },
-            setTimeout(function () {
-                $$("employeeVacationInfoDialog").show();
-            }, 0));
+            function (text, data, xhr) {
+                util.messages.showErrorMessage("ne valja");
+            });
+        $$("employeeVacationInfoDialog").show();
+        setTimeout(function () {
+        }, 0);
         var date = new Date();
-        scheduler.setCurrentView();
+        scheduler.config.readonly = true;
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
         scheduler.config.xml_date = "%Y-%m-%d %H:%i";
         scheduler.locale = locale_sr_latin;
         scheduler.init('employeeCalendar', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
+        scheduler.setCurrentView();
 
     }
 };
@@ -1611,4 +1654,13 @@ function animateValue(id, start, end, duration) {
     }, stepTime);
 }
 
+function getDatesFromRange(startDate, stopDate) {
+    var dateArray = new Array();
+    var currentDate = startDate;
+    do {
+        dateArray.push(new Date(currentDate));
+        currentDate = currentDate.addDays(1);
+    } while (currentDate <= stopDate);
 
+    return dateArray;
+}

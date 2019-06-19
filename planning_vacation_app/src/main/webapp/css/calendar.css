@@ -20,7 +20,20 @@
     background-color: #0d8bf2;
 }
 
-
+/* Boja za dane godisnjeg odmora */
+.vacation_day .dhx_month_head{
+    background-color: #2ecb70;
+}
+.vacation_day .dhx_month_body{
+    background-color: #2ecb70;
+}
+/* Boja za slobodne dane  */
+.day_off .dhx_month_head{
+    background-color: #1CA1C1;
+}
+.day_off .dhx_month_body{
+    background-color: #1CA1C1;
+}
 
 .vacationButton {
     background-color: #268fd5  !important;
