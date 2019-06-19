@@ -6,8 +6,9 @@ import com.telegroupltd.planning_vacation_app.controller.genericController.Gener
 import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 import com.telegroupltd.planning_vacation_app.model.Leaves;
+import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
-import com.telegroupltd.planning_vacation_app.session.UserBean;
+import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -15,8 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +26,7 @@ import java.util.Objects;
 @Scope("request")
 public class LeaveRequestController extends GenericHasActiveController<LeaveRequest, Integer> {
     private final LeaveRequestRepository leaveRequestRepository;
+    private final UserRepository userRepository;
 
     @Value("Dodavanje nije moguće")
     private String badRequestInsert;
@@ -38,9 +38,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     private String badRequestDelete;
 
     @Autowired
-    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository) {
+    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository) {
         super(leaveRequestRepository);
         this.leaveRequestRepository = leaveRequestRepository;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -90,7 +91,26 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
-        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUser().getId());
+        List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUser().getId());
+        List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(),(byte)1);
+        if(userBean.getUser().getUserGroupId()==5) {
+            for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
+                if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != userBean.getUser().getSectorId()){
+                    users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
+                }
+
+            }
+            return leaveRequestUserLeaveRequestStatuses;
+        }
+        else {
+            for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
+                if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != null){
+                    users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
+                }
+
+            }
+            return leaveRequestUserLeaveRequestStatuses;
+        }
     }
 
     @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
