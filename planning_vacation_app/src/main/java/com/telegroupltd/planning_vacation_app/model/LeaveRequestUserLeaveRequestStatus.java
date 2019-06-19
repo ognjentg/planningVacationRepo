@@ -21,7 +21,8 @@ import java.util.Date;
                         @ColumnResult(name = "last_name",type = String.class),
                         @ColumnResult(name = "status_name", type = String.class),
                         @ColumnResult(name = "date_from"),
-                        @ColumnResult(name = "date_to")
+                        @ColumnResult(name = "date_to"),
+                        @ColumnResult(name = "type_name", type = String.class)
                 }
         )
 )
@@ -33,8 +34,9 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private String lastName;
     private Timestamp dateFrom;
     private Timestamp dateTo;
+    private String typeName;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment,Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment,Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo, String typeName) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
@@ -45,6 +47,7 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
         this.lastName = lastName;
         this.setDateFrom(dateFrom == null ? null : new Timestamp(dateFrom.getTime()));
         this.setDateTo(dateTo == null ? null : new Timestamp(dateTo.getTime()));
+        this.typeName=typeName;
     }
 
     public String getStatusName() {
@@ -85,5 +88,13 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
 
     public void setDateTo(Timestamp dateTo) {
         this.dateTo = dateTo;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
     }
 }

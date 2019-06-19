@@ -8,7 +8,7 @@ public interface LeaveRequestRepositoryCustom {
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformation(Integer id);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id,Integer key);
     void updateLeaveRequestStatusRejected(Integer leaveRequestId, String approverComment);
-    void updateLeaveRequestStatusApproved(Integer leaveRequestId);
+    void updateLeaveRequestStatusApproved(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id);
 }

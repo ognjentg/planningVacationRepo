@@ -119,10 +119,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
     }
 
-    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/type/{leaveRequestTypeId}/paid/{paid}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId) {
-        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId);
+
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid){
+        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUser().getId());
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
