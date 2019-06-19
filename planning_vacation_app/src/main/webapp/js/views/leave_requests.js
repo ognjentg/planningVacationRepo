@@ -35,8 +35,8 @@ leaveRequestsView = {
 
                                 if (name === 4) {
                                     $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").hideColumn("accept");
-                                    $$("leave_requestDT").hideColumn("reject");
+                                    $$("leave_requestDT").showColumn("accept");
+                                    $$("leave_requestDT").showColumn("reject");
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                                     $$("leave_requestDT").detachEvent("onBeforeDelete")
@@ -191,10 +191,10 @@ leaveRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject"&&(userData.userGroupId === 2 || userData.userGroupId === 3 || userData.userGroupId === 5)) {
+                            if (action === "reject"&&(userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" || userData.getUserData().key === "menadzer")) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
-                            } else if (action === "accept"&&(userData.userGroupId === 2 || userData.userGroupId === 3 || userData.userGroupId === 5)) {
+                            } else if (action === "accept"&&(userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" || userData.getUserData().key === "menadzer")) {
 
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
@@ -395,11 +395,9 @@ leaveRequestsView = {
                     cols: [{
                         view: "label",
                         label: "Datum od:"
-                    }, {}, {
+                    }, {},{
                         view: "label",
-                        width:200,
-                        id: "dateFromId",
-                        format: webix.Date.dateToStr("%d.%m.%Y.")
+                        id: "dateFromId"
                     }]
 
                 },{
@@ -408,11 +406,9 @@ leaveRequestsView = {
                         view: "label",
                         label: "Datum do:"
 
-                    }, {}, {
+                    }, {},{
                         view: "label",
-                        width:200,
-                        id: "dateToId",
-                        format: webix.Date.dateToStr("%d.%m.%Y.")
+                        id: "dateToId"
                     }]
                 }
             ]
@@ -430,9 +426,8 @@ leaveRequestsView = {
                 $$("lname").setValue(user.lastName);
                 $$("status").setValue(user.statusName);
                 $$("comment").setValue(user.senderComment);
-
-                $$("dateFromId").setValue(new Date(user.dateFrom));
-                $$("dateToId").setValue(new Date(user.dateTo));
+                $$("dateFromId").setValue(new String(user.dateFrom.substr(0,10)));
+                $$("dateToId").setValue(new String(user.dateTo.substr(0,10)));
                 setTimeout(function () {
                     $$("leaveRequestInfoId").show();
                 }, 0);
@@ -456,4 +451,5 @@ leaveRequestsView = {
             });
         util.dismissDialog("rejectRequestInfoId");
     }
+
 };
