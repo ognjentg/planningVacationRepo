@@ -70,8 +70,7 @@ leaveRequestsView = {
                                 template: '#name#',
                                 url: "/hub/leave_request_status",
                             }
-                        }
-                        ,
+                        },
                         required: true,
                     }]
                 }, {
@@ -159,14 +158,22 @@ leaveRequestsView = {
                         header: "&nbsp;",
                         hidden:true,
                         width: 35,
-                        template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>"
-
+                        template: function(obj) {
+                            if(obj.statusName === "Na čekanju") {
+                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
+                            }
+                            else return "";
+                        }
                     }, {
                         id: "reject",
                         header: "&nbsp;",
                         width: 35,
                         hidden:true,
-                        template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>"
+                        template: function(obj) {
+                            if(obj.statusName === "Na čekanju")
+                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
+                            else return "";
+                        }
 
                     }, {
                         id: "view",
@@ -191,30 +198,32 @@ leaveRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject"&&(userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" || userData.getUserData().key === "menadzer")) {
+                            if (action === "reject"&&(userData.keyUserGroup === "admin" || userData.keyUserGroup === "direktor" || userData.keyUserGroup === "menadzer")) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
-                            } else if (action === "accept"&&(userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" || userData.getUserData().key === "menadzer")) {
+                            } else if (action === "accept"&&(userData.keyUserGroup === "admin" || userData.keyUserGroup === "direktor" || userData.keyUserGroup === "menadzer")) {
 
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
                                         var paidLeaveBox=(webix.copy(leaveRequestsView.paidLeaveConfirm("Tip odsustva: ")));
-                                        paidLeaveBox.callback = function (result) {
-                                            if (result == 1) {
+                                        paidLeaveBox.callback = function (result1) {
+                                            var type=result1?1:2; //vraca tip odsustva(placeno(1),neplaceno(2))
+                                            var paid=result1?1:0;//setovanje boolean-a(placeno(1),neplaceno(0))
 
-                                            }else if(result==2){}
+                                                var item = $$("leave_requestDT").getItem(id);
+                                                $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                                connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id+"/"+type+"/"+paid, function (text, data, xhr) {
+                                                    $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                                                    util.messages.showMessage("Zahtjev odobren");
+                                                }, function (text, data, xhr) {
+                                                    util.messages.showErrorMessage(text);
+                                                }, item);
+                                            }
+
                                         };
                                         webix.confirm(paidLeaveBox);
-                                        var item = $$("leave_requestDT").getItem(id);
-                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                        connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id, function (text, data, xhr) {
-                                            $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-                                            util.messages.showMessage("Zahtjev odobren");
-                                        }, function (text, data, xhr) {
-                                            util.messages.showErrorMessage(text);
-                                        }, item);
-                                    }
+
                                 };
                                 webix.confirm(acceptLeaveBox);
                             } else if (action === "view") {
@@ -442,10 +451,10 @@ leaveRequestsView = {
 
         comment=$$("rejectComment").getValue();
 
-       connection.sendAjax("PUT",
+        connection.sendAjax("GET",
             "/hub/leave_request/updateLeaveRequestStatusRejected/" + id+ "/comment/" + comment,function (text, data, xhr) {
-               $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-               util.messages.showMessage("Zahtjev odbijen");}
+                $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                util.messages.showMessage("Zahtjev odbijen");}
             , function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
