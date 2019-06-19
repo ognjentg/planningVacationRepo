@@ -420,48 +420,14 @@ var calendarView = {
     showSendDialog: function () {
         if($$("periodsDT").count() == 0){
             util.messages.showErrorMessage("Nisu odabrani dani za odsustvo");
-            //return;
+            return;
         }
-        var form = $$("createRequestForm");
-        var leaveRequest = {
-            senderUserId: userData.id,
-            leaveTypeId: 1,
-            leaveRequestStatusId: 1,
-            companyId: userData.companyId,
-            senderComment: $$("comment").getValue(),
-            category: "Godisnji"
-        }
-        connection.sendAjax("POST", "hub/leave_request/",
-            function (text, data, xhr) {
-                if (text) {
-                    var tempData = JSON.parse(text);
-                    console.log("TEXT" + text + " ID: " + tempData.id);
-                    var dates = $$("periodsDT").serialize();
-                    console.log("DATA " + dates[0].date);
-                    dates.forEach(function (value) {
-                        var date ={
-                            date: value.date,
-                            leaveRequestId: tempData.id,
-                            canceled: 0,
-                            paid: 1
-                        }
-                        connection.sendAjax("POST", "hub/leave_request_date/",
-                            function (text, data, xhr) {
-                                if (text) {
-
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                            }, date);
-                    })
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
-                    console.log("return " + data + " " + data.category);
-                } else
-                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-            }, function (text, data, xhr) {
-                util.messages.showErrorMessage(text);
-            }, leaveRequest);
+        if(selectedButton == 1)
+            calendarView.sendVacationLeaveRequest();
+        //else if(selectedButton == 2)
+            //Leave
+        //else if(selectedButton == 3)
+            //Bolovanje
 
 /*
         if (form.validate()) {
@@ -480,14 +446,102 @@ var calendarView = {
 
  */
 },
+
+sendVacationLeaveRequest: function(){
+    var form = $$("createRequestForm");
+    var leaveRequest = {
+        senderUserId: userData.id,
+        leaveTypeId: 1,
+        leaveRequestStatusId: 1,
+        companyId: userData.companyId,
+        senderComment: $$("comment").getValue(),
+        category: "Godisnji"
+    }
+    connection.sendAjax("POST", "hub/leave_request/",
+        function (text, data, xhr) {
+            if (text) {
+                var tempData = JSON.parse(text);
+                var dates = $$("periodsDT").serialize();
+                dates.forEach(function (value) {
+                    var date ={
+                        date: value.date,
+                        leaveRequestId: tempData.id,
+                        canceled: 0,
+                        paid: 1
+                    }
+                    connection.sendAjax("POST", "hub/leave_request_date/",
+                        function (text, data, xhr) {
+                            if (text) {
+
+                            } else
+                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                        }, date);
+                })
+                util.messages.showMessage("Zahtjev uspjesno poslan");
+                calendarView.deleteCurrentRequest();
+            } else
+                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+        }, function (text, data, xhr) {
+            util.messages.showErrorMessage(text);
+        }, leaveRequest);
+},
+    deleteCurrentRequest: function () {
+        $$("periodsDT").serialize().forEach(function (value) {
+            var id = value.id;
+            var value = $$("periodsDT").getItem(id).date;
+            var date = new Date(value + "T22:00:00.000Z");
+            var index = selectedDays.indexOf(date.getTime());
+            selectedDays.splice(index, 1);
+        })
+        $$("periodsDT").clearAll();
+        scheduler.setCurrentView();
+        $$("comment").setValue("");
+    },
+
     vacation: function(){
-        selectedButton=1;
+        if(selectedButton != 1 && $$("periodsDT").count() > 0){
+            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
+            delBox.callback = function (result) {
+                if(result == 1){
+                    selectedButton=1;
+                    calendarView.deleteCurrentRequest();
+                }
+            }
+            webix.confirm(delBox);
+        }
+        else
+            selectedButton=1;
+
     },
     leave: function(){
-        selectedButton=2;
-    },
+        if(selectedButton != 2 && $$("periodsDT").count() > 0) {
+            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
+            delBox.callback = function (result) {
+                if(result == 1){
+                    selectedButton=2;
+                    calendarView.deleteCurrentRequest();
+                }
+            }
+            webix.confirm(delBox);
+        }
+        else
+            selectedButton=2;
+        },
     sickLeave: function () {
-        selectedButton=3;
+        if(selectedButton != 3 && $$("periodsDT").count() > 0){
+            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
+            delBox.callback = function (result) {
+                if(result == 1){
+                    selectedButton=3;
+                    calendarView.deleteCurrentRequest();
+                }
+            }
+            webix.confirm(delBox);
+        }
+        else
+            selectedButton=3;
     }
 }
 
