@@ -7,11 +7,11 @@ import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 import com.telegroupltd.planning_vacation_app.model.Leaves;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
+import com.telegroupltd.planning_vacation_app.session.UserBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RequestMapping(value = "hub/leave_request")
-@Controller
+@RestController
 @Scope("request")
 public class LeaveRequestController extends GenericHasActiveController<LeaveRequest, Integer> {
     private final LeaveRequestRepository leaveRequestRepository;
@@ -113,18 +113,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUser().getId(), key);
     }
 
+
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
     public @ResponseBody
     void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
     }
 
-    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/type/{leaveRequestTypeId}/paid/{paid}", method = RequestMethod.PUT)
-    public @ResponseBody
 
-    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid){
-        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUser().getId());
+    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) {
+        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId, leaveRequestTypeId, paid, userBean.getUser().getId());
     }
+
+
+
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
     public @ResponseBody

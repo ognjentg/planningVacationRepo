@@ -228,10 +228,10 @@ var sectorView = {
 
                         console.log(id["column"]);
                         var action = id["column"];
-                        if (action === "delete" && userData.userGroupId === 4) {
+                        if (action === "delete" && userData.getUserData().key === "sekretar") {
                             alert("Niste autorizovani da izbrišete sektor!");
                         }
-                        if (action === "delete" && (userData.userGroupId === 2 || userData.userGroupId === 3 )) {
+                        if (action === "delete" && (userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" )) {
 
                             var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
                             delBox.callback = function (result) {
@@ -272,11 +272,11 @@ var sectorView = {
                             };
                             webix.confirm(delBox);
                         }
-                        if (action === "edit" && userData.userGroupId === 4) {
+                        if (action === "edit" && userData.getUserData().key === "sekretar") {
                             alert("Niste autorizovani da mijenjate sektor!");
                         }
 
-                        if (action === "edit" && (userData.userGroupId === 2 || userData.userGroupId === 3 )) {
+                        if (action === "edit" && (userData.getUserData().key === "admin" || userData.getUserData().key === "direktor" )) {
 
                             sectorView.showEditDialog($$("sectorDT").getItem(id.row));
 
@@ -361,7 +361,7 @@ var sectorView = {
     },
 
     selectPanel: function(){
-        console.log(userData.userGroupId === 2 || userData.userGroupId ==3 || userData.userGroupId==4);
+        console.log(userData.getUserData().key === "admin" || userData.getUserData().key =="direktor" || userData.getUserData().key=="sekretar");
 
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
@@ -370,7 +370,7 @@ var sectorView = {
         $$("main").addView(webix.copy(panelCopy));
 
         $$("deleteSectorsBtn").disable();
-        if(userData.userGroupId == 4){
+        if(userData.getUserData().key == "sekretar"){
             $$("sectorDT").hideColumn("delete");
             $$("sectorDT").hideColumn("edit");
             $$("sectorDT").hideColumn("status");
@@ -423,7 +423,7 @@ var sectorView = {
                             sectorView.showEditDialog($$("sectorDT").getItem(context.id.row));
                             break;
                         case "2":
-                            if (userData.userGroupId === 4) {
+                            if (userData.getUserData().key === "sekretar") {
                                 alert("Niste autorizovani da izbrišete sektor!");
                                 break;
                             }
@@ -892,7 +892,7 @@ function refreshSectorData() {
                     }
                     table.hideProgress();
 
-                    if(userData.userGroupId == 4){
+                    if(userData.getUserData().key == "sekretar"){
                         $$("sectorDT").hideColumn("delete");
                         $$("sectorDT").hideColumn("edit");
                         $$("sectorDT").hideColumn("status");
