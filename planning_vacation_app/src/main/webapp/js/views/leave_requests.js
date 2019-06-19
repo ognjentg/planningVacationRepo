@@ -68,7 +68,7 @@ leaveRequestsView = {
                         options: {
                             body: {
                                 template: '#name#',
-                                url: "/hub/leave_request_status",
+                                url: "/hub/leave_request_status"
                             }
                         },
                         required: true,
@@ -156,10 +156,10 @@ leaveRequestsView = {
                     }, {
                         id: "accept",
                         header: "&nbsp;",
-                        hidden:true,
                         width: 35,
                         template: function(obj) {
-                            if(obj.statusName === "Na čekanju") {
+                            var pom=obj.statusName;
+                            if((pom != "Odobreno")&&(pom!="Odbijeno")) {
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
                             }
                             else return "";
@@ -168,9 +168,9 @@ leaveRequestsView = {
                         id: "reject",
                         header: "&nbsp;",
                         width: 35,
-                        hidden:true,
                         template: function(obj) {
-                            if(obj.statusName === "Na čekanju")
+                            var pom=obj.statusName;
+                            if((pom != "Odobreno")&&(pom!="Odbijeno"))
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                             else return "";
                         }
@@ -205,11 +205,12 @@ leaveRequestsView = {
 
                                 var acceptLeaveBox = (webix.copy(leaveRequestsView.acceptLeaveConfirm("zahtjev za odmor: ")));
                                 acceptLeaveBox.callback = function (result) {
-                                    if (result == 1) {
+                                    if (result) {
                                         var paidLeaveBox=(webix.copy(leaveRequestsView.paidLeaveConfirm("Tip odsustva: ")));
                                         paidLeaveBox.callback = function (result1) {
                                             var type=result1?1:2; //vraca tip odsustva(placeno(1),neplaceno(2))
                                             var paid=result1?1:0;//setovanje boolean-a(placeno(1),neplaceno(0))
+                                            console.log(type+"ana"+paid);
 
                                                 var item = $$("leave_requestDT").getItem(id);
                                                 $$("leave_requestDT").detachEvent("onBeforeDelete");
@@ -220,12 +221,13 @@ leaveRequestsView = {
                                                     util.messages.showErrorMessage(text);
                                                 }, item);
                                             }
-
-                                        };
                                         webix.confirm(paidLeaveBox);
+                                        };
+
 
                                 };
                                 webix.confirm(acceptLeaveBox);
+                                refreshOnData();
                             } else if (action === "view") {
                                 var viewLeaveBox = (webix.copy(leaveRequestsView.showLeaveRequestInfo(id)));
                             }
@@ -449,7 +451,7 @@ leaveRequestsView = {
     saveRejectedLeaveRequest: function () {
         id=$$("leave_requestDT").getSelectedId();
 
-        comment=$$("rejectComment").getValue();
+        comment=$$("rejectComment").getValue()?$$("rejectComment").getValue():"";
 
         connection.sendAjax("GET",
             "/hub/leave_request/updateLeaveRequestStatusRejected/" + id+ "/comment/" + comment,function (text, data, xhr) {
@@ -462,3 +464,63 @@ leaveRequestsView = {
     }
 
 };
+function refreshOnData() {
+    console.log("refresh data");
+
+
+    webix.extend($$("leave_requestDT"), webix.ProgressBar);
+
+    var table = webix.$$("leave_requestDT");
+    var comboItemId = $$("filterLeaveRequestsComboBox").getValue();
+    var URLCurrentUrl = null;
+
+    if(comboItemId == 4){
+        URLCurrentUrl = URLAllLeaveRequests;
+    } else {
+        URLCurrentUrl = URLByLeaveRequestStatus;
+    }
+
+    if(comboItemId == 4) {
+        webix.ajax(URLCurrentUrl, {
+
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl);
+                        table.refresh();
+                    }
+                }
+            }
+        });
+    } else {
+        webix.ajax(URLCurrentUrl+comboItemId, {
+
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl+comboItemId);
+                        table.refresh();
+                    }
+                }
+            }
+        });
+    }
+}
