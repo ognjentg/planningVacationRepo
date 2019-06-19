@@ -361,7 +361,7 @@ var sectorView = {
     },
 
     selectPanel: function(){
-        console.log(userData.keyUserGroup === "admin" || userData.keyUserGroup =="direktor" || userData.keyUserGroup=="sekretar");
+        console.log(userData.keyUserGroup === "admin" || userData.keyUserGroup ==="direktor" || userData.keyUserGroup=="sekretar");
 
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
@@ -370,7 +370,7 @@ var sectorView = {
         $$("main").addView(webix.copy(panelCopy));
 
         $$("deleteSectorsBtn").disable();
-        if(userData.keyUserGroup == "sekretar"){
+        if(userData.keyUserGroup === "sekretar"){
             $$("sectorDT").hideColumn("delete");
             $$("sectorDT").hideColumn("edit");
             $$("sectorDT").hideColumn("status");
@@ -892,7 +892,7 @@ function refreshSectorData() {
                     }
                     table.hideProgress();
 
-                    if(userData.keyUserGroup == "sekretar"){
+                    if(userData.keyUserGroup === "sekretar"){
                         $$("sectorDT").hideColumn("delete");
                         $$("sectorDT").hideColumn("edit");
                         $$("sectorDT").hideColumn("status");

@@ -236,7 +236,7 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    if (userData.keyUserGroup == "superadmin") {
+                    if (userData.keyUserGroup === "superadmin") {
                         companyData = null;
                         showApp();
                     } else {
@@ -430,7 +430,7 @@ var showApp = function () {
         {id: "4", value: "Odjava", icon: "sign-out"}
     ]
 
-    if (userData.keyUserGroup == "admin" || userData.keyUserGroup == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+    if (userData.keyUserGroup === "admin" || userData.keyUserGroup === "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
         for(var i = 0; i < companyInfoItems.length; i++)
         settingsMenu.push(companyInfoItems[i]);
@@ -841,7 +841,7 @@ console.log($$("loginForm").getValues());
                    userData = data.json();
                     console.log(userData.userGroupId);
 
-                    if (userData.keyUserGroup == "superadmin") {
+                    if (userData.keyUserGroup === "superadmin") {
                         companyData = null;
                         showApp();
                     } else {

@@ -1315,7 +1315,7 @@ var companyView = {
 
             if (userData.userGroupId === 2) {
 
-            if (userData.keyUserGroup == "admin") {
+            if (userData.keyUserGroup === "admin") {
 
                 $$("changeCompany").enable();
                 util.dismissDialog('adminChangeCompanyDialog');

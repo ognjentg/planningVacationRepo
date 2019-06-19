@@ -1221,7 +1221,7 @@ usergroupView = {
                             break;
                         }
                         case "4": {
-                            if ($$("usergroupDT").getSelectedItem().position == "zaposleni")
+                            if ($$("usergroupDT").getSelectedItem().position === "zaposleni")
                                 usergroupView.showChangeSectorOfSelectedDialog();
                             else
                                 util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
