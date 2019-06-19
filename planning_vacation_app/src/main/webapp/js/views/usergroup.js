@@ -10,7 +10,7 @@ var selectedManager = [];
 usergroupView = {
     getPanel: function () {
         console.log("uslo u usergroupview");
-        switch (userData.getUserData().key) {
+        switch (userData.key) {
             case "admin":
                 user = "admin";
                 break;
