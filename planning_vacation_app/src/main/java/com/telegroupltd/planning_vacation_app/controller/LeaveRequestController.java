@@ -8,10 +8,7 @@ import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequest
 import com.telegroupltd.planning_vacation_app.model.Leaves;
 import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
-<<<<<<< HEAD
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
-=======
->>>>>>> parent of 010e66e... Changed checking if userGroupId is equal to some number. Instead, now it is beeing checked if key userGroup is equal to some string. Still problems with function for approving and rejecting, I have a 405 error. Looking for solution.
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -137,25 +134,16 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUser().getId(), key);
     }
 
-<<<<<<< HEAD
 
-    @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.GET)
-=======
+
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
->>>>>>> parent of 010e66e... Changed checking if userGroupId is equal to some number. Instead, now it is beeing checked if key userGroup is equal to some string. Still problems with function for approving and rejecting, I have a 405 error. Looking for solution.
     public @ResponseBody
     void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
     }
 
-<<<<<<< HEAD
-
-    @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
-=======
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/type/{leaveRequestTypeId}/paid/{paid}", method = RequestMethod.PUT)
->>>>>>> parent of 010e66e... Changed checking if userGroupId is equal to some number. Instead, now it is beeing checked if key userGroup is equal to some string. Still problems with function for approving and rejecting, I have a 405 error. Looking for solution.
     public @ResponseBody
-
     void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid){
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUser().getId());
     }
