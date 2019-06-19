@@ -248,8 +248,8 @@ var companyView = {
                 checkValue: 'on',
                 uncheckValue: 'off',
                 template: "{common.checkbox()}",
-                width: 35,
-                cssFormat: checkBoxStatus
+                width: 35
+             //   cssFormat: checkBoxStatus
             },
 
                 {
@@ -264,8 +264,8 @@ var companyView = {
                     id: "id",
                     hidden: true,
                     header: "#",
-                    width: 50,
-                    cssFormat: checkBoxStatus,
+                    width: 50
+                //    cssFormat: checkBoxStatus,
                 },
 
                 {
@@ -277,7 +277,7 @@ var companyView = {
                         "font-weight": "bold",
                         "color": "#000000"
                     },
-                    cssFormat: checkBoxStatus,
+                 //   cssFormat: checkBoxStatus,
                     fillspace: true, template: function (obj) {
                         if (obj.logo == null) {
                             return "Nema slike"
@@ -292,7 +292,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                    cssFormat: checkBoxStatus,
+                 //   cssFormat: checkBoxStatus,
                     header: [
                         "Naziv kompanije", {
                             content: "textFilter", value: ""
@@ -304,7 +304,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                    cssFormat: checkBoxStatus,
+                //    cssFormat: checkBoxStatus,
                     header: [
                         "PIN kompanije", {
                             content: "textFilter", value: ""
@@ -316,7 +316,7 @@ var companyView = {
                     id: "delete",
                     header: "&nbsp;",
                     width: 35,
-                    cssFormat: checkBoxStatus,
+                 //   cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                 },
@@ -324,7 +324,7 @@ var companyView = {
                     id: "edit",
                     header: "&nbsp;",
                     width: 35,
-                    cssFormat: checkBoxStatus,
+                //    cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                 },
 
@@ -332,7 +332,7 @@ var companyView = {
                     id: "admins",
                     header: "&nbsp;",
                     width: 35,
-                    cssFormat: checkBoxStatus,
+                 //   cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
                 }
                 // {
@@ -595,30 +595,31 @@ var companyView = {
                                 // alert("Niste autorizovani da izbrišete kompaniju!");
                                 util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                            if (userData.userGroupId == 2) {
-                                alert("Niste autorizovani da izbrišete kompaniju!");
+                                if (userData.userGroupId == 2) {
+                                    alert("Niste autorizovani da izbrišete kompaniju!");
 
+                                    break;
+                                }
+                                var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                                delBox.callback = function (result) {
+                                    if (result === 1) {
+                                        var item = $$("companyDT").getItem(context.id.row);
+                                        $$("companyDT").detachEvent("onBeforeDelete");
+                                        connection.sendAjax("DELETE", "hub/company/" + item.id, function (text, data, xhr) {
+                                            if (text) {
+                                                $$("companyDT").remove(context.id.row);
+                                                util.messages.showMessage("Uspjesno uklanjanje");
+                                                animateValue($$("t1"), 0, companies.length, 1000);
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, item);
+
+                                    }
+                                };
+                                webix.confirm(delBox);
                                 break;
                             }
-                            var delBox = (webix.copy(commonViews.deleteConfirm("company")));
-                            delBox.callback = function (result) {
-                                if (result === 1) {
-                                    var item = $$("companyDT").getItem(context.id.row);
-                                    $$("companyDT").detachEvent("onBeforeDelete");
-                                    connection.sendAjax("DELETE", "hub/company/" + item.id, function (text, data, xhr) {
-                                        if (text) {
-                                            $$("companyDT").remove(context.id.row);
-                                            util.messages.showMessage("Uspjesno uklanjanje");
-                                            animateValue($$("t1"), 0, companies.length, 1000);
-                                        }
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, item);
-
-                                }
-                            };
-                            webix.confirm(delBox);
-                            break;
                     }
                 }
             }
@@ -1327,7 +1328,7 @@ var companyView = {
     }
 
 
-};
+},
 
 function animateValue(id, start, end, duration) {
     console.log("counter start");
