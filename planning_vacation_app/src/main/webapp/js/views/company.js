@@ -199,6 +199,7 @@ var companyView = {
                     icon: "fa fa-trash",
                     label: "Brišite označene",
                     width: 150,
+                    disabled:true,
                     css: "companyButton",
                     click: deleteSelected
 
@@ -368,11 +369,18 @@ var companyView = {
                     console.log(state);
                     if (state === "on") {
                         selectedItemsCheckBox.push(rowId);
+                        $$("delete-selected").enable();
                     } else {
                         var index = selectedItemsCheckBox.indexOf(rowId);
                         if (index > -1) {
                             selectedItemsCheckBox.splice(index, 1);
                         }
+                    }
+
+                    if (selectedItemsCheckBox.length > 0 ) {
+                        $$("delete-selected").enable();
+                    }  else {
+                        $$("delete-selected").disable();
                     }
 
 
@@ -385,12 +393,13 @@ var companyView = {
                     console.log(id["column"]);
                     var action = id["column"];
                     if (action === "delete" && userData.userGroupId === 2) {
-                        alert("Niste autorizovani da izbrišete kompaniju!");
+                        // alert("Niste autorizovani da izbrišete kompaniju!");
+                        util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
                     }
                     if (action === "delete" && userData.userGroupId === 1) {
                         var delBox = (webix.copy(commonViews.deleteConfirm("company")));
                         delBox.callback = function (result) {
-                            if (result == 1) {
+                            if (result === 1) {
                                 var item = $$("companyDT").getItem(id);
                                 $$("companyDT").detachEvent("onBeforeDelete");
                                 connection.sendAjax("DELETE", "hub/company/" + id, function (text, data, xhr) {
@@ -577,12 +586,13 @@ var companyView = {
                             break;
                         case "2":
                             if (userData.userGroupId === 2) {
-                                alert("Niste autorizovani da izbrišete kompaniju!");
+                                // alert("Niste autorizovani da izbrišete kompaniju!");
+                                util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
                                 break;
                             }
                             var delBox = (webix.copy(commonViews.deleteConfirm("company")));
                             delBox.callback = function (result) {
-                                if (result == 1) {
+                                if (result === 1) {
                                     var item = $$("companyDT").getItem(context.id.row);
                                     $$("companyDT").detachEvent("onBeforeDelete");
                                     connection.sendAjax("DELETE", "hub/company/" + item.id, function (text, data, xhr) {
@@ -765,7 +775,8 @@ var companyView = {
         var form = $$("addCompanyForm");
 
         if (!isThereInternetConnection()) {
-            alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+            // alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+            util.messages.showMessage("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
         } else {
 
             var validation = form.validate();
@@ -787,17 +798,20 @@ var companyView = {
 
                         util.dismissDialog('addCompanyDialog');
                         $$("addCompanyBtn").enable();
-                        alert("Kompanija uspješno dodata.");
+                        // alert("Kompanija uspješno dodata.");
+                        util.messages.showMessage("Kompanija uspješno dodata.");
                         animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
                         tmpCompaniesLength = tmpCompaniesLength + 1;
 
                     }
                 }, function (text, data, xhr) {
                     if (text.includes("pin_UNIQUE")) {
-                        alert("Izabrani PIN već postoji. Unesite drugi PIN.");
+                        // alert("Izabrani PIN već postoji. Unesite drugi PIN.");
+                        util.messages.showMessage("Izabrani PIN već postoji. Unesite drugi PIN.");
                     }
                     if (text.includes("name_UNIQUE")) {
-                        alert("Izabrani naziv već postoji. Unesite drugi naziv.");
+                        // alert("Izabrani naziv već postoji. Unesite drugi naziv.");
+                        util.messages.showMessage("Izabrani naziv već postoji. Unesite drugi naziv.");
                     }
 
                 }, newCompany);
@@ -1276,6 +1290,7 @@ var companyView = {
             }
 
             console.log(newCompany.id);
+
             connection.sendAjax("PUT", "hub/company/" + newCompany.id,
                 function (text, data, xhr) {
                     if (text) {
@@ -1285,9 +1300,9 @@ var companyView = {
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    alert(text);
+                    // alert(text);
                 }, newCompany);
-            if (userData.userGroupId == 2) {
+            if (userData.userGroupId === 2) {
                 $$("changeCompany").enable();
                 util.dismissDialog('adminChangeCompanyDialog');
             }
@@ -1302,6 +1317,14 @@ var companyView = {
 
 function animateValue(id, start, end, duration) {
     console.log("counter start");
+
+    if (end === 0) {
+
+        id.setHTML(`<p>${end}</p>`);
+
+        return;
+    }
+
     var range = end - start;
     var current = start;
     var increment = end > start ? 1 : -1;
@@ -1336,7 +1359,9 @@ function refreshData() {
         error: function (text, data, xhr) {
 
             if (xhr.status !== 200) {
-                alert("Nema dostupnih podataka! Provjerite internet konekciju.");
+                // alert("Nema dostupnih podataka! Provjerite internet konekciju.");
+                util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekciju.");
+
                 table.hideProgress();
             }
 
@@ -1422,13 +1447,13 @@ function deleteSelected() {
 
     if (selectedItemsCheckBox.length) {
 
-        alert(selectedItemsCheckBox);
+        // alert(selectedItemsCheckBox);
 
         var delBox = (webix.copy(commonViews.deleteConfirm("company")));
 
         delBox.callback = function (result) {
 
-            if (result == 1) {
+            if (result === 1) {
 
                 $$("companyDT").detachEvent("onBeforeDelete");
 
@@ -1460,7 +1485,8 @@ function deleteSelected() {
 
     } else {
 
-        alert("Nema selektovanih kompanija.");
+        // alert("Nema selektovanih kompanija.");
+        util.messages.showErrorMessage("Nema selektovanih kompanija.");
     }
 
 

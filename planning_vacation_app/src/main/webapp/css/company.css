@@ -211,6 +211,27 @@
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
 }
 
+.fa-users {
+    -webkit-transform: rotate(0deg);
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+
+.webix_el_box :hover .fa-users {
+    -webkit-transform: rotate(360deg);
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+
+.fa-user {
+    -webkit-transform: rotate(0deg);
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+
+.webix_el_box :hover .fa-user {
+    -webkit-transform: rotate(360deg);
+    -webkit-transition: -webkit-transform 0.25s ease-in-out;
+}
+
+
 /*.webix_column > div.webix_cell_select, .webix_column > div.webix_column_select, .webix_column > div.webix_row_select,*/
 /*.webix_column > span.webix_icon fa-trash-o, .webix_column > span.webix_cell_select {*/
 /*color: #fff;*/
@@ -248,4 +269,12 @@
 .my_style {
     font-weight:bold;
     color: #000000;
+}
+
+
+/* dstyle for disable manager in combo */
+
+.webix_list_item.disabled{
+    background: #eee;
+    color: #aaa;
 }

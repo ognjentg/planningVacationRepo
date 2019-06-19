@@ -145,8 +145,6 @@ usergroupView = {
                                 //'onItemClick': function(id){
                                 sectorID = id;
                                 if (sectorID == -1) {
-                                    $$("addUserButton").disable();
-                                } else {
                                     $$("addUserButton").enable();
                                 }
 
@@ -423,6 +421,18 @@ usergroupView = {
                             name: "choseUserGroupCombo",
                             invalidMessage: "Obavezan je izbor radne pozicije.",
                             required: true,
+                            on: {
+                                onChange: function (newId, oldId) {
+
+                                    if (this.getList().getItem(newId).disabled) {
+
+                                        util.messages.showErrorMessage("Nije moguće izabrati menadžera.");
+                                        this.blockEvent();
+                                        oldId ? this.setValue("") : this.setValue(oldId);
+                                        this.unblockEvent();
+                                    }
+                                }
+                            },
                             //options:usergroupView.userGroups
                         }]
                     }, {
@@ -958,6 +968,15 @@ usergroupView = {
             $$("choseUserGroupCombo").show();
             $$("choseUserGroupComboLabel").show();
         }
+
+        if (sectorID === -1) {
+            $$("choseUserGroupCombo").show();
+            $$("choseUserGroupComboLabel").show();
+
+
+
+
+        }
         /*
         if (user !== "superadmin") { //ako nije upitanju superadmin
             $$("check").hide();
@@ -983,6 +1002,12 @@ usergroupView = {
                     });
                 });
                 $$("choseUserGroupCombo").define("options", usergroupView.userGroups);
+
+                if (sectorID === -1) {
+                    $$("choseUserGroupCombo").getList().getItem(5).disabled = true;
+                    $$("choseUserGroupCombo").getList().addCss(5, "disabled");
+                }
+
                 $$("choseUserGroupCombo").refresh();
                 $$("choseUserGroupCombo1").define("options", usergroupView.userGroups);
                 $$("choseUserGroupCombo1").refresh();
@@ -1010,6 +1035,11 @@ usergroupView = {
                 startDate: form.getValues().startDate
             };
             if (sectorID === -2) {
+                newUser.userGroupId = $$("choseUserGroupCombo").getValue();
+                newUser.sectorId = null;
+            }
+
+            if (sectorID === -1) {
                 newUser.userGroupId = $$("choseUserGroupCombo").getValue();
                 newUser.sectorId = null;
             }
@@ -1527,9 +1557,9 @@ usergroupView = {
         scheduler.setCurrentView();
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
-        scheduler.config.xml_date="%Y-%m-%d %H:%i";
+        scheduler.config.xml_date = "%Y-%m-%d %H:%i";
         scheduler.locale = locale_sr_latin;
-        scheduler.init('employeeCalendar',new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
+        scheduler.init('employeeCalendar', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
     }
 };
