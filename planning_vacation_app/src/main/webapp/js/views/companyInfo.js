@@ -281,6 +281,10 @@ var companyInfoView = {
                                     console.log(type);
                                     if (type === "jpg" || type === "png" || type === "jpeg") {
                                         var file = upload.file;
+                                        if(file.size > 1048576){
+                                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                            return false;
+                                        }
                                         var reader = new FileReader();
                                         reader.onload = function (event) {
                                             var img = new Image();

@@ -70,6 +70,10 @@ var profileView = {
                                     on: {
                                         onBeforeFileAdd: function (upload) {
                                             var file = upload.file;
+                                            if(file.size > 1048576){
+                                                util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                                return false;
+                                            }
                                             var reader = new FileReader();
                                             reader.onload = function (ev) {
                                                 $$("preview").setValues({src: ev.target.result});
