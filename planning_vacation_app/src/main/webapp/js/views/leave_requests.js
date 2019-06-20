@@ -108,6 +108,10 @@ leaveRequestsView = {
                         sort: "string",
                         header: "Status",
                     }, {
+                        id: "category",
+                        sort: "string",
+                        header: "Kategorija"
+                    },{
                         id: "typeId",
                         sort: "string",
                         header: "Tip",
@@ -217,6 +221,7 @@ leaveRequestsView = {
                                                 connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id+"/"+type+"/"+paid, function (text, data, xhr) {
                                                     $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                                                     util.messages.showMessage("Zahtjev odobren");
+                                                    console.log("ZAHTJEV JE ODOBREN "+id+type+paid);
                                                 }, function (text, data, xhr) {
                                                     util.messages.showErrorMessage(text);
                                                 }, item);
