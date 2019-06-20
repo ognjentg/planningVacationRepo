@@ -314,15 +314,33 @@ var calendarView = {
 
             if(selectedDays.includes(selectedDate.getTime())) {
                 var index = selectedDays.indexOf(selectedDate.getTime());
-                selectedDays.splice(index, 1);
+                if(selectedButton==3)           // Since sick leave must be continuous, erase all after this point.
+                    selectedDays.splice(index);
+                else
+                    selectedDays.splice(index, 1);
             }
             else if([1,2].indexOf(selectedButton)>=0 &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())){ // Apply not in past rule to vacation and paid leave
                 webix.message("Dan ne smije biti u prošlosti")
             }
-            else if([3].indexOf(selectedButton)>=0 &&
-                !calendarView.ruleset.isContinuous(selectedDate.getTime())){ // Checks if there's a gap between days (ignores non working days)
-                webix.message("Dani moraju biti kontinualni")           // NOTE: This will not stop users from creating non-continuous selections by removing a date from the middle.
+            else if([3].indexOf(selectedButton)>=0){
+                if(selectedDays.length==0) {
+                    selectedDays.push(selectedDate.getTime());
+                }
+                else{
+                    var day = 60*60*24*1000;
+                    var dayDifference = (selectedDate.getTime()- selectedDays[selectedDays.length-1])/day;
+                    var newDay = selectedDays[selectedDays.length-1];
+                    for(var i = 1; i < dayDifference; i++){
+                        newDay += day;
+                        var newDayInWeek = (new Date(newDay)).getDay();
+                        if(nonWorkingDaysInWeek.indexOf(newDayInWeek)==-1&&
+                           nonWorkingDays.indexOf(newDay)==-1)
+                            selectedDays.push(newDay);
+                    }
+                    selectedDays.push(selectedDate.getTime());
+                }
+
             }                                                                
             else if(!selectedDays.includes(selectedDate.getTime()) &&
                 !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
