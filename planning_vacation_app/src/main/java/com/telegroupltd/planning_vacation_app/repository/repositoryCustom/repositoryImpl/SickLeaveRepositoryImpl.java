@@ -42,6 +42,11 @@ public class SickLeaveRepositoryImpl implements SickLeaveRepositoryCustom {
            "JOIN user u ON sl.user_id = u.id "+
            "WHERE sl.active = 1 AND sls.key=?; ";
 
+    private static final String SQL_GET_SICK_LEAVE_FILTERED_BY_USER_ID  = "SELECT sl.id, date_from, date_to,u.first_name,u.last_name, sls.name AS status_name "+
+            "FROM sick_leave sl " + "JOIN sick_leave_status sls ON sl.sick_leave_status_id = sls.id "+
+            "JOIN user u ON sl.user_id = u.id "+
+            "WHERE sl.active = 1 AND u.id=?; ";
+
     @Override
     public List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id) {
        return entityManager.createNativeQuery(SQL_MANAGER,"SickLeaveUserSickLeaveStatusMapping").getResultList();
@@ -50,6 +55,11 @@ public class SickLeaveRepositoryImpl implements SickLeaveRepositoryCustom {
     @Override
     public List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id,Integer key) {
         return entityManager.createNativeQuery(SQL_GET_SICK_LEAVE_FILTERED_BY_SICK_LEAVE_STATUS,"SickLeaveUserSickLeaveStatusMapping").setParameter(1,key).getResultList();
+    }
+
+    @Override
+    public List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredByUserId(Integer id,Integer key) {
+        return entityManager.createNativeQuery(SQL_GET_SICK_LEAVE_FILTERED_BY_USER_ID,"SickLeaveUserSickLeaveStatusMapping").setParameter(1,key).getResultList();
     }
 
     @Override
