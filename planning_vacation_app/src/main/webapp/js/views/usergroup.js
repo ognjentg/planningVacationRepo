@@ -322,10 +322,12 @@ usergroupView = {
                             console.log(id["column"]);
                             var action = id["column"];
                             if ((action === "delete" || action === "sector") && (user === "secretary" || user === "menager")) {
-                                alert("Niste autorizovani da izvršite ovu radnju!");
+                                //alert("Niste autorizovani da izvršite ovu radnju!");
+                                util.messages.showErrorMessage("Niste autorizovani da izvršite ovu radnju!");
                             }
                             if (action === "edit" && user === "secretary") {
-                                alert("Niste autorizovani da izvršite ovu radnju!");
+                                util.messages.showErrorMessage("Niste autorizovani da izvršite ovu radnju!");
+                                //alert("Niste autorizovani da izvršite ovu radnju!");
                             }
                             if (action === "view") {
                                 usergroupView.employeeInfo(id);
@@ -1094,7 +1096,8 @@ usergroupView = {
                         $$("usergroupDT").refresh();
                         usergroupView.refreshDatatable();
                     } else
-                        alert("Greška u dodavanju zaposlenog.");
+                        util.messages.showErrorMessage("Greška u dodavanju zaposlenog.");
+                        //alert("Greška u dodavanju zaposlenog.");
                 }, function (text, data, xhr) {
                     $$("save").enable();
                     util.messages.showErrorMessage(text);
@@ -1197,7 +1200,7 @@ usergroupView = {
                                 util.messages.showErrorMessage("Neuspješna promjena sektora.");
                         }, function (text, data, xhr) {
                             util.messages.showErrorMessage(text);
-                            alert(text);
+                            //alert(text);
                         }, changeSectorInformation);
                 });
                 util.dismissDialog('changeMultipleUsersSectorDialog');
@@ -1462,7 +1465,7 @@ usergroupView = {
                         $$("usergroupDT").remove(id);
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
-                        alert(text);
+                        //alert(text);
                     }, id);
                 var numberOfEmployees = $$("usergroupDT").count();
                 if(numberOfEmployees>0){
@@ -1498,7 +1501,7 @@ usergroupView = {
                                 $$("usergroupDT").remove(element);
                             }, function (text, data, xhr) {
                                 util.messages.showErrorMessage(text);
-                                alert(text);
+                                //alert(text);
                             }, element);
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
@@ -1696,7 +1699,8 @@ function getUserGroups() {
         error: function (text, data, xhr) {
 
             if (xhr.status != 200) {
-                alert("No data to load! Check your internet connection and try again.");
+                //alert("No data to load! Check your internet connection and try again.");
+                util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
                 // table.hideProgress();
             }
 

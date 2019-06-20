@@ -490,7 +490,8 @@ function refreshOnData() {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                    //alert("No data to load! Check your internet connection and try again.");
                     table.hideProgress();
                 }
             },
@@ -511,7 +512,8 @@ function refreshOnData() {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
-                    alert("No data to load! Check your internet connection and try again.");
+                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                    //alert("No data to load! Check your internet connection and try again.");
                     table.hideProgress();
                 }
             },

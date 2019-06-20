@@ -229,7 +229,8 @@ var sectorView = {
                         console.log(id["column"]);
                         var action = id["column"];
                         if (action === "delete" && userData.userGroupKey == "sekretar") {
-                            alert("Niste autorizovani da izbrišete sektor!");
+                            util.messages.showMessage("Niste autorizovani da izbrišete sektor!");
+                            //alert("Niste autorizovani da izbrišete sektor!");
                         }
                         if (action === "delete" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" )) {
 
@@ -246,7 +247,7 @@ var sectorView = {
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
-                                            alert(text);
+                                            //alert(text);
                                         }, managerId);
 
                                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+id,
@@ -277,7 +278,8 @@ var sectorView = {
                             webix.confirm(delBox);
                         }
                         if (action === "edit" && userData.userGroupKey == "sekretar") {
-                            alert("Niste autorizovani da mijenjate sektor!");
+                            //alert("Niste autorizovani da mijenjate sektor!");
+                            util.messages.showMessage("Niste autorizovani da mijenjate sektor!");
                         }
 
                         if (action === "edit" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" )) {
@@ -332,7 +334,7 @@ var sectorView = {
                             }
                         }, function (text, data, xhr) {
                             util.messages.showErrorMessage(text);
-                            alert(text);
+                           // alert(text);
                         }, sector.sectorManagerId);
 
                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
@@ -432,7 +434,8 @@ var sectorView = {
                             break;
                         case "2":
                             if (userData.userGroupKey == "sekretar") {
-                                alert("Niste autorizovani da izbrišete sektor!");
+                                util.messages.showMessage("Niste autorizovani da izbrišete sektor!");
+                               // alert("Niste autorizovani da izbrišete sektor!");
                                 break;
                             }
                             var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
@@ -448,7 +451,7 @@ var sectorView = {
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
-                                            alert(text);
+                                           // alert(text);
                                         }, sector.sectorManagerId);
 
                                     connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
@@ -589,7 +592,8 @@ var sectorView = {
     save: function(){
         var form = $$("addSectorForm");
         if(!isThereInternetConnection()){
-            alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+            util.messages.showErrorMessage("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+           // alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
         }else{
             var validation = form.validate();
             if(validation){
@@ -603,7 +607,7 @@ var sectorView = {
                         }
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
-                        alert(text);
+                       // alert(text);
                     }, $$("managerCombo").getValue());
 
 
@@ -634,14 +638,16 @@ var sectorView = {
                             }*/
                             $$("sectorDT").add(sector);
                             util.dismissDialog('addSectorDialog');
-                            alert("Sektor uspješno dodat.");
+                            util.messages.showMessage("Sektor uspješno dodat.");
+                            //alert("Sektor uspješno dodat.");
                             refreshSectorData();
                             sectorsNumber=sectorsNumber+1;
                             animateValue($$("t1"), 0, sectorsNumber, 1000);
                         }
                     }, function (text, data, xhr) {
                         if (text.includes("name_UNIQUE")) {
-                            alert("Izabrani naziv već postoji. Unesite drugi naziv.");
+                            util.messages.showMessage("Izabrani naziv već postoji. Unesite drugi naziv.");
+                            //alert("Izabrani naziv već postoji. Unesite drugi naziv.");
                         }
                     }, newSector);
                //promijeniti sektor menadzeru-ne radi iz nekog razloga
@@ -794,7 +800,7 @@ var sectorView = {
                     }
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    alert(text);
+                    //alert(text);
                 }, sectorForChange.sectorManagerId);
 
 
@@ -805,7 +811,7 @@ var sectorView = {
                     }
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    alert(text);
+                    //alert(text);
                 }, $$("managerCombo").getValue());
 
             var newSector={
@@ -825,12 +831,13 @@ var sectorView = {
                         $$("sectorDT").updateItem(newSector.id,newSector);
                         refreshSectorData();
                         util.dismissDialog('editSectorDialog');
-                        alert("Sektor uspješno izmjenjen.");
+                        util.messages.showMessage("Sektor uspješno izmjenjen.");
+                       // alert("Sektor uspješno izmjenjen.");
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    alert(text);
+                   // alert(text);
                 }, newSector);
 
 
@@ -882,7 +889,8 @@ function refreshSectorData() {
         error: function (text, data, xhr) {
 
             if (xhr.status != 200) {
-                alert("No data to load! Check your internet connection and try again.");
+                util.messages.showErrorMessage(("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+               // alert("No data to load! Check your internet connection and try again.");
                 table.hideProgress();
             }
 

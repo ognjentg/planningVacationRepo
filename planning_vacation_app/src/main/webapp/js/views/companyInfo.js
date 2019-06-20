@@ -367,7 +367,8 @@ var companyInfoView = {
             });
 
             if(isDaySelected == 1)
-                alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+                //alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+                util.messages.showMessage("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
             else{
             var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
             var dataTableValue;
@@ -482,9 +483,11 @@ var companyInfoView = {
         var dateToInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(dateToValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
         var companyId = userData.companyId;
         if("" == dateFromValue || "" == dateToValue)
-            alert("Niste izabrali jedan od datuma!");
+           // alert("Niste izabrali jedan od datuma!");
+        util.messages.showMessage("Niste izabrali jedan od datuma!");
         else if(dateFrom > dateTo)
-            alert("Datum od ne može biti prije datuma do!");
+           // alert("Datum od ne može biti prije datuma do!");
+            util.messages.showMessage("Datum od ne može biti prije datuma do!");
         else{
         var collectiveVacation = {
             dateFrom: dateFromInDTFormat,
@@ -500,7 +503,8 @@ var companyInfoView = {
         });
 
         if(isDaySelected == 1)
-            alert("Period " + dateFromInDTFormat + " - " + dateToInDTFormat + " je već označen kao kolektivni godišnji odmor.");
+            util.messages.showMessage("Period " + dateFromInDTFormat + " - " + dateToInDTFormat + " je već označen kao kolektivni godišnji odmor.");
+            //alert("Period " + dateFromInDTFormat + " - " + dateToInDTFormat + " je već označen kao kolektivni godišnji odmor.");
         else{
             $$("collectiveVacationDT").add(collectiveVacation);
             collectiveVacation.dateFrom =  dateFrom;
@@ -538,7 +542,8 @@ var companyInfoView = {
         connection.sendAjax("PUT", "hub/company/" + companyId,
             function (text, data, xhr) {
             }, function (text, data, xhr) {
-                alert(text);
+                //alert(text);
+                util.messages.showErrorMessage(text);
             }, company);
 
         var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
@@ -576,7 +581,8 @@ var companyInfoView = {
        connection.sendAjax("POST", "/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",
             function (text, data, xhr) {
             }, function (text, data, xhr) {
-                 alert(text);
+                 //alert(text);
+               util.messages.showErrorMessage(text);
             }, nonWorkingDaysInWeek);
 
         var nonWorkingDaysInYear = []; //saljem samo dane koji nisu bili cekirani ili dane koji su otcekirani pri pokretanju aplikacije
@@ -593,7 +599,8 @@ var companyInfoView = {
         connection.sendAjax("POST", "/hub/nonWorkingDay/addNonWorkingDays/",
             function (text, data, xhr) {
             }, function (text, data, xhr) {
-                alert(text);
+                util.messages.showErrorMessage(text);
+                //alert(text);
             }, nonWorkingDaysInYear);
 
         var constraints = {
@@ -607,10 +614,12 @@ var companyInfoView = {
             function (text, data, xhr) {
                 if (text) {
                 } else {
-                    alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
+                    util.messages.showErrorMessage("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
+                    //alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
                 }
             }, function (text, data, xhr) {
-                alert(text);
+                util.messages.showErrorMessage(text);
+                //alert(text);
             }, constraints);
 
          var collectiveVacations = [];
@@ -642,10 +651,12 @@ var companyInfoView = {
          connection.sendAjax("POST", " /hub/colectiveVacation/addColectiveVacations",
              function (text, data, xhr) {
              }, function (text, data, xhr) {
-                 alert(text);
+                 util.messages.showErrorMessage(text);
+                // alert(text);
              }, collectiveVacations);
 
-        alert("Uspješno izvršena izmjena podataka o kompaniji");
+         util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
+       // alert("Uspješno izvršena izmjena podataka o kompaniji");
         util.dismissDialog('companyInfoDialog');
     }}
 };

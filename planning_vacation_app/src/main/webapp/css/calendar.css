@@ -67,7 +67,7 @@
 
 .vacationButton {
     background-color: #268fd5  !important;
-    border-radius: 6px;
+    border: none;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -78,7 +78,7 @@
 
 .leaveButton{
     background-color:#E989A3 !important;
-    border-radius: 6px;
+    border: none;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -89,7 +89,7 @@
 
 .sickLeaveButton{
     background-color: #00b3b3  !important;
-    border-radius: 6px;
+    border: none;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -100,7 +100,7 @@
 
 .unpickedButton{
     background-color: #8c8c8c !important;
-    border-radius: 6px;
+    border: none;
     height: 100%;
     width: 100%;
     cursor: pointer;

@@ -398,9 +398,8 @@ var companyView = {
                         util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
                         if (action === "delete" && userData.userGroupKey == "admin") {
-                            alert("Niste autorizovani da izbrišete kompaniju!");
-
-
+                            //alert("Niste autorizovani da izbrišete kompaniju!");
+                            util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
                         }
                         if (action === "delete" && userData.userGroupKey == "superadmin") {
                             var delBox = (webix.copy(commonViews.deleteConfirm("company")));
@@ -602,8 +601,8 @@ var companyView = {
                                 util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
                                 if (userData.userGroupKey == "admin") {
-                                    alert("Niste autorizovani da izbrišete kompaniju!");
-
+                                    //alert("Niste autorizovani da izbrišete kompaniju!");
+                                    util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
                                     break;
                                 }
                                 var delBox = (webix.copy(commonViews.deleteConfirm("company")));

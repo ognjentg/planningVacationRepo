@@ -390,11 +390,11 @@ var adminsView = {
                         $$("adminsDT").parse(newAdmin);
                         adminsView.refreshDatatables();
                     } else {
-                        alert("Greška u dodavanju admina.");
+                        util.messages.showErrorMessage("Greška u dodavanju admina.");
                         button.enable();
                     }
                 }, function (text, data, xhr) {
-                    alert(text);
+                    util.messages.showErrorMessage(text);
                     button.enable();
                 }, newAdmin);
         } else {
@@ -414,11 +414,10 @@ var adminsView = {
                         util.messages.showErrorMessage("Neuspješno.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    alert(text);
                 }, selectedId);
             adminsView.refreshDatatables();
         } else {
-            alert("Nije izabran admin!");
+            util.messages.showErrorMessage("Nije izabran admin!");
         }
     },
     refreshDatatables: function () {
