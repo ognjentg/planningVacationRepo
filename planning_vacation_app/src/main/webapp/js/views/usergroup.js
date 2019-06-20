@@ -193,7 +193,7 @@ usergroupView = {
                             uncheckValue: 'off',
                             template: "{common.checkbox()}",
                             width: 35
-                         //   cssFormat: checkBoxStatus
+                            //   cssFormat: checkBoxStatus
                         },
                         {
                             id: "id",
@@ -359,7 +359,6 @@ usergroupView = {
                         group: 5,
                         on: {
                             onItemClick: function (ids, e, node) {
-                                util.messages.showErrorMessage("PAGER");
                             }
                         },
                         animate: {
@@ -826,6 +825,33 @@ usergroupView = {
                         "\t<div class=\"dhx_cal_data\">\n" +
                         "\t</div>\n" +
                         "</div>"
+                },
+                {
+                    css: "calendar.css",
+                    cols: [
+
+                        {
+                            view: "label",
+                            label: "Godišnji",
+                            css:  "vacation_label"
+
+                        },
+                        {
+                            view: "label",
+                            label: "Slobodno",
+                            css:  "day_off_label"
+                        },
+                        {
+                            view: "label",
+                            label: "Neplaćeno",
+                            css: "unpaid_day_label"
+                        },
+                        {
+                            view: "label",
+                            label: "Bolovanje",
+                            css: "sick_day_label"
+                        }
+                    ]
                 }
             ]
         }
@@ -1522,7 +1548,42 @@ usergroupView = {
         webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog));
         var vacationDays = [];
         var daysOff = [];
+        var unpaidDaysOff = [];
+        var sickLeaveDays = [];
         var employee = $$("usergroupDT").getItem(id.row);
+
+
+        scheduler.config.readonly = true;
+        scheduler.config.multi_day = true;
+        scheduler.config.full_day = true;
+        scheduler.templates.month_date_class = function (date) {
+            var has = false;
+            vacationDays.forEach(function (value) {
+                if (webix.Date.equal(value, date))
+                    has = true;
+            });
+            if (has == true)
+                return "vacation_day";
+
+            daysOff.forEach(function (value) {
+                if (webix.Date.equal(value, date))
+                    has = true;
+            });
+            if (has == true)
+                return "day_off";
+            unpaidDaysOff.forEach(function (value) {
+                if (webix.Date.equal(value, date))
+                    has = true;
+            });
+            if (has == true)
+                return "unpaid_day_off";
+            sickLeaveDays.forEach(function (value) {
+                if (webix.Date.equal(value, date))
+                    has = true;
+            });
+            if (has == true)
+                return "sick_day";
+        };
         connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
             function (text, data, xhr) {
                 var days = data.json();
@@ -1537,9 +1598,9 @@ usergroupView = {
                 util.messages.showErrorMessage(text);
             });
         var startDate;
+        var endDate;
         connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
             function (text, data, xhr) {
-
                 var leaves = data.json();
                 var status = "";
                 if (leaves.isAbsent == true)
@@ -1550,44 +1611,44 @@ usergroupView = {
                 var reqs = webix.toArray(leaves.leaves);
                 reqs.forEach(function (element) {
                     startDate = new Date(element.dateFrom);
-                    var endDate = new Date(element.dateTo);
-                    console.log("Tip: " + element.category);
+                    endDate = new Date(element.dateTo);
                     var dates = getDatesFromRange(startDate, endDate);
-                    if (element.category === "Godisnji") {
+                    if (element.typeName === "Plaćeno") {
+                        if (element.category === "Godišnji") {
+                            dates.forEach(function (value) {
+                                vacationDays.push(value);
+                            });
+                        } else if (element.category === "Slobodno")
+                            dates.forEach(function (value) {
+                                daysOff.push(value);
+                            });
+                    } else if (element.typeName === "Neplaćeno") {
+                        console.log("neplaćeno: " + startDate + " - " + endDate);
                         dates.forEach(function (value) {
-                            vacationDays.push(value);
-                        });
-                    } else if (element.category === "Slobodno")
-                        dates.forEach(function (value) {
-                            daysOff.push(value);
-                        });
-                    scheduler.config.multi_day = true;
-                    scheduler.config.full_day = true;
 
-                    scheduler.templates.month_date_class = function (date) {
-                        var has = false;
-                        vacationDays.forEach(function (value) {
-                            if (webix.Date.equal(value, date))
-                                has = true;
+                            unpaidDaysOff.push(value);
                         });
-                        if (has == true)
-                            return "vacation_day";
+                    }
 
-                        daysOff.forEach(function (value) {
-                            if (webix.Date.equal(value, date))
-                                has = true;
-                        });
-                        if (has == true)
-                            return "day_off";
-                    };
                 });
+                scheduler.setCurrentView();
 
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
-        connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + 2 + "/" + employee.id,
+        var stat = "Opravdano";
+        connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + employee.id,
             function (text, data, xhr) {
-                util.messages.showErrorMessage("proslo");
+                var sickLeaves = data.json();
+                sickLeaves.forEach(function (value) {
+                    startDate = new Date(value.dateFrom);
+                    endDate = new Date(value.dateTo);
+                    var sickDays = getDatesFromRange(startDate, endDate);
+                    sickDays.forEach(function (value1) {
+                        sickLeaveDays.push(value1);
+                    });
+                });
+                scheduler.setCurrentView();
             },
             function (text, data, xhr) {
                 util.messages.showErrorMessage("ne valja");
@@ -1596,9 +1657,6 @@ usergroupView = {
         setTimeout(function () {
         }, 0);
         var date = new Date();
-        scheduler.config.readonly = true;
-        scheduler.config.multi_day = true;
-        scheduler.config.full_day = true;
         scheduler.config.xml_date = "%Y-%m-%d %H:%i";
         scheduler.locale = locale_sr_latin;
         scheduler.init('employeeCalendar', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");

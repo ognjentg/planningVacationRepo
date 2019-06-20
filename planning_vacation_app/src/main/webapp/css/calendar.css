@@ -27,12 +27,42 @@
 .vacation_day .dhx_month_body{
     background-color: #2ecb70;
 }
-/* Boja za slobodne dane  */
+/* Boja za labelu godisnji u legendi */
+.vacation_label {
+    color: #2ecb70;
+}
+/* Boja za placene slobodne dane  */
 .day_off .dhx_month_head{
     background-color: #1CA1C1;
 }
 .day_off .dhx_month_body{
     background-color: #1CA1C1;
+}
+/* Boja za labelu slobodni dani u legendi */
+.day_off_label {
+    color: #1CA1C1;
+}
+/* Boja za neplacene slobodne dane  */
+.unpaid_day_off .dhx_month_head{
+    background-color: #fed282;
+}
+.unpaid_day_off .dhx_month_body{
+    background-color: #fed282;
+}
+/* Boja za labelu neplaceni dani u legendi */
+.unpaid_day_label {
+    color: #fed282;
+}
+/* Boja za dane bolovanja */
+.sick_day .dhx_month_head{
+    background-color: #E989A3;
+}
+.sick_day .dhx_month_body{
+    background-color: #E989A3;
+}
+/* Boja za labelu bolovanje u legendi */
+.sick_day_label {
+    color: #E989A3;
 }
 
 .vacationButton {

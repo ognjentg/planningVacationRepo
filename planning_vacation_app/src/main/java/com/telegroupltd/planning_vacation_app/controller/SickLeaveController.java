@@ -130,11 +130,20 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
 
     @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatus/{key}/{userId}", method = RequestMethod.GET)
     public @ResponseBody
-    void getSickLeaveFilteredBySickLeaveStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId){
-        ArrayList<SickLeave> leaves =(ArrayList) getAll();
-        for (SickLeave sl: leaves) {
-            System.out.println("user id " + sl.getUserId()+ " i jos " + sl.getSickLeaveStatusId());
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatusForSelected(@PathVariable String key, @PathVariable Integer userId){
+        ArrayList<SickLeaveUserSickLeaveStatus> leaves =(ArrayList) getSickLeaveFilteredByUserId(userId);
+        ArrayList<SickLeaveUserSickLeaveStatus> remove = new ArrayList<>();
+
+        for (SickLeaveUserSickLeaveStatus sl: leaves) {
+            if (!sl.getStatusName().equals(key))
+                remove.add(sl);
         }
+        for (SickLeaveUserSickLeaveStatus rsl : remove){
+            leaves.remove(rsl);
+        }
+        for(SickLeaveUserSickLeaveStatus sl :leaves)
+            System.out.println("bolovanje od "+sl.getDateFrom()+" do "+sl.getDateTo()+" ime "+sl.getFirstName());
+        return leaves;
     }
 }
 

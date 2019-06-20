@@ -166,8 +166,6 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             leaveRequests.remove(req);
 
         for (LeaveRequestUserLeaveRequestStatus lr : leaveRequests) {
-            System.out.println(lr.getDateFrom() + "  -  "+lr.getDateTo());
-            System.out.println(lr.getCategory());
             if (now.after(lr.getDateFrom()) && now.before(lr.getDateTo())) {
                 isAbsent = true;
                 break;
