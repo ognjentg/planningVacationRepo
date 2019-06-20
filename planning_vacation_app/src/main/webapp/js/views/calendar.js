@@ -331,6 +331,11 @@ var calendarView = {
                     var day = 60*60*24*1000;
                     var dayDifference = (selectedDate.getTime()- selectedDays[selectedDays.length-1])/day;
                     var newDay = selectedDays[selectedDays.length-1];
+                    if(dayDifference<0) // if the user selects in the opposite direction, just quickly correct the range.
+                    {
+                        dayDifference = (selectedDays[0] - selectedDate.getTime())/day;
+                        newDay = selectedDate.getTime();
+                    }
                     for(var i = 1; i < dayDifference; i++){
                         newDay += day;
                         var newDayInWeek = (new Date(newDay)).getDay();
@@ -339,6 +344,7 @@ var calendarView = {
                             selectedDays.push(newDay);
                     }
                     selectedDays.push(selectedDate.getTime());
+                    selectedDays.sort(function (a, b) { return a - b; })
                 }
 
             }                                                                
