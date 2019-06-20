@@ -161,10 +161,9 @@ usergroupView = {
 
                                 if (sectorID == -2 || sectorID == -1) {
                                     $$("changeManagerBtn").disable();
-                                    F
                                 } else $$("changeManagerBtn").enable()
-                            }
 
+                            }
                         }
                     }
                     ]
@@ -872,17 +871,17 @@ usergroupView = {
         }
     },
 
-    changeManager: function () {
-        if ($$("changeManagerTable").getSelectedItem().id === "undefined") {
-            util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzeraaa.");
-        } else {
-            var employe;
-            $$("changeManagerTable").eachRow(
-                function (row) {
-                    if ($$("changeManagerTable").getItem(row).position === "menadzer") {
-                        employe = row;
-                    }
+    changeManager:function(){
+    if($$("changeManagerTable").getSelectedItem().id==="undefined"){
+        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzera.");
+    } else {
+        var employe;
+        $$("changeManagerTable").eachRow(
+            function(row) {
+                if ($$("changeManagerTable").getItem(row).position === "menadzer") {
+                    employe = row;
                 }
+            }
             );
             var changeManagerInformation = {
                 newManager: $$("changeManagerTable").getSelectedItem().id,
