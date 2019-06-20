@@ -323,7 +323,9 @@ var calendarView = {
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())){ // Apply not in past rule to vacation and paid leave
                 webix.message("Dan ne smije biti u prošlosti")
             }
-            else if([3].indexOf(selectedButton)>=0){
+            else if([3].indexOf(selectedButton)>=0&&
+                nonWorkingDaysInWeek.indexOf(selectedDate.getDay())==-1&&
+                nonWorkingDays.indexOf(selectedDate.getTime())==-1){
                 if(selectedDays.length==0) {
                     selectedDays.push(selectedDate.getTime());
                 }
