@@ -183,7 +183,7 @@ var sickRequestsView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject" && userData.userGroupId === 4) {
+                            if (action === "reject" && userData.userGroupKey == "sekretar") {
                                 var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovannje: ")));
                                 rejectLeaveBox.callback = function (result) {
                                     if (result == 1) {
@@ -199,7 +199,7 @@ var sickRequestsView = {
 
                                 };
                                 webix.confirm(rejectLeaveBox);
-                            } else if (action === "accept" && userData.userGroupId === 4) {
+                            } else if (action === "accept" && userData.userGroupKey == "sekretar") {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {

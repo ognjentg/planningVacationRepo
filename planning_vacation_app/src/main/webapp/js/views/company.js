@@ -199,7 +199,7 @@ var companyView = {
                     icon: "fa fa-trash",
                     label: "Brišite označene",
                     width: 150,
-                    disabled:true,
+                    disabled: true,
                     css: "companyButton",
                     click: deleteSelected
 
@@ -249,7 +249,7 @@ var companyView = {
                 uncheckValue: 'off',
                 template: "{common.checkbox()}",
                 width: 35
-             //   cssFormat: checkBoxStatus
+                //   cssFormat: checkBoxStatus
             },
 
                 {
@@ -265,7 +265,7 @@ var companyView = {
                     hidden: true,
                     header: "#",
                     width: 50
-                //    cssFormat: checkBoxStatus,
+                    //    cssFormat: checkBoxStatus,
                 },
 
                 {
@@ -277,7 +277,7 @@ var companyView = {
                         "font-weight": "bold",
                         "color": "#000000"
                     },
-                 //   cssFormat: checkBoxStatus,
+                    //   cssFormat: checkBoxStatus,
                     fillspace: true, template: function (obj) {
                         if (obj.logo == null) {
                             return "Nema slike"
@@ -292,7 +292,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                 //   cssFormat: checkBoxStatus,
+                    //   cssFormat: checkBoxStatus,
                     header: [
                         "Naziv kompanije", {
                             content: "textFilter", value: ""
@@ -304,7 +304,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                //    cssFormat: checkBoxStatus,
+                    //    cssFormat: checkBoxStatus,
                     header: [
                         "PIN kompanije", {
                             content: "textFilter", value: ""
@@ -316,7 +316,7 @@ var companyView = {
                     id: "delete",
                     header: "&nbsp;",
                     width: 35,
-                 //   cssFormat: checkBoxStatus,
+                    //   cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                 },
@@ -324,7 +324,7 @@ var companyView = {
                     id: "edit",
                     header: "&nbsp;",
                     width: 35,
-                //    cssFormat: checkBoxStatus,
+                    //    cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                 },
 
@@ -332,7 +332,7 @@ var companyView = {
                     id: "admins",
                     header: "&nbsp;",
                     width: 35,
-                 //   cssFormat: checkBoxStatus,
+                    //   cssFormat: checkBoxStatus,
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
                 }
                 // {
@@ -377,9 +377,9 @@ var companyView = {
                         }
                     }
 
-                    if (selectedItemsCheckBox.length > 0 ) {
+                    if (selectedItemsCheckBox.length > 0) {
                         $$("delete-selected").enable();
-                    }  else {
+                    } else {
                         $$("delete-selected").disable();
                     }
 
@@ -393,85 +393,85 @@ var companyView = {
                     console.log(id["column"]);
                     var action = id["column"];
 
-                    if (action === "delete" && userData.userGroupId == 2) {
+                    if (action === "delete" && userData.userGroupKey == "admin") {
                         // alert("Niste autorizovani da izbrišete kompaniju!");
                         util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                    if (action === "delete" && userData.userGroupId == 2) {
-                        alert("Niste autorizovani da izbrišete kompaniju!");
+                        if (action === "delete" && userData.userGroupKey == "admin") {
+                            alert("Niste autorizovani da izbrišete kompaniju!");
+
+                        }
+                        if (action === "delete" && userData.userGroupKey == "superadmin") {
+                            var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                            delBox.callback = function (result) {
+                                if (result === 1) {
+                                    var item = $$("companyDT").getItem(id);
+                                    $$("companyDT").detachEvent("onBeforeDelete");
+                                    connection.sendAjax("DELETE", "hub/company/" + id, function (text, data, xhr) {
+                                        if (text) {
+                                            $$("companyDT").remove(id);
+                                            util.messages.showMessage("Uspjesno uklanjanje");
+                                            animateValue($$("t1"), 0, tmpCompaniesLength - 1, 1000);
+                                            tmpCompaniesLength = tmpCompaniesLength - 1;
+                                        }
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, item);
+                                }
+                            };
+                            webix.confirm(delBox);
+                        }
+
+                        if (action === "edit") {
+                            companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
+
+                        }
+                        if (action === "view") {
+                            companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));
+
+                        }
+
+                        if (action === "admins") {
+                            console.log($$("companyDT").getItem(id.row).id);
+                            webix.ui(webix.copy(adminsView.showAdminsDialogForSuperadmin($$("companyDT").getItem(id.row).id)));
+                        }
+
+                        // if (action === "delete-selected" && selectedItemsCheckBox.length) {
+                        //     console.log("delete selected");
+                        //
+                        //     var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                        //     delBox.callback = function (result) {
+                        //         if (result == 1) {
+                        //
+                        //             $$("companyDT").detachEvent("onBeforeDelete");
+                        //
+                        //             selectedItemsCheckBox.forEach(function (item) {
+                        //
+                        //                 connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
+                        //                     if (text) {
+                        //                         $$("companyDT").remove(item);
+                        //
+                        //
+                        //                     }
+                        //                 }, function (text, data, xhr) {
+                        //                     util.messages.showErrorMessage(text);
+                        //                 }, item);
+                        //
+                        //
+                        //             });
+                        //
+                        //             $$("companyDT").refresh();
+                        //             selectedItemsCheckBox = [];
+                        //
+                        //         }
+                        //     };
+                        //     webix.confirm(delBox);
+                        //
+                        // }
 
                     }
-                    if (action === "delete" && userData.userGroupId == 1) {
-                        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
-                        delBox.callback = function (result) {
-                            if (result === 1) {
-                                var item = $$("companyDT").getItem(id);
-                                $$("companyDT").detachEvent("onBeforeDelete");
-                                connection.sendAjax("DELETE", "hub/company/" + id, function (text, data, xhr) {
-                                    if (text) {
-                                        $$("companyDT").remove(id);
-                                        util.messages.showMessage("Uspjesno uklanjanje");
-                                        animateValue($$("t1"), 0, tmpCompaniesLength - 1, 1000);
-                                        tmpCompaniesLength = tmpCompaniesLength - 1;
-                                    }
-                                }, function (text, data, xhr) {
-                                    util.messages.showErrorMessage(text);
-                                }, item);
-                            }
-                        };
-                        webix.confirm(delBox);
-                    }
-
-                    if (action === "edit") {
-                        companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
-
-                    }
-                    if (action === "view") {
-                        companyView.showShowCompanyDialog($$("companyDT").getItem(id.row));
-
-                    }
-
-                    if (action === "admins") {
-                        console.log($$("companyDT").getItem(id.row).id);
-                        webix.ui(webix.copy(adminsView.showAdminsDialogForSuperadmin($$("companyDT").getItem(id.row).id)));
-                    }
-
-                    // if (action === "delete-selected" && selectedItemsCheckBox.length) {
-                    //     console.log("delete selected");
-                    //
-                    //     var delBox = (webix.copy(commonViews.deleteConfirm("company")));
-                    //     delBox.callback = function (result) {
-                    //         if (result == 1) {
-                    //
-                    //             $$("companyDT").detachEvent("onBeforeDelete");
-                    //
-                    //             selectedItemsCheckBox.forEach(function (item) {
-                    //
-                    //                 connection.sendAjax("DELETE", "hub/company/" + item, function (text, data, xhr) {
-                    //                     if (text) {
-                    //                         $$("companyDT").remove(item);
-                    //
-                    //
-                    //                     }
-                    //                 }, function (text, data, xhr) {
-                    //                     util.messages.showErrorMessage(text);
-                    //                 }, item);
-                    //
-                    //
-                    //             });
-                    //
-                    //             $$("companyDT").refresh();
-                    //             selectedItemsCheckBox = [];
-                    //
-                    //         }
-                    //     };
-                    //     webix.confirm(delBox);
-                    //
-                    // }
-
                 }
             }
-
         },
             {
                 view: "toolbar",
@@ -507,7 +507,7 @@ var companyView = {
     },
 
     selectPanel: function () {
-        console.log(userData.userGroupId == 1);
+        console.log(userData.userGroupKey == "superadmin");
 
         $$("main").removeView(rightPanel);
         rightPanel = "companyPanel";
@@ -517,12 +517,12 @@ var companyView = {
         $$("main").addView(webix.copy(panelCopy));
 
 
-        if (userData.userGroupId == 1) {
+        if (userData.userGroupKey == "superadmin") {
             $$("statisticsBtn").hide();
             $$("employee-counter").hide();
         }
 
-        if (userData.userGroupId == 2) {
+        if (userData.userGroupKey == "admin") {
             $$("employee-counter").hide();
         }
 
@@ -591,11 +591,11 @@ var companyView = {
                             break;
                         case "2":
 
-                            if (userData.userGroupId == 2) {
+                            if (userData.userGroupKey == "admin") {
                                 // alert("Niste autorizovani da izbrišete kompaniju!");
                                 util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                                if (userData.userGroupId == 2) {
+                                if (userData.userGroupKey == "admin") {
                                     alert("Niste autorizovani da izbrišete kompaniju!");
 
                                     break;
@@ -1197,7 +1197,7 @@ var companyView = {
 
 
     showChangeCompanyDialog: function (company) {
-        if (userData.userGroupId == 2) {
+        if (userData.userGroupKey == "admin") {
             webix.ui(webix.copy(companyView.adminChangeCompanyDialog));
             var form = $$("adminChangeCompanyForm");
 
@@ -1264,7 +1264,7 @@ var companyView = {
 
     saveChangedCompany: function () {
         $$("changeCompany").disable();
-        if (userData.userGroupId == 2) {
+        if (userData.userGroupKey == "admin") {
             var form = $$("adminChangeCompanyForm");
         } else {
             var form = $$("changeCompanyForm");
@@ -1276,7 +1276,7 @@ var companyView = {
         var validation = form.validate();
         if (validation) {
             var newCompany;
-            if (userData.userGroupId == 2) {
+            if (userData.userGroupKey == "admin") {
                 newCompany = {
                     id: form.getValues().id,
                     name: form.getValues().name,
@@ -1314,23 +1314,20 @@ var companyView = {
                     // alert(text);
                 }, newCompany);
 
-            if (userData.userGroupId == 2) {
-
-            if (userData.userGroupId == 2) {
+            if (userData.userGroupKey == "admin") {
 
                 $$("changeCompany").enable();
-                util.dismissDialog('adminChangeCompanyDialog');
+                util.dismissDialog('changeCompanyDialog');
             }
-            $$("changeCompany").enable();
-            util.dismissDialog('changeCompanyDialog');
+
         }
 
+
     }
+}
 
-
-},
-
-function animateValue(id, start, end, duration) {
+function animateValue(id, start, end, duration)
+{
     console.log("counter start");
 
     if (end === 0) {
@@ -1393,7 +1390,7 @@ function refreshData() {
                     table.hideProgress();
                     // counterAnimation(1130, 1130, 2230);
 
-                    if (userData.userGroupId == 2) {
+                    if (userData.userGroupKey == "admin") {
 
                         $$("addCompanyBtn").hide();
 
