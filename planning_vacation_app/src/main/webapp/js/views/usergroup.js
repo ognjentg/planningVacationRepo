@@ -333,9 +333,8 @@ usergroupView = {
                             if (action == "delete") {
                                 if ($$("usergroupDT").getItem(id).position != "menadzer"){
 
-                                    var id = $$("usergroupDT").getSelectedId();
-                                    var user = $$("usergroupDT").getItem(id);
-                                    if(user=userData){
+                                   // var id = $$("usergroupDT").getSelectedId();
+                                    if($$("usergroupDT").getSelectedId() == userData.id){
                                         util.messages.showErrorMessage("Ne možete obrisati sami sebe.");
                                     }else{
                                         usergroupView.deleteEmployee();
