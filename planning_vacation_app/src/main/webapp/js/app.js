@@ -236,7 +236,7 @@ var init = function () {
             if (xhr.status == "200") {
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    if (userData.userGroupKey == "superadmin") {
+                    if (userData.userGroupId == 1) {
                         companyData = null;
                         showApp();
                     } else {
@@ -363,23 +363,23 @@ var mainLayout = {
                     lastName: userData.lastName,
                 };
 
-                switch (userData.userGroupKey){
-                    case "superadmin":
+                switch (userData.userGroupId){
+                    case 1:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
                         break;
-                    case "admin":
+                    case 2:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
                         break;
-                    case "direktor":
+                    case 3:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
                         break;
-                    case "sekretar":
+                    case 4:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
                         break;
-                    case "menadzer":
+                    case 5:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
                         break;
-                    case "zaposleni":
+                    case 6:
                         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
                         break;
                 }
@@ -430,7 +430,7 @@ var showApp = function () {
         {id: "4", value: "Odjava", icon: "sign-out"}
     ]
 
-    if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
+    if (userData.userGroupId == 2 || userData.userGroupId == 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
         for(var i = 0; i < companyInfoItems.length; i++)
         settingsMenu.push(companyInfoItems[i]);
@@ -455,48 +455,48 @@ var showApp = function () {
 //    $$("settingsSubMenu").add(settingsMenu[0]);
     if(userData!=null)
     {
-        if(userData.userGroupKey !== "superadmin") {
+        if(userData.userGroupId !== 1) {
             $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
         } else {
             $$("companyLogoImage").setValues({src: "img/telegroup-logo.png"});
         }
-        switch (userData.userGroupKey) {
-        case "superadmin":
+        switch (userData.userGroupId) {
+        case 1:
             localMenuData = webix.copy(menuSuperAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
             if(userData.firstName == null || userData.lastName == null){
                 showAddFirstAndLastNameDialog();
             }
             break;
-        case "admin":
+        case 2:
             localMenuData = webix.copy(menuAdmin);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
             if(userData.firstName == null || userData.lastName == null){
                 showAddFirstAndLastNameDialog();
             }
             break;
-        case "direktor":
+        case 3:
             localMenuData = webix.copy(menuDirector);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
             if(userData.firstName == null || userData.lastName == null){
                 showAddFirstAndLastNameDialog();
             }
             break;
-        case "sekretar":
+        case 4:
             localMenuData = webix.copy(menuSecretary);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
             if(userData.firstName == null || userData.lastName == null){
                 showAddFirstAndLastNameDialog();
             }
             break;
-        case "menadzer":
+        case 5:
             localMenuData = webix.copy(menuSectorManager);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
             if(userData.firstName == null || userData.lastName == null){
                 showAddFirstAndLastNameDialog();
             }
             break;
-        case "zaposleni":
+        case 6:
             localMenuData = webix.copy(menuWorker);
             $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
             if(userData.firstName == null || userData.lastName == null){
@@ -839,9 +839,9 @@ console.log($$("loginForm").getValues());
                // util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
-                    console.log(userData.userGroupKey);
+                    console.log(userData.userGroupId);
 
-                    if (userData.userGroupKey == "superadmin") {
+                    if (userData.userGroupId == 1) {
                         companyData = null;
                         showApp();
                     } else {
