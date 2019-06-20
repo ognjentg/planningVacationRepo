@@ -331,8 +331,16 @@ usergroupView = {
                                 usergroupView.employeeInfo(id);
                             }
                             if (action == "delete") {
-                                if ($$("usergroupDT").getItem(id).position != "menadzer")
-                                    usergroupView.deleteEmployee();
+                                if ($$("usergroupDT").getItem(id).position != "menadzer"){
+
+                                    var id = $$("usergroupDT").getSelectedId();
+                                    var user = $$("usergroupDT").getItem(id);
+                                    if(user=userData){
+                                        util.messages.showErrorMessage("Ne možete obrisati sami sebe.");
+                                    }else{
+                                        usergroupView.deleteEmployee();
+                                    }
+                                }
                                 else
                                     util.messages.showErrorMessage("Nije moguće izbrisati menadžera.");
                             }
@@ -1445,9 +1453,9 @@ usergroupView = {
         var delBox = (webix.copy(commonViews.deleteConfirm("zaposlenog")));
         delBox.callback = function (result) {
             if (result == 1) {
-
                 var id = $$("usergroupDT").getSelectedId();
                 var user = $$("usergroupDT").getItem(id);
+
                 console.log("USR ID: " + id + "USER " + user.email);
                 connection.sendAjax("PUT", "hub/user/deleteUser/" + id,
                     function (text, data, xhr) {
