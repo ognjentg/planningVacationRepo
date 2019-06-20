@@ -2,6 +2,7 @@ var chosenCategory=null; //here will be setted chosen category  - but there must
 var schedulerEvents = [];
 var selectedButton=null;
 var selectedDays = [];
+var updatedDays = [];
 
 var calendarView = {
     freeDays: 20,
@@ -426,8 +427,8 @@ var calendarView = {
             calendarView.sendVacationLeaveRequest();
         //else if(selectedButton == 2)
             //Leave
-        //else if(selectedButton == 3)
-            //Bolovanje
+        else if(selectedButton == 3)
+            calendarView.sendSickLeaveRequest();
 
 /*
         if (form.validate()) {
@@ -447,46 +448,6 @@ var calendarView = {
  */
 },
 
-sendVacationLeaveRequest: function(){
-    var form = $$("createRequestForm");
-    var leaveRequest = {
-        senderUserId: userData.id,
-        leaveTypeId: 1,
-        leaveRequestStatusId: 1,
-        companyId: userData.companyId,
-        senderComment: $$("comment").getValue(),
-        category: "Godisnji"
-    }
-    connection.sendAjax("POST", "hub/leave_request/",
-        function (text, data, xhr) {
-            if (text) {
-                var tempData = JSON.parse(text);
-                var dates = $$("periodsDT").serialize();
-                dates.forEach(function (value) {
-                    var date ={
-                        date: value.date,
-                        leaveRequestId: tempData.id,
-                        canceled: 0,
-                        paid: 1
-                    }
-                    connection.sendAjax("POST", "hub/leave_request_date/",
-                        function (text, data, xhr) {
-                            if (text) {
-
-                            } else
-                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                        }, function (text, data, xhr) {
-                            util.messages.showErrorMessage(text);
-                        }, date);
-                })
-                util.messages.showMessage("Zahtjev uspjesno poslan");
-                calendarView.deleteCurrentRequest();
-            } else
-                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-        }, function (text, data, xhr) {
-            util.messages.showErrorMessage(text);
-        }, leaveRequest);
-},
     deleteCurrentRequest: function () {
         $$("periodsDT").serialize().forEach(function (value) {
             var id = value.id;
@@ -498,6 +459,63 @@ sendVacationLeaveRequest: function(){
         $$("periodsDT").clearAll();
         scheduler.setCurrentView();
         $$("comment").setValue("");
+    },
+    sendVacationLeaveRequest: function(){
+        var form = $$("createRequestForm");
+        var leaveRequest = {
+            senderUserId: userData.id,
+            leaveTypeId: 1,
+            leaveRequestStatusId: 1,
+            companyId: userData.companyId,
+            senderComment: $$("comment").getValue(),
+            category: "Godisnji"
+        }
+        connection.sendAjax("POST", "hub/leave_request/",
+            function (text, data, xhr) {
+                if (text) {
+                    var tempData = JSON.parse(text);
+                    var dates = $$("periodsDT").serialize();
+                    dates.forEach(function (value) {
+                        var date ={
+                            date: value.date,
+                            leaveRequestId: tempData.id,
+                            canceled: 0,
+                            paid: 1
+                        }
+                        connection.sendAjax("POST", "hub/leave_request_date/",
+                            function (text, data, xhr) {
+                                if (text) {
+
+                                } else
+                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            }, function (text, data, xhr) {
+                                util.messages.showErrorMessage(text);
+                            }, date);
+                    })
+                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    calendarView.deleteCurrentRequest();
+                } else
+                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, leaveRequest);
+    },
+
+    sendSickLeaveRequest: function(){
+        var datesArr = []; //saljem samo dane koji nisu bili cekirani ili dane u sedmici koji su otcekirani pri pokretanju aplikacije
+        var dates = $$("periodsDT").serialize();
+
+        for(var i = 0; i < dates.length; i++) {
+            var date = dates[i].date;
+            console.log(date);
+            datesArr.push(date);
+        }
+
+        connection.sendAjax("POST", "/hub/sickLeave/addSickLeaveRequest/",
+            function (text, data, xhr) {
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, datesArr);
     },
 
     vacation: function(){
