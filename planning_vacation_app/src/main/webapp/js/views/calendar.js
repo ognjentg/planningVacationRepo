@@ -6,6 +6,8 @@ var updatedDays = [];
 
 var calendarView = {
     freeDays: 20,
+    nonWorkingDays: null,
+    nonWorkingdDaysInWeek:null,
     panel: {
         id: "calendarPanel",
         adjust: true,
@@ -245,6 +247,7 @@ var calendarView = {
                             nonWorkingDays[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
+                        calendarView.nonWorkingDays = nonWorkingDays;
                         scheduler.setCurrentView();
                     }
                 }
@@ -270,6 +273,7 @@ var calendarView = {
                             zones: "fullday"
                         });
                         scheduler.setCurrentView();
+                        calendarView.nonWorkingdDaysInWeek = nonWorkingDaysInWeek;
                     }
                 }
             }
@@ -307,14 +311,24 @@ var calendarView = {
         scheduler.config.dblclick_create = false;
         scheduler.config.drag_create = false;
         scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
-            if(!selectedDays.includes(selectedDate.getTime()) &&
+
+            if(selectedDays.includes(selectedDate.getTime())) {
+                var index = selectedDays.indexOf(selectedDate.getTime());
+                selectedDays.splice(index, 1);
+            }
+            else if([1,2].indexOf(selectedButton)>=0 &&
+                !calendarView.ruleset.isNotInPast(selectedDate.getTime())){ // Apply not in past rule to vacation and paid leave
+                webix.message("Dan ne smije biti u prošlosti")
+            }
+            else if([3].indexOf(selectedButton)>=0 &&
+                !calendarView.ruleset.isContinuous(selectedDate.getTime())){ // Checks if there's a gap between days (ignores non working days)
+                webix.message("Dani moraju biti kontinualni")           // NOTE: This will not stop users from creating non-continuous selections by removing a date from the middle.
+            }                                                                
+            else if(!selectedDays.includes(selectedDate.getTime()) &&
                 !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
                 !nonWorkingDays.includes(selectedDate.getTime())) {
                 selectedDays.push(selectedDate.getTime());
-                selectedDays.sort(function (a, b) { return a - b; })
-            } else if(selectedDays.includes(selectedDate.getTime())) {
-                var index = selectedDays.indexOf(selectedDate.getTime());
-                selectedDays.splice(index, 1);
+                selectedDays.sort(function (a, b) { return a - b; });
             }
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
@@ -521,7 +535,41 @@ var calendarView = {
                 util.messages.showErrorMessage(text);
             }, datesArr);
     },
+    ruleset:
+        {
+            // Check if all of the selected dates are neighboring each other (ignoring non working days)
+            isContinuous: function(dateToAdd)
+            {
+                var selectedDaysCopy = JSON.parse(JSON.stringify(selectedDays));
+                var day = 1000 * 60 * 60 * 24;
+                if(dateToAdd!==undefined&&dateToAdd!=null) {
+                    selectedDaysCopy.push(dateToAdd);
+                    selectedDaysCopy.sort(function (a, b) { return a - b; });
+                }
+                for(var i = 0; i < selectedDaysCopy.length-1; i++) {
+                    if (selectedDaysCopy[i + 1] - selectedDaysCopy[i] > day) {
+                        var daysDifference = (selectedDaysCopy[i+1]-selectedDaysCopy[i])/(day);
+                        for(var j = 1; j < daysDifference; j++)
+                        {
+                            var nextDay = selectedDaysCopy[i]+day*j;
+                            var nextDayInWeek =(new Date(nextDay).getDay());
+                            if(calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek)==-1 &&
+                                calendarView.nonWorkingDays.indexOf(nextDay)==-1)
+                                return false;
 
+                        }
+
+                    }
+                }
+                return true;
+            },
+            isNotInPast: function(date)
+            {
+                if(getToday().getTime() > date)
+                    return false;
+                return true;
+            }
+        },
     vacation: function(){
         if(selectedButton != 1 && $$("periodsDT").count() > 0){
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
@@ -597,7 +645,14 @@ Date.prototype.addDays = function(days) {
     date.setDate(date.getDate() + days);
     return date;
 }
-
+function roundToDayStart(timeStamp) { // Rounds timestamp to midnight of that day
+    var d = new Date(timeStamp);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
+}
+function getToday()
+{
+    return roundToDayStart(Date.now());
+}
 function getDates(startDate, stopDate) {
     var dateArray = new Array();
     var currentDate = startDate;
