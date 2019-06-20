@@ -125,7 +125,8 @@ var calendarView = {
                             ]
                         },{
                                 view: "label",
-                                label: "Zahtjev za godisnjim odmorom",
+                                id: "leaveTypeLabel",
+                                label: "Zahtjev za godišnjim odmorom",
                                   css:{"font-style": "bold", "font-size": "150%"},
                                 type: "header",
                                 width: 400,
@@ -183,6 +184,7 @@ var calendarView = {
                                  height:10
                                  },{
                                  view: "label",
+                                     id: "commentLabel",
                                   label: "Komentar:"},
                                  {
                                  //2.element-comment section
@@ -513,6 +515,8 @@ var calendarView = {
 
         connection.sendAjax("POST", "/hub/sickLeave/addSickLeaveRequest/",
             function (text, data, xhr) {
+                util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
+                calendarView.deleteCurrentRequest();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, datesArr);
@@ -524,13 +528,20 @@ var calendarView = {
             delBox.callback = function (result) {
                 if(result == 1){
                     selectedButton=1;
+                    $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
                     calendarView.deleteCurrentRequest();
+                    $$("comment").show();
+                    $$("commentLabel").show();
                 }
             }
             webix.confirm(delBox);
         }
-        else
+        else{
             selectedButton=1;
+            $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
+            $$("comment").show();
+            $$("commentLabel").show();
+        }
 
     },
     leave: function(){
@@ -539,13 +550,20 @@ var calendarView = {
             delBox.callback = function (result) {
                 if(result == 1){
                     selectedButton=2;
+                    $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
+                    $$("comment").show();
+                    $$("commentLabel").show();
                     calendarView.deleteCurrentRequest();
                 }
             }
             webix.confirm(delBox);
         }
-        else
+        else{
             selectedButton=2;
+            $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
+            $$("comment").show();
+            $$("commentLabel").show();
+        }
         },
     sickLeave: function () {
         if(selectedButton != 3 && $$("periodsDT").count() > 0){
@@ -553,13 +571,20 @@ var calendarView = {
             delBox.callback = function (result) {
                 if(result == 1){
                     selectedButton=3;
+                    $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
+                    $$("comment").hide();
+                    $$("commentLabel").hide();
                     calendarView.deleteCurrentRequest();
                 }
             }
             webix.confirm(delBox);
         }
-        else
+        else{
             selectedButton=3;
+            $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
+            $$("comment").hide();
+            $$("commentLabel").hide();
+        }
     }
 }
 
