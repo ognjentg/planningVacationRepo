@@ -400,6 +400,7 @@ var companyView = {
                         if (action === "delete" && userData.userGroupKey == "admin") {
                             alert("Niste autorizovani da izbrišete kompaniju!");
 
+
                         }
                         if (action === "delete" && userData.userGroupKey == "superadmin") {
                             var delBox = (webix.copy(commonViews.deleteConfirm("company")));
@@ -411,8 +412,12 @@ var companyView = {
                                         if (text) {
                                             $$("companyDT").remove(id);
                                             util.messages.showMessage("Uspjesno uklanjanje");
-                                            animateValue($$("t1"), 0, tmpCompaniesLength - 1, 1000);
                                             tmpCompaniesLength = tmpCompaniesLength - 1;
+                                            if(numberOfCompanies>0){
+                                                animateValue($$("t1"), 0, tmpCompaniesLength, 100);
+                                            }else{
+                                                animateValue($$("t1"), 0, 0, 100);
+                                            }
                                         }
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
@@ -421,6 +426,7 @@ var companyView = {
                             };
                             webix.confirm(delBox);
                         }
+
 
                         if (action === "edit") {
                             companyView.showChangeCompanyDialog($$("companyDT").getItem(id.row));
@@ -609,7 +615,11 @@ var companyView = {
                                             if (text) {
                                                 $$("companyDT").remove(context.id.row);
                                                 util.messages.showMessage("Uspjesno uklanjanje");
-                                                animateValue($$("t1"), 0, companies.length, 1000);
+                                                if(companies.length>0){
+                                                    animateValue($$("t1"), 0, companies.length, 1000);
+                                                }else{
+                                                    animateValue($$("t1"), 0, 0, 1000);
+                                                }
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
@@ -1326,6 +1336,7 @@ var companyView = {
     }
 }
 
+
 function animateValue(id, start, end, duration)
 {
     console.log("counter start");
@@ -1340,6 +1351,7 @@ function animateValue(id, start, end, duration)
     var range = end - start;
     var current = start;
     var increment = end > start ? 1 : -1;
+    increment = end == start ? 0: increment;
     var stepTime = Math.abs(Math.floor(duration / range));
     var timer = setInterval(function () {
         current += increment;
@@ -1403,13 +1415,21 @@ function refreshData() {
 
                         table.parse(companies);
 
-                        animateValue($$("t1"), 0, numberOfCompanies, 100);
+                        if(numberOfCompanies>0){
+                            animateValue($$("t1"), 0, numberOfCompanies, 100);
+                        }else{
+                            animateValue($$("t1"), 0, 0, 100);
+                        }
                         animateValue($$("t2"), 0, 100, 100);
                         animateValue($$("t3"), 0, 100, 100);
 
                     } else {
                         table.parse(companies);
-                        animateValue($$("t1"), 0, numberOfCompanies, 1000);
+                        if(numberOfCompanies>0){
+                            animateValue($$("t1"), 0, numberOfCompanies, 100);
+                        }else{
+                            animateValue($$("t1"), 0, 0, 100);
+                        }
                         animateValue($$("t2"), 0, 100, 900);
                         animateValue($$("t3"), 0, 100, 900);
 

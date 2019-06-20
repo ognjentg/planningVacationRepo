@@ -310,7 +310,11 @@ usergroupView = {
                         },
                         onAfterLoad: function () {
                             var numberOfEmployees = $$("usergroupDT").count();
-                            animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                            if(numberOfEmployees>0){
+                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                            }else{
+                                animateValue($$("t3"), 0, 0, 1000);
+                            }
                         }
                     },
                     onClick: {
@@ -1454,7 +1458,11 @@ usergroupView = {
                         alert(text);
                     }, id);
                 var numberOfEmployees = $$("usergroupDT").count();
-                animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                if(numberOfEmployees>0){
+                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                }else{
+                    animateValue($$("t3"), 0, 0, 1000);
+                }
             }
         };
         webix.confirm(delBox);
@@ -1488,10 +1496,18 @@ usergroupView = {
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
                     var numberOfEmployees = $$("usergroupDT").count();
-                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                    if(numberOfEmployees>0){
+                        animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                    }else{
+                        animateValue($$("t3"), 0, 0, 1000);
+                    }
                 }
                 var numberOfEmployees = $$("usergroupDT").count();
-                animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                if(numberOfEmployees>0){
+                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                }else{
+                    animateValue($$("t3"), 0, 0, 1000);
+                }
             };
             webix.confirm(delBox);
 
@@ -1696,7 +1712,7 @@ function getUserGroups() {
     });
 }
 
-function animateValue(id, start, end, duration) {
+/*function animateValue(id, start, end, duration) {
     console.log("counter start");
     var range = end - start;
     var current = start;
@@ -1709,7 +1725,7 @@ function animateValue(id, start, end, duration) {
             clearInterval(timer);
         }
     }, stepTime);
-}
+}*/
 
 function getDatesFromRange(startDate, stopDate) {
     var dateArray = new Array();

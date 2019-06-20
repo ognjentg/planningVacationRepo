@@ -105,7 +105,7 @@ var sectorView = {
                         uncheckValue: 'off',
                         template: "{common.checkbox()}",
                         width: 35,
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                     },
                     {
                         id: "id",
@@ -121,7 +121,7 @@ var sectorView = {
                         hidden: true,
                         fillspace: true,
                         width: 50,
-                        cssFormat: checkCheckBoxStatus
+                        cssFormat: checkBoxStatus
                     },
 
                     {
@@ -132,21 +132,21 @@ var sectorView = {
                             {
                                 content: "textFilter", value: "", icon: "wxi-search"
                             }],
-                        cssFormat: checkCheckBoxStatus
+                        cssFormat: checkBoxStatus
                     },
                     {
                         id: "max_percentage_absent_people",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         header: "Maksimalan procenat odsutnih"
                     },
                     {
                         id: "sectorManagerId",
                         header: "sectorManagerId",
                         width: 50,
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         hidden: true
                     },
                     {
@@ -154,7 +154,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         editable: false,
                         header: ["Ime rukovodioca",
                             {
@@ -166,7 +166,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         editable: false,
                         header: ["Prezime rukovodioca",
                             {
@@ -177,7 +177,7 @@ var sectorView = {
                         id: "delete",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                     },
@@ -185,14 +185,14 @@ var sectorView = {
                         id: "edit",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                     },
                     {
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkCheckBoxStatus,
+                        cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                     }
                 ],
@@ -262,7 +262,11 @@ var sectorView = {
                                             $$("sectorDT").remove(id);
                                             util.messages.showMessage("Uspjesno uklanjanje");
                                             sectorsNumber=sectorsNumber-1;
-                                            animateSectorValue($$("t1"), 0, sectorsNumber, 1000);
+                                            if(sectorsNumber >0 ){
+                                                animateValue($$("t1"), 0, sectorsNumber, 1000);
+                                            }else{
+                                                animateValue($$("t1"), 0, 0, 1000);
+                                            }
                                         }
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
@@ -357,7 +361,11 @@ var sectorView = {
         };
         webix.confirm(delBox);
         sectorsNumber = sectorsNumber - selectedItems.length;
-        animateSectorValue($$("t1"), 0, sectorsNumber, 1000);
+        if(sectorsNumber>0){
+            animateValue($$("t1"), 0, sectorsNumber, 1000);
+        }else{
+            animateValue($$("t1"), 0, 0, 1000);
+        }
     },
 
     selectPanel: function(){
@@ -456,7 +464,11 @@ var sectorView = {
                                             $$("sectorDT").remove(context.id.row);
                                             util.messages.showMessage("Uspjesno uklanjanje");
                                             sectorsNumber=sectorsNumber-1;
-                                            animateSectorValue($$("t1"), 0, sectorsNumber, 1000);
+                                            if(sectorsNumber>0){
+                                                animateValue($$("t1"), 0, sectorsNumber, 1000);
+                                            }else{
+                                                animateValue($$("t1"), 0, 0, 1000);
+                                            }
                                         }
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
@@ -576,7 +588,7 @@ var sectorView = {
 
     save: function(){
         var form = $$("addSectorForm");
-        if(!checkInternetConnection()){
+        if(!isThereInternetConnection()){
             alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
         }else{
             var validation = form.validate();
@@ -616,7 +628,7 @@ var sectorView = {
                             util.dismissDialog('addSectorDialog');
                             alert("Sektor uspješno dodat.");
                             sectorsNumber=sectorsNumber+1;
-                            animateSectorValue($$("t1"), 0, sectorsNumber, 1000);
+                            animateValue($$("t1"), 0, sectorsNumber, 1000);
                         }
                     }, function (text, data, xhr) {
                         if (text.includes("name_UNIQUE")) {
@@ -818,41 +830,30 @@ var sectorView = {
 
 
 };
-function animateSectorValue(id, start, end, duration) {
+
+
+function animateValue(id, start, end, duration){
     console.log("counter start");
+
+    if (end === 0) {
+
+        id.setHTML(`<p>${end}</p>`);
+
+        return;
+    }
+
     var range = end - start;
     var current = start;
     var increment = end > start ? 1 : -1;
-    increment = end == start ? start: increment;
+    increment = end == start ? 0: increment;
     var stepTime = Math.abs(Math.floor(duration / range));
     var timer = setInterval(function () {
         current += increment;
         id.setHTML(`<p>${current}</p>`);
-        if (current == end) {
+        if (current === end) {
             clearInterval(timer);
         }
     }, stepTime);
-}
-
-function checkCheckBoxStatus(value, obj) {
-
-    if (obj.status === "on") {
-        console.log(obj.status);
-
-        return "webix_row_select";
-    } else {
-        return "";
-    }
-
-}
-function checkInternetConnection() {
-
-    if (navigator.onLine) {
-        return true;
-    }
-
-    return false;
-
 }
 
 function refreshSectorData() {
@@ -886,9 +887,9 @@ function refreshSectorData() {
                     sectors = data.json();
                     if(sectors.length>0){
                         sectorsNumber= sectors.length;
-                        animateSectorValue($$("t1"), 0, sectorsNumber, 100);
+                        animateValue($$("t1"), 0, sectorsNumber, 100);
                     }else{
-                        animateSectorValue($$("t1"), 0, 0, 100);
+                        animateValue($$("t1"), 0, 0, 100);
                     }
                     table.hideProgress();
 
@@ -900,7 +901,6 @@ function refreshSectorData() {
 
                     $$("sectorDT").hideColumn("delete-selected");
                     table.parse(sectors);
-                    //animateSectorValue($$("t1"), 0, sectorsNumber, 100);
                 }
             }
 

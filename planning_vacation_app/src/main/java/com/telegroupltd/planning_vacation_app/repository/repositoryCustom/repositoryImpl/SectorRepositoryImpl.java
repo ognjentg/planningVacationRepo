@@ -15,7 +15,7 @@ public class SectorRepositoryImpl implements SectorRepositoryCustom {
             "FROM sector s JOIN user u ON s.sector_manager_id = u.id " +
             "WHERE s.active=1 AND s.company_id=?;";
 
-    private static final String SQL_UPDATE_SECTOR="UPDATE user u SET u.sector_id=null WHERE u.sector_id=?;";
+    private static final String SQL_UPDATE_SECTOR="UPDATE user u SET u.sector_id=null WHERE u.sector_id=?";
 
     @PersistenceContext
     private EntityManager entityManager;
