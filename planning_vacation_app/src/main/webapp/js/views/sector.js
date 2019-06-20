@@ -77,7 +77,7 @@ var sectorView = {
                         view: "button",
                         type: "iconButton",
                         label: "Izbrišite sektore",
-                        icon: "plus-circle",
+                        icon: "fa fa-trash",
                         click:"sectorView.deleteSectors",
                         css: "companyButton",
                         autowidth: true
@@ -105,7 +105,7 @@ var sectorView = {
                         uncheckValue: 'off',
                         template: "{common.checkbox()}",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                     },
                     {
                         id: "id",
@@ -118,10 +118,10 @@ var sectorView = {
                     {
                         id: "id",
                         header: "#",
-                        hidden: true,
-                        fillspace: true,
+                       // hidden: true,
+                       // fillspace: true,
                         width: 50,
-                        cssFormat: checkBoxStatus
+                       // cssFormat: checkBoxStatus
                     },
 
                     {
@@ -132,21 +132,21 @@ var sectorView = {
                             {
                                 content: "textFilter", value: "", icon: "wxi-search"
                             }],
-                        cssFormat: checkBoxStatus
+                        //cssFormat: checkBoxStatus
                     },
                     {
                         id: "max_percentage_absent_people",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         header: "Maksimalan procenat odsutnih"
                     },
                     {
                         id: "sectorManagerId",
                         header: "sectorManagerId",
                         width: 50,
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         hidden: true
                     },
                     {
@@ -154,7 +154,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                       // cssFormat: checkBoxStatus,
                         editable: false,
                         header: ["Ime rukovodioca",
                             {
@@ -166,7 +166,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         editable: false,
                         header: ["Prezime rukovodioca",
                             {
@@ -177,7 +177,7 @@ var sectorView = {
                         id: "delete",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                     },
@@ -185,14 +185,14 @@ var sectorView = {
                         id: "edit",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                     },
                     {
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
-                        cssFormat: checkBoxStatus,
+                        //cssFormat: checkBoxStatus,
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                     }
                 ],
@@ -369,7 +369,7 @@ var sectorView = {
     },
 
     selectPanel: function(){
-        console.log(userData.userGroupKey == "admin" || userData.userGroupKey == "diretor" || userData.userGroupKey=="menadzer");
+        console.log(userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey=="menadzer");
 
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
@@ -594,7 +594,7 @@ var sectorView = {
             var validation = form.validate();
             if(validation){
 
-                //$$("addSectorForm").getElementById("saveSector").disable();
+
                 $$("saveSector").disable();
 
                 connection.sendAjax("PUT", "hub/user/changeToManager/" +$$("managerCombo").getValue(),
@@ -617,16 +617,25 @@ var sectorView = {
                     active:1
                 }
 
+
                 var sector=null;
                 console.log(newSector.id);
                connection.sendAjax("POST", "/hub/sector",
                     function (text, data, xhr) {
                         if (text) {
                             sector=data.json();
+                            /*var temp={
+                                id:sector.id,
+                                name:sector.name,
+                                max_percentage_absent_people:null,
+                                sectorManagerId: $$("managerCombo").getValue(),
+                                first_name:
+                                last_name:
+                            }*/
                             $$("sectorDT").add(sector);
-                            $$("addSectorBtn").enable();
                             util.dismissDialog('addSectorDialog');
                             alert("Sektor uspješno dodat.");
+                            refreshSectorData();
                             sectorsNumber=sectorsNumber+1;
                             animateValue($$("t1"), 0, sectorsNumber, 1000);
                         }
@@ -635,7 +644,6 @@ var sectorView = {
                             alert("Izabrani naziv već postoji. Unesite drugi naziv.");
                         }
                     }, newSector);
-
                //promijeniti sektor menadzeru-ne radi iz nekog razloga
                 var changeSectorInformation = {
                     id: $$("managerCombo").getValue(),
@@ -815,8 +823,9 @@ var sectorView = {
                 function (text, data, xhr) {
                     if (text) {
                         $$("sectorDT").updateItem(newSector.id,newSector);
+                        refreshSectorData();
+                        util.dismissDialog('editSectorDialog');
                         alert("Sektor uspješno izmjenjen.");
-                        util.dismissDialog('editDialog');
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
@@ -832,7 +841,7 @@ var sectorView = {
 };
 
 
-function animateValue(id, start, end, duration){
+/*function animateValue(id, start, end, duration){
     console.log("counter start");
 
     if (end === 0) {
@@ -854,7 +863,7 @@ function animateValue(id, start, end, duration){
             clearInterval(timer);
         }
     }, stepTime);
-}
+}*/
 
 function refreshSectorData() {
     $$("t1").setHTML(`<p>${0}</p>`);
