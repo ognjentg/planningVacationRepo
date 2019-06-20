@@ -487,14 +487,19 @@ public class UserController extends GenericController<User, Integer> {
         User user = userRepository.getByIdAndActive(id, (byte)1);
         if(user == null)
             throw new BadRequestException(badRequestNoUser);
-        User userTemp = cloner.deepClone(user);
-        userTemp.setActive((byte) 0);
-        if(repo.saveAndFlush(userTemp) != null){
-            logUpdateAction(userTemp, user);
-            return "Success";
+        if(user == userBean.getUser()){
+            throw new BadRequestException(badRequestDelete);
+        }else{
+            User userTemp = cloner.deepClone(user);
+            userTemp.setActive((byte) 0);
+            if(repo.saveAndFlush(userTemp) != null){
+                logUpdateAction(userTemp, user);
+                return "Success";
+            }
+            else
+                throw new BadRequestException(badRequestUpdate);
         }
-        else
-            throw new BadRequestException(badRequestUpdate);
+
     }
 
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
