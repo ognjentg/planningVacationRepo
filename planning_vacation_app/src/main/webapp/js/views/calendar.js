@@ -230,6 +230,47 @@ var calendarView = {
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
 
+        var vacationRequestApproved = [];
+        var vacationRequestDenied = [];
+        var vacationRequestWaiting = [];
+        var leaveRequestWaiting = [];
+
+        //Dohvatanje dana na godisnjem odmoru, sto je na cekanju
+        webix.ajax("hub/leaveRequestInfo/leaveRequestInfoWait/" + userData.id, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        var leaves = data.json(); //ALL seaves!!!!  ALL
+
+                        for(var i = 0; i < leaves.length; i++){
+                        //Ovo ce samo da radi ya 1.datum tj od FROM,...ispraviti //TODO !!
+                            var tempDate = new Date(leaves[i].dateFrom); //treba sveee jedan datum iz INTERVALA dateFrom  do  dateTo pokupitiiii!!!!!!!!!!
+
+                            tempDate.setHours(00, 00, 00);
+
+                            if(leaves.category=="Godišnji" && leaves.statusName=="Na čekanju")
+                            vacationRequestWaiting[i] = tempDate.getTime();
+                            else if(leaves.category=="Godišnji" && leaves.statusName=="Odobreno")
+                                 vacationRequestApproved[i] = tempDate.getTime();
+                            else if(leaves.category=="Godišnji" && leaves.statusName=="Odbijeno")
+                                 vacationRequestApproved[i] = tempDate.getTime();
+                              else if(leaves.category=="Slobodno" && leaves.statusName=="Na čekanju")
+                                 leaveRequestWaiting[i] = tempDate.getTime();
+
+                                 //todo boje staviti da mogu provjeriti,je li ovo radi!!!!!
+                            scheduler.blockTime(tempDate, "fullday");
+                        }
+                        scheduler.setCurrentView();
+                    }
+                }
+            }
+        });
+
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
             error: function (text, data, xhr) {
@@ -299,6 +340,9 @@ var calendarView = {
             if(selectedDays.includes(date.getTime())) {
                 return "selected_day";
             }
+             if(vacationRequestWaiting.includes(date.getTime())) {
+                return "vacation_day";
+              }
             return "";
         }
         //skrivanje lightboxa
