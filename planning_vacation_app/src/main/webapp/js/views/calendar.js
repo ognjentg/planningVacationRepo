@@ -8,6 +8,8 @@ var calendarView = {
     freeDays: 20,
     nonWorkingDays: null,
     nonWorkingdDaysInWeek:null,
+    vacationRequestWaiting:null,
+    leaveRequestWaiting:null,
     panel: {
         id: "calendarPanel",
         adjust: true,
@@ -236,7 +238,7 @@ var calendarView = {
         var leaveRequestWaiting = [];
 
         //Dohvatanje dana na godisnjem odmoru, sto je na cekanju
-        webix.ajax("hub/leaveRequestInfo/leaveRequestInfoWait/" + userData.id, {
+        webix.ajax("hub/leave_request/leaveRequestByUserId/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
                     util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
@@ -246,25 +248,24 @@ var calendarView = {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
                         var leaves = data.json(); //ALL seaves!!!!  ALL
-
                         for(var i = 0; i < leaves.length; i++){
                         //Ovo ce samo da radi ya 1.datum tj od FROM,...ispraviti //TODO !!
                             var tempDate = new Date(leaves[i].dateFrom); //treba sveee jedan datum iz INTERVALA dateFrom  do  dateTo pokupitiiii!!!!!!!!!!
-
                             tempDate.setHours(00, 00, 00);
-
-                            if(leaves.category=="Godišnji" && leaves.statusName=="Na čekanju")
+                            if(leaves[i].category=="Godisnji" /*&& leaves[i].statusName=="Na čekanju"*/){ //TODO: ne prepoznaje ovaj atribut!
                             vacationRequestWaiting[i] = tempDate.getTime();
-                            else if(leaves.category=="Godišnji" && leaves.statusName=="Odobreno")
+                            console.log(i+".  "+vacationRequestWaiting[i])
+                            }
+                   /*         else if(leaves.category=="Godisnji" && leaves.statusName=="Odobreno")
                                  vacationRequestApproved[i] = tempDate.getTime();
-                            else if(leaves.category=="Godišnji" && leaves.statusName=="Odbijeno")
-                                 vacationRequestApproved[i] = tempDate.getTime();
-                              else if(leaves.category=="Slobodno" && leaves.statusName=="Na čekanju")
-                                 leaveRequestWaiting[i] = tempDate.getTime();
-
-                                 //todo boje staviti da mogu provjeriti,je li ovo radi!!!!!
+                            else if(leaves.category=="Godisnji" && leaves.statusName=="Odbijeno")
+                                 vacationRequestDenied[i] = tempDate.getTime();*/
+                      //        else if(leaves.category=="Slobodno" /*&& leaves.statusName=="Na čekanju"*/)
+                       //          leaveRequestWaiting[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
+                         calendarView.vacationRequestWaiting = vacationRequestWaiting;
+                        calendarView.leaveRequestWaiting = leaveRequestWaiting;
                         scheduler.setCurrentView();
                     }
                 }
@@ -343,6 +344,9 @@ var calendarView = {
              if(vacationRequestWaiting.includes(date.getTime())) {
                 return "vacation_day";
               }
+            if(leaveRequestWaiting.includes(date.getTime())) {
+                return "day_off";
+            }
             return "";
         }
         //skrivanje lightboxa

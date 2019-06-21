@@ -88,6 +88,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         } else throw new BadRequestException(badRequestDelete);
     }
 
+    @RequestMapping(value = "/leaveRequestByUserId/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformationByUserId(@PathVariable Integer id){
+        return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(id);
+    }
+
     @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {

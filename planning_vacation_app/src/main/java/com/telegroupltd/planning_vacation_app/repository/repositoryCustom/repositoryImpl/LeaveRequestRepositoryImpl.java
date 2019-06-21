@@ -66,6 +66,21 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "WHERE lr.active=1 AND lr.id=? ";
 
 
+    private static final String SQL_ALL_REQUESTS_FOR_USER = "SELECT lr.id, category, sender_comment, approver_comment, sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name "+
+            "FROM leave_request lr "+
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
+            "JOIN user u ON lr.sender_user_id=u.id "+
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
+            "JOIN leave_request_type lrt ON lr.leave_type_id=lrt.id "+
+            "WHERE lr.active=1 AND sender_user_id=? "+
+            "GROUP BY lr.id ";
+
+    @Override
+    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id) {
+        return entityManager.createNativeQuery(SQL_ALL_REQUESTS_FOR_USER,"LeaveRequestUserLeaveRequestStatusMapping").setParameter(1,id).getResultList();
+    }
+
+
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformation(Integer id) {
         return entityManager.createNativeQuery(SQL_ALL,"LeaveRequestUserLeaveRequestStatusMapping").getResultList();
@@ -107,4 +122,5 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id){
         return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_INFO_BY_ID, "LeaveRequestUserLeaveRequestStatusMapping").setParameter(1, id).getResultList();
     }
+
 }
