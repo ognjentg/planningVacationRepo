@@ -510,7 +510,7 @@ var calendarView = {
             leaveRequestStatusId: 1,
             companyId: userData.companyId,
             senderComment: $$("comment").getValue(),
-            category: "Godisnji"
+            category: "Godišnji"
         }
         connection.sendAjax("POST", "hub/leave_request/",
             function (text, data, xhr) {

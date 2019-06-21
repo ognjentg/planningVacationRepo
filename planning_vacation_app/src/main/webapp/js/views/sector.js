@@ -889,7 +889,7 @@ function refreshSectorData() {
         error: function (text, data, xhr) {
 
             if (xhr.status != 200) {
-                util.messages.showErrorMessage(("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
+                util.messages.showErrorMessage(("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo."));
                // alert("No data to load! Check your internet connection and try again.");
                 table.hideProgress();
             }
