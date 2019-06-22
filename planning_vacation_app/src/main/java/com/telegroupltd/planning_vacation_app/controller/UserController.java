@@ -547,10 +547,7 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.getAllUsersWithoutSector(companyId);
     }
 
-    @RequestMapping(value = "/changeSectorMilica", method = RequestMethod.PUT)
-    public @ResponseBody void changeSectorMilica(@RequestBody ChangeSectorInformation changeSectorInformation){
-        userRepository.changeSectorMilica(changeSectorInformation.getId(),changeSectorInformation.getSectorId());
-    }
+
 
 
 }

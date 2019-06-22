@@ -994,6 +994,17 @@ usergroupView = {
         $$("choseSectorCombo").setValue("Svi sektori");
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
 
+    },
+
+    selectPanelWithSector: function(sector){
+        usergroupView.selectPanel();
+        $$("choseSectorCombo").setValue(sector.id);
+
+        sectorID=sector.id;
+        usergroupView.refreshDatatable();
+
+        //$$("usergroupDT").clearAll();
+        //$$("usergroupDT").define("url", "hub/user/custom/bySector/" + sector.id);
     }
     ,
 
