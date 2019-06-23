@@ -10,6 +10,8 @@ var calendarView = {
     nonWorkingdDaysInWeek:null,
     vacationRequestWaiting:null,
     leaveRequestWaiting:null,
+    sickLeaveDaysWaiting: [],
+    sickLeaveDaysApproved: [],
     panel: {
         id: "calendarPanel",
         adjust: true,
@@ -244,7 +246,8 @@ var calendarView = {
         var vacationRequestDenied = [];
         var vacationRequestWaiting = [];
         var leaveRequestWaiting = [];
-
+        var sickLeaveDaysApproved = [];
+        var sickLeaveDaysWaiting = [];
         //Dohvatanje dana na godisnjem odmoru, sto je na cekanju
         webix.ajax("hub/leave_request/leaveRequestByUserId/" + userData.id, {
             error: function (text, data, xhr) {
@@ -279,7 +282,7 @@ var calendarView = {
                 }
             }
         });
-
+        calendarView.getSickDays();
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
             error: function (text, data, xhr) {
@@ -355,6 +358,10 @@ var calendarView = {
             if(leaveRequestWaiting.includes(date.getTime())) {
                 return "day_off";
             }
+            if(calendarView.sickLeaveDaysApproved.includes(date.getTime()))
+                return "sick_day";
+            if(calendarView.sickLeaveDaysWaiting.includes(date.getTime()))
+                return "sick_day_waiting";
             return "";
         }
         //skrivanje lightboxa
@@ -525,8 +532,10 @@ var calendarView = {
             calendarView.sendVacationLeaveRequest();
         //else if(selectedButton == 2)
             //Leave
-        else if(selectedButton == 3)
+        else if(selectedButton == 3){
             calendarView.sendSickLeaveRequest();
+            calendarView.getSickDays();
+        }
 
 /*
         if (form.validate()) {
@@ -715,6 +724,37 @@ var calendarView = {
             $$("comment").hide();
             $$("commentLabel").hide();
         }
+    },
+    //Dohvatanje bolovanja
+    getSickDays: function () {
+        webix.ajax("hub/sickLeave/getSickLeaveFilteredByUserId/" + userData.id, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200 && data.json() != null) {
+                    var sickLeave = data.json();
+                    sickLeave.forEach(function (value) {
+                        //Dodavanje dana na čekanju
+                        if(value.statusName == "Na čekanju"){
+                            console.log("FROM " + value.dateFrom + " TO " + value.dateTo);
+                            getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
+                                calendarView.sickLeaveDaysWaiting.push(day.getTime());
+                            })
+                        }
+                        //Dodavanje odobrenih dana
+                        else if(value.statusName == "Opravdano"){
+                            getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
+                                calendarView.sickLeaveDaysApproved.push(day.getTime());
+                            })
+                        }
+                    })
+
+                }
+            }
+        })
     }
 }
 
@@ -738,7 +778,7 @@ function getToday()
 function getDates(startDate, stopDate) {
     var dateArray = new Array();
     var currentDate = startDate;
-    while (currentDate < stopDate) {
+    while (currentDate <= stopDate) {
         dateArray.push(new Date (currentDate));
         currentDate = currentDate.addDays(1);
     }

@@ -60,6 +60,12 @@
 .sick_day .dhx_month_body{
     background-color: #E989A3;
 }
+.sick_day_waiting .dhx_month_head{
+    background-color: #e99cb2;
+}
+.sick_day_waiting .dhx_month_body{
+    background-color: #e99cb2;
+}
 /* Boja za labelu bolovanje u legendi */
 .sick_day_label {
     color: #E989A3;
