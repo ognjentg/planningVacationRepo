@@ -125,6 +125,14 @@ var calendarView = {
                                     css: "sickLeaveButton",
                                     click:"calendarView.sickLeave",
                                     autowidth: true
+                                },{},
+                                {
+                                    id: "religionBtn",
+                                    view: "button",
+                                    label: "Religijski praznici",
+                                    css: "vacationButton",
+                                   // click:"calendarView.sickLeave",
+                                    autowidth: true
                                 }
                             ]
                         },{

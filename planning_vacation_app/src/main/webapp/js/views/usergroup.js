@@ -549,10 +549,7 @@ usergroupView = {
                         view: "icon",
                         icon: "close",
                         align: "right",
-                        click: function () {
-                            $$("changeManagerBtn").enable();
-                            util.dismissDialog("changeManagerDialog");
-                        }
+                        click: "util.dismissDialog('changeManagerDialog')"
                     }]
                 },
                 {
@@ -617,7 +614,9 @@ usergroupView = {
                     label: "Promijeni",
                     id: "changeManagerButton",
                     align: "right",
-                    click: "usergroupView.changeManager",
+                    click: function() {
+                        usergroupView.changeManager();
+                    },
                     width: 200
                 }
             ]
@@ -903,16 +902,6 @@ usergroupView = {
             connection.sendAjax("POST", "hub/user/changeManager",
                 function (text, data, xhr) {
                     if (text) {
-                        util.messages.showMessage("Uspješna promjena pozicije zaposlenom.");
-                        $$("changeManagerTable").eachRow(
-                            function (row) {
-                                if ($$("changeManagerTable").getItem(row).position === "menadzer") {
-                                    var user1 = $$("changeManagerTable").getItem(row);
-                                    user1.position = "zaposleni";
-                                    $$("changeManagerTable").updateItem(row, user1);
-                                }
-                            }
-                        );
                         $$("usergroupDT").eachRow(
                             function (row) {
                                 if ($$("usergroupDT").getItem(row).position === "menadzer") {
@@ -924,14 +913,16 @@ usergroupView = {
                         );
                         var user = $$("changeManagerTable").getItem(changeManagerInformation.newManager);
                         user.position = "menadzer";
-                        $$("changeManagerTable").updateItem(changeManagerInformation.newManager, user);
                         $$("usergroupDT").updateItem(changeManagerInformation.newManager, user);
-
+                        util.dismissDialog("changeManagerDialog");
+                        util.messages.showMessage("Uspješna promjena pozicije zaposlenom.");
                     } else
                         util.messages.showErrorMessage("Neuspješna promjena pozicije zaposlenom.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 }, changeManagerInformation);
+
+
         }
     },
 
