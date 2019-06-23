@@ -33,14 +33,15 @@ var sickRequestsView = {
                             label: "Vrsta zahtjeva",
                             labelWidth: 100,
                             value: "1",
+                            editable:false,
                             on: {
                                 onChange(name) {
                                     $$("secretary_requestDT").clearAll();
 
 
                                     if(name === 4){
-                                        $$("secretary_requestDT").hideColumn("accept");
-                                        $$("secretary_requestDT").hideColumn("reject");
+                                        $$("secretary_requestDT").showColumn("accept");
+                                        $$("secretary_requestDT").showColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
@@ -156,13 +157,26 @@ var sickRequestsView = {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
-                        template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>",
+                        //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>",
+                        template: function(obj) {
+                            var pom=obj.statusName;
+                            if((pom != "Opravdano")&&(pom!="Neopravdano")) {
+                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
+                            }
+                            else return "";
+                        },
 
                     }, {
                         id: "reject",
                         header: "&nbsp;",
                         width: 35,
-                        template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
+                        //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
+                        template: function(obj) {
+                            var pom=obj.statusName;
+                            if((pom != "Opravdano")&&(pom!="Neopravdano"))
+                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
+                            else return "";
+                        }
 
                     },
                     ],
