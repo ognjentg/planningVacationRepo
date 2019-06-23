@@ -38,19 +38,19 @@ public class GenericLogger<T> extends CommonController {
     }
 
     public void logCreateAction(T object) {
-        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUser().getId(), Logger.ActionType.CREATE.toString(), createMessage.replace("{entity}", object.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUser().getCompanyId()));
+        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getId(), Logger.ActionType.CREATE.toString(), createMessage.replace("{entity}", object.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getCompanyId()));
     }
 
     public void logUpdateAction(T newObject, T oldObject) {
-        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUser().getId(), Logger.ActionType.UPDATE.toString(), updateMessage.replace("{oldEntity}", oldObject.toString()).replace("{newEntity}", newObject.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUser().getCompanyId()));
+        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getId(), Logger.ActionType.UPDATE.toString(), updateMessage.replace("{oldEntity}", oldObject.toString()).replace("{newEntity}", newObject.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getCompanyId()));
     }
 
     public void logDeleteAction(T object) {
-        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUser().getId(), Logger.ActionType.DELETE.toString(), deleteMessage.replace("{entity}", object.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUser().getCompanyId()));
+        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getId(), Logger.ActionType.DELETE.toString(), deleteMessage.replace("{entity}", object.toString()), type.getSimpleName(), (byte) 1, ((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getCompanyId()));
     }
 
     public void logSpecificAction(String actionType, String actionDetails, String tableName) {
-        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUser().getId(), actionType, actionDetails, tableName, (byte) 0, ((UserBean) httpSession.getAttribute("userBean")).getUser().getCompanyId()));
+        loggerRepository.saveAndFlush(new Logger(((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getId(), actionType, actionDetails, tableName, (byte) 0, ((UserBean) httpSession.getAttribute("userBean")).getUserUserGroupKey().getCompanyId()));
     }
 
 }

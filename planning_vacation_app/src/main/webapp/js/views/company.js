@@ -396,7 +396,7 @@ var companyView = {
                     if (action === "delete" && userData.userGroupKey == "admin") {
                         // alert("Niste autorizovani da izbrišete kompaniju!");
                         util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
-
+                    }
                         if (action === "delete" && userData.userGroupKey == "admin") {
                             //alert("Niste autorizovani da izbrišete kompaniju!");
                             util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
@@ -476,7 +476,7 @@ var companyView = {
 
                     }
                 }
-            }
+
         },
             {
                 view: "toolbar",

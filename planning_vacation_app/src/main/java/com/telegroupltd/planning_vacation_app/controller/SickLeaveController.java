@@ -50,25 +50,25 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     @RequestMapping(value = "/sickLeaveInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<SickLeaveUserSickLeaveStatus> getSectorsInformation(){
-        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUser().getId());
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUserUserGroupKey().getId());
     }
 
     @RequestMapping(value = "/sickLeaveInfoWait", method = RequestMethod.GET)
     public @ResponseBody
     List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(){
-        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformationForWait(userBean.getUser().getId());
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformationForWait(userBean.getUserUserGroupKey().getId());
     }
 
     @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
-        return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUser().getId(), key);
+        return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUserUserGroupKey().getId(), key);
     }
 
     @RequestMapping(value = "/getSickLeaveFilteredByUserId/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredByUserId(@PathVariable Integer key ){
-        return sickLeaveRepository.getSickLeaveFilteredByUserId(userBean.getUser().getId(), key);
+        return sickLeaveRepository.getSickLeaveFilteredByUserId(userBean.getUserUserGroupKey().getId(), key);
     }
 
     @Transactional
@@ -84,7 +84,7 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
             if (dates.get(0).before(cal.getTime())) {
                 SickLeave sickLeave = new SickLeave();
                 sickLeave.setActive((byte) 1);
-                sickLeave.setUserId(userBean.getUser().getId());
+                sickLeave.setUserId(userBean.getUserUserGroupKey().getId());
                 sickLeave.setDateFrom(new Timestamp(dates.get(0).getTime()));
                 sickLeave.setDateTo(new Timestamp(dates.get(dates.size() - 1).getTime()));
                 sickLeave.setSickLeaveStatusId(1);

@@ -100,7 +100,7 @@ public class UserController extends GenericController<User, Integer> {
     List<User> getAll() throws ForbiddenException {
         List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
 
-        if (superAdmin == userBean.getUser().getUserGroupId()) {
+        if (superAdmin == userBean.getUserUserGroupKey().getUserGroupId()) {
             for (User u : users) {
                 u.setPassword("");
                 u.setSalt("");
@@ -109,24 +109,24 @@ public class UserController extends GenericController<User, Integer> {
         }
 
 
-        users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte) 1)));
-        if (admin == userBean.getUser().getUserGroupId()){
+        users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), ((byte) 1)));
+        if (admin == userBean.getUserUserGroupKey().getUserGroupId()){
             for (User u : users) {
                 u.setPassword("");
                 u.setSalt("");
             }
             return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).collect(Collectors.toList());
-        }else if(director == userBean.getUser().getUserGroupId()) {
+        }else if(director == userBean.getUserUserGroupKey().getUserGroupId()) {
             for (User u : users) {
                 u.setPassword("");
                 u.setSalt("");
             }
             return users.stream().filter(u ->  admin != u.getUserGroupId() && director != u.getUserGroupId()).collect(Collectors.toList());
-        }else if(secretary == userBean.getUser().getUserGroupId()) {
+        }else if(secretary == userBean.getUserUserGroupKey().getUserGroupId()) {
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).collect(Collectors.toList());
-        } else if(sectorManager== userBean.getUser().getUserGroupId()) {
-            users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte)1)));
+        } else if(sectorManager== userBean.getUserUserGroupKey().getUserGroupId()) {
+            users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte)1)));
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u-> worker == u.getUserGroupId()).collect(Collectors.toList());
         }
@@ -138,7 +138,7 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     User findById(@PathVariable("id") Integer id) throws BadRequestException {
         User user = userRepository.findById(id).orElse(null);
-        if (user != null && Objects.equals(user.getCompanyId(), userBean.getUser().getCompanyId())) {
+        if (user != null && Objects.equals(user.getCompanyId(), userBean.getUserUserGroupKey().getCompanyId())) {
             user.setPassword("");
             user.setSalt("");
             return user;
@@ -152,18 +152,41 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     UserUserGroupKey login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
         User user = userRepository.login(userLoginInformation.getEmail(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
+        String tempKey="";
+        switch (user.getUserGroupId()) {
+            case 1:
+                tempKey = "superadmin";
+                break;
+            case 2:
+                tempKey = "admin";
+                break;
+            case 3:
+                tempKey = "direktor";
+                break;
+            case 4:
+                tempKey = "sekretar";
+                break;
+            case 5:
+                tempKey="menadzer";
+                break;
+            case 6:
+                tempKey="zaposleni";
+                break;
+        }
+
+        UserUserGroupKey userUserGroupKey = new UserUserGroupKey(user,tempKey);
         if (user == null) {
             throw new ForbiddenException("Forbidden");
         } else {
-            userBean.setUser(user);
+            userBean.setUserUserGroupKey(userUserGroupKey);
             userBean.setAuthorized(true);
-           // return userBean.getUser();
+           // return userBean.getUserUserGroupKey();
             UserGroupController userGroupController=new UserGroupController(userGroupRepository);
             UserGroup userGroup= userGroupController.findById(user.getUserGroupId());
-            userBean.setKeyUserGroup(userGroup.getKey());
+            userBean.setUserUserGroupKey(userUserGroupKey);
             //  userBean.setLoggedIn(true);
 
-            return new UserUserGroupKey(userBean.getUser(),userBean.getKeyUserGroup());
+            return new UserUserGroupKey(userBean.getUserUserGroupKey(),userBean.getUserUserGroupKey().getUserGroupKey());
         }
     }
 
@@ -188,7 +211,7 @@ public class UserController extends GenericController<User, Integer> {
         }
         List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
 
-        if (superAdmin == userBean.getUser().getUserGroupId()) {
+        if (superAdmin == userBean.getUserUserGroupKey().getUserGroupId()) {
             return users.stream().filter(u -> admin == u.getUserGroupId()).count();
         }else  throw new ForbiddenException("Forbidden");
     }
@@ -210,19 +233,19 @@ public class UserController extends GenericController<User, Integer> {
         }
         List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
 
-        if (superAdmin == userBean.getUser().getUserGroupId())
+        if (superAdmin == userBean.getUserUserGroupKey().getUserGroupId())
             return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).count();
         else {
-            users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), ((byte) 1)));
+            users = cloner.deepClone(userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), ((byte) 1)));
 
-            if (admin == userBean.getUser().getUserGroupId())
+            if (admin == userBean.getUserUserGroupKey().getUserGroupId())
                 return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId()).count();
-            else if (director == userBean.getUser().getUserGroupId())
+            else if (director == userBean.getUserUserGroupKey().getUserGroupId())
                 return users.stream().filter(u -> superAdmin != u.getUserGroupId() && admin != u.getUserGroupId() && director != u.getUserGroupId()).count();
-            else if (secretary == userBean.getUser().getUserGroupId())
+            else if (secretary == userBean.getUserUserGroupKey().getUserGroupId())
                 return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).count();
-            else if (sectorManager == userBean.getUser().getUserGroupId()) {
-                users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUser().getCompanyId(), userBean.getUser().getSectorId(), ((byte) 1)));
+            else if (sectorManager == userBean.getUserUserGroupKey().getUserGroupId()) {
+                users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte) 1)));
                 return users.stream().filter(u -> worker == u.getUserGroupId()).count();
             } else
                 throw new ForbiddenException("Forbidden");
@@ -235,7 +258,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public @ResponseBody
     String update(@PathVariable Integer id, @RequestBody User user) throws BadRequestException {
-        if(userBean.getUser().getId().equals(id)){
+        if(userBean.getUserUserGroupKey().getId().equals(id)){
             if (Validator.stringMaxLength(user.getFirstName(), 100)) {
                 if (Validator.stringMaxLength(user.getLastName(), 100)) {
                     if(Validator.binaryMaxLength(user.getPhoto(), longblobLength)){
@@ -267,7 +290,7 @@ public class UserController extends GenericController<User, Integer> {
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
     User insert(@RequestBody User user) throws BadRequestException {
-        ////   if(userRepository.countAllByCompanyIdAndEmail(userBean.getUser().getCompanyId(), user.getEmail()).compareTo(Integer.valueOf(0)) == 0){
+        ////   if(userRepository.countAllByCompanyIdAndEmail(userBean.getUserUserGroupKey().getCompanyId(), user.getEmail()).compareTo(Integer.valueOf(0)) == 0){
         if(userRepository.getByCompanyIdAndEmailAndActive(user.getCompanyId(), user.getEmail(), (byte)1) != null){
             throw new BadRequestException(badRequestEmailExists);
         }
@@ -280,7 +303,7 @@ public class UserController extends GenericController<User, Integer> {
             newUser.setFirstName(null);
             newUser.setLastName(null);
             if(user.getCompanyId() == null)
-                user.setCompanyId(userBean.getUser().getCompanyId());
+                user.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
             else if(user.getUserGroupId()!=superAdmin && user.getUserGroupId()!=admin ) {  //Svi primaju mail-ove osim superadmina i admina, prvi put
                 //   newUser.setPauseFlag(user.getPauseFlag());
                 //   newUser.setStartDate(user.getStartDate()); - ne kupi dobro na frontu,kupi undefined,pa zato ovako zasada/....
@@ -333,7 +356,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public @ResponseBody
     List<User> getAdminsOfCompany(){
-        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUser().getCompanyId(), admin, (byte)1);
+        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), admin, (byte)1);
         resoult.forEach(user -> user.setPassword(null));
         return resoult;
     }
@@ -341,7 +364,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/nonAdmins", method = RequestMethod.GET)
     public @ResponseBody
     List<User> getNonAdmins(){
-        Integer companyId = userBean.getUser().getCompanyId();
+        Integer companyId = userBean.getUserUserGroupKey().getCompanyId();
         List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 3, (byte)1);
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 4, (byte)1));
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 5, (byte)1));
@@ -475,11 +498,11 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     List<UserUserGroupSector> getAllExtendedBySectorId(@PathVariable Integer sectorId) {
         if(sectorId==-1) //svi sektori
-            return userRepository.getAllByCompanyIdAllSectorsAndActive(userBean.getUser().getCompanyId());
+            return userRepository.getAllByCompanyIdAllSectorsAndActive(userBean.getUserUserGroupKey().getCompanyId());
             else if(sectorId==-2) //workers without sector
-                return userRepository.getAllExtendedBySectorIdNullAndActive(userBean.getUser().getCompanyId());
+                return userRepository.getAllExtendedBySectorIdNullAndActive(userBean.getUserUserGroupKey().getCompanyId());
 
-        return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUser().getCompanyId(), sectorId);
+        return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), sectorId);
     }
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.PUT)
     public @ResponseBody
@@ -487,7 +510,7 @@ public class UserController extends GenericController<User, Integer> {
         User user = userRepository.getByIdAndActive(id, (byte)1);
         if(user == null)
             throw new BadRequestException(badRequestNoUser);
-        if(user == userBean.getUser()){
+        if(user == userBean.getUserUserGroupKey()){
             throw new BadRequestException(badRequestDelete);
         }else{
             User userTemp = cloner.deepClone(user);
@@ -505,7 +528,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody
     String updatePassword(@RequestBody PasswordInformation passwordInformation) throws BadRequestException{
-        User user = userRepository.findById(userBean.getUser().getId()).orElse(null);
+        User user = userRepository.findById(userBean.getUserUserGroupKey().getId()).orElse(null);
         if(user != null){
             if(passwordInformation.getOldPassword() != null && user.getPassword().trim().toLowerCase().equals(Util.hashPasswordSalt(passwordInformation.getOldPassword().trim(),user.getSalt()))){
                 if(passwordInformation.getNewPassword() != null && Validator.passwordChecking(passwordInformation)){
@@ -528,7 +551,7 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     User checkState() throws ForbiddenException {
         if (userBean.isAuthorized()) {
-            return userBean.getUser();
+            return userBean.getUserUserGroupKey();
         } else
             throw new ForbiddenException("Forbidden");
     }
@@ -538,12 +561,12 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/getAllUsersFromSectorByUserGroupId/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody List<User> getAllUsersFromSectorByUserGroupId(@PathVariable Integer sectorId){
-        return userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUser().getCompanyId(),sectorId);
+        return userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUserUserGroupKey().getCompanyId(),sectorId);
     }
 
     @RequestMapping(value = "/getAllUsersWithoutSector", method = RequestMethod.GET)
     public @ResponseBody List<User> getAllUsersWithoutSector(){
-        Integer companyId=userBean.getUser().getCompanyId();
+        Integer companyId=userBean.getUserUserGroupKey().getCompanyId();
         return userRepository.getAllUsersWithoutSector(companyId);
     }
 

@@ -51,7 +51,7 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     @Override
     public @ResponseBody
     List<Sector> getAll() {
-        return sectorRepository.getAllByCompanyIdAndActive(userBean.getUser().getCompanyId(), (byte)1);
+        return sectorRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1);
         // return sectors = sectorRepository.getAllByActiveIs((byte)1);
 
     }
@@ -72,7 +72,7 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     @RequestMapping(value = "/sectorInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<SectorUser> getSectorsInformation(){
-        return sectorRepository.getSectorsInformation(userBean.getUser().getCompanyId());
+        return sectorRepository.getSectorsInformation(userBean.getUserUserGroupKey().getCompanyId());
     }
 
     @RequestMapping(value = "/updateUsersFromSector/{sectorId}", method = RequestMethod.PUT)
