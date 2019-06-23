@@ -248,8 +248,8 @@ var companyView = {
                 checkValue: 'on',
                 uncheckValue: 'off',
                 template: "{common.checkbox()}",
-                width: 35
-                //   cssFormat: checkBoxStatus
+                width: 35,
+                cssFormat: "checkBoxStatus"
             },
 
                 {
@@ -264,8 +264,8 @@ var companyView = {
                     id: "id",
                     hidden: true,
                     header: "#",
-                    width: 50
-                    //    cssFormat: checkBoxStatus,
+                    width: 50,
+                    cssFormat: "checkBoxStatus"
                 },
 
                 {
@@ -277,7 +277,8 @@ var companyView = {
                         "font-weight": "bold",
                         "color": "#000000"
                     },
-                    //   cssFormat: checkBoxStatus,
+
+                    cssFormat: "checkBoxStatus",
                     fillspace: true, template: function (obj) {
                         if (obj.logo == null) {
                             return "Nema slike"
@@ -292,7 +293,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                    //   cssFormat: checkBoxStatus,
+                    cssFormat: "checkBoxStatus",
                     header: [
                         "Naziv kompanije", {
                             content: "textFilter", value: ""
@@ -304,7 +305,7 @@ var companyView = {
                     fillspace: true,
                     editor: "text",
                     sort: "string",
-                    //    cssFormat: checkBoxStatus,
+                    cssFormat: "checkBoxStatus",
                     header: [
                         "PIN kompanije", {
                             content: "textFilter", value: ""
@@ -316,7 +317,7 @@ var companyView = {
                     id: "delete",
                     header: "&nbsp;",
                     width: 35,
-                    //   cssFormat: checkBoxStatus,
+                    cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                 },
@@ -324,7 +325,7 @@ var companyView = {
                     id: "edit",
                     header: "&nbsp;",
                     width: 35,
-                    //    cssFormat: checkBoxStatus,
+                    cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                 },
 
@@ -332,7 +333,7 @@ var companyView = {
                     id: "admins",
                     header: "&nbsp;",
                     width: 35,
-                    //   cssFormat: checkBoxStatus,
+                    cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
                 }
                 // {

@@ -81,7 +81,7 @@ var companyInfoView = {
                                     id: "delete",
                                     header: "&nbsp;",
                                     fillspace:true,
-                                    cssFormat: checkBoxStatus,
+                                    cssFormat: "checkBoxStatus",
                                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                                 },
@@ -179,7 +179,7 @@ var companyInfoView = {
                                     id: "delete",
                                     header: "&nbsp;",
                                     fillspace:true,
-                                    cssFormat: checkBoxStatus,
+                                    cssFormat: "checkBoxStatus",
                                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                                 },

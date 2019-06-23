@@ -105,7 +105,7 @@ var sectorView = {
                         uncheckValue: 'off',
                         template: "{common.checkbox()}",
                         width: 35,
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                     },
                     {
                         id: "id",
@@ -121,7 +121,7 @@ var sectorView = {
                        // hidden: true,
                         fillspace: true,
                         width: 50,
-                       // cssFormat: checkBoxStatus
+                        cssFormat: "checkBoxStatus"
                     },
 
                     {
@@ -132,21 +132,21 @@ var sectorView = {
                             {
                                 content: "textFilter", value: "", icon: "wxi-search"
                             }],
-                        //cssFormat: checkBoxStatus
+                        cssFormat: "checkBoxStatus"
                     },
                     {
                         id: "max_percentage_absent_people",
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         header: "Maksimalan procenat odsutnih"
                     },
                     {
                         id: "sectorManagerId",
                         header: "sectorManagerId",
                         width: 50,
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         hidden: true
                     },
                     {
@@ -154,7 +154,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                       // cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         editable: false,
                         header: ["Ime rukovodioca",
                             {
@@ -166,7 +166,7 @@ var sectorView = {
                         fillspace: true,
                         editor: "text",
                         sort: "string",
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         editable: false,
                         header: ["Prezime rukovodioca",
                             {
@@ -177,7 +177,7 @@ var sectorView = {
                         id: "delete",
                         header: "&nbsp;",
                         width: 35,
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                     },
@@ -185,14 +185,14 @@ var sectorView = {
                         id: "edit",
                         header: "&nbsp;",
                         width: 35,
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
                     },
                     {
                         id: "view",
                         header: "&nbsp;",
                         width: 35,
-                        //cssFormat: checkBoxStatus,
+                        cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                     }
                 ],

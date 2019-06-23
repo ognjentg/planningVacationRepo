@@ -191,8 +191,8 @@ usergroupView = {
                             checkValue: 'on',
                             uncheckValue: 'off',
                             template: "{common.checkbox()}",
-                            width: 35
-                            //   cssFormat: checkBoxStatus
+                            width: 35,
+                            cssFormat: "checkBoxStatus"
                         },
                         {
                             id: "id",
