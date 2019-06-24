@@ -269,6 +269,8 @@ public class UserController extends GenericController<User, Integer> {
                         userTemp.setLastName(user.getLastName());
                         userTemp.setReceiveMail(user.getReceiveMail());
                         userTemp.setPhoto(user.getPhoto());
+                        userBean.getUserUserGroupKey().setFirstName(user.getFirstName());
+                        userBean.getUserUserGroupKey().setLastName(user.getLastName());
                         logUpdateAction(user, oldUser);
 
                         return "Success";
