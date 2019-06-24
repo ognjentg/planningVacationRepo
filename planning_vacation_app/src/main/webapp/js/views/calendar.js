@@ -4,6 +4,13 @@ var selectedButton=null;
 var selectedDays = [];
 var updatedDays = [];
 
+var buttons ={
+    VACATION : 1,
+    PAID : 2,
+    SICK : 3,
+    RELIGIOUS : 4
+};
+
 var calendarView = {
     freeDays: 20,
     nonWorkingDays: null,
@@ -377,19 +384,19 @@ var calendarView = {
 
             if(selectedDays.includes(selectedDate.getTime())) {
                 var index = selectedDays.indexOf(selectedDate.getTime());
-                if(selectedButton==3)           // Since sick leave must be continuous, erase all after this point.
+                if(selectedButton===buttons.SICK)           // Since sick leave must be continuous, erase all after this point.
                     selectedDays.splice(index);
                 else
                     selectedDays.splice(index, 1);
             }
-            else if([1,2].indexOf(selectedButton)>=0 &&
+            else if([buttons.VACATION,buttons.PAID].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())){ // Apply not in past rule to vacation and paid leave
                 webix.message("Dan ne smije biti u prošlosti")
             }
-            else if([3].indexOf(selectedButton)>=0&&
-                nonWorkingDaysInWeek.indexOf(selectedDate.getDay())==-1&&
-                nonWorkingDays.indexOf(selectedDate.getTime())==-1){
-                if(selectedDays.length==0) {
+            else if(selectedButton===buttons.SICK &&
+                nonWorkingDaysInWeek.indexOf(selectedDate.getDay())===-1&&
+                nonWorkingDays.indexOf(selectedDate.getTime())===-1){
+                if(selectedDays.length===0) {
                     selectedDays.push(selectedDate.getTime());
                 }
                 else{
@@ -528,11 +535,11 @@ var calendarView = {
             util.messages.showErrorMessage("Nisu odabrani dani za odsustvo");
             return;
         }
-        if(selectedButton == 1)
+        if(selectedButton == buttons.VACATION)
             calendarView.sendVacationLeaveRequest();
-        //else if(selectedButton == 2)
+        //else if(selectedButton == buttons.PAID)
             //Leave
-        else if(selectedButton == 3){
+        else if(selectedButton == buttons.SICK){
             calendarView.sendSickLeaveRequest();
             calendarView.getSickDays();
         }
@@ -662,11 +669,11 @@ var calendarView = {
             }
         },
     vacation: function(){
-        if(selectedButton != 1 && $$("periodsDT").count() > 0){
+        if(selectedButton != buttons.VACATION && $$("periodsDT").count() > 0){
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if(result == 1){
-                    selectedButton=1;
+                    selectedButton=buttons.VACATION;
                     $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
                     calendarView.deleteCurrentRequest();
                     $$("comment").show();
@@ -676,7 +683,7 @@ var calendarView = {
             webix.confirm(delBox);
         }
         else{
-            selectedButton=1;
+            selectedButton=buttons.VACATION;
             $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
             $$("comment").show();
             $$("commentLabel").show();
@@ -684,11 +691,11 @@ var calendarView = {
 
     },
     leave: function(){
-        if(selectedButton != 2 && $$("periodsDT").count() > 0) {
+        if(selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if(result == 1){
-                    selectedButton=2;
+                    selectedButton=buttons.PAID;
                     $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
                     $$("comment").show();
                     $$("commentLabel").show();
@@ -698,18 +705,18 @@ var calendarView = {
             webix.confirm(delBox);
         }
         else{
-            selectedButton=2;
+            selectedButton=buttons.PAID;
             $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
             $$("comment").show();
             $$("commentLabel").show();
         }
         },
     sickLeave: function () {
-        if(selectedButton != 3 && $$("periodsDT").count() > 0){
+        if(selectedButton != buttons.SICK && $$("periodsDT").count() > 0){
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if(result == 1){
-                    selectedButton=3;
+                    selectedButton=buttons.SICK;
                     $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
                     $$("comment").hide();
                     $$("commentLabel").hide();
@@ -719,7 +726,7 @@ var calendarView = {
             webix.confirm(delBox);
         }
         else{
-            selectedButton=3;
+            selectedButton=buttons.SICK;
             $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
             $$("comment").hide();
             $$("commentLabel").hide();
