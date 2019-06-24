@@ -66,6 +66,10 @@ var companyInfoView = {
                             adjust:true,
                             select: "row",
                             navigation: true,
+                            tooltip: {
+                                dx:-35, //20 by default
+                                dy:20
+                            },
                             columns:[
                                 {
                                     id:"#",
@@ -80,7 +84,9 @@ var companyInfoView = {
                                 {
                                     id: "delete",
                                     header: "&nbsp;",
+                                    tooltip: "Brisanje",
                                     fillspace:true,
+                                    width: 35,
                                     cssFormat: "checkBoxStatus",
                                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
@@ -158,6 +164,10 @@ var companyInfoView = {
                             label:"Kolektivni godišnji odmor:",
                             adjust:true,
                             select: "row",
+                            tooltip: {
+                                dx:-35, //20 by default
+                                dy:20
+                            },
                             navigation: true,
                             columns:[
                                 {
@@ -178,6 +188,7 @@ var companyInfoView = {
                                 {
                                     id: "delete",
                                     header: "&nbsp;",
+                                    tooltip: "Brisanje",
                                     fillspace:true,
                                     cssFormat: "checkBoxStatus",
                                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",

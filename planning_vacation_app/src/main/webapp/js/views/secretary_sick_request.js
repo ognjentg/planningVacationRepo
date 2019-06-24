@@ -80,6 +80,10 @@ var sickRequestsView = {
                     id: "secretary_requestDT",
                     css: "secretary_requestDatatable",
                     margin: 10,
+                    tooltip: {
+                        dx:-35, //20 by default
+                        dy:20
+                    },
                     multiselect: false,
                     navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
                     select: "row", // cell
@@ -157,6 +161,7 @@ var sickRequestsView = {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
+                        tooltip: "Prihvati zahtjev",
                         //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>",
                         template: function(obj) {
                             var pom=obj.statusName;
@@ -169,6 +174,7 @@ var sickRequestsView = {
                     }, {
                         id: "reject",
                         header: "&nbsp;",
+                        tooltip: "Odbij zahtjev",
                         width: 35,
                         //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
                         template: function(obj) {

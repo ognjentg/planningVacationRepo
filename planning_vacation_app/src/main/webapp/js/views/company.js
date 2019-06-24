@@ -238,6 +238,10 @@ var companyView = {
             multiselect: false,
             resizeColumn: true,
             resizeRow: true,
+            tooltip: {
+                dx:-35, //20 by default
+                dy:20
+            },
             checkboxRefresh: true,
             onContext: {},
             pager: "pagerA",
@@ -317,6 +321,7 @@ var companyView = {
                     id: "delete",
                     header: "&nbsp;",
                     width: 35,
+                    tooltip: "Brisanje",
                     cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
@@ -324,6 +329,7 @@ var companyView = {
                 {
                     id: "edit",
                     header: "&nbsp;",
+                    tooltip: "Azuriranje",
                     width: 35,
                     cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
@@ -332,6 +338,7 @@ var companyView = {
                 {
                     id: "admins",
                     header: "&nbsp;",
+                    tooltip: "Pregled admina",
                     width: 35,
                     cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",

@@ -79,6 +79,10 @@ leaveRequestsView = {
                     id: "leave_requestDT",
                     margin: 10,
                     multiselect: false,
+                    tooltip: {
+                        dx:-35, //20 by default
+                        dy:20
+                    },
                     navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
                     select: "row", // cell
                     resizeColumn: true, // omogucen resize kolona korisniku
@@ -161,6 +165,7 @@ leaveRequestsView = {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
+                        tooltip: "Prihvati zahtjev",
                         template: function(obj) {
                             var pom=obj.statusName;
                             if((pom != "Odobreno")&&(pom!="Odbijeno")) {
@@ -171,6 +176,7 @@ leaveRequestsView = {
                     }, {
                         id: "reject",
                         header: "&nbsp;",
+                        tooltip: "Odbij zahtjev",
                         width: 35,
                         template: function(obj) {
                             var pom=obj.statusName;
@@ -182,6 +188,7 @@ leaveRequestsView = {
                     }, {
                         id: "view",
                         header: "&nbsp;",
+                        tooltip: "Pregled",
                         width: 35,
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-eye'></span>"
                     }

@@ -173,7 +173,10 @@ usergroupView = {
                     view: "datatable",
                     id: "usergroupDT",
                     margin: 10,
-                    tooltip: true,
+                    tooltip: {
+                        dx:-35, //20 by default
+                        dy:20
+                    },
                     //fillspace: true,
                     //editaction: "dblclick",
                     // multiselect: false,
@@ -254,12 +257,13 @@ usergroupView = {
                             id: "delete",
                             header: "&nbsp;",
                             width: 35,
+                            tooltip: "Brisanje",
                             template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
                         }, {
                             id: "view",
                             header: "&nbsp;",
-                            tooltip: "Informacije o zaposlenom",
+                            tooltip: "Pregled",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                         }, /*{
@@ -271,7 +275,7 @@ usergroupView = {
                         },*/ {
                             id: "sector", //mijenjanje sektora, od strane direktora i admina
                             header: "&nbsp;",
-                            tooltip: "Mijenjanje sektora zaposlenog.",
+                            tooltip: "Azuriranje",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-users'></span>"
                         }, {
@@ -558,7 +562,10 @@ usergroupView = {
                     margin: 10,
                     height: 250,
                     width: 600,
-                    tooltip: true,
+                    tooltip: {
+                        dx:-35, //20 by default
+                        dy:20
+                    },
                     select: "row",
                     multiselect: false,
                     checkboxRefresh: true,
@@ -1221,6 +1228,9 @@ usergroupView = {
                     id: "1",
                     value: "Izbriši zaposlenog",
                     icon: "trash"
+                },
+                {
+                    $template: "Separator"
                 },
                 {
                     id: "2",

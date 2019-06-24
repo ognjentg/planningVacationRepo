@@ -87,6 +87,10 @@ var sectorView = {
             {
                 id: "sectorDT",
                 view: "datatable",
+                tooltip: {
+                    dx:-35, //20 by default
+                    dy:20
+                },
                 css: "companyDatatable",
                 margin: 10,
                 editable: true,
@@ -176,6 +180,7 @@ var sectorView = {
                     {
                         id: "delete",
                         header: "&nbsp;",
+                        tooltip: "Brisanje",
                         width: 35,
                         cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
@@ -184,6 +189,7 @@ var sectorView = {
                     {
                         id: "edit",
                         header: "&nbsp;",
+                        tooltip: "Azuriranje",
                         width: 35,
                         cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
@@ -191,6 +197,7 @@ var sectorView = {
                     {
                         id: "view",
                         header: "&nbsp;",
+                        tooltip: "Pregled",
                         width: 35,
                         cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
@@ -241,6 +248,7 @@ var sectorView = {
                                     $$("sectorDT").detachEvent("onBeforeDelete");
                                     var managerId= item.sectorManagerId;
 
+
                                     connection.sendAjax("PUT", "hub/user/changeToWorker/" + managerId,
                                         function (text, data, xhr) {
                                             if (text) {
@@ -250,7 +258,7 @@ var sectorView = {
                                             //alert(text);
                                         }, managerId);
 
-                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+id,
+                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item.sectorId,
                                         function (text, data, xhr) {
                                             if (text) {
                                             }
@@ -329,6 +337,7 @@ var sectorView = {
 
                 selectedItems.forEach(function (item) {
 
+                    console.log("=================================  " + item);
                     var sector=$$("sectorDT").getItem(item);
                     connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
                         function (text, data, xhr) {
@@ -375,6 +384,8 @@ var sectorView = {
     selectPanel: function(){
         console.log(userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey=="menadzer");
 
+        selectedItems = [];
+        console.log("------------------------ " + selectedItems);
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
         var panelCopy = webix.copy(this.panel);
