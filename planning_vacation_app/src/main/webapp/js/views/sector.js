@@ -240,31 +240,14 @@ var sectorView = {
                             //alert("Niste autorizovani da izbrišete sektor!");
                         }
                         if (action === "delete" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" )) {
-
+                            console.log("delete");
                             var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
+                            console.log($$("sectorDT").getItem(id));
                             delBox.callback = function (result) {
                                 if (result == 1) {
                                     var item = $$("sectorDT").getItem(id);
                                     $$("sectorDT").detachEvent("onBeforeDelete");
                                     var managerId= item.sectorManagerId;
-
-
-                                    connection.sendAjax("PUT", "hub/user/changeToWorker/" + managerId,
-                                        function (text, data, xhr) {
-                                            if (text) {
-                                            }
-                                        }, function (text, data, xhr) {
-                                            util.messages.showErrorMessage(text);
-                                            //alert(text);
-                                        }, managerId);
-
-                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item.sectorId,
-                                        function (text, data, xhr) {
-                                            if (text) {
-                                            }
-                                        }, function (text, data, xhr) {
-
-                                        },item);
 
                                     connection.sendAjax("DELETE", "hub/sector/" + id, function (text, data, xhr) {
                                         if (text) {
@@ -280,6 +263,27 @@ var sectorView = {
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
                                     }, item);
+
+                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/" + item.id,
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                            }
+                                        }, function (text, data, xhr) {
+
+                                        },item);
+
+                                    connection.sendAjax("PUT", "hub/user/changeToWorker/" + managerId,
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                            }
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                            //alert(text);
+                                        }, managerId);
+
+
+
+
 
                                 }
                             };

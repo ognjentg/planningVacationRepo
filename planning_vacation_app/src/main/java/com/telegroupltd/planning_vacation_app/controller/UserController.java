@@ -487,6 +487,7 @@ public class UserController extends GenericController<User, Integer> {
             throw new BadRequestException(badRequestNoUser);
         User userTemp = cloner.deepClone(oldUser);
         userTemp.setUserGroupId(worker);
+        userTemp.setSectorId(null);
         if(repo.saveAndFlush(userTemp) != null){
             logUpdateAction(userTemp, oldUser);
             return "Success";
