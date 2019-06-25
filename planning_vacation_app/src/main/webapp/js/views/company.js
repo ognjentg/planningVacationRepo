@@ -546,6 +546,8 @@ var companyView = {
 
                     var column = master.getColumnConfig(config.columnId);
                     var checked = config.checked ? column.checkValue : column.uncheckValue;
+                    selectedItemsCheckBox = [];
+
                     master.data.each(function (obj) {
 
 
@@ -556,6 +558,13 @@ var companyView = {
 
                         }
                     });
+
+                    if (checked === "off") {
+                        selectedItemsCheckBox = [];
+                        $$("delete-selected").disable();
+                        // alert(selectedItemsCheckBox.length);
+                    }
+
                     master.refresh();
                 };
             }
