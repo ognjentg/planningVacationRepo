@@ -6,6 +6,7 @@ var sectorID = null; // if there is sector manager
 //int numberOfSectors; //when sector is changed
 var selectedItems = [];
 var selectedManager = [];
+var choosenSectorId = 0;
 
 usergroupView = {
     getPanel: function () {
@@ -958,6 +959,7 @@ usergroupView = {
 
         webix.ajax().get("hub/sector").then(function (data) {
             //response text
+            console.log("hub/sector");
             console.log(data.text());
             if (data.json() != null) {
                 console.log("loaded data with success");
@@ -990,11 +992,14 @@ usergroupView = {
         //                         console.log('called once after first rendering:');
         //                   });
         $$("choseSectorCombo").setValue("Svi sektori");
+
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
 
     },
 
     selectPanelWithSector: function(sector){
+        console.log("select panel with sector");
+
         usergroupView.selectPanel();
         $$("choseSectorCombo").setValue(sector.id);
 
@@ -1135,9 +1140,10 @@ usergroupView = {
     ,
 
     changeSector: function () {
-
+        console.log("method change sector");
         var user = $$("usergroupDT").getSelectedItem();
         var sectorId = $$("cuCombo").getValue();
+        choosenSectorId = sectorId;
         if (sectorId === -1 || sectorId === -2) {
             util.messages.showErrorMessage("Odabrani sektor ne postoji!");
         } else {
@@ -1162,10 +1168,18 @@ usergroupView = {
                                 user.sector_name = sectorName;
                                 $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
                             } else {
-                                $$("usergroupDT").remove($$("usergroupDT").getSelectedId());
+                                $$("usergroupDT").eachRow(function(row){
+                                    if ($$("usergroupDT").getItem(row).sectorId === sectorId)
+                                        console.log($$("usergroupDT").getItem(row));
+                                    else {
+                                        console.log($$("usergroupDT").getItem(row));
+                                        $$("usergroupDT").remove($$("usergroupDT").getSelectedId());
+                                    }
+                                });
+
                             }
                         } else
-                            util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
+                            util.messages.showErrorMessage("Neuspješna izmjena sektora.");
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
                     }, changeSectorInformation);
@@ -1178,7 +1192,7 @@ usergroupView = {
 
     changeMultipleUsersSector: function () {
         var sectorId = $$("cmuCombo").getValue();
-
+        choosenSectorId = sectorId;
         if (sectorId === -1 || sectorId === -2) {
             util.messages.showErrorMessage("Odabrani sektor ne postoji!");
         } else {
@@ -1203,7 +1217,15 @@ usergroupView = {
                                     user.sector_name = sectorName;
                                     $$("usergroupDT").updateItem(element, user);
                                 } else {
-                                    $$("usergroupDT").remove(element);
+                                    $$("usergroupDT").eachRow(function(row){
+                                        if ($$("usergroupDT").getItem(row).sectorId === sectorId)
+                                            console.log($$("usergroupDT").getItem(row));
+                                        else {
+                                            console.log($$("usergroupDT").getItem(row));
+                                            $$("usergroupDT").remove(element);
+                                        }
+                                    });
+
                                 }
                             } else
                                 util.messages.showErrorMessage("Neuspješna promjena sektora.");
