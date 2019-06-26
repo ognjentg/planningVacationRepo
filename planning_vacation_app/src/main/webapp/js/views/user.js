@@ -94,7 +94,7 @@ var profileView = {
                             name: "firstName",
                             label: "Ime",
                             invalidMessage: "Niste unijeli ime.",
-                            labelWidth: 150,
+                            labelWidth: 100,
                             height: 35
                         },
                         {
@@ -104,7 +104,7 @@ var profileView = {
                             name: "lastName",
                             label: "Prezime",
                             invalidMessage: "Niste unijeli prezime.",
-                            labelWidth: 150,
+                            labelWidth: 100,
                             height: 35
                         },
                         {

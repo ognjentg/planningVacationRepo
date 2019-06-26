@@ -524,7 +524,7 @@ var calendarView = {
                         religionLeave = data.json();
                     }
                     else
-                        religionLeave = 0;
+                        religionLeave.numberOfDaysUsed = 0;
                     animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
                 }
             }
@@ -541,7 +541,6 @@ var calendarView = {
             //Leave
         else if(selectedButton == buttons.SICK){
             calendarView.sendSickLeaveRequest();
-            calendarView.getSickDays();
         }
 
 /*
@@ -629,6 +628,7 @@ var calendarView = {
             function (text, data, xhr) {
                 util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
                 calendarView.deleteCurrentRequest();
+                calendarView.getSickDays();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, datesArr);
@@ -758,7 +758,7 @@ var calendarView = {
                             })
                         }
                     })
-
+                    scheduler.setCurrentView();
                 }
             }
         })
