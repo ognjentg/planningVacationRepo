@@ -277,4 +277,5 @@
 .webix_list_item.disabled{
     background: #eee;
     color: #aaa;
+    display: none;
 }

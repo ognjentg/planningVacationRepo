@@ -1357,6 +1357,15 @@ function animateValue(id, start, end, duration)
 {
     console.log("counter start");
 
+    if (end === null) {
+
+        end = 0;
+
+        id.setHTML(`<p>${end}</p>`);
+
+        return;
+    }
+
     if (end === 0) {
 
         id.setHTML(`<p>${end}</p>`);

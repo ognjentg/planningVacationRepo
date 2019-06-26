@@ -437,18 +437,18 @@ usergroupView = {
                             name: "choseUserGroupCombo",
                             invalidMessage: "Obavezan je izbor radne pozicije.",
                             required: true,
-                            on: {
-                                onChange: function (newId, oldId) {
-
-                                    if (this.getList().getItem(newId).disabled) {
-
-                                        util.messages.showErrorMessage("Nije moguće izabrati menadžera.");
-                                        this.blockEvent();
-                                        oldId ? this.setValue("") : this.setValue(oldId);
-                                        this.unblockEvent();
-                                    }
-                                }
-                            },
+                            // on: {
+                            //     onChange: function (newId, oldId) {
+                            //
+                            //         if (this.getList().getItem(newId).disabled) {
+                            //
+                            //             util.messages.showErrorMessage("Nije moguće izabrati menadžera.");
+                            //             this.blockEvent();
+                            //             oldId ? this.setValue("") : this.setValue(oldId);
+                            //             this.unblockEvent();
+                            //         }
+                            //     }
+                            // },
                             //options:usergroupView.userGroups
                         }]
                     }, {
@@ -981,6 +981,7 @@ usergroupView = {
                 });
                 console.log(data.text());
                 $$("choseSectorCombo").define("options", usergroupView.sectors);
+                $$("choseSectorCombo").setValue("-1");
                 $$("choseSectorCombo").refresh();
 
             } else {
@@ -1025,7 +1026,7 @@ usergroupView = {
             $$("choseUserGroupComboLabel").show();
         }
 
-        if (sectorID === -1) {
+        if (sectorID == -1) {
             $$("choseUserGroupCombo").show();
             $$("choseUserGroupComboLabel").show();
 
@@ -1052,12 +1053,12 @@ usergroupView = {
                 userGroups.forEach(function (userGroup) {
                     usergroupView.userGroups.push({
                         id: userGroup.id,
-                        value: userGroup.keyUserGroup
+                        value: userGroup.key
                     });
                 });
                 $$("choseUserGroupCombo").define("options", usergroupView.userGroups);
 
-                if (sectorID === -1) {
+                if (sectorID == -1 || sectorID == -2) {
                     $$("choseUserGroupCombo").getList().getItem(5).disabled = true;
                     $$("choseUserGroupCombo").getList().addCss(5, "disabled");
                 }
