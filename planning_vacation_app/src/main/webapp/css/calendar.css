@@ -49,6 +49,9 @@
 .unpaid_day_off .dhx_month_body{
     background-color: #fed282;
 }
+.dhx_now .dhx_month_body, .dhx_now .dhx_month_head {
+    background:none !important;
+}
 /* Boja za labelu neplaceni dani u legendi */
 .unpaid_day_label {
     color: #fed282;
