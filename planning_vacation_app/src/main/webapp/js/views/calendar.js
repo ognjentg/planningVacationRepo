@@ -429,7 +429,8 @@ var calendarView = {
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
             var tableData = [];
-            selectedDays.forEach(function (value) { tableData.push({eventId: e.id, date: new Date(value).toISOString().split("T")[0]}) });
+            var format = webix.Date.dateToStr("%d.%m.%Y");
+            selectedDays.forEach(function (value) { tableData.push({eventId: e.id, date: format(new Date(value))}) });
             $$("periodsDT").parse(tableData);
         });
         // 1. custom
