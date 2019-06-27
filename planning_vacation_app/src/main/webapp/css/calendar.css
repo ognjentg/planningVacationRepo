@@ -44,24 +44,24 @@
 }
 /* Boja za neplacene slobodne dane  */
 .unpaid_day_off .dhx_month_head{
-    background-color: #fed282;
+    background-color: #edc13e;
 }
 .unpaid_day_off .dhx_month_body{
-    background-color: #fed282;
+    background-color: #edc13e;
 }
 .dhx_now .dhx_month_body, .dhx_now .dhx_month_head {
     background:none !important;
 }
 /* Boja za labelu neplaceni dani u legendi */
 .unpaid_day_label {
-    color: #fed282;
+    color: #edc13e;
 }
 /* Boja za dane bolovanja */
 .sick_day .dhx_month_head{
-    background-color: #E989A3;
+    background-color: #e36688;
 }
 .sick_day .dhx_month_body{
-    background-color: #E989A3;
+    background-color: #e36688;
 }
 .sick_day_waiting .dhx_month_head{
     background-color: #e99cb2;
@@ -71,11 +71,98 @@
 }
 /* Boja za labelu bolovanje u legendi */
 .sick_day_label {
-    color: #E989A3;
+    color: #e36688;
+}
+.sick_day_waiting_label{
+    background-color: #e99cb2;
+}
+.vacation_day_waiting .dhx_month_head{
+    background-color: #77e0a3;
+}
+.vacation_day_waiting .dhx_month_body{
+    background-color: #77e0a3;
+}
+.vacation_day_waiting_label{
+    background-color: #6bcf95;
+}
+.vacation_day_approved_label{
+    background-color: #2ecb70;
+}
+.vacation_day_denied .dhx_month_head{
+    background-color: #069140;
+}
+.vacation_day_denied .dhx_month_body{
+    background-color: #069140;
+}
+.vacation_day_denied_label{
+    background-color: #069140;
+}
+.sick_day_approved_label{
+    background-color: #e36688;
+}
+.sick_day_denied .dhx_month_head{
+    background-color: #d42857;
+}
+.sick_day_denied .dhx_month_body{
+    background-color: #d42857;
+}
+.sick_day_denied_label{
+    background-color: #d42857;
+}
+.day_off_waiting .dhx_month_head{
+     background-color: #60b7cc;
+}
+.day_off_waiting .dhx_month_body{
+    background-color: #60b7cc;
+}
+.day_off_waiting_label{
+    background-color: #60b7cc;
+}
+.day_off_approved_label{
+    background-color: #1CA1C1;
+}
+.day_off_denied_label{
+    background-color: #03748f;
+}
+.unpaid_day_off_approved_label{
+    background-color: #edc13e;
+}
+.day_off_denied .dhx_month_head{
+    background-color: #03748f;
+}
+.day_off_denied .dhx_month_body{
+    background-color: #03748f;
+}
+.religion_day_off .dhx_month_head{
+    background-color: #a247cc;
+}
+.religion_day_off .dhx_month_body{
+    background-color: #a247cc;
+}
+.religion_day_off_approved_label{
+    background-color: #a247cc;
+}
+.religion_day_off_waiting .dhx_month_head{
+    background-color: #c58be0;
+}
+.religion_day_off_waiting .dhx_month_body{
+    background-color: #c58be0;
+}
+.religion_day_off_waiting_label{
+    background-color: #c58be0;
+}
+.religion_day_off_denied .dhx_month_head{
+    background-color: #6a0399;
+}
+.religion_day_off_denied .dhx_month_body{
+    background-color: #6a0399;
+}
+.religion_day_off_denied_label{
+    background-color: #6a0399;
 }
 
 .vacationButton .webixtype_base {
-    background-color: #268fd5  !important;
+    background-color: #2ecb70  !important;
     border-radius: 6px;
     height: 100%;
     width: 100%;
@@ -86,7 +173,7 @@
 }
 
 .leaveButton .webixtype_base{
-    background-color: #E989A3 !important;
+    background-color: #1CA1C1 !important;
     border-radius: 6px;
     height: 100%;
     width: 100%;
@@ -98,7 +185,7 @@
 
 
 .sickLeaveButton .webixtype_base{
-    background-color: #00b3b3  !important;
+    background-color: #e36688  !important;
     border-radius: 6px;
     height: 100%;
     width: 100%;
@@ -108,7 +195,7 @@
     padding: auto 6px;
 }
 .religionButton .webixtype_base{
-    background-color: #E989A3 !important;
+    background-color: #a247cc !important;
     border-radius: 6px;
     height: 100%;
     width: 100%;
