@@ -71,9 +71,9 @@
     color: #E989A3;
 }
 
-.vacationButton {
+.vacationButton .webixtype_base {
     background-color: #268fd5  !important;
-    border: none;
+    border-radius: 6px;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -82,9 +82,9 @@
     padding: auto 6px;
 }
 
-.leaveButton{
-    background-color:#E989A3 !important;
-    border: none;
+.leaveButton .webixtype_base{
+    background-color: #E989A3 !important;
+    border-radius: 6px;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -93,9 +93,9 @@
     padding: auto 6px;
 }
 
-.sickLeaveButton{
+.sickLeaveButton .webixtype_base{
     background-color: #00b3b3  !important;
-    border: none;
+    border-radius: 6px;
     height: 100%;
     width: 100%;
     cursor: pointer;
@@ -104,9 +104,10 @@
     padding: auto 6px;
 }
 
-.unpickedButton{
-    background-color: #8c8c8c !important;
-    border: none;
+.unpickedButton .webixtype_base{
+    /*background-color: #8c8c8c !important;*/
+    background-color: #268fd5  !important;
+    border-radius: 6px;
     height: 100%;
     width: 100%;
     cursor: pointer;

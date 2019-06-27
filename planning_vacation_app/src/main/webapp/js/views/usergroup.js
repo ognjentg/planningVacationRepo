@@ -1000,6 +1000,7 @@ usergroupView = {
 
     selectPanelWithSector: function(sector){
         console.log("select panel with sector");
+        $$("mainMenu").select("usergroup");
 
         usergroupView.selectPanel();
         $$("choseSectorCombo").setValue(sector.id);

@@ -115,7 +115,7 @@ var calendarView = {
                                     id: "vacationBtn",
                                     view: "button",
                                     label: "Godišnji odmor",
-                                    css: "vacationButton",
+                                    css: "vacationButton .webixtype_base",
                                     click: "calendarView.vacation",
                                     autowidth: true
                                 },{},
@@ -123,7 +123,7 @@ var calendarView = {
                                     id: "leaveBtn",
                                     view: "button",
                                     label: "Odsustvo",
-                                    css: "leaveButton",
+                                    css: "unpickedButton .webixtype_base",
                                     click:"calendarView.leave",
                                     autowidth: true
                                 },{},
@@ -131,7 +131,7 @@ var calendarView = {
                                     id: "sickLeaveBtn",
                                     view: "button",
                                     label: "Bolovanje",
-                                    css: "sickLeaveButton",
+                                    css: "sickLeaveButton .webixtype_base",
                                     click:"calendarView.sickLeave",
                                     autowidth: true
                                 },{},
@@ -501,8 +501,17 @@ var calendarView = {
                     if (data.json() != null) {
                         var vacationDays = data.json();
                         calendarView.freeDays = vacationDays.totalDays - vacationDays.usedDays;
-                        animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
-                        animateValue($$("t2"), 0, vacationDays.totalDays, 700);
+                        if(vacationDays.totalDays - vacationDays.usedDays>0){
+                            animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
+                        }else{
+                            animateValue($$("t1"), 0, 0, 700);
+                        }
+
+                        if(vacationDays.totalDays>0){
+                            animateValue($$("t2"), 0, vacationDays.totalDays, 700);
+                        }else{
+                            animateValue($$("t2"), 0, 0, 700);
+                        }
                     }
                     else{
                         calendarView.freeDays = 0;
@@ -525,7 +534,11 @@ var calendarView = {
                     }
                     else
                         religionLeave.numberOfDaysUsed = 0;
-                    animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
+                    if(2 - religionLeave.numberOfDaysUsed >0){
+                        animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
+                    }else{
+                        animateValue($$("t3"), 0, 0, 200);
+                    }
                 }
             }
         });
@@ -669,7 +682,11 @@ var calendarView = {
             }
         },
     vacation: function(){
+        $$("vacationBtn").css_setter("vacationButton .webixtype_base");
+        $$("leaveBtn").css_setter("unpickedButton .webixtype_base");
+        $$("sickLeaveBtn").css_setter("unpickedButton .webixtype_base");
         if(selectedButton != buttons.VACATION && $$("periodsDT").count() > 0){
+
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if(result == 1){
@@ -691,6 +708,9 @@ var calendarView = {
 
     },
     leave: function(){
+        $$("leaveBtn").css_setter("leaveButton .webixtype_base");
+        $$("vacationBtn").css_setter("unpickedButton .webixtype_base");
+        $$("sickLeaveBtn").css_setter("unpickedButton .webixtype_base");
         if(selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
@@ -712,7 +732,11 @@ var calendarView = {
         }
         },
     sickLeave: function () {
+        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("vacationBtn").css_setter("unpickedButton .webixtype_base");
+        $$("leaveBtn").css_setter("unpickedButton .webixtype_base");
         if(selectedButton != buttons.SICK && $$("periodsDT").count() > 0){
+
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if(result == 1){
