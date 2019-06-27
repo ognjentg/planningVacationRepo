@@ -123,7 +123,7 @@ var calendarView = {
                                     id: "leaveBtn",
                                     view: "button",
                                     label: "Odsustvo",
-                                    css: "unpickedButton .webixtype_base",
+                                    css: "leaveButton .webixtype_base",
                                     click:"calendarView.leave",
                                     autowidth: true
                                 },{},
@@ -139,8 +139,8 @@ var calendarView = {
                                     id: "religionBtn",
                                     view: "button",
                                     label: "Religijski praznici",
-                                    css: "vacationButton",
-                                   // click:"calendarView.sickLeave",
+                                    css: "religionButton .webixtype_base",
+                                    click:"calendarView.religionLeave",
                                     autowidth: true
                                 }
                             ]
@@ -683,8 +683,10 @@ var calendarView = {
         },
     vacation: function(){
         $$("vacationBtn").css_setter("vacationButton .webixtype_base");
-        $$("leaveBtn").css_setter("unpickedButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("unpickedButton .webixtype_base");
+        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
+
         if(selectedButton != buttons.VACATION && $$("periodsDT").count() > 0){
 
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
@@ -709,8 +711,9 @@ var calendarView = {
     },
     leave: function(){
         $$("leaveBtn").css_setter("leaveButton .webixtype_base");
-        $$("vacationBtn").css_setter("unpickedButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("unpickedButton .webixtype_base");
+        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
         if(selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
@@ -733,8 +736,9 @@ var calendarView = {
         },
     sickLeave: function () {
         $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("vacationBtn").css_setter("unpickedButton .webixtype_base");
-        $$("leaveBtn").css_setter("unpickedButton .webixtype_base");
+        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
         if(selectedButton != buttons.SICK && $$("periodsDT").count() > 0){
 
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
@@ -754,6 +758,32 @@ var calendarView = {
             $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
             $$("comment").hide();
             $$("commentLabel").hide();
+        }
+    },
+    religionLeave: function(){
+        $$("religionBtn").css_setter("religionButton .webixtype_base");
+        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
+        if(selectedButton != buttons.RELIGIOUS && $$("periodsDT").count() > 0){
+
+            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
+            delBox.callback = function (result) {
+                if(result == 1){
+                    selectedButton=buttons.SICK;
+                    $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
+                    $$("comment").show();
+                    $$("commentLabel").show();
+                    calendarView.deleteCurrentRequest();
+                }
+            }
+            webix.confirm(delBox);
+        }
+        else{
+            selectedButton=buttons.RELIGIOUS;
+            $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
+            $$("comment").show();
+            $$("commentLabel").show();
         }
     },
     //Dohvatanje bolovanja
