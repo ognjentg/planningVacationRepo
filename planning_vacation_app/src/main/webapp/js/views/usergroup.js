@@ -207,7 +207,7 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:210,
-                            header: ["<span class='webix_icon fa fa-user'/>Ime",
+                            header: ["Ime",  //<span class='webix_icon fa fa-user'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -217,7 +217,7 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:210,
-                            header: ["<span class='webix_icon fa fa-user'/>Prezime",
+                            header: ["Prezime", //<span class='webix_icon fa fa-user'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -228,7 +228,7 @@ usergroupView = {
                             editable: false,
                             sort: "text",
                             //width:220,
-                            header: ["<span class='webix_icon fa fa-user'/>Email",
+                            header: ["Email", //<span class='webix_icon fa fa-user'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -238,7 +238,7 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            header: ["<span class='webix_icon fas fa-briefcase'/>Pozicija",
+                            header: ["Pozicija", //<span class='webix_icon fas fa-briefcase'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -249,7 +249,7 @@ usergroupView = {
                             editable: false,
                             sort: "string",
                             //width:220,
-                            header: ["<span class='webix_icon fas fa-briefcase'/>Sektor",
+                            header: ["Sektor", //<span class='webix_icon fas fa-briefcase'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
