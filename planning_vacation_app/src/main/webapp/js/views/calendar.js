@@ -811,11 +811,20 @@ var calendarView = {
                 return true;
             }
         },
-    vacation: function () {
-        $$("vacationBtn").css_setter("vacationButton .webixtype_base");
+    vacation: function(){
+        /*$$("vacationBtn").css_setter("vacationButton .webixtype_base");
         $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
         $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
+
+        $$("vacationBtn").define("css","vacationButton .webixtype_base");
+        $$("vacationBtn").refresh();
+        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("leaveBtn").refresh();
+        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("sickLeaveBtn").refresh();
+        $$("religionBtn").define("css","unpickedButton .webixtype_base");
+        $$("religionBtn").refresh();
 
         if (selectedButton != buttons.VACATION && $$("periodsDT").count() > 0) {
 
@@ -838,12 +847,20 @@ var calendarView = {
         }
 
     },
-    leave: function () {
-        $$("leaveBtn").css_setter("leaveButton .webixtype_base");
+    leave: function(){
+       /* $$("leaveBtn").css_setter("leaveButton .webixtype_base");
         $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
         $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
-        if (selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
+        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
+        $$("vacationBtn").refresh();
+        $$("leaveBtn").define("css","leaveButton .webixtype_base");
+        $$("leaveBtn").refresh();
+        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("sickLeaveBtn").refresh();
+        $$("religionBtn").define("css","unpickedButton .webixtype_base");
+        $$("religionBtn").refresh();
+        if(selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
                 if (result == 1) {
@@ -863,11 +880,19 @@ var calendarView = {
         }
     },
     sickLeave: function () {
-        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
+       /* $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
         $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
         $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");
-        if (selectedButton != buttons.SICK && $$("periodsDT").count() > 0) {
+        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
+        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
+        $$("vacationBtn").refresh();
+        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("leaveBtn").refresh();
+        $$("sickLeaveBtn").define("css","sickLeaveButton .webixtype_base");
+        $$("sickLeaveBtn").refresh();
+        $$("religionBtn").define("css","unpickedButton .webixtype_base");
+        $$("religionBtn").refresh();
+        if(selectedButton != buttons.SICK && $$("periodsDT").count() > 0){
 
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {
@@ -887,12 +912,21 @@ var calendarView = {
             $$("commentLabel").hide();
         }
     },
-    religionLeave: function () {
-        $$("religionBtn").css_setter("religionButton .webixtype_base");
+
+    religionLeave: function(){
+        /*$$("religionBtn").css_setter("religionButton .webixtype_base");
         $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
         $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        if (selectedButton != buttons.RELIGIOUS && $$("periodsDT").count() > 0) {
+        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");*/
+        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
+        $$("vacationBtn").refresh();
+        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("leaveBtn").refresh();
+        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
+        $$("sickLeaveBtn").refresh();
+        $$("religionBtn").define("css","religionButton .webixtype_base");
+        $$("religionBtn").refresh();
+        if(selectedButton != buttons.RELIGIOUS && $$("periodsDT").count() > 0){
 
             var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
             delBox.callback = function (result) {

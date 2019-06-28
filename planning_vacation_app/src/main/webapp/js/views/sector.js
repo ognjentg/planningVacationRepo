@@ -669,8 +669,13 @@ var sectorView = {
                             $$("addSectorBtn").enable();
                             //alert("Sektor uspješno dodat.");
                             refreshSectorData();
-                            sectorsNumber=sectorsNumber+1;
-                            animateValue($$("t1"), 0, sectorsNumber, 1000);
+                            if(sectorsNumber<0){
+                                sectorsNumber=1;
+                                animateValue($$("t1"), 0, sectorsNumber, 1000);
+                            }else{
+                                sectorsNumber=sectorsNumber+1;
+                                animateValue($$("t1"), 0, sectorsNumber, 1000);
+                            }
                         }
                     }, function (text, data, xhr) {
                         if (text.includes("name_UNIQUE")) {

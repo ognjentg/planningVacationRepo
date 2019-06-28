@@ -999,17 +999,64 @@ usergroupView = {
     },
 
     selectPanelWithSector: function(sector){
-        console.log("select panel with sector");
+        console.log("select panel with sector "+ sector.id);
         $$("mainMenu").select("usergroup");
 
-        usergroupView.selectPanel();
-        $$("choseSectorCombo").setValue(sector.id);
+        util.selectPanel(this.getPanel());
+        usergroupView.createDatatableContextMenu();
+        if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
+            $$("addUserButton").hide();
+            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
+            $$("usergroupDT").hideColumn("delete");
+            $$("usergroupDT").hideColumn("sector");
+        }
+        if (user === "manager") {// rukovodioc ne moze gledati ostale sektore
+            $$("choseSectorCombo").hide();
+            $$("izaberiLabel").hide();
+        }
+        console.log("u selectPanel");
+
+
+        usergroupView.sectors = [];
+
+        webix.ajax().get("hub/sector").then(function (data) {
+            //response text
+            console.log("hub/sector");
+            console.log(data.text());
+            if (data.json() != null) {
+                console.log("loaded data with success");
+                var sectors = data.json();
+                usergroupView.sectors.push({
+                    id: -2,
+                    value: "Bez sektora"
+                });
+                usergroupView.sectors.push({
+                    id: -1,
+                    value: "Svi sektori"
+                });
+                sectors.forEach(function (sector) {
+                    usergroupView.sectors.push({
+                        id: sector.id,
+                        value: sector.name,
+
+                    });
+                });
+                console.log(data.text());
+                $$("choseSectorCombo").define("options", usergroupView.sectors);
+
+            } else {
+                util.messages.showErrorMessage("Neuspješno učitavanje sektora.");
+            }
+
+        });
 
         sectorID=sector.id;
-        usergroupView.refreshDatatable();
+        $$("choseSectorCombo").setValue(sector.name);
+        $$("choseSectorCombo").refresh();
 
-        //$$("usergroupDT").clearAll();
-        //$$("usergroupDT").define("url", "hub/user/custom/bySector/" + sector.id);
+        $$("usergroupDT").clearAll();
+        $$("usergroupDT").define("url", "hub/user/custom/bySector/" + sector.id);
+        $$("usergroupDT").detachEvent("onBeforeDelete");
     }
     ,
 
