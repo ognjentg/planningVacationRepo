@@ -122,7 +122,7 @@ var sectorView = {
                     {
                         id: "id",
                         header: "#",
-                       // hidden: true,
+                        hidden: true,
                         fillspace: true,
                         width: 50,
                         cssFormat: "checkBoxStatus"
@@ -301,8 +301,6 @@ var sectorView = {
                         }
                         if (action === "view") {
                             usergroupView.selectPanelWithSector($$("sectorDT").getItem(id.row));
-                            //usergroupView.selectPanel();
-                            //$$("choseSectorCombo").setValue($$("sectorDT").getItem(id.row).id);
                         }
 
                     }
