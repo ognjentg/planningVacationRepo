@@ -8,6 +8,21 @@ leaveRequestsView = {
 
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
+        webix.protoUI({
+            name: "fadeInWindow",
+            $init: function () {
+                this.$ready.push(function () {
+                    this.attachEvent("onShow", function () {
+                        this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                    })
+                    this.attachEvent("onHide", function () {
+                        this.$view.style.display = "block";
+                        this.$view.className += " animated fadeOutUpBig";
+                    })
+                });
+            }
+        }, webix.ui.window);
+
     },
     getPanel: function () {
         return {
@@ -287,7 +302,7 @@ leaveRequestsView = {
         };
     },
     rejectRequest: {
-        view: "window",
+        view: "fadeInWindow",
         id: "rejectRequestInfoId",
         position: "center",
         modal: true,
@@ -359,7 +374,7 @@ leaveRequestsView = {
 
     },
     leaveRequestInfo: {
-        view: "window",
+        view: "fadeInWindow",
         id: "leaveRequestInfoId",
         position: "center",
         modal: true,

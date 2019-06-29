@@ -389,7 +389,7 @@ usergroupView = {
 
 
     addDialog: {
-        view: "window",
+        view: "fadeInWindow",
         id: "addUserDialog",
         position: "center",
         modal: true,
@@ -633,7 +633,7 @@ usergroupView = {
     },
 
     changeSectorDialog: {
-        view: "window",
+        view: "fadeInWindow",
         id: "changeSectorDialog",
         position: "center",
         modal: true,
@@ -689,7 +689,7 @@ usergroupView = {
     },
 
     changeMultipleUsersSectorDialog: {
-        view: "window",
+        view: "fadeInWindow",
         id: "changeMultipleUsersSectorDialog",
         position: "center",
         modal: true,
@@ -744,7 +744,7 @@ usergroupView = {
 
 
     changeUserGroupDialog: {
-        view: "window",
+        view: "fadeInWindow",
         id: "changeUserGroupDialog",
         position: "center",
         modal: true,
@@ -789,7 +789,7 @@ usergroupView = {
         }
     },
     employeeVacationInfoDialog: {
-        view: "window",
+        view: "fadeInWindow",
         id: "employeeVacationInfoDialog",
         name: "employeeVacationInfoDialog",
         position: "center",
@@ -996,6 +996,21 @@ usergroupView = {
 
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
 
+
+        webix.protoUI({
+            name: "fadeInWindow",
+            $init: function () {
+                this.$ready.push(function () {
+                    this.attachEvent("onShow", function () {
+                        this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                    })
+                    this.attachEvent("onHide", function () {
+                        this.$view.style.display = "block";
+                        this.$view.className += " animated fadeOutUpBig";
+                    })
+                });
+            }
+        }, webix.ui.window);
     },
 
     selectPanelWithSector: function(sector){
