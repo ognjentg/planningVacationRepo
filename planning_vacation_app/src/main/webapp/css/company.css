@@ -279,3 +279,48 @@
     color: #aaa;
     display: none;
 }
+
+
+@-webkit-keyframes fadeInDownBigConfirmDialog {
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -2000px, 0);
+        transform: translate3d(0, -2000px, 0);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes fadeInDownBigConfirmDialog {
+    from {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -2000px, 0);
+        transform: translate3d(0, -2000px, 0);
+    }
+
+    to {
+        opacity: 1;
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+.fadeInDownBigConfirmDialog {
+
+    -webkit-animation-name: fadeInDownBigConfirmDialog;
+    animation-name: fadeInDownBigConfirmDialog;
+}
+
+.webix_modal_box, .webix_popup, .webix_alert-warning {
+
+    -webkit-animation-name: fadeInDownBigConfirmDialog;
+    animation-name: fadeInDownBigConfirmDialog;
+
+    -webkit-animation-duration: 1000ms;
+    animation-duration: 1000ms;
+
+}
