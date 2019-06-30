@@ -121,9 +121,10 @@ var adminsView = {
                                     connection.sendAjax("PUT", "hub/user/deleteAdmin/" + adminTemp.id,
                                         function (text, data, xhr) {
                                             if (text) {
-                                                util.messages.showMessage("Admin je uspješno uklonjen.");
+                                                var userTemp = JSON.parse(text);
                                                 $$("adminsDT").remove(id);
-                                                adminsView.refreshDatatables();
+                                                $$("chooseAdminDT").parse(userTemp);
+                                                util.messages.showMessage("Admin je uspješno uklonjen.");
                                             } else
                                                 util.messages.showErrorMessage("Neuspješno uklanjanje.");
                                         }, function (text, data, xhr) {
@@ -385,10 +386,11 @@ var adminsView = {
             connection.sendAjax("POST", "/hub/user",
                 function (text, data, xhr) {
                     if (text) {
-                        util.messages.showMessage("Admin uspješno dodan.");
+                        $$("addNewAdminButton").enable();
+                        var userTemp = JSON.parse(text);
+                        $$("adminsDT").parse(userTemp);
                         currentDialog.hide();
-                        $$("adminsDT").parse(newAdmin);
-                        adminsView.refreshDatatables();
+                        util.messages.showMessage("Admin uspješno dodan.");
                     } else {
                         util.messages.showErrorMessage("Greška u dodavanju admina.");
                         button.enable();
@@ -405,17 +407,20 @@ var adminsView = {
         var table = $$("chooseAdminDT");
         var selectedId = table.getSelectedId();
         if (selectedId) {
+            $$("chooseAdmin").disable();
             connection.sendAjax("PUT", "hub/user/addAdmin/" + selectedId,
                 function (text, data, xhr) {
                     if (text) {
+                        $$("chooseAdmin").enable();
+                        var userTemp = JSON.parse(text);
+                        $$("chooseAdminDT").remove(selectedId);
+                        $$("adminsDT").parse(userTemp);
                         util.messages.showMessage("Admin uspješno izabran.");
-                        adminsView.refreshDatatables();
                     } else
                         util.messages.showErrorMessage("Neuspješno.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 }, selectedId);
-            adminsView.refreshDatatables();
         } else {
             util.messages.showErrorMessage("Nije izabran admin!");
         }
