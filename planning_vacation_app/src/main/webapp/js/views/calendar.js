@@ -719,6 +719,7 @@ var calendarView = {
     },
     sendVacationLeaveRequest: function () {
         var form = $$("createRequestForm");
+        var format = webix.Date.strToDate("%d.%m.%Y");
         var leaveRequest = {
             senderUserId: userData.id,
             leaveTypeId: 1,
@@ -734,7 +735,7 @@ var calendarView = {
                     var dates = $$("periodsDT").serialize();
                     dates.forEach(function (value) {
                         var date = {
-                            date: value.date,
+                            date: format(value.date),
                             leaveRequestId: tempData.id,
                             canceled: 0,
                             paid: 1
@@ -761,9 +762,10 @@ var calendarView = {
     sendSickLeaveRequest: function () {
         var datesArr = []; //saljem samo dane koji nisu bili cekirani ili dane u sedmici koji su otcekirani pri pokretanju aplikacije
         var dates = $$("periodsDT").serialize();
+        var format = webix.Date.strToDate("%d.%m.%Y");
 
         for (var i = 0; i < dates.length; i++) {
-            var date = dates[i].date;
+            var date = format(dates[i].date);
             console.log(date);
             datesArr.push(date);
         }

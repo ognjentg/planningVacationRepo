@@ -709,7 +709,6 @@ var companyView = {
                         id: "pin",
                         invalidMessage: "PIN kompanije je obavezno unijeti.",
                         name: "pin",
-                        type: "password",
                         editable: true,
                         stringResult: true,
                         label: "PIN kompanije:",

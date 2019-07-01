@@ -352,20 +352,17 @@ var adminsView = {
         }
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
         $$("adminsDT").define("url", adminsView.adminsURL);
-        //connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
     },
     showAdminsDialog: function () {
         adminsView.adminsURL = "hub/user/admins/";
         adminsView.nonAdminsURL = "hub/user/nonAdmins/";
         webix.ui(webix.copy(adminsView.adminsDialog)).show();
         $$("adminsDT").define("url", adminsView.adminsURL);
-        //connection.attachAjaxEvents("adminsDT", adminsView.adminsURL);
     },
     showChooseAdminDialog: function () {
         $$("addAdminButton").disable();
         webix.ui(webix.copy(adminsView.chooseAdminDialog)).show();
         $$("chooseAdminDT").define("url", adminsView.nonAdminsURL);
-       // connection.attachAjaxEvents("chooseAdminDT", adminsView.nonAdminsURL);
     },
     showAddNewAdminDialog: function () {
         $$("addNewAdminButton").disable();
@@ -424,21 +421,5 @@ var adminsView = {
         } else {
             util.messages.showErrorMessage("Nije izabran admin!");
         }
-    },
-    refreshDatatables: function () {
-        var table1 = $$("adminsDT");
-        var table2 = $$("chooseAdminDT");
-
-        webix.extend(table1, webix.ProgressBar);
-        webix.extend(table2, webix.ProgressBar);
-
-        table1.showProgress();
-        table2.showProgress();
-
-        table1.clearAll();
-        table2.clearAll();
-
-        table1.define("url", adminsView.adminsURL);
-        table2.define("url", adminsView.nonAdminsURL);
     }
 }

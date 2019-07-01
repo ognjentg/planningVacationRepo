@@ -724,6 +724,7 @@ var loginLayout = {
                         css:"textS",
                         id:"company",
                         name: "kompanija",
+                        type: "password",
                         width: 600,
                         height:40
                     },{}, {
