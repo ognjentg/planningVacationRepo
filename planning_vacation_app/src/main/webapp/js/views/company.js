@@ -412,7 +412,7 @@ var companyView = {
                         if (action === "delete" && userData.userGroupKey == "superadmin") {
                             var delBox = (webix.copy(commonViews.deleteConfirm("company")));
                             delBox.callback = function (result) {
-                                if (result === 1) {
+                                if (result == 1) {
                                     var item = $$("companyDT").getItem(id);
                                     $$("companyDT").detachEvent("onBeforeDelete");
                                     connection.sendAjax("DELETE", "hub/company/" + id, function (text, data, xhr) {
