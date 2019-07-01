@@ -843,8 +843,13 @@ console.log($$("loginForm").getValues());
                     console.log(userData.userGroupKey);
 
                     if (userData.userGroupKey == "superadmin") {
-                        companyData = null;
-                        showApp();
+                        if(objectToSend.companyPin.length==0) {
+                            companyData = null;
+                            showApp();
+                        }
+                        else{
+                            util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
+                        }
                     } else {
                         webix.ajax().get("hub/company/" + userData.companyId, {
                             success: function (text, data, xhr) {

@@ -1409,23 +1409,37 @@ function refreshData() {
     var table = webix.$$("companyDT");
     table.clearAll();
     table.showProgress();
+    var bla;
+
+    webix.ajax("hub/user/numberOfAdmins", {
+        error: function (text, data, xhr) {
+            if (xhr.status !== 200) {
+                // alert("Nema dostupnih podataka! Provjerite internet konekciju.");
+                util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekcijuuuuuuuuu.");
+                table.hideProgress();
+            }
+        },
+        success: function (text, data, xhr) {
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
+                    numberOfAdmins = data.json();
+                    animateValue($$("t2"), 0, numberOfAdmins, 100);
+                }
+            }
+        }
+    });
 
 
     webix.ajax("hub/company", {
-
         error: function (text, data, xhr) {
-
             if (xhr.status !== 200) {
                 // alert("Nema dostupnih podataka! Provjerite internet konekciju.");
                 util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekciju.");
-
                 table.hideProgress();
             }
-
         },
-
         success: function (text, data, xhr) {
-
             if (xhr.status === 200) {
                 if (data.json() != null) {
                     console.log("loaded data with success");
@@ -1434,26 +1448,17 @@ function refreshData() {
                     tmpCompaniesLength = numberOfCompanies;
                     table.hideProgress();
                     // counterAnimation(1130, 1130, 2230);
-
                     if (userData.userGroupKey == "admin") {
-
                         $$("addCompanyBtn").hide();
-
-
                         // var table = webix.$$("companyDT");
-
                         // table.clearAll();
-
                         companies = companies.slice(0, 1);
-
                         table.parse(companies);
-
                         if(numberOfCompanies>0){
                             animateValue($$("t1"), 0, numberOfCompanies, 100);
                         }else{
                             animateValue($$("t1"), 0, 0, 100);
                         }
-                        animateValue($$("t2"), 0, 100, 100);
                         animateValue($$("t3"), 0, 100, 100);
 
                     } else {
@@ -1461,27 +1466,18 @@ function refreshData() {
                         if(numberOfCompanies>0){
                             animateValue($$("t1"), 0, numberOfCompanies, 100);
                         }else{
-                            animateValue($$("t1"), 0, 0, 100);
+                            animateValue($$("t1"), 0, numberOfCompanies, 100);
                         }
-                        animateValue($$("t2"), 0, 100, 900);
-                        animateValue($$("t3"), 0, 100, 900);
-
+                        animateValue($$("t3"), 0, 100, 100);
                     }
                 }
             }
-
             var control = $$("companyDT").getHeaderContent("mc1");
-
             var state = control.isChecked();
-
             control.uncheck();
         }
 
     });
-
-
-
-
 }
 
 function checkBoxStatus(value, obj) {

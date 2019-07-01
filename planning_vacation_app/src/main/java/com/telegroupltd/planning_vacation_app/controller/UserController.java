@@ -210,9 +210,9 @@ public class UserController extends GenericController<User, Integer> {
             session.invalidate();
         }
         List<User> users = cloner.deepClone(userRepository.getAllByActiveIs((byte) 1));  //List<T> getAllByActiveIs(Byte active);
-
+       // System.out.println(userBean.getUserUserGroupKey().getUserGroupId());
         if (superAdmin == userBean.getUserUserGroupKey().getUserGroupId()) {
-            return users.stream().filter(u -> admin == u.getUserGroupId()).count();
+            return users.stream().filter(u->u.getUserGroupId()!=null && u.getUserGroupId()==2).count();
         }else  throw new ForbiddenException("Forbidden");
     }
 
