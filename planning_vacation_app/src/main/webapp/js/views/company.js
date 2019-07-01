@@ -613,18 +613,25 @@ var companyView = {
                             break;
                         case "2":
 
-                            if (userData.userGroupKey == "admin") {
+                            // if (userData.userGroupKey == "admin") {
                                 // alert("Niste autorizovani da izbrišete kompaniju!");
-                                util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
+                                // util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
 
-                                if (userData.userGroupKey == "admin") {
-                                    //alert("Niste autorizovani da izbrišete kompaniju!");
-                                    util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
-                                    break;
+                                // if (userData.userGroupKey == "admin") {
+                                //     //alert("Niste autorizovani da izbrišete kompaniju!");
+                                //     util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
+                                //     break;
+                                // }
+
+                                if (userData.userGroupKey === "admin") {
+                                    // alert(userData.userGroupKey);
+                                   alert("Niste autorizovani da izbrišete kompaniju!");
+                                   break;
                                 }
+
                                 var delBox = (webix.copy(commonViews.deleteConfirm("company")));
                                 delBox.callback = function (result) {
-                                    if (result === 1) {
+                                    if (result == 1) {
                                         var item = $$("companyDT").getItem(context.id.row);
                                         $$("companyDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("DELETE", "hub/company/" + item.id, function (text, data, xhr) {
@@ -645,7 +652,7 @@ var companyView = {
                                 };
                                 webix.confirm(delBox);
                                 break;
-                            }
+                            // }
                     }
                 }
             }
@@ -1340,7 +1347,7 @@ var companyView = {
                     // alert(text);
                 }, newCompany);
 
-            if (userData.userGroupKey == "admin") {
+            if (userData.userGroupKey == "superadmin") {
 
                 $$("changeCompany").enable();
                 util.dismissDialog('changeCompanyDialog');
@@ -1510,7 +1517,7 @@ function deleteSelected() {
 
         delBox.callback = function (result) {
 
-            if (result === 1) {
+            if (result == 1) {
 
                 $$("companyDT").detachEvent("onBeforeDelete");
 
@@ -1532,9 +1539,14 @@ function deleteSelected() {
 
                 });
 
-                $$("companyDT").refresh();
 
                 selectedItemsCheckBox = [];
+
+                var control = $$("companyDT").getHeaderContent("mc1");
+
+                control.uncheck();
+
+                $$("companyDT").refresh();
 
             }
         };
