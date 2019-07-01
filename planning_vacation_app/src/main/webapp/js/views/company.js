@@ -844,8 +844,10 @@ var companyView = {
                         $$("addCompanyBtn").enable();
                         // alert("Kompanija uspješno dodata.");
                         util.messages.showMessage("Kompanija uspješno dodata.");
-                        animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
+                        // animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
+                        refreshData();
                         tmpCompaniesLength = tmpCompaniesLength + 1;
+
 
                     }
                 }, function (text, data, xhr) {
