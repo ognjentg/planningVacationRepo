@@ -516,6 +516,9 @@ var calendarView = {
                     selectedDays.splice(index);
                 else
                     selectedDays.splice(index, 1);
+            } else if([buttons.SICK].includes(selectedButton) &&
+                calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())){
+                webix.message("Dan ne smije biti u budućnosti");
             } else if ([buttons.VACATION, buttons.PAID].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
                 webix.message("Dan ne smije biti u prošlosti")
@@ -809,6 +812,15 @@ var calendarView = {
             },
             isNotInPast: function (date) {
                 if (getToday().getTime() > date)
+                    return false;
+                return true;
+            },
+            doesNotStartInFuture: function (date) {
+                var temp = $$("periodsDT").serialize()[0];
+                if(temp == null)
+                    return calendarView.ruleset.isNotInPast(date);
+                var format = webix.Date.strToDate("%d.%m.%Y");
+                if(format(temp.date).getTime() < getToday().getTime())
                     return false;
                 return true;
             }
