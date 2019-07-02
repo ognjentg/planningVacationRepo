@@ -123,8 +123,10 @@ var adminsView = {
                                             if (text) {
                                                 var userTemp = JSON.parse(text);
                                                 $$("adminsDT").remove(id);
-                                                $$("chooseAdminDT").parse(userTemp);
+                                                //$$("chooseAdminDT").parse(userTemp);
                                                 util.messages.showMessage("Admin je uspješno uklonjen.");
+                                                numberOfAdmins = numberOfAdmins - 1;
+                                                animateValue($$("t2"), 0, numberOfAdmins, 100);
                                             } else
                                                 util.messages.showErrorMessage("Neuspješno uklanjanje.");
                                         }, function (text, data, xhr) {
@@ -370,6 +372,7 @@ var adminsView = {
         webix.UIManager.setFocus("email");
     },
     addNewAdmin: function () {
+
         var button = $$("addAdmin");
         button.disable();
         var form = $$("addNewAdminForm");
@@ -388,6 +391,8 @@ var adminsView = {
                         $$("adminsDT").parse(userTemp);
                         currentDialog.hide();
                         util.messages.showMessage("Admin uspješno dodan.");
+                        numberOfAdmins = numberOfAdmins + 1;
+                        animateValue($$("t2"), 0, numberOfAdmins, 100);
                     } else {
                         util.messages.showErrorMessage("Greška u dodavanju admina.");
                         button.enable();
@@ -396,6 +401,8 @@ var adminsView = {
                     util.messages.showErrorMessage(text);
                     button.enable();
                 }, newAdmin);
+
+
         } else {
             button.enable();
         }

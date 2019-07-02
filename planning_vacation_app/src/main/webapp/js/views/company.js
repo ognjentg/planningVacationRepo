@@ -69,7 +69,7 @@ var companyView = {
                         },
                         {
                             view: "label",
-                            label: "broj administratora",
+                            label: "Broj administratora",
                             type: "header",
                             css: "admin-counter"
                         },
@@ -88,7 +88,7 @@ var companyView = {
                         },
                         {
                             view: "label",
-                            label: "broj kompanija",
+                            label: "Broj kompanija",
                             type: "header",
                             css: "companies-counter"
                         },
@@ -1414,7 +1414,6 @@ function refreshData() {
     webix.ajax("hub/user/numberOfAdmins", {
         error: function (text, data, xhr) {
             if (xhr.status !== 200) {
-                // alert("Nema dostupnih podataka! Provjerite internet konekciju.");
                 util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekcijuuuuuuuuu.");
                 table.hideProgress();
             }
