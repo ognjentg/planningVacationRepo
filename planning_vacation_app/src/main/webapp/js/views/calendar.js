@@ -197,36 +197,6 @@ var calendarView = {
                                 }
                             ]
                         },
-                        {
-                            cols: [
-                                {
-                                    view: "label",
-                                    label: "Odbijeno",
-                                    align:"center"
-                                },
-                                {
-                                    view: "label",
-                                    css: "vacation_day_denied_label"
-
-                                },
-                                {
-                                    view: "label",
-                                    css: "day_off_denied_label"
-                                },
-                                {
-                                    view: "label",
-                                    css: "day_off_denied_label"
-                                },
-                                {
-                                    view: "label",
-                                    css: "sick_day_denied_label"
-                                },
-                                {
-                                    view: "label",
-                                    css: "religion_day_off_denied_label"
-                                }
-                            ]
-                        }
                     ]
                 }, {
                     width: 10
