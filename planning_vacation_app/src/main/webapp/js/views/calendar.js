@@ -233,40 +233,33 @@ var calendarView = {
                 },
                     {
                         rows: [{
-                            cols: [
-                                {
-                                    id: "vacationBtn",
-                                    view: "button",
-                                    label: "Godišnji odmor",
-                                    css: "vacationButton .webixtype_base",
-                                    click: "calendarView.vacation",
-                                    autowidth: true
-                                }, {},
-                                {
-                                    id: "leaveBtn",
-                                    view: "button",
-                                    label: "Odsustvo",
-                                    css: "leaveButton .webixtype_base",
-                                    click: "calendarView.leave",
-                                    autowidth: true
-                                }, {},
-                                {
-                                    id: "sickLeaveBtn",
-                                    view: "button",
-                                    label: "Bolovanje",
-                                    css: "sickLeaveButton .webixtype_base",
-                                    click: "calendarView.sickLeave",
-                                    autowidth: true
-                                }, {},
-                                {
-                                    id: "religionBtn",
-                                    view: "button",
-                                    label: "Religijski praznici",
-                                    css: "religionButton .webixtype_base",
-                                    click: "calendarView.religionLeave",
-                                    autowidth: true
+                            view:"combo",
+                            id:"comboId",
+                            value: "1",
+                            editable:false,
+                            options:[
+                                { id:1, value:"Godisnji odmor" },
+                                { id:2, value:"Odsustvo" },
+                                { id:3, value:"Bolovanje" },
+                                {id:4,value:"Religijski praznici"}
+                            ],
+                            on:{
+                                onChange(name){
+                                    calendarView.deleteCurrentRequest();
+                                    if (name === 4) {
+                                        calendarView.religionLeave();
+                                        console.log("analaketa");
+                                    } else if (name === 3) {
+                                       calendarView.sickLeave();
+                                    } else if (name === 2) {
+                                      calendarView.leave();
+                                    }
+                                    else  if (name===1){
+                                      calendarView.vacation();
+                                    }
                                 }
-                            ]
+                            }
+
                         }, {
                             view: "label",
                             id: "leaveTypeLabel",
@@ -826,139 +819,38 @@ var calendarView = {
             }
         },
     vacation: function(){
-        /*$$("vacationBtn").css_setter("vacationButton .webixtype_base");
-        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
 
-        $$("vacationBtn").define("css","vacationButton .webixtype_base");
-        $$("vacationBtn").refresh();
-        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("leaveBtn").refresh();
-        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("sickLeaveBtn").refresh();
-        $$("religionBtn").define("css","unpickedButton .webixtype_base");
-        $$("religionBtn").refresh();
-
-        if (selectedButton != buttons.VACATION && $$("periodsDT").count() > 0) {
-
-            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
-            delBox.callback = function (result) {
-                if (result == 1) {
-                    selectedButton = buttons.VACATION;
-                    $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
-                    calendarView.deleteCurrentRequest();
-                    $$("comment").show();
-                    $$("commentLabel").show();
-                }
-            }
-            webix.confirm(delBox);
-        } else {
             selectedButton = buttons.VACATION;
             $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
             $$("comment").show();
             $$("commentLabel").show();
-        }
+
 
     },
     leave: function(){
-       /* $$("leaveBtn").css_setter("leaveButton .webixtype_base");
-        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
-        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
-        $$("vacationBtn").refresh();
-        $$("leaveBtn").define("css","leaveButton .webixtype_base");
-        $$("leaveBtn").refresh();
-        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("sickLeaveBtn").refresh();
-        $$("religionBtn").define("css","unpickedButton .webixtype_base");
-        $$("religionBtn").refresh();
-        if(selectedButton != buttons.PAID && $$("periodsDT").count() > 0) {
-            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
-            delBox.callback = function (result) {
-                if (result == 1) {
-                    selectedButton = buttons.PAID;
-                    $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
-                    $$("comment").show();
-                    $$("commentLabel").show();
-                    calendarView.deleteCurrentRequest();
-                }
-            }
-            webix.confirm(delBox);
-        } else {
+
             selectedButton = buttons.PAID;
             $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
             $$("comment").show();
             $$("commentLabel").show();
-        }
+
     },
     sickLeave: function () {
-       /* $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("religionBtn").css_setter("sickLeaveButton .webixtype_base");*/
-        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
-        $$("vacationBtn").refresh();
-        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("leaveBtn").refresh();
-        $$("sickLeaveBtn").define("css","sickLeaveButton .webixtype_base");
-        $$("sickLeaveBtn").refresh();
-        $$("religionBtn").define("css","unpickedButton .webixtype_base");
-        $$("religionBtn").refresh();
-        if(selectedButton != buttons.SICK && $$("periodsDT").count() > 0){
 
-            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
-            delBox.callback = function (result) {
-                if (result == 1) {
-                    selectedButton = buttons.SICK;
-                    $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
-                    $$("comment").hide();
-                    $$("commentLabel").hide();
-                    calendarView.deleteCurrentRequest();
-                }
-            }
-            webix.confirm(delBox);
-        } else {
             selectedButton = buttons.SICK;
             $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
             $$("comment").hide();
             $$("commentLabel").hide();
-        }
+
     },
 
     religionLeave: function(){
-        /*$$("religionBtn").css_setter("religionButton .webixtype_base");
-        $$("vacationBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("leaveBtn").css_setter("sickLeaveButton .webixtype_base");
-        $$("sickLeaveBtn").css_setter("sickLeaveButton .webixtype_base");*/
-        $$("vacationBtn").define("css","unpickedButton .webixtype_base");
-        $$("vacationBtn").refresh();
-        $$("leaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("leaveBtn").refresh();
-        $$("sickLeaveBtn").define("css","unpickedButton .webixtype_base");
-        $$("sickLeaveBtn").refresh();
-        $$("religionBtn").define("css","religionButton .webixtype_base");
-        $$("religionBtn").refresh();
-        if(selectedButton != buttons.RELIGIOUS && $$("periodsDT").count() > 0){
 
-            var delBox = (webix.copy(commonViews.deleteConfirm("promjene")));
-            delBox.callback = function (result) {
-                if (result == 1) {
-                    selectedButton = buttons.SICK;
-                    $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
-                    $$("comment").show();
-                    $$("commentLabel").show();
-                    calendarView.deleteCurrentRequest();
-                }
-            }
-            webix.confirm(delBox);
-        } else {
             selectedButton = buttons.RELIGIOUS;
             $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
             $$("comment").show();
             $$("commentLabel").show();
-        }
+
     },
     //Dohvatanje bolovanja
     getSickDays: function () {
