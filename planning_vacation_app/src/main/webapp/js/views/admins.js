@@ -420,6 +420,10 @@ var adminsView = {
                         $$("chooseAdminDT").remove(selectedId);
                         $$("adminsDT").parse(userTemp);
                         util.messages.showMessage("Admin uspješno izabran.");
+                        util.dismissDialog("chooseAdminDialog");
+                        $$("addAdminButton").enable();
+                        numberOfAdmins = numberOfAdmins + 1;
+                        animateValue($$("t2"), 0, numberOfAdmins, 100);
                     } else
                         util.messages.showErrorMessage("Neuspješno.");
                 }, function (text, data, xhr) {
