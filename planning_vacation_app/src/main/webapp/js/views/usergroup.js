@@ -658,30 +658,39 @@ usergroupView = {
                     view: "form",
                     // rules: {},
                     id: "changeSectorForm",
+                    elementsConfig: {
+                        bottomPadding: 18
+                    },
                     elements: [{
                         height: 15
                     }, {
-                        cols: [{
-                            view: "combo",
-                            id: "cuCombo",
-                            placeholder: "Sektor",
-                            name: "cuCombo",
-                            invalidMessage: "Obavezan je izbor sektora.",
-                            width: 250,
-                            align: "center",
-                            required: true
-                        },
+                        cols: [
                             {
-
-                                id: "save",
-                                view: "button",
-                                value: "Promijeni",
-                                width: 125,
-                                icon: "plus-circle",
-                                hotkey: "enter",
-                                align: "center",
-                                click: 'usergroupView.changeSector'
-                            }]
+                                view: "combo",
+                                id: "cuCombo",
+                                placeholder: "Sektor",
+                                name: "cuCombo",
+                                invalidMessage: "Obavezan je izbor sektora.",
+                                width: 250,
+                                align: "left",
+                                required: true
+                            },
+                            {
+                                rows: [
+                                    {
+                                        id: "save",
+                                        view: "button",
+                                        value: "Promijeni",
+                                        width: 125,
+                                        icon: "plus-circle",
+                                        hotkey: "enter",
+                                        align: "center",
+                                        click: 'usergroupView.changeSector'
+                                    },
+                                    {}
+                                ]
+                            },
+                        ]
                     }],
                     width: 400,
                 }]
@@ -714,28 +723,39 @@ usergroupView = {
                     view: "form",
                     // rules: {},
                     id: "changeSectorForm",
+                    elementsConfig: {
+                        bottomPadding: 18
+                    },
                     elements: [{
                         height: 15
                     }, {
-                        cols: [{
-                            view: "combo",
-                            id: "cmuCombo",
-                            placeholder: "Sektor",
-                            name: "cmuCombo",
-                            invalidMessage: "Obavezan je izbor sektora.",
-                            width: 250,
-                            align: "center",
-                            required: true
-                        }, {
-                            id: "save",
-                            view: "button",
-                            value: "Promijeni",
-                            width: 125,
-                            icon: "plus-circle",
-                            hotkey: "enter",
-                            align: "center",
-                            click: 'usergroupView.changeMultipleUsersSector'
-                        }]
+                        cols: [
+                            {
+                                view: "combo",
+                                id: "cmuCombo",
+                                placeholder: "Sektor",
+                                name: "cmuCombo",
+                                invalidMessage: "Obavezan je izbor sektora.",
+                                width: 250,
+                                align: "left",
+                                required: true
+                            },
+                            {
+                                rows: [
+                                    {
+                                        id: "save",
+                                        view: "button",
+                                        value: "Promijeni",
+                                        width: 125,
+                                        icon: "plus-circle",
+                                        hotkey: "enter",
+                                        align: "center",
+                                        click: 'usergroupView.changeMultipleUsersSector'
+                                    },
+                                    {}
+                                ]
+                            }
+                        ]
                     }],
                     width: 400,
                 }]
@@ -802,7 +822,7 @@ usergroupView = {
                     view: "toolbar",
                     cols: [{
                         view: "label",
-                        label: "<span class='webix_icon fa-user'></span> Informacije o zahtjevu:",
+                        label: "<span class='webix_icon fa-user'></span> Pregled odsustva:",
                         width: 400,
                     }, {}, {
                         hotkey: 'esc',
@@ -956,6 +976,7 @@ usergroupView = {
 
 
         usergroupView.sectors = [];
+        usergroupView.changeSectors = [];
 
         webix.ajax().get("hub/sector").then(function (data) {
             //response text
@@ -968,6 +989,10 @@ usergroupView = {
                     id: -2,
                     value: "Bez sektora"
                 });
+                usergroupView.changeSectors.push({
+                    id: -2,
+                    value: "Bez sektora"
+                });
                 usergroupView.sectors.push({
                     id: -1,
                     value: "Svi sektori"
@@ -975,8 +1000,11 @@ usergroupView = {
                 sectors.forEach(function (sector) {
                     usergroupView.sectors.push({
                         id: sector.id,
-                        value: sector.name,
-
+                        value: sector.name
+                    });
+                    usergroupView.changeSectors.push({
+                        id: sector.id,
+                        value: sector.name
                     });
                 });
                 console.log(data.text());
@@ -1208,12 +1236,12 @@ usergroupView = {
         var user = $$("usergroupDT").getSelectedItem();
         var sectorId = $$("cuCombo").getValue();
         choosenSectorId = sectorId;
-        if (sectorId === -1 || sectorId === -2) {
+        if (sectorId === -1) {
             util.messages.showErrorMessage("Odabrani sektor ne postoji!");
         } else {
             var changeSectorInformation = {
                 id: user.id,
-                sectorId: sectorId
+                sectorId: sectorId === -2 ? null : sectorId
             };
             if ($$("cuCombo").validate()) {
                 connection.sendAjax("POST", "hub/user/changeSector",
@@ -1626,10 +1654,9 @@ usergroupView = {
 ////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
         webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
-        $$("cuCombo").define("options", usergroupView.sectors);
+        $$("cuCombo").define("options", usergroupView.changeSectors);
         $$("cuCombo").refresh();
-    }
-    ,
+    },
 
     showChangeMultipleUsersSector: function () {
         var validate = true;
@@ -1639,7 +1666,7 @@ usergroupView = {
         })
         if (validate) {
             webix.ui(webix.copy(usergroupView.changeMultipleUsersSectorDialog)).show();
-            $$("cmuCombo").define("options", usergroupView.sectors);
+            $$("cmuCombo").define("options", usergroupView.changeSectors);
             $$("cmuCombo").refresh();
         } else
             util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom");
