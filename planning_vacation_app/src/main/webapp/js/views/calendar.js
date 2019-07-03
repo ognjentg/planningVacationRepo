@@ -300,7 +300,7 @@ var calendarView = {
                                     id: "comment",
                                     labelAlign: "left",
                                     // height:200,  //without setted height, we can do resizeing
-                                    width: 400,
+                                    autoWidth: true,
                                     tooltip: "U komentaru možete objasniti detalje Vašeg zahtjeva.",
                                     placeholder: "Ovdje unesite komentar ako imate"
                                 }, {
@@ -311,7 +311,7 @@ var calendarView = {
                                     type: "iconButton",
                                     hotkey: "enter",
                                     //icon: "", //todo
-                                    label: "Posalji zahtjev",
+                                    label: "Pošalji zahtjev",
                                     height: 40,
                                     css: "companyButton",
                                     click: 'calendarView.showSendDialog'
@@ -678,6 +678,12 @@ var calendarView = {
         else if (selectedButton == buttons.SICK) {
             calendarView.sendSickLeaveRequest();
         }
+        else if(selectedButton == buttons.PAID){
+            calendarView.sendPaidLeaveRequest();
+        }
+        else if(selectedButton == buttons.RELIGIOUS){
+            calendarView.sendReligionLeaveRequest();
+        }
 
         /*
                 if (form.validate()) {
@@ -719,6 +725,88 @@ var calendarView = {
             companyId: userData.companyId,
             senderComment: $$("comment").getValue(),
             category: "Godisnji"
+        }
+        connection.sendAjax("POST", "hub/leave_request/",
+            function (text, data, xhr) {
+                if (text) {
+                    var tempData = JSON.parse(text);
+                    var dates = $$("periodsDT").serialize();
+                    dates.forEach(function (value) {
+                        var date = {
+                            date: format(value.date),
+                            leaveRequestId: tempData.id,
+                            canceled: 0,
+                            paid: 1
+                        }
+                        connection.sendAjax("POST", "hub/leave_request_date/",
+                            function (text, data, xhr) {
+                                if (text) {
+
+                                } else
+                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            }, function (text, data, xhr) {
+                                util.messages.showErrorMessage(text);
+                            }, date);
+                    })
+                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    calendarView.deleteCurrentRequest();
+                } else
+                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, leaveRequest);
+    },
+    sendReligionLeaveRequest: function (){
+        var form = $$("createRequestForm");
+        var format = webix.Date.strToDate("%d.%m.%Y");
+        var leaveRequest = {
+            senderUserId: userData.id,
+            leaveTypeId: 1,
+            leaveRequestStatusId: 1,
+            companyId: userData.companyId,
+            senderComment: $$("comment").getValue(),
+            category: "Praznik"
+        }
+        connection.sendAjax("POST", "hub/leave_request/",
+            function (text, data, xhr) {
+                if (text) {
+                    var tempData = JSON.parse(text);
+                    var dates = $$("periodsDT").serialize();
+                    dates.forEach(function (value) {
+                        var date = {
+                            date: format(value.date),
+                            leaveRequestId: tempData.id,
+                            canceled: 0,
+                            paid: 1
+                        }
+                        connection.sendAjax("POST", "hub/leave_request_date/",
+                            function (text, data, xhr) {
+                                if (text) {
+
+                                } else
+                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            }, function (text, data, xhr) {
+                                util.messages.showErrorMessage(text);
+                            }, date);
+                    })
+                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    calendarView.deleteCurrentRequest();
+                } else
+                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, leaveRequest);
+    },
+    sendPaidLeaveRequest: function (){
+        var form = $$("createRequestForm");
+        var format = webix.Date.strToDate("%d.%m.%Y");
+        var leaveRequest = {
+            senderUserId: userData.id,
+            leaveTypeId: 1,
+            leaveRequestStatusId: 1,
+            companyId: userData.companyId,
+            senderComment: $$("comment").getValue(),
+            category: "Odsustvo"
         }
         connection.sendAjax("POST", "hub/leave_request/",
             function (text, data, xhr) {

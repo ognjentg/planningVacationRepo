@@ -458,7 +458,7 @@ var showApp = function () {
         if(userData.userGroupKey !== "superadmin") {
             $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
         } else {
-            $$("companyLogoImage").setValues({src: "img/telegroup-logo.png"});
+            $$("companyLogoImage").setValues({src: "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D"});
         }
         switch (userData.userGroupKey) {
         case "superadmin":
