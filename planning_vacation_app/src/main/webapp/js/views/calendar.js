@@ -376,6 +376,7 @@ var calendarView = {
                 }
             }
         });
+
         calendarView.getSickDays();
         //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
@@ -472,6 +473,31 @@ var calendarView = {
         scheduler.config.dblclick_create = false;
         scheduler.config.drag_create = false;
         scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
+
+
+
+            if (
+                // leaveRequestWaiting.includes(selectedDate.getTime()) ||
+                // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
+                // sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
+                // vacationRequestWaiting.includes(selectedDate.getTime()) ||
+                // vacationRequestApproved.includes(selectedDate.getTime()) ||
+                calendarView.sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
+                calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime())   ||
+                leaveRequestWaiting.includes(selectedDate.getTime())                 ||
+                calendarView.vacationRequestWaiting.includes(selectedDate.getTime()) ||
+                vacationRequestApproved.includes(selectedDate.getTime())
+            ) {
+
+                console.log("sick approved"+sickLeaveDaysApproved);
+                console.log("sick waiting"+sickLeaveDaysWaiting);
+                console.log("leave waiting"+leaveRequestWaiting);
+                console.log("vacation approved"+vacationRequestApproved);
+                console.log("vacation waiting"+vacationRequestWaiting);
+
+                return false;
+
+            }
 
             if (selectedDays.includes(selectedDate.getTime())) {
                 var index = selectedDays.indexOf(selectedDate.getTime());
