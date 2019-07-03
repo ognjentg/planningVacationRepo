@@ -24,6 +24,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.List;
@@ -319,8 +323,13 @@ public class UserController extends GenericController<User, Integer> {
             }
             newUser.setPauseFlag(user.getPauseFlag());
             newUser.setStartDate(user.getStartDate());
-            newUser.setSectorId(user.getSectorId());  //It is sector manager's job
-            newUser.setPhoto(null);
+//            newUser.setSectorId(user.getSectorId());  //It is sector manager's job
+            newUser.setSectorId(null); // Sa prethodnom linijom baci exception, pa sam ostavio ovo sa null
+            try {
+                newUser.setPhoto(Files.readAllBytes(Paths.get(new File("src/main/resources/default.png").getAbsolutePath())));
+            } catch (IOException e) {
+                newUser.setPhoto(null);
+            }
             newUser.setUserGroupId(user.getUserGroupId());
             if(user.getUserGroupId()!=superAdmin) {
                 newUser.setCompanyId(user.getCompanyId());
