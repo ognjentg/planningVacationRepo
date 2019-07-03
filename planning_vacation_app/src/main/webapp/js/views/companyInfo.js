@@ -79,7 +79,7 @@ var companyInfoView = {
                                 {
                                     id:"day",
                                     header:"Neradni dani",
-                                    width:227
+                                    width:310
                                 },
                                 {
                                     id: "delete",
@@ -178,12 +178,12 @@ var companyInfoView = {
                                 {
                                     id:"dateFrom",
                                     header:"Od",
-                                    width:115
+                                    width:156
                                 },
                                 {
                                     id:"dateTo",
                                     header:"Do",
-                                    width:115
+                                    width:156
                                 },
                                 {
                                     id: "delete",
