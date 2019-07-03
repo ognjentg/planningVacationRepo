@@ -3,12 +3,8 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
-import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
-import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
-import com.telegroupltd.planning_vacation_app.model.Leaves;
-import com.telegroupltd.planning_vacation_app.model.User;
-import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
-import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.model.*;
+import com.telegroupltd.planning_vacation_app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -27,7 +23,9 @@ import java.util.Objects;
 public class LeaveRequestController extends GenericHasActiveController<LeaveRequest, Integer> {
     private final LeaveRequestRepository leaveRequestRepository;
     private final UserRepository userRepository;
-
+    private final VacationDaysRepository vacationDaysRepository;
+    private final LeaveRequestDateRepository leaveRequestDateRepository;
+    private final ReligionLeaveRepository religionLeaveRepository;
     @Value("Dodavanje nije moguće")
     private String badRequestInsert;
 
@@ -38,10 +36,13 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     private String badRequestDelete;
 
     @Autowired
-    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository) {
+    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository, VacationDaysRepository vacationDaysRepository, LeaveRequestDateRepository leaveRequestDateRepository, ReligionLeaveRepository religionLeaveRepository) {
         super(leaveRequestRepository);
         this.leaveRequestRepository = leaveRequestRepository;
         this.userRepository = userRepository;
+        this.vacationDaysRepository = vacationDaysRepository;
+        this.leaveRequestDateRepository = leaveRequestDateRepository;
+        this.religionLeaveRepository = religionLeaveRepository;
     }
 
     @Transactional
@@ -151,6 +152,20 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid){
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
+        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
+        //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
+        if(leaveRequest.getCategory().equals("Godisnji")){
+            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+            vacationDays.setUsedDays(vacationDays.getUsedDays() + leaveRequestDates.size());
+            vacationDaysRepository.saveAndFlush(vacationDays);
+        }
+        //Povećavanje broja iskorištenih praznika u tabeli religion_leave
+        else if(leaveRequest.getCategory().equals("Praznik")){
+            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+            religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
+            religionLeaveRepository.saveAndFlush(religionLeave);
+        }
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)

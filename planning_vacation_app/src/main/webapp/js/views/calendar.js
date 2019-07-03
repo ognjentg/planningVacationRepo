@@ -1,6 +1,5 @@
 var chosenCategory = null; //here will be setted chosen category  - but there must be value from database...
 var schedulerEvents = [];
-var selectedButton = null;
 var selectedDays = [];
 var updatedDays = [];
 
@@ -10,6 +9,7 @@ var buttons = {
     SICK: 3,
     RELIGIOUS: 4
 };
+var selectedButton = buttons.VACATION;
 
 var calendarView = {
     freeDays: 20,
@@ -80,7 +80,7 @@ var calendarView = {
                             },
                             {
                                 view: "label",
-                                label: "Preostalo plaćeno odsustvo",
+                                label: "Preostalo dana za praznike",
                                 type: "header",
                                 css: "companies-counter"
                             },
