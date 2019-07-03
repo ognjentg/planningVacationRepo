@@ -12,6 +12,7 @@ var buttons = {
 var selectedButton = buttons.VACATION;
 
 var calendarView = {
+    leftReligionLeaveDays: 0,
     freeDays: 20,
     nonWorkingDays: null,
     nonWorkingdDaysInWeek: null,
@@ -473,9 +474,11 @@ var calendarView = {
         scheduler.config.dblclick_create = false;
         scheduler.config.drag_create = false;
         scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
-
-
-
+            if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
+                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
+                util.messages.showErrorMessage("Nemate pravo na više dana");
+                return;
+            }
             if (
                 // leaveRequestWaiting.includes(selectedDate.getTime()) ||
                 // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
@@ -655,6 +658,7 @@ var calendarView = {
                     var religionLeave;
                     if (data.json() != null) {
                         religionLeave = data.json();
+                        calendarView.leftReligionLeaveDays = 2 - religionLeave.numberOfDaysUsed;
                     } else
                         religionLeave.numberOfDaysUsed = 0;
                     if (2 - religionLeave.numberOfDaysUsed > 0) {
