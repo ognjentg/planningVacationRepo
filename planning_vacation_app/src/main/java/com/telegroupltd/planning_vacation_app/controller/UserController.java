@@ -319,8 +319,10 @@ public class UserController extends GenericController<User, Integer> {
             }
             newUser.setPauseFlag(user.getPauseFlag());
             newUser.setStartDate(user.getStartDate());
-//            newUser.setSectorId(user.getSectorId());  //It is sector manager's job
-            newUser.setSectorId(null); // Sa prethodnom linijom baci exception, pa sam ostavio ovo sa null
+            if(user.getSectorId() > 0)
+                newUser.setSectorId(user.getSectorId());  //It is sector manager's job
+            else
+             newUser.setSectorId(null); // Sa prethodnom linijom baci exception, pa sam ostavio ovo sa null
             try {
                 newUser.setPhoto(Files.readAllBytes(Paths.get(new File("src/main/resources/default.png").getAbsolutePath())));
             } catch (IOException e) {

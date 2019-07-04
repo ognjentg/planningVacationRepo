@@ -315,11 +315,8 @@ usergroupView = {
                         },
                         onAfterLoad: function () {
                             var numberOfEmployees = $$("usergroupDT").count();
-                            if(numberOfEmployees>0){
-                                animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                            }else{
-                                animateValue($$("t3"), 0, 0, 1000);
-                            }
+                            usergroupView.refreshCouner();
+
                         }
                     },
                     onClick: {
@@ -1198,9 +1195,16 @@ usergroupView = {
                         util.messages.showMessage("Zaposleni uspješno dodan.");
                         $$("addUserButton").enable();
                         util.dismissDialog('addUserDialog');
-                        $$("usergroupDT").add(newUser);
-                        $$("usergroupDT").refresh();
-                        usergroupView.refreshDatatable();
+                        //$$("usergroupDT").add(newUser);
+                       // $$("usergroupDT").refresh();
+                        var user = JSON.parse(text);
+                        if(sectorID > 0)
+                            user.sector_name = $$("choseSectorCombo").getValue();
+                        if(user.userGroupId == 6)
+                            user.position = "zaposleni";
+                        $$("usergroupDT").parse(user);
+                        //usergroupView.refreshDatatable();
+                        usergroupView.refreshCouner();
                     } else
                         util.messages.showErrorMessage("Greška u dodavanju zaposlenog.");
                         //alert("Greška u dodavanju zaposlenog.");
@@ -1230,7 +1234,9 @@ usergroupView = {
         }
     }
     ,
-
+    refreshCouner: function() {
+        animateValue($$("t3"), 0, $$("usergroupDT").count(), 1000);
+    },
     changeSector: function () {
         console.log("method change sector");
         var user = $$("usergroupDT").getSelectedItem();
@@ -1594,11 +1600,8 @@ usergroupView = {
                         //alert(text);
                     }, id);
                 var numberOfEmployees = $$("usergroupDT").count();
-                if(numberOfEmployees>0){
-                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                }else{
-                    animateValue($$("t3"), 0, 0, 1000);
-                }
+                usergroupView.refreshCouner();
+
             }
         };
         webix.confirm(delBox);
@@ -1632,18 +1635,12 @@ usergroupView = {
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
                     var numberOfEmployees = $$("usergroupDT").count();
-                    if(numberOfEmployees>0){
-                        animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                    }else{
-                        animateValue($$("t3"), 0, 0, 1000);
-                    }
+                    usergroupView.refreshCouner();
+
                 }
                 var numberOfEmployees = $$("usergroupDT").count();
-                if(numberOfEmployees>0){
-                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                }else{
-                    animateValue($$("t3"), 0, 0, 1000);
-                }
+                usergroupView.refreshCouner();
+
             };
             webix.confirm(delBox);
 
