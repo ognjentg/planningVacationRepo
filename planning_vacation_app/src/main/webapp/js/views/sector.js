@@ -537,8 +537,8 @@ var sectorView = {
                 {
                     view: "form",
                     id: "addSectorForm",
-                    width: 660,
-                    height: 200,
+                    width: 450,
+                    //height: 200,
                     elementsConfig: {
                         labelWidth: 200,
                         bottomPadding: 20
@@ -549,6 +549,7 @@ var sectorView = {
                             id: "name",
                             name: "name",
                             label: "Naziv:",
+                            labelWidth:100,
                             invalidMessage: "Naziv je obavezno unijeti.",
                             required: true
                         },
@@ -556,14 +557,27 @@ var sectorView = {
                             view: "combo",
                             id:"managerCombo",
                             name:"managerCombo",
-                            label:"Rukovodilac",
+                            label:"Rukovodilac:",
+                            labelWidth:100,
                             options:{
+                                filter:function(item,value){
+                                    var firstName,lastName,email=false;
+                                    if(item.firstName!=null && item.firstName.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                                        return true;
+                                    if(item.lastName!=null && item.lastName.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                                        return true;
+                                    if(item.email!=null && item.email.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                                        return true;
+                                    return false ;
+                                },
                                 body:{
-                                    template: "#firstName# #lastName#",
+                                    template: "#firstName# #lastName# (#email#)",
                                     url: "hub/user/getAllUsersWithoutSector",
                                 }
                             },
-                            required: true
+
+                            required: true,
+
                         },
                         {
                             id: "saveSector",
