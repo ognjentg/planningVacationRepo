@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @RequestMapping(value = "/hub/constraints")
-@Controller
+@RestController
 @Scope("request")
 public class ConstraintsController extends GenericHasActiveController<Constraints, Integer> {
 
