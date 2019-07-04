@@ -3,14 +3,8 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
-import com.telegroupltd.planning_vacation_app.model.User;
-import com.telegroupltd.planning_vacation_app.model.UserGroup;
-import com.telegroupltd.planning_vacation_app.model.UserUserGroupKey;
-import com.telegroupltd.planning_vacation_app.model.UserUserGroupSector;
-import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
-import com.telegroupltd.planning_vacation_app.repository.UserGroupRepository;
-import com.telegroupltd.planning_vacation_app.repository.UserRepository;
-import com.telegroupltd.planning_vacation_app.session.UserBean;
+import com.telegroupltd.planning_vacation_app.model.*;
+import com.telegroupltd.planning_vacation_app.repository.*;
 import com.telegroupltd.planning_vacation_app.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,10 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Timestamp;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RequestMapping(value = "hub/user")
@@ -42,6 +33,8 @@ public class UserController extends GenericController<User, Integer> {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
     private final UserGroupRepository userGroupRepository;
+    private final VacationDaysRepository vacationDaysRepository;
+    private final ReligionLeaveRepository religionLeaveRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -85,11 +78,13 @@ public class UserController extends GenericController<User, Integer> {
     @Value("Nova lozinka ne ispunjava pravila.")
     private String badRequestNewPassword;
     @Autowired
-    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository){
+    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository){
         super(userRepository);
         this.userRepository=userRepository;
         this.companyRepository=companyRepository;
         this.userGroupRepository=userGroupRepository;
+        this.vacationDaysRepository = vacationDaysRepository;
+        this.religionLeaveRepository = religionLeaveRepository;
     }
     //Used to send login information to the added user
     @Autowired
@@ -356,6 +351,20 @@ public class UserController extends GenericController<User, Integer> {
                 if(user.getUserGroupId()!=superAdmin) {
                    notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                 }
+                VacationDays vacationDays = new VacationDays();
+                vacationDays.setUsedDays(0);
+                vacationDays.setActive((byte)1);
+                vacationDays.setTotalDays(20);
+                vacationDays.setUserId(newUser.getId());
+                vacationDays.setYear(Calendar.getInstance().get(Calendar.YEAR));
+                vacationDaysRepository.saveAndFlush(vacationDays);
+
+                ReligionLeave religionLeave = new ReligionLeave();
+                religionLeave.setNumberOfDaysUsed(0);
+                religionLeave.setActive((byte)1);
+                religionLeave.setUserId(newUser.getId());
+                religionLeave.setYear(Calendar.getInstance().get(Calendar.YEAR));
+                religionLeaveRepository.saveAndFlush(religionLeave);
                 return newUser;
             }
             throw new BadRequestException(badRequestInsert);

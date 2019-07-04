@@ -16,6 +16,8 @@ public class VacationDays implements HasActive {
     private Byte active;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id", nullable = false)
     public Integer getId() {
         return id;

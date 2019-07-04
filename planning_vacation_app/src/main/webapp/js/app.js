@@ -394,7 +394,7 @@ var mainLayout = {
                         if (text) {
 
                              util.dismissDialog('addFirstAndLastNameDialog');
-                             alert("Ime i prezime  uspješno dodano.");
+                             util.messages.showMessage("Ime i prezime  uspješno dodano.");
                         } else
                             util.messages.showErrorMessage("Neuspješno dodavanje.");
                     }, function (text, data, xhr) {
