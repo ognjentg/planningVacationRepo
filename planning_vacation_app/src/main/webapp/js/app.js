@@ -540,9 +540,33 @@ var showApp = function () {
     $$("usernameHolder").refresh();
 
     rightPanel = "emptyRightPanel";
-
-    $$("mainMenu").select("template");
-    templateView.selectPanel();
+    switch (userData.userGroupKey){
+        case "superadmin":
+            $$("mainMenu").select("company");
+            companyView.selectPanel();
+            break;
+        case "admin":
+            $$("mainMenu").select("usergroup");
+            usergroupView.selectPanel();
+            break;
+        case "direktor":
+            $$("mainMenu").select("usergroup");
+            usergroupView.selectPanel();
+            break;
+        case "sekretar":
+            $$("mainMenu").select("calendar");
+            calendarView.selectPanel();
+            break;
+        case "menadzer":
+            $$("mainMenu").select("calendar");
+            calendarView.selectPanel();
+            break;
+        case "zaposleni":
+            $$("mainMenu").select("calendar");
+            calendarView.selectPanel();
+            break;
+    }
+    //templateView.selectPanel();
 };
 
 //login and logout

@@ -474,11 +474,6 @@ var calendarView = {
         scheduler.config.dblclick_create = false;
         scheduler.config.drag_create = false;
         scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
-            if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
-                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
-                util.messages.showErrorMessage("Nemate pravo na više dana");
-                return;
-            }
             if (
                 // leaveRequestWaiting.includes(selectedDate.getTime()) ||
                 // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
@@ -541,7 +536,12 @@ var calendarView = {
                     })
                 }
 
-            } else if (!selectedDays.includes(selectedDate.getTime()) &&
+            }
+            else if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
+                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
+                util.messages.showErrorMessage("Nemate pravo na više dana");
+                return;
+            }else if (!selectedDays.includes(selectedDate.getTime()) &&
                 !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
                 !nonWorkingDays.includes(selectedDate.getTime())) {
                 selectedDays.push(selectedDate.getTime());
@@ -549,6 +549,7 @@ var calendarView = {
                     return a - b;
                 });
             }
+
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
             var tableData = [];
