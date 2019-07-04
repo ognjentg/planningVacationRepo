@@ -5,6 +5,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenExcepti
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.*;
 import com.telegroupltd.planning_vacation_app.repository.*;
+import com.telegroupltd.planning_vacation_app.util.LeaveRequestCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -155,13 +156,13 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
-        if(leaveRequest.getCategory().equals("Godisnji")){
+        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji)){
             VacationDays vacationDays = vacationDaysRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
             vacationDays.setUsedDays(vacationDays.getUsedDays() + leaveRequestDates.size());
             vacationDaysRepository.saveAndFlush(vacationDays);
         }
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
-        else if(leaveRequest.getCategory().equals("Praznik")){
+        else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik)){
             ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
             religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
             religionLeaveRepository.saveAndFlush(religionLeave);
