@@ -232,6 +232,17 @@ leaveRequestsView = {
                                 if("Godisnji"==kategorija){
                                     $$("radioId").hide();
                                 }
+                                connection.sendAjax("GET",
+                                    "/hub/leave_request/leaveRequestInfo/" + id,
+                                    function (text, data, xhr) {
+                                        user = data.json();
+                                        $$("acceptFname").setValue(user.firstName);
+                                        $$("acceptLname").setValue(user.lastName);
+                                        $$("acceptCategory").setValue(user.category);
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    });
+
                             } else if (action === "view") {
                                 var viewLeaveBox = (webix.copy(leaveRequestsView.showLeaveRequestInfo(id)));
                             }
@@ -258,7 +269,7 @@ leaveRequestsView = {
             });
 
     },
-    acceptRequestFuntion:function(){
+    acceptRequestFunction:function(){
         var type;//vraca tip odsustva(placeno(1),neplaceno(2))
         var paid;//setovanje boolean-a(placeno(1),neplaceno(0))
         var pom=$$("radioId").getValue();
@@ -513,8 +524,43 @@ leaveRequestsView = {
         body:{
             rows:[
                 {
-                    view:"label",
-                    label:"Odobravanje zahtjeva za odmor:"},
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Odobravanje zahtjeva za odmor:",
+                        width: 400,
+                    }, {}, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: 'util.dismissDialog(\'acceptDialogId\');'
+                    }]
+                },{
+                    cols: [{
+                        view: "label",
+                        label: "Ime:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptFname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Prezime:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptLname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Kategorija:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptCategory"
+                    }]
+                },
                 {
                     view:"radio",
                     id:"radioId",
@@ -526,7 +572,7 @@ leaveRequestsView = {
                             view:"button",
                             id:"acceptButtonId",
                             value: "Odobri",
-                            click:"leaveRequestsView.acceptRequestFuntion"
+                            click:"leaveRequestsView.acceptRequestFunction"
 
                     },
                         {
