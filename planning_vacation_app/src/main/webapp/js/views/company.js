@@ -155,7 +155,7 @@ var companyView = {
                     name: "archiveBtn",
                     type: "iconButton",
                     icon: "external-link",
-                    label: "Arhivirajte",
+                    label: "Export",
                     width: 100, css: "companyButton",
                     on: {
                         onItemClick: function () {

@@ -88,19 +88,18 @@ public class CompanyController extends GenericController<Company, Integer> {
         if(Validator.stringMaxLength(company.getName(),40)) {
             if (Validator.binaryMaxLength(company.getLogo(), longblobLength)) {
 
-                Company newCompany = new Company();
-                newCompany.setId(null);
-                newCompany.setName(company.getName());
-                newCompany.setActive((byte) 1);
-                newCompany.setLogo(company.getLogo());
-                newCompany.setPin(company.getPin());
+                company.setId(null);
+                company.setName(company.getName());
+                company.setActive((byte) 1);
+                company.setLogo(company.getLogo());
+                company.setPin(company.getPin());
 
 
-                if (repo.saveAndFlush(newCompany) != null) {
-                        entityManager.refresh(newCompany);
-                        logCreateAction(newCompany);
+                if (repo.saveAndFlush(company) != null) {
+                        entityManager.refresh(company);
+                        logCreateAction(company);
 
-                    return newCompany;
+                    return company;
                 }
                 throw new BadRequestException(badRequestInsert);
             }
