@@ -137,7 +137,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable Integer key) {
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable String key) {
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
     }
 
@@ -171,7 +171,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
     public @ResponseBody
-    Leaves getLeaveRequestFilteredByLeaveRequestStatusForSelected(@PathVariable Integer key, @PathVariable Integer userId) {
+    Leaves getLeaveRequestFilteredByLeaveRequestStatusForSelected(@PathVariable String key, @PathVariable Integer userId) {
 
         boolean isAbsent = false;
         ArrayList<LeaveRequestUserLeaveRequestStatus> removeReq = new ArrayList<>();

@@ -285,7 +285,7 @@ leaveRequestsView = {
         var id=$$("leave_requestDT").getSelectedId();
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id+"/"+type+"/"+paid, function (text, data, xhr) {
-            $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+           // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
             util.messages.showMessage("Zahtjev odobren");
             console.log("ZAHTJEV JE ODOBREN "+id+type+paid);
         }, function (text, data, xhr) {
@@ -293,6 +293,7 @@ leaveRequestsView = {
         }, item);
         util.dismissDialog('acceptDialogId');
 
+refreshOnData();
     },
 
     rejectRequest: {
@@ -508,12 +509,13 @@ leaveRequestsView = {
 
         connection.sendAjax("GET",
             "/hub/leave_request/updateLeaveRequestStatusRejected/" + id+ "/comment/" + comment,function (text, data, xhr) {
-                $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                //$$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                 util.messages.showMessage("Zahtjev odbijen");}
             , function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
         util.dismissDialog("rejectRequestInfoId");}
+        refreshOnData();
     },
     acceptDialog:{
         view:"fadeInWindow",
@@ -603,8 +605,12 @@ function refreshOnData() {
 
     if(comboItemId == 4){
         URLCurrentUrl = URLAllLeaveRequests;
-    } else {
-        URLCurrentUrl = URLByLeaveRequestStatus;
+    } else if(comboItemId == 3){
+        URLCurrentUrl = URLByLeaveRequestStatus+3;
+    }else if(comboItemId == 2){
+        URLCurrentUrl = URLByLeaveRequestStatus+2;
+    }else if(comboItemId == 1){
+        URLCurrentUrl = URLByLeaveRequestStatus+1;
     }
 
     if(comboItemId == 4) {

@@ -83,7 +83,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     }
 
     @Override
-    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id, Integer key) {
+    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id, String key) {
         return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS,"LeaveRequestUserLeaveRequestStatusMapping").setParameter(1,key).getResultList();
     }
 
