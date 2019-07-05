@@ -223,7 +223,7 @@ panel: {
                             value: "1",
                             editable:false,
                             options:[
-                                { id:1, value:"Godisnji odmor" },
+                                { id:1, value:"Godišnji odmor" },
                                 { id:2, value:"Odsustvo" },
                                 { id:3, value:"Bolovanje" },
                                 {id:4,value:"Religijski praznici"}
@@ -798,7 +798,7 @@ panel: {
             leaveRequestStatusId: 1,
             companyId: userData.companyId,
             senderComment: $$("comment").getValue(),
-            category: "Godisnji"
+            category: "Godišnji"
         }
         connection.sendAjax("POST", "hub/leave_request/",
             function (text, data, xhr) {

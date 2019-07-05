@@ -156,13 +156,13 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
-        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji)){
+        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
             VacationDays vacationDays = vacationDaysRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
             vacationDays.setUsedDays(vacationDays.getUsedDays() + leaveRequestDates.size());
             vacationDaysRepository.saveAndFlush(vacationDays);
         }
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
-        else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik)){
+        else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
             ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
             religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
             religionLeaveRepository.saveAndFlush(religionLeave);
