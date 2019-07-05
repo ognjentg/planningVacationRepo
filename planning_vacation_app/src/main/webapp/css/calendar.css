@@ -22,14 +22,28 @@
 
 /* Boja za dane godisnjeg odmora */
 .vacation_day .dhx_month_head{
-    background-color: #2ecb70;
+    background-color: #f2c057; /*#2ecb70;*/
 }
 .vacation_day .dhx_month_body{
-    background-color: #2ecb70;
+    background-color: #f2c057; /*#2ecb70;*/
 }
 /* Boja za labelu godisnji u legendi */
 .vacation_label {
-    color: #2ecb70;
+    color: #f2c057; /*#2ecb70;*/
+}
+/*Boja za dane godisnjeg odmora na cekanju:*/
+.vacation_day_waiting .dhx_month_head{
+    background-color: #FFEB94;  /*#77e0a3;*/
+}
+.vacation_day_waiting .dhx_month_body{
+    background-color: #FFEB94;  /*#77e0a3;*/
+}
+.vacation_day_waiting_label{
+    background-color: #FFEB94;  /*#77e0a3;*/
+}
+/*godisnji odobren-labela:*/
+.vacation_day_approved_label{
+    background-color: #f2c057; /*#2ecb70;*/
 }
 /* Boja za placene slobodne dane  */
 .day_off .dhx_month_head{
@@ -76,18 +90,8 @@
 .sick_day_waiting_label{
     background-color: #e99cb2;
 }
-.vacation_day_waiting .dhx_month_head{
-    background-color: #77e0a3;
-}
-.vacation_day_waiting .dhx_month_body{
-    background-color: #77e0a3;
-}
-.vacation_day_waiting_label{
-    background-color: #6bcf95;
-}
-.vacation_day_approved_label{
-    background-color: #2ecb70;
-}
+
+/*
 .vacation_day_denied .dhx_month_head{
     background-color: #069140;
 }
@@ -96,7 +100,7 @@
 }
 .vacation_day_denied_label{
     background-color: #069140;
-}
+}*/
 .sick_day_approved_label{
     background-color: #e36688;
 }
