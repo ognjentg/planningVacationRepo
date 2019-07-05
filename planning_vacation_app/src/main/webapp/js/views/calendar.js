@@ -16,11 +16,15 @@ var calendarView = {
     freeDays: 20,
     nonWorkingDays: null,
     nonWorkingdDaysInWeek: null,
-    vacationRequestWaiting: null,
-    leaveRequestWaiting: null,
+    vacationRequestWaiting: [],
+    vacationRequestApproved: [],
+    leaveRequestWaiting: [],
     sickLeaveDaysWaiting: [],
     sickLeaveDaysApproved: [],
-    panel: {
+    leaveRequestApprovedPaid: [],
+    leaveRequestApprovedUnpaid: [],
+
+panel: {
         id: "calendarPanel",
         adjust: true,
         rows: [
@@ -333,14 +337,16 @@ var calendarView = {
         var panelCopy = webix.copy(this.panel);
         $$("main").addView(webix.copy(panelCopy));
 
-
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
 
         var vacationRequestApproved = [];
-        var vacationRequestDenied = [];
         var vacationRequestWaiting = [];
+
         var leaveRequestWaiting = [];
+        var leaveRequestApprovedPaid = [];
+        var leaveRequestApprovedUnpaid= [];
+
         var sickLeaveDaysApproved = [];
         var sickLeaveDaysWaiting = [];
         //Dohvatanje dana na godisnjem odmoru, sto je na cekanju
@@ -355,28 +361,51 @@ var calendarView = {
                     if (data.json() != null) {
                         var leaves = data.json(); //ALL seaves!!!!  ALL
                         for (var i = 0; i < leaves.length; i++) {
-                            //Ovo ce samo da radi ya 1.datum tj od FROM,...ispraviti //TODO !!
-                            var tempDate = new Date(leaves[i].dateFrom); //treba sveee jedan datum iz INTERVALA dateFrom  do  dateTo pokupitiiii!!!!!!!!!!
-                            tempDate.setHours(00, 00, 00);
-                            if (leaves[i].category == "Godisnji" /*&& leaves[i].statusName=="Na čekanju"*/) { //TODO: ne prepoznaje ovaj atribut!
-                                vacationRequestWaiting[i] = tempDate.getTime();
-                                console.log(i + ".  " + vacationRequestWaiting[i])
+                            if ( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName == "Odobreno") { //TODO: ne prepoznaje ovaj atribut!
+                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
+                                    vacationRequestApproved.push(day.getTime());
+                                   // console.log(vacationRequestApproved);
+                                })
                             }
-                            /*         else if(leaves.category=="Godisnji" && leaves.statusName=="Odobreno")
-                                          vacationRequestApproved[i] = tempDate.getTime();
-                                     else if(leaves.category=="Godisnji" && leaves.statusName=="Odbijeno")
-                                          vacationRequestDenied[i] = tempDate.getTime();*/
-                            //        else if(leaves.category=="Slobodno" /*&& leaves.statusName=="Na čekanju"*/)
-                            //          leaveRequestWaiting[i] = tempDate.getTime();
-                            scheduler.blockTime(tempDate, "fullday");
+                            else if( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno") {
+                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
+                                   vacationRequestWaiting.push(day.getTime());
+                                   console.log(vacationRequestWaiting);
+                                })
+                            }
+                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno" ){
+                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
+                                    leaveRequestWaiting.push(day.getTime());
+                                    console.log(vacationRequestWaiting);
+                                })
+                            }
+                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" && leaves[i].typeName=="Plaćeno" ){ //
+                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
+                                    leaveRequestApprovedPaid.push(day.getTime());
+                                    console.log(leaveRequestApprovedPaid);
+                                })
+                            }
+                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" && leaves[i].typeName=="Neplaćeno" ){ //
+                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
+                                    leaveRequestApprovedUnpaid.push(day.getTime());
+                                    console.log(leaveRequestApprovedUnpaid);
+                                })
+                            }
+
                         }
                         calendarView.vacationRequestWaiting = vacationRequestWaiting;
+                        calendarView.vacationRequestApproved = vacationRequestApproved;
+
                         calendarView.leaveRequestWaiting = leaveRequestWaiting;
+                        calendarView.leaveRequestApprovedPaid = leaveRequestApprovedPaid;
+                        calendarView.leaveRequestApprovedUnpaid = leaveRequestApprovedUnpaid;
+
                         scheduler.setCurrentView();
                     }
                 }
             }
-        });
+        }
+        );
 
         calendarView.getSickDays();
         //Dohvatanje neradnih dana
@@ -460,8 +489,10 @@ var calendarView = {
                 return "sick_day_waiting";
             if (vacationRequestApproved.includes(date.getTime()))
                 return "vacation_day";
-            if (vacationRequestDenied.includes(date.getTime()))
-                return "vacation_day_denied";
+            if (leaveRequestApprovedPaid.includes(date.getTime()))
+                return "day_off";
+            if (leaveRequestApprovedUnpaid.includes(date.getTime()))
+                return "unpaid_day_off";
             return "";
         }
         //skrivanje lightboxa
@@ -484,7 +515,7 @@ var calendarView = {
                 calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime())   ||
                 leaveRequestWaiting.includes(selectedDate.getTime())                 ||
                 calendarView.vacationRequestWaiting.includes(selectedDate.getTime()) ||
-                vacationRequestApproved.includes(selectedDate.getTime())
+                calendarView.vacationRequestApproved.includes(selectedDate.getTime())
             ) {
 
                 console.log("sick approved"+sickLeaveDaysApproved);
