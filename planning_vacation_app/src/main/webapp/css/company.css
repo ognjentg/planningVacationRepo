@@ -315,7 +315,7 @@
     animation-name: fadeInDownBigConfirmDialog;
 }
 
-.webix_modal_box, .webix_popup, .webix_alert-warning {
+.webix_modal_box,  .webix_alert-warning {
 
     -webkit-animation-name: fadeInDownBigConfirmDialog;
     animation-name: fadeInDownBigConfirmDialog;
@@ -324,3 +324,115 @@
     animation-duration: 1000ms;
 
 }
+
+.companyFormButtons {
+    margin-top: 40px !important;
+}
+
+.addCompanyDialog {
+    border-width: 0px !important;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+
+/* animation f*/
+
+.fadeInAnimation, .companyPanelToolbar  {
+
+    animation: fadeInAnimation ease 5s;
+    -webkit-animation: fadeInAnimation ease 500ms;
+    -moz-animation: fadeInAnimation ease 500ms;
+    -o-animation: fadeInAnimation ease 500ms;
+    -ms-animation: fadeInAnimation ease 500ms;
+
+}
+
+@keyframes fadeInAnimation{
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-moz-keyframes fadeInAnimation {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-webkit-keyframes fadeInAnimation {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-o-keyframes fadeInAnimation {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+@-ms-keyframes fadeInAnimation {
+    0% {
+        opacity:0;
+    }
+    100% {
+        opacity:1;
+    }
+}
+
+.webix_el_label b, .fa-anim, .webix_tree_branch_1 {
+
+
+    -webkit-animation: focus-in-contract-bck 500ms cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+    animation: focus-in-contract-bck 500ms cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+
+}
+@-webkit-keyframes focus-in-contract-bck {
+    0% {
+        letter-spacing: 1em;
+        -webkit-transform: translateZ(300px);
+        transform: translateZ(300px);
+        -webkit-filter: blur(12px);
+        filter: blur(12px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateZ(12px);
+        transform: translateZ(12px);
+        -webkit-filter: blur(0);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+@keyframes focus-in-contract-bck {
+    0% {
+        letter-spacing: 1em;
+        -webkit-transform: translateZ(300px);
+        transform: translateZ(300px);
+        -webkit-filter: blur(12px);
+        filter: blur(12px);
+        opacity: 0;
+    }
+    100% {
+        -webkit-transform: translateZ(12px);
+        transform: translateZ(12px);
+        -webkit-filter: blur(0);
+        filter: blur(0);
+        opacity: 1;
+    }
+}
+
+
+

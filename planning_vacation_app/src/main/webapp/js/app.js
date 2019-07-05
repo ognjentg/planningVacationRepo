@@ -267,6 +267,7 @@ var mainLayout = {
     id: "app",
     width: "auto",
     height: "auto",
+    css:"fadeInAnimation",
     rows: [
         {
             cols: [{

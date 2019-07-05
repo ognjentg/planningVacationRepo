@@ -56,7 +56,7 @@ var companyView = {
                     width: 140,
                     height: 70,
                     css: "companyPanelToolbar",
-                    template: "<span class='fa fa-briefcase'></span> Kompanije"
+                    template: "<span class='fa fa-briefcase fa-anim'></span> Kompanije"
                 },
 
                 {
@@ -495,7 +495,7 @@ var companyView = {
                 cols: [{
                     view: "pager", id: "pagerA",
                     template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
-                    size: 20,
+                    size: 16,
                     height: 35,
                     group: 5,
                     on: {
@@ -665,6 +665,7 @@ var companyView = {
         move: true,
         position: "center",
         modal: true,
+        css:"addCompanyDialog",
         body: {
             id: "addCompanyInside",
             rows: [{
@@ -701,7 +702,8 @@ var companyView = {
                         name: "name",
                         label: "Naziv:",
                         invalidMessage: "Naziv je obavezno unijeti.",
-                        required: true
+                        required: true,
+                        height:35
                     },
 
                     {
@@ -713,6 +715,7 @@ var companyView = {
                         stringResult: true,
                         label: "PIN kompanije:",
                         required: true,
+                        height:35
 
 
                     },
@@ -734,8 +737,8 @@ var companyView = {
 
                     },
 
-                    {
-                        margin: 5,
+                    {  css:"companyFormButtons",
+                        margin: 10,
                         cols: [{}, {
                             id: "saveCompany",
                             view: "button",
@@ -744,7 +747,8 @@ var companyView = {
                             align: "right",
                             click: "companyView.save",
                             hotkey: "enter",
-                            width: 150
+                            width: 150,
+                            height:35
                         }, {
 
                             id: "cancelCompany",
@@ -757,7 +761,8 @@ var companyView = {
                                 this.getTopParentView().hide();
                             },
                             hotkey: "esc",
-                            width: 150
+                            width: 150,
+                            height:35
 
                         }]
                     }
