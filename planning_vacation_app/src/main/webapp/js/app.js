@@ -5,8 +5,17 @@ var MENU_STATES = {
 };
 var menuState = MENU_STATES.COLLAPSED;
 
+var film_set = [
+    [ "War and Peace", "Leo Tolstoy" ],
+    [ "Hamlet", "Shakespeare" ],
+    [ "Madame Bovary", "Gustave Flaubert" ]
+];
+
 //menu configuration - EDITABLE
 var settingsMenu = [];
+var notifications = [];
+var numberOfUnreadNotifications = 0;
+var notificationsMenu = [];
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sektor", icon: "code"},
@@ -296,6 +305,41 @@ var mainLayout = {
                         width: 600
                     },
                     {
+                        id: "notificationBtn",
+                        view:"button",
+                        width:60,
+                        badge:numberOfUnreadNotifications,
+                        type:"icon",
+                        icon:"bell",
+                        click: function() {
+                            webix.ui({
+                                view: "popup",
+                                body: {
+                                    view: "list",
+                                    id: "notificationList",
+                                    name: "notificationList",
+                                    select: true,
+                                    borderless: true,
+                                    //  css:"notifications",
+                                    width: 250,
+                                    autoheight: true,
+                                },
+                                type: {
+                                    height: 120
+                                },
+                                on: {
+                                    /* onHide:() =>
+                                         {
+                                         $$("notificationList").clearAll();
+                                         $$("notificationList").showOverlay(`<div style='margin:20px; font-size:14px;'>${_("No new notifications")}</div>`);
+                                         $$("notificationList").define({ autoheight:false, height:80 });
+                                         $$("notificationList").resize();
+                                         this.app.callEvent("read:notifications");
+                                     }*/
+                                },
+                            });
+                        }},
+                    {
                         view: "menu",
                         width: 45,
                         icon: "cog",
@@ -304,14 +348,14 @@ var mainLayout = {
                         css: "settingsMenu",
                         align: "right",
                         submenuConfig: {width: 180},
-                       data: [{
-                           id: "settingsSubMenu", icon: "cog", value: "", submenu: settingsMenu
-                       }],
+                        data: [{
+                            id: "settingsSubMenu", icon: "cog", value: "", submenu: settingsMenu
+                        }],
                         openAction: "click",
                         on: {
-                            onMenuItemClick: settingsMenuActions
+                          onMenuItemClick: settingsMenuActions
                         }
-                    }
+                    },
                 ]
             }]
 
@@ -417,6 +461,7 @@ var menuEvents = {
 }
 var mainApp;
 var showApp = function () {
+
     var companyInfoItems = [
         {id: "0", value: "O kompaniji", icon: "info-circle"},
         {id:"sep1", $template: "Separator"}];
@@ -440,6 +485,7 @@ var showApp = function () {
     for(var i = 0; i < subMenuItems.length; i++)
         settingsMenu.push(subMenuItems[i]);
 
+
     console.log("Company data: ");
     console.log(companyData);
     var main = webix.copy(mainLayout);
@@ -449,11 +495,27 @@ var showApp = function () {
     //**************
     var localMenuData = null;
 
-    //if (userData.userGroupId != 2 || userData.userGroupId != 3) //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
-  //  alert(settingsMenu[0].id);
-//    $$("settingsMenu").define("submenu",settingsMenu);
-  //$$("settingsMenu").refresh();
-//    $$("settingsSubMenu").add(settingsMenu[0]);
+
+
+    webix.ajax().get("/hub/notification/getAllNotificationByUser/" + 6, { // userData.id,
+        success: function (text, data, xhr) {
+            numberOfUnreadNotifications = 0;
+            var userNotifications = data.json();
+            for (var i = 0; i <userNotifications.length; i++)
+            {
+                if(userNotifications[i].seen == 0)
+                    numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
+                notifications.push(userNotifications[i].id, userNotifications[i].title, userNotifications[i].text);
+           //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
+            }
+            $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+            $$("notificationBtn").refresh();
+        },
+        error: function (text, data, xhr) {
+          alert(text)
+        }
+    });
+
     if(userData!=null)
     {
         if(userData.userGroupKey !== "superadmin") {
@@ -862,6 +924,8 @@ console.log($$("loginForm").getValues());
                 util.messages.showErrorMessage("Prijavljivanje nije uspjelo!")
             },
             success: function (text, data, xhr) {
+
+
                // util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                    userData = data.json();
