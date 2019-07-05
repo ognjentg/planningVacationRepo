@@ -387,6 +387,7 @@ panel: {
                                    console.log(vacationRequestWaiting);
                                 })
                             }
+ //Odsustvo:
                             else if(leaves[i].category=="Odsustvo" && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno" ){
                                 getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                     leaveRequestWaiting.push(day.getTime());
@@ -932,6 +933,7 @@ panel: {
                 util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
                 calendarView.deleteCurrentRequest();
                 calendarView.getSickDays();
+                calendarView.getVacationDays();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, datesArr);
@@ -1095,7 +1097,7 @@ panel: {
                     var sickLeave = data.json();
                     sickLeave.forEach(function (value) {
                         //Dodavanje dana na čekanju
-                        if (value.statusName == "Na čekanju") {
+                        if (value.statusName != "Opravdano"  && value.statusName != "Odbijeno" ) {
                             console.log("FROM " + value.dateFrom + " TO " + value.dateTo);
                             getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
                                 calendarView.sickLeaveDaysWaiting.push(day.getTime());
