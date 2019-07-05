@@ -222,7 +222,7 @@ leaveRequestsView = {
                             console.log(id["column"]);
 
                             var action = id["column"];
-
+                            $$("leave_requestDT").select(id);
                             if (action === "reject"&&(userData.userGroupKey =="admin" || userData.userGroupKey =="direktor" || userData.userGroupKey =="menadzer")) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
