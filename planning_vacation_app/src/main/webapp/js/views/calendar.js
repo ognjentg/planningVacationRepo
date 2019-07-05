@@ -351,94 +351,6 @@ panel: {
         var nonWorkingDaysInWeek = [];
 
 
-        var vacationRequestApproved = [];
-        var vacationRequestWaiting = [];
-
-        var leaveRequestWaiting = [];
-        var leaveRequestApprovedPaid = [];
-        var leaveRequestApprovedUnpaid= [];
-
-        var religionRequestApproved=[];
-        var religionRequestWaiting=[];
-
-        var sickLeaveDaysApproved = [];
-        var sickLeaveDaysWaiting = [];
-        //Dohvatanje dana na godisnjem odmoru, sto je na cekanju
-        webix.ajax("hub/leave_request/leaveRequestByUserId/" + userData.id, {
-            error: function (text, data, xhr) {
-                if (xhr.status != 200) {
-                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
-                }
-            },
-            success: function (text, data, xhr) {
-                if (xhr.status === 200) {
-                    if (data.json() != null) {
-                        var leaves = data.json(); //ALL seaves!!!!  ALL
-                        for (var i = 0; i < leaves.length; i++) {
-                            if ( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName == "Odobreno") { //TODO: ne prepoznaje ovaj atribut!
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    vacationRequestApproved.push(day.getTime());
-                                   // console.log(vacationRequestApproved);
-                                })
-                            }
-                            else if( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno") {
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                   vacationRequestWaiting.push(day.getTime());
-                                   console.log(vacationRequestWaiting);
-                                })
-                            }
- //Odsustvo:
-                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno" ){
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    leaveRequestWaiting.push(day.getTime());
-                                    console.log(leaveRequestWaiting);
-                                })
-                            }
-                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" /*&& leaves[i].typeName=="Plaćeno"*/ ){ //
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    leaveRequestApprovedPaid.push(day.getTime());
-                                    console.log(leaveRequestApprovedPaid);
-                                })
-                            }
-                            else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" /*&& leaves[i].typeName=="Neplaćeno"*/ ){ //
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    leaveRequestApprovedUnpaid.push(day.getTime());
-                                    console.log(leaveRequestApprovedUnpaid);
-                                })
-                            }
-//religijski:
-                        else if(leaves[i].category=="Praznik" && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno" /*&& leaves[i].typeName=="Neplaćeno"*/ ){ //
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    religionRequestWaiting.push(day.getTime());
-                                    console.log(religionRequestWaiting);
-                                })
-                            }
-                            else if(leaves[i].category=="Praznik" && leaves[i].statusName=="Odobreno"  /*&& leaves[i].typeName=="Neplaćeno"*/ ){ //
-                                getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
-                                    religionRequestApproved.push(day.getTime());
-                                    console.log(religionRequestApproved);
-                                })
-                            }
-
-                        }
-                        calendarView.vacationRequestWaiting = vacationRequestWaiting;
-                        calendarView.vacationRequestApproved = vacationRequestApproved;
-
-                        calendarView.leaveRequestWaiting = leaveRequestWaiting;
-                        calendarView.leaveRequestApprovedPaid = leaveRequestApprovedPaid;
-                        calendarView.leaveRequestApprovedUnpaid = leaveRequestApprovedUnpaid;
-
-                        calendarView.religionRequestWaiting = religionRequestWaiting;
-                        calendarView.religionRequestApproved = religionRequestApproved;
-
-
-                        scheduler.setCurrentView();
-                    }
-                }
-            }
-        }
-        );
-
         //var sickLeaveDaysApproved = [];
         //var sickLeaveDaysWaiting = [];
         calendarView.getVacationDays();
@@ -527,10 +439,10 @@ panel: {
             if (leaveRequestApprovedPaid.includes(date.getTime()))
                 return "day_off";
             if (leaveRequestApprovedUnpaid.includes(date.getTime()))
-                return "unpaid_day_off";  //
-            if (religionRequestWaiting.includes(date.getTime()))
+                return "unpaid_day_off";
+            if (religionLeaveDaysWaiting.includes(date.getTime()))
                 return "religion_day_off_waiting";
-            if (religionRequestApproved.includes(date.getTime()))
+            if(religionLeaveDaysApproved.includes(date.getTime()))
                 return "religion_day_off";
             return "";
         }
@@ -933,7 +845,6 @@ panel: {
                 util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
                 calendarView.deleteCurrentRequest();
                 calendarView.getSickDays();
-                calendarView.getVacationDays();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, datesArr);
@@ -1097,7 +1008,7 @@ panel: {
                     var sickLeave = data.json();
                     sickLeave.forEach(function (value) {
                         //Dodavanje dana na čekanju
-                        if (value.statusName != "Opravdano"  && value.statusName != "Odbijeno" ) {
+                        if (value.statusName == "Na čekanju") {
                             console.log("FROM " + value.dateFrom + " TO " + value.dateTo);
                             getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
                                 calendarView.sickLeaveDaysWaiting.push(day.getTime());
