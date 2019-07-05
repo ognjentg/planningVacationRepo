@@ -58,17 +58,17 @@
 }
 /* Boja za neplacene slobodne dane  */
 .unpaid_day_off .dhx_month_head{
-    background-color: #edc13e;
+    background-color: #BBBF95; /*#edc13e;*/
 }
 .unpaid_day_off .dhx_month_body{
-    background-color: #edc13e;
+    background-color: #BBBF95; /*#edc13e;*/
 }
 .dhx_now .dhx_month_body, .dhx_now .dhx_month_head {
     background:none !important;
 }
 /* Boja za labelu neplaceni dani u legendi */
 .unpaid_day_label {
-    color: #edc13e;
+    color: #BBBF95; /*#edc13e;*/
 }
 /* Boja za dane bolovanja */
 .sick_day .dhx_month_head{
@@ -129,7 +129,7 @@
     background-color: #03748f;
 }
 .unpaid_day_off_approved_label{
-    background-color: #edc13e;
+    background-color: #BBBF95; /*#edc13e;*/
 }
 .day_off_denied .dhx_month_head{
     background-color: #03748f;
