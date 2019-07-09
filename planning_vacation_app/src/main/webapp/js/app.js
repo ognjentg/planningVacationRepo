@@ -311,73 +311,11 @@ var mainLayout = {
                         badge:numberOfUnreadNotifications,
                         type:"icon",
                         icon:"bell",
+                        popup:"notificationMenu",
                         click: function() {
-                            webix.ui({
-                                view: "popup",
-                                body: {
-                                    view: "list",
-                                    id: "notificationList",
-                                    name: "notificationList",
-                                    select: true,
-                                    resize:true,
-                                    autoheight:true,
-                                    borderless: true,
-                                    template:function(obj){
-                                        return "<span class='m_title'>" + (obj.title) + "</span>" +
-                                            "<span class='message'>" + (obj.text) + "</span>";
+                            showNotifications();
 
-                                   },
-                                   // template: "#title#.#text#{common.markCheckbox()}",
-                                  //  data: notifications,
-                                    css:"notifications",
-                                    width: 250,
-                                     type:{
-                                        markCheckbox:function(obj ){
-                                            return "<span class='check webix_icon fa-"+(obj.markCheckbox?"check-":"")+"square-o'></span>";
-                                        }
-                                    },
-                                    on: {
-                                        "onItemClick": function (id, e, node) {
-                                            var item = this.getItem(id);
-                                            webix.alert({
-                                                title: item.title,
-                                                ok: "OK",
-                                                text: item.text
-                                            });
-                                    }
-                                },
-                                onClick:{
-                                    "check":function(e, id){
-                                        var item = this.getItem(id);
-                                        item.markCheckbox = item.markCheckbox?0:1;
-                                        if(item.markCheckbox == 0)
-                                         numberOfUnreadNotifications--;
-                                        else
-                                         numberOfUnreadNotifications++;
-                                        $$("notificationBtn").config.badge = numberOfUnreadNotifications;
-                                        $$("notificationBtn").refresh();
-                                        this.updateItem(id, item);
-                                    }
-                                },
-                            },
-                                //   autoheight: true,
-                            type: {
-                                height: 120
-                            },
-                            }).show({ pos: "bottom"});
-                          //  alert($$("notificationList").count())
-                            var list = $$("notificationList");
 
-                            for(var i = 0; i < notifications.length; i++){
-                            list.parse(notifications[i]);
-		                    list.waitData.then(function() { list.resize()});
-		                    webix.extend(list,webix.OverlayBox);
-		                    this.on("new:notification",function() {
-		                	list.hideOverlay();
-			                list.define({ autoheight:true });
-		                	list.resize();
-			                list.add(notifications[i],0);
-		});}
                     }},
                 {
                     view: "menu",
@@ -1089,6 +1027,66 @@ showAddFirstAndLastNameDialog = function () {
         }, 0);
 };
 
+
+showNotifications=function(){
+    webix.ui({
+        view: "popup",
+        id: "notificationMenu",
+        head: "Submenu",
+        height: 400,
+        body: {
+            rows: [
+                {
+                    view: "list",
+                    id: "notificationList",
+                    name: "notificationList",
+                    select: true,
+                    resize: true,
+                    autoheight: true,
+                    borderless: true,
+                    template: function (obj) {
+                        return "<span class='m_title'>" + (obj.title) + "</span>" +
+                            "<span class='message'>" + (obj.text) + "</span>";
+
+                    },
+                    // template: "#title#.#text#{common.markCheckbox()}",
+                    //  data: notifications,
+                    css: "notifications",
+                    width: 300,
+                    type: {
+                        height: 80,
+                        width: 300 /* BEWARE needs to be more than specified in extended-orange.css for contactName and message_text */
+                    },
+                    on: {
+                        "onItemClick": function (id, e, node) {
+                            var item = this.getItem(id);
+                            webix.alert({
+                                title: item.title,
+                                ok: "OK",
+                                text: item.text
+                            });
+                        }
+                    },
+                    onClick: {
+                        "check": function (e, id) {
+                            var item = this.getItem(id);
+                            item.markCheckbox = item.markCheckbox ? 0 : 1;
+                            if (item.markCheckbox == 0)
+                                numberOfUnreadNotifications--;
+                            else
+                                numberOfUnreadNotifications++;
+                            $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+                            $$("notificationBtn").refresh();
+                            this.updateItem(id, item);
+                        }
+                    },
+                }
+            ]
+        }
+    });
+    var list = $$("notificationList");
+    list.parse(notifications);
+};
 
 
 //main call
