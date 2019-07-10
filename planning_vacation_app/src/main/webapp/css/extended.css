@@ -319,3 +319,18 @@ element.style {
 	border-left: 0;
 	border-right: 0;
 }
+
+/* notifications */
+.notifications .webix_list_item,
+.notifications .webix_list_item.webix_selected{
+	line-height:20px;
+	padding:10px;
+}
+.notifications .webix_list_item .title{
+	font-weight:500;
+	color:#313131;
+}
+.notifications .webix_list_item .text{
+	display:block;
+	color:#475466;
+}

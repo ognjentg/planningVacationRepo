@@ -475,7 +475,7 @@ var localMenuData = null;
 
 
 
-webix.ajax().get("/hub/notification/getAllNotificationByUser/" + 6, { // userData.id,
+webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
     success: function (text, data, xhr) {
         numberOfUnreadNotifications = 0;
         var userNotifications = data.json();
@@ -487,7 +487,12 @@ webix.ajax().get("/hub/notification/getAllNotificationByUser/" + 6, { // userDat
             notification = {
                 id: userNotifications[i].id,
                 title: userNotifications[i].title,
-                text: userNotifications[i].text
+                text: userNotifications[i].text,
+                active: userNotifications[i].active,
+                seen: userNotifications[i].seen,
+                receiverUserId: userNotifications[i].receiverUserId,
+                companyId: userNotifications[i].companyId,
+                leaveType: userNotifications[i].leaveType,
             };
             notifications.push(notification);
 
@@ -1046,8 +1051,8 @@ showNotifications=function(){
                     borderless: true,
                     template: function (obj) {
                         return "<span class='m_title'>" + (obj.title) + "</span>" +
-                            "<span class='message'>" + (obj.text) + "</span>";
-
+                            "<span class='message'>" + (obj.text) + "</span>" +
+                            "<span class='check webix_icon fa-"+(obj.seen?"check-":"")+"square-o'></span>";
                     },
                     // template: "#title#.#text#{common.markCheckbox()}",
                     //  data: notifications,
@@ -1068,13 +1073,36 @@ showNotifications=function(){
                         }
                     },
                     onClick: {
-                        "check": function (e, id) {
+                        webix_icon: function (e, id) {
+
                             var item = this.getItem(id);
                             item.markCheckbox = item.markCheckbox ? 0 : 1;
                             if (item.markCheckbox == 0)
                                 numberOfUnreadNotifications--;
                             else
                                 numberOfUnreadNotifications++;
+                       var updatedNotifications = [];
+                      /* var notification = {
+                                id: item.id,
+                                title: item.title,
+                                text: item.text,
+                                seen: 0,//item.seen
+                                notificationCompanyId: item.notificationCompanyId,
+                                notificatoinUserId: item.notificatoinUserId,
+                        };*/
+
+                       var selectedNotification = notifications.filter(
+                           function(element){
+                               return element.id == item.id;
+                       });
+
+                            updatedNotifications.push(selectedNotification[0]);
+                            connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
+                                function (text, data, xhr) {
+
+                                }, function (text, data, xhr) {
+                                    alert(text);
+                                }, updatedNotifications);
                             $$("notificationBtn").config.badge = numberOfUnreadNotifications;
                             $$("notificationBtn").refresh();
                             this.updateItem(id, item);
