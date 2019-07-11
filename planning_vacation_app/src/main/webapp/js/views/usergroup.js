@@ -88,7 +88,7 @@ usergroupView = {
                         height: 40,
                         css: "companyButton",
                         align: "left",
-                        disabled: true,
+                        //disabled: true,
                         click: 'usergroupView.showAddDialog'
                     }, {
                         id: "deleteSelectedButton",
@@ -957,9 +957,13 @@ usergroupView = {
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
             $$("addUserButton").hide();
+            $$("deleteSelectedButton").hide();
+            $$("changeSectorOfSelectedButton").hide();
+            $$("changeManagerBtn").hide();
             // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             $$("usergroupDT").hideColumn("delete");
             $$("usergroupDT").hideColumn("sector");
+            $$("usergroupDT").hideColumn("checkboxRow");
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
             // $$("companyDT").refreshColumns();
@@ -1019,7 +1023,7 @@ usergroupView = {
         //                   });
         $$("choseSectorCombo").setValue("Svi sektori");
 
-        $$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
+        //$$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
 
 
         webix.protoUI({

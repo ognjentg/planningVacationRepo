@@ -183,11 +183,6 @@ var menuSectorManager=[
            value: "Zaposleni",
            icon: "users"
       },
-      {
-            id: "sectorInfo",
-            value: "Sektor",
-            icon: "briefcase"
-      },
     {
         id: "leave_requests",
         value: "Pregled zahtjeva za odmor",
@@ -511,7 +506,7 @@ if(userData!=null)
     if(userData.userGroupKey !== "superadmin") {
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
     } else {
-        $$("companyLogoImage").setValues({src: "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D"});
+        $$("companyLogoImage").setValues({src: "img/telegroup-logo-inside.png"});
     }
     switch (userData.userGroupKey) {
     case "superadmin":
@@ -542,7 +537,7 @@ if(userData!=null)
             showAddFirstAndLastNameDialog();
         }
         break;
-    case "direktor":
+    case "menadzer":
         localMenuData = webix.copy(menuSectorManager);
         $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
         if(userData.firstName == null || userData.lastName == null){
@@ -587,15 +582,18 @@ webix.ui({
 });
 
 
-$$("mainMenu").define("data", localMenuData);
-$$("mainMenu").define("on", menuEvents);
+if(userData.userGroupKey != "superadmin" && userData.userGroupKey != "zaposleni"){
+    $$("mainMenu").define("data", localMenuData);
+    $$("mainMenu").define("on", menuEvents);
+}
+
 
 $$("usernameHolder").refresh();
 
 rightPanel = "emptyRightPanel";
 switch (userData.userGroupKey){
     case "superadmin":
-        $$("mainMenu").select("company");
+        $$("menu-collapse").hide();
         companyView.selectPanel();
         break;
     case "admin":
@@ -615,7 +613,7 @@ switch (userData.userGroupKey){
         calendarView.selectPanel();
         break;
     case "zaposleni":
-        $$("mainMenu").select("calendar");
+        $$("menu-collapse").hide();
         calendarView.selectPanel();
         break;
 }

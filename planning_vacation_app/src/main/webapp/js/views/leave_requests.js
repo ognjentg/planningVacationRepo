@@ -6,6 +6,7 @@ leaveRequestsView = {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
         rightPanel = "leaveRequestsPanel";
 
+
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
         webix.protoUI({
@@ -22,7 +23,10 @@ leaveRequestsView = {
                 });
             }
         }, webix.ui.window);
-
+        if(userData.userGroupKey == "sekretar"){
+            $$("leave_requestDT").hideColumn("accept");
+            $$("leave_requestDT").hideColumn("reject");
+        }
     },
     getPanel: function () {
         return {
