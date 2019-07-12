@@ -22,7 +22,10 @@ import java.util.Date;
                         @ColumnResult(name = "status_name", type = String.class),
                         @ColumnResult(name = "date_from"),
                         @ColumnResult(name = "date_to"),
-                        @ColumnResult(name = "type_name", type = String.class)
+                        @ColumnResult(name = "type_name", type = String.class),
+                        @ColumnResult(name = "approver_user_first_name", type = String.class),
+                        @ColumnResult(name = "approver_user_last_name", type = String.class)
+
                 }
         )
 )
@@ -35,8 +38,10 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private Timestamp dateFrom;
     private Timestamp dateTo;
     private String typeName;
+    private String approverUserFirstName;
+    private String approverUserLastName;
 
-    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment,Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo, String typeName) {
+    public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo, String typeName, String approverUserFirstName, String approverUserLastName) {
         this.setId(id);
         this.setCategory(category);
         this.setSenderComment(senderComment);
@@ -48,7 +53,17 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
         this.setDateFrom(dateFrom == null ? null : new Timestamp(dateFrom.getTime()));
         this.setDateTo(dateTo == null ? null : new Timestamp(dateTo.getTime()));
         this.typeName=typeName;
+        this.approverUserFirstName = approverUserFirstName;
+        this.approverUserLastName = approverUserLastName;
     }
+
+    public String getApproverUserFisrtName() { return approverUserFirstName;}
+
+    public void setApproverUserFisrtName(String approverUserFirstName) { this.approverUserFirstName = approverUserFirstName; }
+
+    public String getApproverUserLastName() { return approverUserLastName;}
+
+    public void setApproverUserLastName(String approverUserLastName) { this.approverUserLastName = approverUserLastName; }
 
     public String getStatusName() {
         return statusName;

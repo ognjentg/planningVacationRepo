@@ -233,9 +233,10 @@ leaveRequestsView = {
                             } else if (action === "accept"&&(userData.userGroupKey =="admin" || userData.userGroupKey =="direktor" || userData.userGroupKey =="menadzer")) {
                                 var kategorija=$$("leave_requestDT").getSelectedItem().category;
                                 webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
-                                if("Godisnji"==kategorija){
+                                if("Godišnji"==kategorija || "Godisnji"==kategorija){
                                     $$("radioId").hide();
                                 }
+
                                 connection.sendAjax("GET",
                                     "/hub/leave_request/leaveRequestInfo/" + id,
                                     function (text, data, xhr) {
@@ -348,14 +349,13 @@ refreshOnData();
                     }]
                 },
                 {
-                    cols: [{
-                        view: "label",
-                        label: "Komentar:",
-                    }, {
-                        view: "text",
-                        id: "rejectComment"
 
-                    }]
+                        view: "text",
+                        id: "rejectComment",
+                        required: true,
+                        label:"Komentar:"
+
+
                 }, {}, {}, {
                     cols: [{
                         view: "button",
@@ -463,6 +463,16 @@ refreshOnData();
                         view: "label",
                         id: "dateToId"
                     }]
+                },{
+
+                    cols: [{
+                        view: "label",
+                        label: "Obradio:"
+
+                    }, {},{
+                        view: "label",
+                        id: "approverUserName"
+                    }]
                 }
             ]
         }
@@ -479,7 +489,11 @@ refreshOnData();
                 $$("lname").setValue(user.lastName);
                 $$("status").setValue(user.statusName);
                 $$("comment").setValue(user.senderComment);
-
+                if(user.statusName == "Na čekanju"){
+                    $$("approverUserName").setValue("-");
+                }
+                else
+                    $$("approverUserName").setValue(user.approverUserFirstName + " " + user.approverUserLastName);
                 if(user.approverComment!=null){
                     $$("approverComment").setValue(user.approverComment);
                     $$("approverComment").show();
