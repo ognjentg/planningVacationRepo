@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface VacationDaysRepository extends JpaRepository<VacationDays,Integer>, HasActiveRepository<VacationDays,Integer> {
     VacationDays getByUserIdAndActive(Integer userId, byte active);
+    VacationDays getByUserIdAndYearAndActive(Integer userId, Integer year, byte active);
 }

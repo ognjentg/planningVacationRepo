@@ -581,6 +581,9 @@ webix.ui({
     }
 });
 
+//Sakrivanje notifikacija kod superadmina
+if(userData.userGroupKey == "superadmin")
+    $$("notificationBtn").hide();
 
 if(userData.userGroupKey != "superadmin" && userData.userGroupKey != "zaposleni"){
     $$("mainMenu").define("data", localMenuData);
@@ -613,8 +616,9 @@ switch (userData.userGroupKey){
         calendarView.selectPanel();
         break;
     case "zaposleni":
-        $$("menu-collapse").hide();
+        //$$("menu-collapse").hide();
         calendarView.selectPanel();
+        $$("mainMenu").select("calendar");
         break;
 }
 //templateView.selectPanel();

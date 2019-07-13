@@ -61,7 +61,7 @@ panel: {
                             },
                             {
                                 view: "label",
-                                label: "Ukupan godišnji",
+                                label: "Stari godišnji",
                                 type: "header",
                                 css: "companies-counter"
                             }
@@ -78,7 +78,7 @@ panel: {
                             },
                             {
                                 view: "label",
-                                label: "Preostali godišnji",
+                                label: "Novi godišnji",
                                 type: "header",
                                 css: "companies-counter"
                             },
@@ -601,7 +601,7 @@ panel: {
     },
     refreshCounter: function () {
         //Dohvatanje dana godišnjeg odmora
-        webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
+        webix.ajax("hub/vacation_days/byUserIdOld/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
                     util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
@@ -613,22 +613,41 @@ panel: {
                         var vacationDays = data.json();
                         calendarView.freeDays = vacationDays.totalDays - vacationDays.usedDays;
                         if (vacationDays.totalDays - vacationDays.usedDays > 0) {
-                            animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
-                        } else {
-                            animateValue($$("t1"), 0, 0, 700);
-                        }
-
-                        if (vacationDays.totalDays > 0) {
-                            animateValue($$("t2"), 0, vacationDays.totalDays, 700);
+                            animateValue($$("t2"), 0, calendarView.freeDays, 700);
                         } else {
                             animateValue($$("t2"), 0, 0, 700);
                         }
                     } else {
-                        calendarView.freeDays = 0;
+                        animateValue($$("t2"), 0, 0, 700);
                     }
+                    webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
+                        error: function (text, data, xhr) {
+                            if (xhr.status != 200) {
+                                util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                            }
+                        },
+                        success: function (text, data, xhr) {
+                            if (xhr.status === 200) {
+                                if (data.json() != null) {
+                                    var vacationDays = data.json();
+                                    calendarView.freeDays += vacationDays.totalDays - vacationDays.usedDays;
+                                    if (vacationDays.totalDays - vacationDays.usedDays > 0) {
+                                        animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
+                                    } else {
+                                        animateValue($$("t1"), 0, 0, 700);
+                                    }
+
+
+                                } else {
+                                    animateValue($$("t1"), 0, 0, 700);
+                                }
+                            }
+                        }
+                    });
                 }
             }
         });
+
         //Dohvatanje slobodnih dana za religijske praznike
         webix.ajax("hub/religion_leave/byUserId/" + userData.id, {
             error: function (text, data, xhr) {

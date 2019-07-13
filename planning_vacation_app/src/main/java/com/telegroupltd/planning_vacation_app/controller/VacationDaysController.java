@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
 import java.util.List;
 
 
@@ -30,7 +31,14 @@ public class VacationDaysController extends GenericHasActiveController<VacationD
     @RequestMapping(value = "/byUserId/{userId}", method = RequestMethod.GET)
     public @ResponseBody
     VacationDays getByUserId(@PathVariable Integer userId){
-        return vacationDaysRepository.getByUserIdAndActive(userId, (byte)1);
+        return vacationDaysRepository.getByUserIdAndYearAndActive(userId, Calendar.getInstance().get(Calendar.YEAR), (byte)1);
     }
+
+    @RequestMapping(value = "/byUserIdOld/{userId}", method = RequestMethod.GET)
+    public @ResponseBody
+    VacationDays getOldByUserId(@PathVariable Integer userId){
+        return vacationDaysRepository.getByUserIdAndYearAndActive(userId, Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
+    }
+
 
 }

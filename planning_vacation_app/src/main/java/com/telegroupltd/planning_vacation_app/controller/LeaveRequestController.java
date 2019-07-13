@@ -13,10 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import javax.validation.Valid;
+import java.util.*;
 
 @RequestMapping(value = "hub/leave_request")
 @RestController
@@ -35,6 +33,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @Value("Brisanje nije moguće.")
     private String badRequestDelete;
+
+    @Value("Korisnik nema dovoljno godišnjeg")
+    private String notEnoughDays;
 
     @Autowired
     public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository, VacationDaysRepository vacationDaysRepository, LeaveRequestDateRepository leaveRequestDateRepository, ReligionLeaveRepository religionLeaveRepository) {
@@ -151,15 +152,40 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
     public @ResponseBody
-    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid){
-        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException{
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
         if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
-            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-            vacationDays.setUsedDays(vacationDays.getUsedDays() + leaveRequestDates.size());
-            vacationDaysRepository.saveAndFlush(vacationDays);
+            Integer numOfVacationDays = leaveRequestDates.size();
+            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
+            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+            if(oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0){
+                if(vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays){
+                    throw new BadRequestException(notEnoughDays);
+                }
+                else {
+                    vacationDays.setUsedDays(vacationDays.getUsedDays() + numOfVacationDays);
+                    vacationDaysRepository.saveAndFlush(vacationDays);
+                }
+            }
+            else{
+                Integer maxOldDays = oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays();
+                Integer maxDays = maxOldDays + vacationDays.getTotalDays() - vacationDays.getUsedDays();
+                if(maxDays <= numOfVacationDays)
+                    throw new BadRequestException(notEnoughDays);
+                Integer leftDays = numOfVacationDays - maxOldDays;
+                if(leftDays > 0){
+                    oldVacationDays.setUsedDays(oldVacationDays.getTotalDays());
+                    vacationDaysRepository.saveAndFlush(oldVacationDays);
+                    vacationDays.setUsedDays(vacationDays.getUsedDays() + leftDays);
+                    vacationDaysRepository.saveAndFlush(vacationDays);
+                }
+                else{
+                    oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() + numOfVacationDays);
+                    vacationDaysRepository.saveAndFlush(oldVacationDays);
+                }
+            }
         }
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
         else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
@@ -167,6 +193,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
             religionLeaveRepository.saveAndFlush(religionLeave);
         }
+        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)

@@ -361,7 +361,8 @@ refreshOnData();
                         view: "button",
                         label: "Odbij",
                         id:"rejectButton",
-                        click:'leaveRequestsView.saveRejectedLeaveRequest'
+                        click:'leaveRequestsView.saveRejectedLeaveRequest',
+                        hotkey: "enter"
                     }, {}, {
                         view: "button",
                         label: "Otkaži",
