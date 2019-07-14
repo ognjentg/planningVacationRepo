@@ -33,6 +33,8 @@ var calendarView = {
     sickLeaveDaysApproved: [],
     leaveRequestApprovedPaid: [],
     leaveRequestApprovedUnpaid: [],
+    maxPeriodLength: 0,
+    sickLeaveJustificationPeriodLength: 0,
 
 panel: {
         id: "calendarPanel",
@@ -403,6 +405,22 @@ panel: {
                 }
             }
         });
+        //Dohvatanje ograničenja kompanije /hub/constraints
+        webix.ajax("hub/constraints/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    var constraints = data.json();
+                    calendarView.maxPeriodLength = constraints.vacationPeriodLength;
+                    calendarView.sickLeaveJustificationPeriodLength = constraints.sickLeaveJustificationPeriodLength;
+                }
+            }
+        });
+
 
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
@@ -487,10 +505,14 @@ panel: {
                     selectedDays.splice(index, 1);
             } else if([buttons.SICK].includes(selectedButton) &&
                 calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())){
-                webix.message("Dan ne smije biti u budućnosti");
-            } else if ([buttons.VACATION, buttons.PAID].includes(selectedButton) &&
+                util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
+            } else if([buttons.SICK].includes(selectedButton) &&
+                days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
+                ){
+                util.messages.showErrorMessage("Istekao je period za validaciju");
+            }else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
-                webix.message("Dan ne smije biti u prošlosti")
+                util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
             } else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
@@ -522,6 +544,10 @@ panel: {
             else if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
                 (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
                 util.messages.showErrorMessage("Nemate pravo na više dana");
+                return;
+            }else if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.maxPeriodLength) ||
+                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
+                util.messages.showErrorMessage("Izabrali ste maksimalni period za godišnji");
                 return;
             }else if (!selectedDays.includes(selectedDate.getTime()) &&
                 !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
@@ -1074,4 +1100,21 @@ function getDates(startDate, stopDate) {
         currentDate = currentDate.addDays(1);
     }
     return dateArray;
+}
+
+function days_between(date1, date2) {
+
+    // The number of milliseconds in one day
+    var ONE_DAY = 1000 * 60 * 60 * 24
+
+    // Convert both dates to milliseconds
+    var date1_ms = date1.getTime()
+    var date2_ms = date2.getTime()
+
+    // Calculate the difference in milliseconds
+    var difference_ms = Math.abs(date1_ms - date2_ms)
+
+    // Convert back to days and return
+    return Math.round(difference_ms/ONE_DAY)
+
 }

@@ -36,6 +36,7 @@ public class UserController extends GenericController<User, Integer> {
     private final UserGroupRepository userGroupRepository;
     private final VacationDaysRepository vacationDaysRepository;
     private final ReligionLeaveRepository religionLeaveRepository;
+    private final ConstraintsRepository constraintsRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -79,13 +80,14 @@ public class UserController extends GenericController<User, Integer> {
     @Value("Nova lozinka ne ispunjava pravila.")
     private String badRequestNewPassword;
     @Autowired
-    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository){
+    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository, ConstraintsRepository constraintsRepository){
         super(userRepository);
         this.userRepository=userRepository;
         this.companyRepository=companyRepository;
         this.userGroupRepository=userGroupRepository;
         this.vacationDaysRepository = vacationDaysRepository;
         this.religionLeaveRepository = religionLeaveRepository;
+        this.constraintsRepository = constraintsRepository;
     }
     //Used to send login information to the added user
     @Autowired
@@ -355,9 +357,10 @@ public class UserController extends GenericController<User, Integer> {
                    notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                 }
                 VacationDays vacationDays = new VacationDays();
+                Constraints constraints = constraintsRepository.getByCompanyIdAndActive(newUser.getCompanyId(), (byte)1);
                 vacationDays.setUsedDays(0);
                 vacationDays.setActive((byte)1);
-                vacationDays.setTotalDays(20);
+                vacationDays.setTotalDays(constraints.getMaxVacationDays());
                 vacationDays.setUserId(newUser.getId());
                 vacationDays.setYear(Calendar.getInstance().get(Calendar.YEAR));
                 vacationDaysRepository.saveAndFlush(vacationDays);
