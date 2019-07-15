@@ -321,16 +321,22 @@ element.style {
 }
 
 /* notifications */
-.notifications .webix_list_item,
-.notifications .webix_list_item.webix_selected{
+
+.notifications .webix_list_item{
 	line-height:20px;
 	padding:10px;
 }
-.notifications .webix_list_item .title{
-	font-weight:500;
+.notifications .webix_list_item .m_title{
+	font-weight:bold;
 	color:#313131;
 }
-.notifications .webix_list_item .text{
+.notifications .webix_list_item .message{
 	display:block;
 	color:#475466;
+}
+
+.notifications .webix_list_item .cbx{
+    position: absolute;
+    right: 16px;
+    font-size: 18px;
 }

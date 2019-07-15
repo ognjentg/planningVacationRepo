@@ -5,12 +5,6 @@ var MENU_STATES = {
 };
 var menuState = MENU_STATES.COLLAPSED;
 
-var film_set = [
-    [ "War and Peace", "Leo Tolstoy" ],
-    [ "Hamlet", "Shakespeare" ],
-    [ "Madame Bovary", "Gustave Flaubert" ]
-];
-
 //menu configuration - EDITABLE
 var settingsMenu = [];
 var notifications = [];
@@ -309,8 +303,6 @@ var mainLayout = {
                         popup:"notificationMenu",
                         click: function() {
                             showNotifications();
-
-
                     }},
                 {
                     view: "menu",
@@ -475,7 +467,7 @@ webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
         numberOfUnreadNotifications = 0;
         var userNotifications = data.json();
         var notification;
-        for (var i = 0; i <userNotifications.length; i++)
+        for (var i = 0; i < userNotifications.length; i++)
         {
             if(userNotifications[i].seen == 0)
                 numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
@@ -490,7 +482,6 @@ webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
                 leaveType: userNotifications[i].leaveType,
             };
             notifications.push(notification);
-
             //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
         }
         $$("notificationBtn").config.badge = numberOfUnreadNotifications;
@@ -1034,7 +1025,6 @@ showAddFirstAndLastNameDialog = function () {
         }, 0);
 };
 
-
 showNotifications=function(){
     webix.ui({
         view: "popup",
@@ -1052,12 +1042,12 @@ showNotifications=function(){
                     autoheight: true,
                     borderless: true,
                     template: function (obj) {
-                        return "<span class='m_title'>" + (obj.title) + "</span>" +
-                            "<span class='message'>" + (obj.text) + "</span>" +
-                            "<span class='check webix_icon fa-"+(obj.seen?"check-":"")+"square-o'></span>";
-                    },
-                    // template: "#title#.#text#{common.markCheckbox()}",
-                    //  data: notifications,
+                        if(obj.seen)
+                        return   "<span class='m_title'>" + (obj.title) + "</span>" + "<span class='cbx'><input type='checkbox' class='cb' checked='checked'></span>" +
+                        "<span class='message'>" + (obj.text) + "</span>";
+                        return   "<span class='m_title'>" + (obj.title) + "</span>" + "<span class='cbx'><input type='checkbox' class='cb'></span>" +
+                            "<span class='message'>" + (obj.text) + "</span>";
+                    }, //ima problem kad je neki item u listi cekiran, pa kad ponovo predjes na njega poveca se brojac
                     css: "notifications",
                     width: 300,
                     type: {
@@ -1066,49 +1056,40 @@ showNotifications=function(){
                     },
                     on: {
                         "onItemClick": function (id, e, node) {
+                            if(e.target.type != "checkbox"){
                             var item = this.getItem(id);
-                            webix.alert({
-                                title: item.title,
-                                ok: "OK",
-                                text: item.text
-                            });
+                            if("Zahtjev za godišnji odmor" == item.title)
+                                alert("Prebaci na view zahtjeva");
+                            else if("Bolovanje" == item.title)
+                                alert("Prebaci na view kalendar");
+                            }
                         }
                     },
                     onClick: {
-                        webix_icon: function (e, id) {
-
+                        cb: function(e, id) {
                             var item = this.getItem(id);
-                            item.markCheckbox = item.markCheckbox ? 0 : 1;
-                            if (item.markCheckbox == 0)
-                                numberOfUnreadNotifications--;
-                            else
+                            if (item.seen == 1)
                                 numberOfUnreadNotifications++;
-                       var updatedNotifications = [];
-                      /* var notification = {
-                                id: item.id,
-                                title: item.title,
-                                text: item.text,
-                                seen: 0,//item.seen
-                                notificationCompanyId: item.notificationCompanyId,
-                                notificatoinUserId: item.notificatoinUserId,
-                        };*/
-
-                       var selectedNotification = notifications.filter(
-                           function(element){
-                               return element.id == item.id;
-                       });
-
-                            updatedNotifications.push(selectedNotification[0]);
+                            else
+                                numberOfUnreadNotifications--;
+                            item.seen = item.seen ? 0 : 1;
+                            //ako je sada seen 1 znaci da ce kad se izvrsi ovaj event biti seen 0, tj. poruka ce biti neprocitana i obrnuto
+                            var updatedNotifications = [];
+                            var updatedNotification = notifications.filter(
+                                function(element){
+                             return element.id == item.id;
+                          });
+                            updatedNotifications.push(updatedNotification[0]);
                             connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
                                 function (text, data, xhr) {
-
                                 }, function (text, data, xhr) {
-                                    alert(text);
+                                    alert(text)
                                 }, updatedNotifications);
+
                             $$("notificationBtn").config.badge = numberOfUnreadNotifications;
                             $$("notificationBtn").refresh();
-                            this.updateItem(id, item);
-                        }
+
+                        },
                     },
                 }
             ]
