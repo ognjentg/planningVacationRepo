@@ -1259,7 +1259,7 @@ usergroupView = {
                         if (text) {
                             util.messages.showMessage("Uspješna promjena sektora.");
                             //usergroupView.refreshDatatable();
-                            if ($$("choseSectorCombo").getValue() === "Svi sektori") {
+                            if ($$("choseSectorCombo").getValue() === "-1") {
                                 var user = $$("usergroupDT").getSelectedItem();
                                 var sectorName;
                                 usergroupView.sectors.forEach(function (value) {

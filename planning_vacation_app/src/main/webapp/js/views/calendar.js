@@ -506,7 +506,7 @@ panel: {
             } else if([buttons.SICK].includes(selectedButton) &&
                 calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())){
                 util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
-            } else if([buttons.SICK].includes(selectedButton) &&
+            } else if([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
                 days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
                 ){
                 util.messages.showErrorMessage("Istekao je period za validaciju");
