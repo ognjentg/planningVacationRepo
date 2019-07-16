@@ -34,7 +34,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_REJECTED = "UPDATE leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN user u ON lr.sender_user_id = u.id "+
-            "JOIN leave_request_date lrd ON lrd.id=lr.id "+
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
             "SET lr.leave_request_status_id = 3 , lr.approver_comment=?, lrd.canceled=1 "+
             "WHERE lr.id=? ";
 

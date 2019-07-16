@@ -4,6 +4,7 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 import com.telegroupltd.planning_vacation_app.model.Notification;
 import com.telegroupltd.planning_vacation_app.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +30,6 @@ public class NotificationController extends GenericHasActiveController<Notificat
 
     @Value("Dodavanje nije moguće.")
     private String badRequestInsert;
-
 
     public NotificationController(NotificationRepository notificationRepository) {
         super(notificationRepository);
@@ -105,5 +106,42 @@ public class NotificationController extends GenericHasActiveController<Notificat
         cloner.deepClone(notification);
         Objects.requireNonNull(notification).setActive((byte)0);
         return "Uspjesno";
+    }
+
+    @Transactional
+    @RequestMapping(value = "/addNotification", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public @ResponseBody
+    void insertNotification(@RequestBody LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus, Integer reject) throws ParseException {
+        Notification notification = null;
+        notification.setReceiverUserId(leaveRequestUserLeaveRequestStatus.getSenderUserId());
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setSeen((byte) 0);
+        notification.setActive((byte) 1);
+        if ("Godišnji".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
+            notification.setTitle("Zahtjev za godišnji odmor");
+            if (reject == 0)
+                notification.setTitle("Godišnji odmor u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijen.");
+            else
+                notification.setText("Godišnji odmor u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobren.");
+        } else if ("Odsustvo".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
+            notification.setTitle("Zahtjev za odsustvo");
+            if (reject == 0)
+                notification.setTitle("Odsustvo u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijeno.");
+            else
+                notification.setText("Odsustvo u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobreno");
+        } else if ("Praznik".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
+            notification.setTitle("Zahtjev za praznik");
+            if (reject == 0)
+                notification.setTitle("Praznik u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijen.");
+            else
+                notification.setText("Praznik u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
+                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobren.");
+        }
     }
 }

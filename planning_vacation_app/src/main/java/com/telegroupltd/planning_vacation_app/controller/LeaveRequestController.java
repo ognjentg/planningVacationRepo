@@ -5,6 +5,7 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenExcepti
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.*;
 import com.telegroupltd.planning_vacation_app.repository.*;
+import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.LeaveRequestCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RequestMapping(value = "hub/leave_request")
@@ -25,6 +27,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     private final VacationDaysRepository vacationDaysRepository;
     private final LeaveRequestDateRepository leaveRequestDateRepository;
     private final ReligionLeaveRepository religionLeaveRepository;
+    @Autowired
+    private NotificationRepository notificationRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
     @Value("Dodavanje nije moguće")
     private String badRequestInsert;
 
@@ -54,11 +60,54 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     LeaveRequest insert(@RequestBody LeaveRequest leaveRequest) throws BadRequestException {
         //Check if category length is equal or greater than 45
+        System.out.println("Kreiranje zahtjeva");
+        Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
+        System.out.println("Sector id = " + sectorId);
         if (leaveRequest.getCategory().length() >= 45)
             throw new BadRequestException(badRequestInsert);
         if (repo.saveAndFlush(leaveRequest) == null)
             throw new BadRequestException(badRequestInsert);
         logCreateAction(leaveRequest);
+        Notification notification = new Notification();
+        notification.setActive((byte) 1);
+        notification.setSeen((byte) 0);
+        notification.setLeaveType(leaveRequest.getLeaveTypeId().byteValue());
+        notification.setCompanyId(leaveRequest.getCompanyId());
+        if (sectorId != null) {
+            Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
+            notification.setReceiverUserId(s.getSectorManagerId());
+            if ("Godišnji".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za godišnji odmor");
+            } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za odsustvo");
+            } else if ("Praznik".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za praznik");
+            }
+            notificationRepository.saveAndFlush(notification);
+        } else {
+            List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
+                    2, (byte) 1);
+            List<User> directors = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
+                    3, (byte) 1);
+            if ("Godišnji".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za godišnji odmor");
+            } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za odsustvo");
+            } else if ("Praznik".equals(leaveRequest.getCategory())) {
+                notification.setTitle("Zahtjev za praznik");
+            }
+
+            for (User user1 : directors) {
+                notification.setReceiverUserId(user1.getId());
+                notificationRepository.saveAndFlush(notification);
+            }
+            for (User user : admins) {
+                System.out.println(user.getId());
+                notification.setReceiverUserId(user.getId());
+                notificationRepository.saveAndFlush(notification);
+            }
+
+        }
         return leaveRequest;
     }
 
@@ -89,6 +138,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             logDeleteAction(leaveRequest);
             return "Success";
         } else throw new BadRequestException(badRequestDelete);
+
     }
 
     @RequestMapping(value = "/leaveRequestByUserId/{id}", method = RequestMethod.GET)
@@ -126,7 +176,6 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id) {
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
-        System.out.println(lrs.getFirstName());
         return lrs;
     }
 
@@ -142,12 +191,35 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
     }
 
-
-
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.GET)
     public @ResponseBody
     void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
+        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(lrs.getSenderUserId());
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setSeen((byte) 0);
+        notification.setActive((byte) 1);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date dateFrom = new Date(lrs.getDateFrom().getTime());
+        Date dateTo = new Date(lrs.getDateTo().getTime());
+        String date1 = formatter.format(dateFrom.getTime());
+        String date2 = formatter.format(dateTo.getTime());
+        if ("Godišnji".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za godišnji odmor");
+             notification.setText("Godišnji odmor u periodu " + date1 + " - "
+                        + date2 + " je odbijen.");
+        } else if ("Odsustvo".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za odsustvo");
+            notification.setText("Odsustvo u periodu " + date1 + " - "
+                        + date2 + " je odbijeno.");
+        } else if ("Praznik".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za praznik");
+            notification.setText("Praznik u periodu " + date1 + " - "
+                        + date2 + " je odbijen.");
+        }
+        notificationRepository.saveAndFlush(notification);
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
@@ -194,6 +266,34 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             religionLeaveRepository.saveAndFlush(religionLeave);
         }
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
+        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        lrs.setLeaveTypeId(leaveRequestTypeId);
+        Notification notification = new Notification();
+        System.out.println(lrs.getSenderUserId());
+
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setSeen((byte) 0);
+        notification.setActive((byte) 1);
+        notification.setReceiverUserId(lrs.getSenderUserId());
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Date dateFrom = new Date(lrs.getDateFrom().getTime());
+        Date dateTo = new Date(lrs.getDateTo().getTime());
+        String date1 = formatter.format(dateFrom.getTime());
+        String date2 = formatter.format(dateTo.getTime());
+        if ("Godišnji".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za godišnji odmor");
+            notification.setText("Godišnji odmor u periodu " + date1 + " - "
+                    + date2 + " je odobren.");
+        } else if ("Odsustvo".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za odsustvo");
+            notification.setText("Odsustvo u periodu " + date1 + " - "
+                    + date2 + " je odobreno.");
+        } else if ("Praznik".equals(lrs.getCategory())) {
+            notification.setTitle("Zahtjev za praznik");
+            notification.setText("Praznik u periodu " + date1 + " - "
+                    + date2 + " je odobren.");
+        }
+        notificationRepository.saveAndFlush(notification);
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)

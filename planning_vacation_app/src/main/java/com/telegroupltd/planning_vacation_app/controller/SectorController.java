@@ -75,6 +75,12 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
         return sectorRepository.getSectorsInformation(userBean.getUserUserGroupKey().getCompanyId());
     }
 
+    @Override
+    public Sector findById(Integer sectorId) {
+        return sectorRepository.getByIdAndActive(sectorId,(byte) 1);
+    }
+
+
     @RequestMapping(value = "/updateUsersFromSector/{sectorId}", method = RequestMethod.PUT)
     public @ResponseBody
     void updateSectorsUsers(@PathVariable Integer sectorId){

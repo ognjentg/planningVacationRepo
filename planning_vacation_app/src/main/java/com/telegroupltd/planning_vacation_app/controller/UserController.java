@@ -96,6 +96,12 @@ public class UserController extends GenericController<User, Integer> {
 //Override metoda: insert*, update*, delete*, getAll*(ne smije se vidjeti sifra), getById(ne smije se vidjeti sifra)
 //Implementirati metode: login*, logout*, ...
 
+    @RequestMapping(value = "/getUserByCompanyId", method = RequestMethod.GET)
+    public List<User> getUserByUsergroupIdAndCompanyId(@PathVariable Integer userGroupId) {
+        return userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
+                userGroupId, (byte) 1);
+    }
+
 
     @Override
     public @ResponseBody
