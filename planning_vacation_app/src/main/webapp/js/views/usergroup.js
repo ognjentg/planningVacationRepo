@@ -1173,6 +1173,7 @@ usergroupView = {
         var form = $$("addUserForm");
         if (form.validate()) {
             $$("save").disable();
+
             var newUser = {
                 email: form.getValues().email,
                 sectorId: sectorID,
@@ -1259,7 +1260,7 @@ usergroupView = {
                         if (text) {
                             util.messages.showMessage("Uspješna promjena sektora.");
                             //usergroupView.refreshDatatable();
-                            if ($$("choseSectorCombo").getValue() === "-1") {
+                            if ($$("choseSectorCombo").getValue() == (-1)) {
                                 var user = $$("usergroupDT").getSelectedItem();
                                 var sectorName;
                                 usergroupView.sectors.forEach(function (value) {
@@ -1271,14 +1272,13 @@ usergroupView = {
                                 $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
                             } else {
                                 $$("usergroupDT").eachRow(function(row){
-                                    if ($$("usergroupDT").getItem(row).sectorId === sectorId)
+                                    if ($$("usergroupDT").getItem(row).sectorId === sectorId )
                                         console.log($$("usergroupDT").getItem(row));
                                     else {
                                         console.log($$("usergroupDT").getItem(row));
                                         $$("usergroupDT").remove($$("usergroupDT").getSelectedId());
                                     }
                                 });
-
                             }
                         } else
                             util.messages.showErrorMessage("Neuspješna izmjena sektora.");
@@ -1308,7 +1308,7 @@ usergroupView = {
                         function (text, data, xhr) {
                             if (text) {
                                 util.messages.showMessage("Uspješna promjena sektora.");
-                                if ($$("choseSectorCombo").getValue() === "Svi sektori") {
+                                if ($$("choseSectorCombo").getValue() == (-1)) {
                                     var user = $$("usergroupDT").getItem(element);
                                     var sectorName;
                                     usergroupView.sectors.forEach(function (value) {
@@ -1320,7 +1320,7 @@ usergroupView = {
                                     $$("usergroupDT").updateItem(element, user);
                                 } else {
                                     $$("usergroupDT").eachRow(function(row){
-                                        if ($$("usergroupDT").getItem(row).sectorId === sectorId)
+                                        if ($$("usergroupDT").getItem(row).sectorId === sectorId )
                                             console.log($$("usergroupDT").getItem(row));
                                         else {
                                             console.log($$("usergroupDT").getItem(row));
@@ -1337,6 +1337,8 @@ usergroupView = {
                         }, changeSectorInformation);
                 });
                 util.dismissDialog('changeMultipleUsersSectorDialog');
+                $$("deleteSelectedButton").disable();
+                $$("changeSectorOfSelectedButton").disable();
             }
         }
     }
@@ -1647,7 +1649,8 @@ usergroupView = {
 
             };
             webix.confirm(delBox);
-
+            $$("deleteSelectedButton").disable();
+            $$("changeSectorOfSelectedButton").disable();
         }
     }
     ,
