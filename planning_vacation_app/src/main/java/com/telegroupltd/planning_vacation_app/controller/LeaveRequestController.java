@@ -185,6 +185,21 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationForWait(userBean.getUserUserGroupKey().getId());
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+   /* @RequestMapping(value = "/getAbsenceHistoryUserInfo", method = RequestMethod.GET)
+    public @ResponseBody
+    List<AbsenceHistoryUser> getAbsenceHistoryUserInfo() {
+        return leaveRequestRepository.getAbsenceHistoryUserInfo(userBean.getUserUserGroupKey().getId());
+    }*/
+
+    @RequestMapping(value = "/getAbsenceHistoryUserInfo/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(@PathVariable Integer id) {
+        return leaveRequestRepository.getAbsenceHistoryUserInfo(userBean.getUserUserGroupKey().getId(), id);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable String key) {

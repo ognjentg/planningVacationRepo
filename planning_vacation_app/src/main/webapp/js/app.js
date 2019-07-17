@@ -19,7 +19,8 @@ var localMenuData = [
     {id:"constraints", value: "Ograničenja", icon: "briefcase"},
     {id:"admins", value: "Admini kompanija", icon: "list"},
     {id: "secretary_sick_request", value: "Pregled zahtjeva", icon: "far fa-envelope"},
-    {id:"leave_requests",value:"Pregled zahtjeva za odmor",icon:"list"}
+    {id:"leave_requests", value: "Pregled zahtjeva za odmor",icon:"list"},
+    {id:"absence_history", value: "Isotrija odsustava", icon: "fas fa-history"}
 ];
 
 var menuActions = function (id) {
@@ -56,6 +57,9 @@ var menuActions = function (id) {
             break;
         case "leave_requests":
             leaveRequestsView.selectPanel();
+            break;
+        case "absence_history":
+            absenceHistoryView.selectPanel();
             break;
             }
 
@@ -158,12 +162,17 @@ var menuSecretary=[
         id: "leave_requests",
         value: "Pregled zahtjeva za odmor",
         icon: "list"
-    }
+    },
  /*    {
            id: "collectiveVacation",
            value: "Kolektivni godišnji odmor",
            icon: "briefcase"
       }*/
+    {
+        id:"absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
+    }
 ];
 
 var menuSectorManager=[
@@ -189,6 +198,11 @@ var menuWorker=[
         id: "calendar",
         value: "Kalendar",
         icon: "fa fa-calendar"
+    },
+    {
+        id:"absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
     }
 ];
 var settingsMenuActions=function (id) {

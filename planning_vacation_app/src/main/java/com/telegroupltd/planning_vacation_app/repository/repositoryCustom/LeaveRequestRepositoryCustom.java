@@ -1,5 +1,6 @@
 package com.telegroupltd.planning_vacation_app.repository.repositoryCustom;
 
+import com.telegroupltd.planning_vacation_app.model.AbsenceHistoryUser;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 
 import java.util.List;
@@ -13,4 +14,9 @@ public interface LeaveRequestRepositoryCustom {
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id);
 
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    /*public List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id);*/
+    List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id,Integer key);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 }
