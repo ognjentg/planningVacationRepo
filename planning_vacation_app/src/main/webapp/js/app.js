@@ -81,12 +81,12 @@ var menuAdmin=[
       },
       {
            id: "sector",
-           value: "Pregled sektora",
-           icon: "list"
+           value: "Sektori",
+           icon: "briefcase"
       },
     {
         id: "leave_requests",
-        value: "Pregled zahtjeva za odmor",
+        value: "Zahtjevi za odmor",
         icon: "list"
     }
 
@@ -115,12 +115,12 @@ var menuDirector=[
       },
       {
            id: "sector",
-           value: "Pregled sektora",
-           icon: "list"
+           value: "Sektori",
+           icon: "briefcase"
       },
     {
         id: "leave_requests",
-        value: "Pregled zahtjeva za odmor",
+        value: "Zahtjevi za odmor",
         icon: "list"
     }
  /*    {
@@ -140,7 +140,7 @@ var menuSecretary=[
 
      {
             id: "secretary_sick_request",
-            value: "Zahtjevi",
+            value: "Zahtjevi za bolovanje",
             icon: "far fa-envelope"
       },/*
      {
@@ -155,12 +155,12 @@ var menuSecretary=[
       },
             {
                  id: "sector",
-                 value: "Pregled sektora",
-                 icon: "list"
+                 value: "Sektori",
+                 icon: "briefcase"
             },
     {
         id: "leave_requests",
-        value: "Pregled zahtjeva za odmor",
+        value: "Zahtjevi za odmor",
         icon: "list"
     },
  /*    {
@@ -188,7 +188,7 @@ var menuSectorManager=[
       },
     {
         id: "leave_requests",
-        value: "Pregled zahtjeva za odmor",
+        value: "Zahtjevi za odmor",
         icon: "list"
     }
 ];
