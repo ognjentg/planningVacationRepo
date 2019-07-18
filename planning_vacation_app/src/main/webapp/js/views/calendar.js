@@ -496,7 +496,9 @@ var calendarView = {
                 calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
                 leaveRequestWaiting.includes(selectedDate.getTime()) ||
                 calendarView.vacationRequestWaiting.includes(selectedDate.getTime()) ||
-                calendarView.vacationRequestApproved.includes(selectedDate.getTime())
+                calendarView.vacationRequestApproved.includes(selectedDate.getTime()) ||
+                calendarView.leaveRequestApprovedPaid.includes(selectedDate.getTime()) ||
+                calendarView.leaveRequestApprovedUnpaid.includes(selectedDate.getTime())
             ) {
 
                 console.log("sick approved" + calendarView.sickLeaveDaysApproved);

@@ -190,6 +190,11 @@ var menuSectorManager=[
         id: "leave_requests",
         value: "Zahtjevi za odmor",
         icon: "list"
+    },
+    {
+        id:"absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
     }
 ];
 
@@ -1074,10 +1079,27 @@ showNotifications=function(){
                         "onItemClick": function (id, e, node) {
                             if(e.target.type != "checkbox"){
                             var item = this.getItem(id);
-                            if("Zahtjev za godišnji odmor" == item.title)
-                                alert("Prebaci na view zahtjeva");
-                            else if("Bolovanje" == item.title)
-                                alert("Prebaci na view kalendar");
+                                if("Bolovanje" == item.title){
+                                    if(userData.userGroupKey == "zaposleni"){
+                                        calendarView.selectPanel();
+                                        $$("mainMenu").select("calendar");
+                                    }
+                                    else if (userGroupKey == "sekretar"){
+                                        $$("mainMenu").select("secretary_sick_request");
+                                        sickRequestsView.selectPanel();
+                                    }
+                                }
+                            else {
+                                if(userData.userGroupKey == "zaposleni"){
+                                    $$("mainMenu").select("absence_history");
+                                    absenceHistoryView.selectPanel();
+                                }
+                                else {
+                                    $$("mainMenu").select("leave_requests");
+                                    leaveRequestsView.selectPanel();
+                                }
+                            }
+
                             }
                         }
                     },
