@@ -210,7 +210,7 @@ var sickRequestsView = {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
-                                            $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                                           // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
                                             util.messages.showMessage("Zahtjev neopravdan");
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
@@ -218,6 +218,7 @@ var sickRequestsView = {
                                     }
 
                                 };
+                                refreshOnThisData();
                                 webix.confirm(rejectLeaveBox);
                             } else if (action === "accept" && userData.userGroupKey == "sekretar") {
                                 var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
@@ -226,14 +227,14 @@ var sickRequestsView = {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
-                                                $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                                               // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
                                                 util.messages.showMessage("Zahtjev opravdan");
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
                                         }, item);
                                     }
-                                    //refreshOnData();
                                 };
+                                refreshOnThisData();
                                 webix.confirm(acceptLeaveBox);
                             }
                         }
@@ -290,7 +291,7 @@ var sickRequestsView = {
 
 };
 
-function refreshOnData() {
+function refreshOnThisData() {
     console.log("refresh data");
 
 

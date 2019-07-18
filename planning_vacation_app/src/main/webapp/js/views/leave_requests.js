@@ -284,7 +284,7 @@ leaveRequestsView = {
         }else{
              type=2;
              paid=0;
-}
+        }
 
         var item = $$("leave_requestDT").getItem(id);
         var id=$$("leave_requestDT").getSelectedId();
@@ -624,13 +624,15 @@ function refreshOnData() {
 
     if(comboItemId == 4){
         URLCurrentUrl = URLAllLeaveRequests;
-    } else if(comboItemId == 3){
+    }else{
+        URLCurrentUrl = URLByLeaveRequestStatus
+    } /*else if(comboItemId == 3){
         URLCurrentUrl = URLByLeaveRequestStatus+3;
     }else if(comboItemId == 2){
         URLCurrentUrl = URLByLeaveRequestStatus+2;
     }else if(comboItemId == 1){
         URLCurrentUrl = URLByLeaveRequestStatus+1;
-    }
+    }*/
 
     if(comboItemId == 4) {
         webix.ajax(URLCurrentUrl, {
