@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -453,6 +455,22 @@ public class UserController extends GenericController<User, Integer> {
         }
         else
             throw new BadRequestException(badRequestUpdate);
+    }
+
+
+    @RequestMapping(value = "/canGoOnVacation/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Boolean canGoOnVacation(@PathVariable("id")Integer id) {
+        User user = userRepository.getByIdAndActive(id, (byte)1);
+        if(user.getStartDate() == null)
+            return Boolean.TRUE;
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = LocalDate.parse(user.getStartDate().toString());
+        Period period = Period.between(now, startDate);
+        if(user.getPauseFlag() != 0 && period.getMonths() <= 6)
+            return Boolean.FALSE;
+        else
+            return Boolean.TRUE;
     }
 
     @RequestMapping(value = "/changeSector", method = RequestMethod.POST)

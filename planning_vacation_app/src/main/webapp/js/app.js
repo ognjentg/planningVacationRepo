@@ -591,10 +591,10 @@ webix.ui({
 if(userData.userGroupKey == "superadmin")
     $$("notificationBtn").hide();
 
-if(userData.userGroupKey != "superadmin" && userData.userGroupKey != "zaposleni"){
+//if(userData.userGroupKey != "superadmin" && userData.userGroupKey != "zaposleni"){
     $$("mainMenu").define("data", localMenuData);
     $$("mainMenu").define("on", menuEvents);
-}
+//}
 
 
 $$("usernameHolder").refresh();

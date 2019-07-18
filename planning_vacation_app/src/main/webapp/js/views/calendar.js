@@ -35,6 +35,7 @@ var calendarView = {
     leaveRequestApprovedUnpaid: [],
     maxPeriodLength: 0,
     sickLeaveJustificationPeriodLength: 0,
+    canGoOnVacation: false,
 
     panel: {
         id: "calendarPanel",
@@ -419,7 +420,19 @@ var calendarView = {
                 }
             }
         });
-
+        //Da li može ići na godišnji
+        webix.ajax("hub/user/canGoOnVacation/" + userData.id, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    calendarView.canGoOnVacation = text;
+                }
+            }
+        });
 
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
@@ -512,6 +525,9 @@ var calendarView = {
             } else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
                 util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
+            }else if ([buttons.VACATION].includes(selectedButton) &&
+                !calendarView.canGoOnVacation) { // Apply not in past rule to vacation and paid leave
+                util.messages.showErrorMessage("Nemate još pravo na godišnji!")
             } else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
