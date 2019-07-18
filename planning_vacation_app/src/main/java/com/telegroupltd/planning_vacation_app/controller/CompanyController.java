@@ -193,13 +193,13 @@ public class CompanyController extends GenericController<Company, Integer> {
         Double sum = vacation + religion + leave;
 
         if(sum == 0){
-            MonthUserNo monthUserNo = new MonthUserNo("Nema podataka",0);
+            MonthUserNo monthUserNo = new MonthUserNo("Nema podataka",0,"000000");
             return monthUserNoList;
         }
 
-        MonthUserNo monthUserNo1 = new MonthUserNo(vacation/sum * 100,"Godišnji");
-        MonthUserNo monthUserNo2 = new MonthUserNo(religion/sum * 100,"Praznik");
-        MonthUserNo monthUserNo3 = new MonthUserNo(leave/sum * 100,"Odsustvo");
+        MonthUserNo monthUserNo1 = new MonthUserNo(vacation/sum * 100,"Godišnji","#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(religion/sum * 100,"Praznik","#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(leave/sum * 100,"Odsustvo","#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);
@@ -303,18 +303,18 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         verticalScale = usersInCompany.size();
 
-        MonthUserNo monthUserNo1 = new MonthUserNo("Januar",january);
-        MonthUserNo monthUserNo2 = new MonthUserNo("Februar",february);
-        MonthUserNo monthUserNo3 = new MonthUserNo("Mart",march);
-        MonthUserNo monthUserNo4 = new MonthUserNo("April",april);
-        MonthUserNo monthUserNo5 = new MonthUserNo("Maj",may);
-        MonthUserNo monthUserNo6 = new MonthUserNo("Jun",jun);
-        MonthUserNo monthUserNo7 = new MonthUserNo("Jul",july);
-        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust",august);
-        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar",september);
-        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar",october);
-        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar",november);
-        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar",december);
+        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january,"#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo("Februar",february,"#f58231");
+        MonthUserNo monthUserNo3 = new MonthUserNo("Mart",march,"#ffe119");
+        MonthUserNo monthUserNo4 = new MonthUserNo("April",april,"#bfef45");
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj",may,"3cb44b");
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun",jun,"42d4f4");
+        MonthUserNo monthUserNo7 = new MonthUserNo("Jul",july,"#4363d8");
+        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust",august,"#911eb4");
+        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar",september,"#f032e6");
+        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar",october,"#469990");
+        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar",november,"#fabebe");
+        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar",december,"#aaffc3");
 
         List<MonthUserNo> monthUserNos = new ArrayList<>();
         monthUserNos.add(monthUserNo1);

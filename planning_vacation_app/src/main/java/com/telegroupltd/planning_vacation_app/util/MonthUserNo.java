@@ -5,10 +5,28 @@ public class MonthUserNo {
     private int number;
     private double procentage;
     private String category;
+    private String color;
 
-    public MonthUserNo(double procentage, String category) {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public MonthUserNo(double procentage, String category,String color) {
         this.procentage = procentage;
         this.category = category;
+        this.color=color;
     }
 
     public double getProcentage() {
@@ -19,9 +37,10 @@ public class MonthUserNo {
         this.procentage = procentage;
     }
 
-    public MonthUserNo(String month, int number) {
+    public MonthUserNo(String month, int number, String colors) {
         this.month = month;
         this.number = number;
+        this.color=colors;
     }
 
     public String getMonth() {
