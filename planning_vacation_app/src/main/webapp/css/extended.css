@@ -340,3 +340,8 @@ element.style {
     right: 16px;
     font-size: 18px;
 }
+
+/*list items in notifications*/
+ul.list {
+	background-color: red;
+}

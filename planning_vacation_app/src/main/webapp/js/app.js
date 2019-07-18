@@ -500,6 +500,7 @@ webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
         }
         $$("notificationBtn").config.badge = numberOfUnreadNotifications;
         $$("notificationBtn").refresh();
+
     },
     error: function (text, data, xhr) {
       alert(text)
@@ -1053,7 +1054,8 @@ showNotifications=function(){
                     name: "notificationList",
                     select: true,
                     resize: true,
-                    autoheight: true,
+                    scroll:"y",
+                    layout:"y",
                     borderless: true,
                     template: function (obj) {
                         if(obj.seen)
@@ -1066,7 +1068,7 @@ showNotifications=function(){
                     width: 300,
                     type: {
                         height: 80,
-                        width: 300 /* BEWARE needs to be more than specified in extended-orange.css for contactName and message_text */
+                        width: 350 /* BEWARE needs to be more than specified in extended-orange.css for contactName and message_text */
                     },
                     on: {
                         "onItemClick": function (id, e, node) {
@@ -1111,6 +1113,17 @@ showNotifications=function(){
     });
     var list = $$("notificationList");
     list.parse(notifications);
+
+    //oboji zelenom elemente notifikacije koje se su procitane, a crvenom notifikacije koje nisu
+    $$("notificationList").data.each(function(obj){
+        webix.html.addCss( obj, "list");
+        if(obj.seen){
+            //      obj._appendTo('ul.list')
+        }else{
+
+        }
+        $$("notificationList").refresh();
+    });
 };
 
 
