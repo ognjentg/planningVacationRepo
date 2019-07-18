@@ -49,7 +49,7 @@ usergroupView = {
                 }, {}, {}, {},
 
                     {
-                        css: "employee-counter",
+                        css: "employee-counter right_margin",
                         rows: [
                             {view: "template", id: "t3", css: "employee-counter"},
                             {

@@ -8,7 +8,7 @@ var vacationRequestWaiting = [];
 
 var leaveRequestWaiting = [];
 var leaveRequestApprovedPaid = [];
-var leaveRequestApprovedUnpaid= [];
+var leaveRequestApprovedUnpaid = [];
 
 var religionLeaveDaysApproved = [];
 var religionLeaveDaysWaiting = [];
@@ -36,7 +36,7 @@ var calendarView = {
     maxPeriodLength: 0,
     sickLeaveJustificationPeriodLength: 0,
 
-panel: {
+    panel: {
         id: "calendarPanel",
         adjust: true,
         rows: [
@@ -53,7 +53,7 @@ panel: {
                         template: "<span class='fa fa-briefcase'></span> Kalendar"
                     },
                     {
-                        css: "admin-counter",
+                        css: "companies-counter right_margin",
                         rows: [
                             {
                                 view: "template",
@@ -130,27 +130,27 @@ panel: {
                                 {
                                     view: "label",
                                     label: "Godišnji",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
                                     label: "Plaćeno",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
                                     label: "Neplaćeno",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
                                     label: "Bolovanje",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
                                     label: "Religijsko",
-                                    align:"center"
+                                    align: "center"
                                 }
                             ]
                         },
@@ -159,7 +159,7 @@ panel: {
                                 {
                                     view: "label",
                                     label: "Na čekanju",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
@@ -189,7 +189,7 @@ panel: {
                                 {
                                     view: "label",
                                     label: "Odobreno",
-                                    align:"center"
+                                    align: "center"
                                 },
                                 {
                                     view: "label",
@@ -213,36 +213,35 @@ panel: {
                                     css: "religion_day_off_approved_label"
                                 }
                             ]
-                        },
+                        }, {height: 10}
                     ]
                 }, {
                     width: 10
                 },
                     {
                         rows: [{
-                            view:"combo",
-                            id:"comboId",
+                            view: "combo",
+                            id: "comboId",
                             value: "1",
-                            editable:false,
-                            options:[
-                                { id:1, value:"Godišnji odmor" },
-                                { id:2, value:"Odsustvo" },
-                                { id:3, value:"Bolovanje" },
-                                {id:4,value:"Religijski praznici"}
+                            editable: false,
+                            options: [
+                                {id: 1, value: "Godišnji odmor"},
+                                {id: 2, value: "Odsustvo"},
+                                {id: 3, value: "Bolovanje"},
+                                {id: 4, value: "Religijski praznici"}
                             ],
-                            on:{
-                                onChange(name){
+                            on: {
+                                onChange(name) {
                                     calendarView.deleteCurrentRequest();
                                     if (name === 4) {
                                         calendarView.religionLeave();
                                         console.log("analaketa");
                                     } else if (name === 3) {
-                                       calendarView.sickLeave();
+                                        calendarView.sickLeave();
                                     } else if (name === 2) {
-                                      calendarView.leave();
-                                    }
-                                    else  if (name===1){
-                                      calendarView.vacation();
+                                        calendarView.leave();
+                                    } else if (name === 1) {
+                                        calendarView.vacation();
                                     }
                                 }
                             }
@@ -460,7 +459,7 @@ panel: {
                 return "unpaid_day_off";
             if (religionLeaveDaysWaiting.includes(date.getTime()))
                 return "religion_day_off_waiting";
-            if(religionLeaveDaysApproved.includes(date.getTime()))
+            if (religionLeaveDaysApproved.includes(date.getTime()))
                 return "religion_day_off";
             return "";
         }
@@ -476,22 +475,22 @@ panel: {
         scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
             if (
                 // leaveRequestWaiting.includes(selectedDate.getTime()) ||
-                // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
-                // sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
-                // vacationRequestWaiting.includes(selectedDate.getTime()) ||
-                // vacationRequestApproved.includes(selectedDate.getTime()) ||
-                calendarView.sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
-                calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime())   ||
-                leaveRequestWaiting.includes(selectedDate.getTime())                 ||
+            // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
+            // sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
+            // vacationRequestWaiting.includes(selectedDate.getTime()) ||
+            // vacationRequestApproved.includes(selectedDate.getTime()) ||
+                calendarView.sickLeaveDaysApproved.includes(selectedDate.getTime()) ||
+                calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
+                leaveRequestWaiting.includes(selectedDate.getTime()) ||
                 calendarView.vacationRequestWaiting.includes(selectedDate.getTime()) ||
                 calendarView.vacationRequestApproved.includes(selectedDate.getTime())
             ) {
 
-                console.log("sick approved"+calendarView.sickLeaveDaysApproved);
-                console.log("sick waiting"+calendarView.sickLeaveDaysWaiting);
-                console.log("leave waiting"+calendarView.leaveRequestWaiting);
-                console.log("vacation approved"+calendarView.vacationRequestApproved);
-                console.log("vacation waiting"+calendarView.vacationRequestWaiting);
+                console.log("sick approved" + calendarView.sickLeaveDaysApproved);
+                console.log("sick waiting" + calendarView.sickLeaveDaysWaiting);
+                console.log("leave waiting" + calendarView.leaveRequestWaiting);
+                console.log("vacation approved" + calendarView.vacationRequestApproved);
+                console.log("vacation waiting" + calendarView.vacationRequestWaiting);
 
                 return false;
 
@@ -503,14 +502,14 @@ panel: {
                     selectedDays.splice(index);
                 else
                     selectedDays.splice(index, 1);
-            } else if([buttons.SICK].includes(selectedButton) &&
-                calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())){
+            } else if ([buttons.SICK].includes(selectedButton) &&
+                calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())) {
                 util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
-            } else if([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
+            } else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
                 days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
-                ){
+            ) {
                 util.messages.showErrorMessage("Istekao je period za validaciju");
-            }else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
+            } else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
                 util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
             } else if (selectedButton === buttons.SICK &&
@@ -540,16 +539,15 @@ panel: {
                     })
                 }
 
-            }
-            else if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
-                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
+            } else if ((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.freeDays) ||
+                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)) {
                 util.messages.showErrorMessage("Nemate pravo na više dana");
                 return;
-            }else if((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.maxPeriodLength) ||
-                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)){
+            } else if ((selectedButton == buttons.VACATION && $$("periodsDT").count() >= calendarView.maxPeriodLength) ||
+                (selectedButton == buttons.RELIGIOUS && $$("periodsDT").count() >= calendarView.leftReligionLeaveDays)) {
                 util.messages.showErrorMessage("Izabrali ste maksimalni period za godišnji");
                 return;
-            }else if (!selectedDays.includes(selectedDate.getTime()) &&
+            } else if (!selectedDays.includes(selectedDate.getTime()) &&
                 !nonWorkingDaysInWeek.includes(selectedDate.getDay()) &&
                 !nonWorkingDays.includes(selectedDate.getTime())) {
                 selectedDays.push(selectedDate.getTime());
@@ -709,11 +707,9 @@ panel: {
         //Leave
         else if (selectedButton == buttons.SICK) {
             calendarView.sendSickLeaveRequest();
-        }
-        else if(selectedButton == buttons.PAID){
+        } else if (selectedButton == buttons.PAID) {
             calendarView.sendPaidLeaveRequest();
-        }
-        else if(selectedButton == buttons.RELIGIOUS){
+        } else if (selectedButton == buttons.RELIGIOUS) {
             calendarView.sendReligionLeaveRequest();
         }
 
@@ -789,7 +785,7 @@ panel: {
                 util.messages.showErrorMessage(text);
             }, leaveRequest);
     },
-    sendReligionLeaveRequest: function (){
+    sendReligionLeaveRequest: function () {
         var form = $$("createRequestForm");
         var format = webix.Date.strToDate("%d.%m.%Y");
         var leaveRequest = {
@@ -831,7 +827,7 @@ panel: {
                 util.messages.showErrorMessage(text);
             }, leaveRequest);
     },
-    sendPaidLeaveRequest: function (){
+    sendPaidLeaveRequest: function () {
         var form = $$("createRequestForm");
         var format = webix.Date.strToDate("%d.%m.%Y");
         var leaveRequest = {
@@ -929,50 +925,50 @@ panel: {
             },
             doesNotStartInFuture: function (date) {
                 var temp = $$("periodsDT").serialize()[0];
-                if(temp == null)
+                if (temp == null)
                     return calendarView.ruleset.isNotInPast(date);
                 var format = webix.Date.strToDate("%d.%m.%Y");
-                if(format(temp.date).getTime() < getToday().getTime())
+                if (format(temp.date).getTime() < getToday().getTime())
                     return false;
                 return true;
             }
         },
-    vacation: function(){
+    vacation: function () {
 
-            selectedButton = buttons.VACATION;
-            $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
-            $$("comment").show();
-            $$("commentLabel").show();
+        selectedButton = buttons.VACATION;
+        $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
+        $$("comment").show();
+        $$("commentLabel").show();
 
 
     },
-    leave: function(){
+    leave: function () {
 
-            selectedButton = buttons.PAID;
-            $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
-            $$("comment").show();
-            $$("commentLabel").show();
+        selectedButton = buttons.PAID;
+        $$("leaveTypeLabel").setValue("Zahtjev za odsustvo");
+        $$("comment").show();
+        $$("commentLabel").show();
 
     },
     sickLeave: function () {
 
-            selectedButton = buttons.SICK;
-            $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
-            $$("comment").hide();
-            $$("commentLabel").hide();
+        selectedButton = buttons.SICK;
+        $$("leaveTypeLabel").setValue("Zahtjev za bolovanje");
+        $$("comment").hide();
+        $$("commentLabel").hide();
 
     },
 
-    religionLeave: function(){
+    religionLeave: function () {
 
-            selectedButton = buttons.RELIGIOUS;
-            $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
-            $$("comment").show();
-            $$("commentLabel").show();
+        selectedButton = buttons.RELIGIOUS;
+        $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
+        $$("comment").show();
+        $$("commentLabel").show();
 
     },
     //Dohvatanje godišnjeg
-    getVacationDays: function(){
+    getVacationDays: function () {
         webix.ajax("hub/leave_request/leaveRequestByUserId/" + userData.id, {
                 error: function (text, data, xhr) {
                     if (xhr.status != 200) {
@@ -984,42 +980,36 @@ panel: {
                         if (data.json() != null) {
                             var leaves = data.json(); //ALL seaves!!!!  ALL
                             for (var i = 0; i < leaves.length; i++) {
-                                if ( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName == "Odobreno") { //TODO: ne prepoznaje ovaj atribut!
+                                if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && leaves[i].statusName == "Odobreno") { //TODO: ne prepoznaje ovaj atribut!
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestApproved.push(day.getTime());
                                         // console.log(vacationRequestApproved);
                                     })
-                                }
-                                else if( (leaves[i].category=="Godišnji" || leaves[i].category=="Godisnji") && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno") {
+                                } else if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && leaves[i].statusName != "Odobreno" && leaves[i].statusName != "Odbijeno") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestWaiting.push(day.getTime());
                                         console.log(vacationRequestWaiting);
                                     })
-                                }
-                                else if(leaves[i].category=="Odsustvo" && leaves[i].statusName!="Odobreno" && leaves[i].statusName!="Odbijeno" ){
+                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName != "Odobreno" && leaves[i].statusName != "Odbijeno") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestWaiting.push(day.getTime());
                                         console.log(vacationRequestWaiting);
                                     })
-                                }
-                                else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" && leaves[i].typeName=="Plaćeno" ){ //
+                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Odobreno" && leaves[i].typeName == "Plaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedPaid.push(day.getTime());
                                         console.log(leaveRequestApprovedPaid);
                                     })
-                                }
-                                else if(leaves[i].category=="Odsustvo" && leaves[i].statusName=="Odobreno" && leaves[i].typeName=="Neplaćeno" ){ //
+                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Odobreno" && leaves[i].typeName == "Neplaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedUnpaid.push(day.getTime());
                                         console.log(leaveRequestApprovedUnpaid);
                                     })
-                                }
-                                else if(leaves[i].category == "Praznik" && leaves[i].statusName=="Odobreno"){
+                                } else if (leaves[i].category == "Praznik" && leaves[i].statusName == "Odobreno") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         religionLeaveDaysApproved.push(day.getTime());
                                     })
-                                }
-                                else if(leaves[i].category == "Praznik" && leaves[i].statusName!="Odobreno"){
+                                } else if (leaves[i].category == "Praznik" && leaves[i].statusName != "Odobreno") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         religionLeaveDaysWaiting.push(day.getTime());
                                     })
@@ -1115,6 +1105,6 @@ function days_between(date1, date2) {
     var difference_ms = Math.abs(date1_ms - date2_ms)
 
     // Convert back to days and return
-    return Math.round(difference_ms/ONE_DAY)
+    return Math.round(difference_ms / ONE_DAY)
 
 }
