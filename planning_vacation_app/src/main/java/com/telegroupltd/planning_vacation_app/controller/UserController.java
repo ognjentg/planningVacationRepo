@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "hub/user")
 @Controller
 @Scope("request")
+@SuppressWarnings("ALL")
 public class UserController extends GenericController<User, Integer> {
 
     private final UserRepository userRepository;

@@ -3,8 +3,15 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericController;
 import com.telegroupltd.planning_vacation_app.model.Company;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequestDate;
+import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 
+import com.telegroupltd.planning_vacation_app.repository.LeaveRequestDateRepository;
+import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
+import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.util.MonthUserNo;
 import com.telegroupltd.planning_vacation_app.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,17 +23,20 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
-import java.util.Objects;
+import java.time.Month;
+import java.util.*;
 
 
 @RequestMapping(value = "/hub/company")
 @Controller
 @Scope("request")
+@SuppressWarnings("ALL")
 public class CompanyController extends GenericController<Company, Integer> {
 
     private final CompanyRepository companyRepository;
-
+    private final UserRepository userRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveRequestDateRepository leaveRequestDateRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -50,9 +60,12 @@ public class CompanyController extends GenericController<Company, Integer> {
     private Long longblobLength;
 
     @Autowired
-    public CompanyController(CompanyRepository companyRepository) {
+    public CompanyController(CompanyRepository companyRepository, UserRepository userRepository, LeaveRequestRepository leaveRequestRepository, LeaveRequestDateRepository leaveRequestDateRepository) {
         super(companyRepository);
         this.companyRepository = companyRepository;
+        this.userRepository = userRepository;
+        this.leaveRequestRepository = leaveRequestRepository;
+        this.leaveRequestDateRepository = leaveRequestDateRepository;
     }
 
     @Override
@@ -156,4 +169,169 @@ public class CompanyController extends GenericController<Company, Integer> {
         }
         throw new BadRequestException(badRequestDelete);
     }
+
+    @RequestMapping(value = "/statistics/user/{id}",method = RequestMethod.GET)
+    public @ResponseBody
+    List<MonthUserNo> getStatisticsForUser(@PathVariable Integer id) throws BadRequestException{
+
+        Integer companyId = userBean.getUserUserGroupKey().getCompanyId();
+        List<LeaveRequest> leaveRequests = leaveRequestRepository.getAllBySenderUserIdAndLeaveRequestStatusIdAndActive(id,2,(byte)1);
+
+        Double vacation = 0.0, religion = 0.0, leave = 0.0;  //kategorija godisnji, odsustvo i praznik
+
+        for(LeaveRequest leaveRequest : leaveRequests){
+            switch (leaveRequest.getCategory()){
+                case "Godišnji": vacation+=1;
+                    System.out.println(vacation); break;
+                case "Praznik": religion+=1;
+                    System.out.println(religion); break;
+                case "Odsustvo": leave+=1; break;
+            }
+        }
+        List<MonthUserNo> monthUserNoList = new ArrayList<>();
+
+        Double sum = vacation + religion + leave;
+
+        if(sum == 0){
+            MonthUserNo monthUserNo = new MonthUserNo("Nema podataka",0);
+            return monthUserNoList;
+        }
+
+        MonthUserNo monthUserNo1 = new MonthUserNo(vacation/sum * 100,"Godišnji");
+        MonthUserNo monthUserNo2 = new MonthUserNo(religion/sum * 100,"Praznik");
+        MonthUserNo monthUserNo3 = new MonthUserNo(leave/sum * 100,"Odsustvo");
+
+        monthUserNoList.add(monthUserNo1);
+        monthUserNoList.add(monthUserNo2);
+        monthUserNoList.add(monthUserNo3);
+
+        return monthUserNoList;
+    }
+
+    @RequestMapping(value = "/statistics/all",method = RequestMethod.GET)
+    public @ResponseBody
+    List<MonthUserNo> getStatisticAll(Integer id) throws BadRequestException{
+
+        Integer companyId = userBean.getUserUserGroupKey().getCompanyId();
+        List<User> usersInCompany = new ArrayList<>();
+        List<LeaveRequest> leaveRequests = new ArrayList<>();
+
+
+        if(userBean.getUserUserGroupKey().getUserGroupKey()=="admin" || userBean.getUserUserGroupKey().getUserGroupKey()=="direktor" || userBean.getUserUserGroupKey().getUserGroupKey()=="sekretar"){
+            usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId,(byte)1);
+            leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte)1, 2);
+        }else if(userBean.getUserUserGroupKey().getUserGroupKey()=="menadzer"){
+            Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
+            usersInCompany = userRepository.getAllByCompanyIdAndSectorIdAndActive(companyId, sectorId,(byte)1);
+            leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte)1, 2);
+            int i=0;
+            for(LeaveRequest leaveRequest : leaveRequests){
+                if(!usersInCompany.contains(userRepository.getByIdAndActive(leaveRequest.getSenderUserId(),(byte)1))){
+                    leaveRequests.remove(i);
+                }
+                i++;
+            }
+        }
+
+
+        List<Integer> numberOfWorkersOnVacationByMonthsAndVerticalScale = new ArrayList<>();
+        Integer january = 0, february = 0, march = 0, april = 0, may = 0, jun = 0, july = 0, august = 0, september = 0, october = 0, november = 0, december = 0, verticalScale = 0;
+
+        for(LeaveRequest leaveRequest : leaveRequests){
+            List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(),(byte)1);
+            leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
+            Date firstDay = leaveRequestDates.get(0).getDate();
+            Date lastDay = leaveRequestDates.get(leaveRequestDates.size()-1).getDate();
+
+            if(firstDay.getMonth()== lastDay.getMonth()){
+                Date date = firstDay;
+                if(date.getYear()== new Date().getYear()){
+                    switch (date.getMonth()){
+                        case 1: january++; break;
+                        case 2: february++; break;
+                        case 3: march++; break;
+                        case 4: april++; break;
+                        case 5: may++; break;
+                        case 6: jun++; break;
+                        case 7: july++; break;
+                        case 8: august++; break;
+                        case 9: september++; break;
+                        case 10: october++; break;
+                        case 11: november++; break;
+                        case 12: december++; break;
+                    }
+                }
+
+            }else{
+                Date date = firstDay;
+                Date date2 = lastDay;
+                if(date.getYear()== new Date().getYear()){
+                    switch (date.getMonth()){
+                        case 1: january++; break;
+                        case 2: february++; break;
+                        case 3: march++; break;
+                        case 4: april++; break;
+                        case 5: may++; break;
+                        case 6: jun++; break;
+                        case 7: july++; break;
+                        case 8: august++; break;
+                        case 9: september++; break;
+                        case 10: october++; break;
+                        case 11: november++; break;
+                        case 12: december++; break;
+                    }
+                }
+                if(date2.getYear()== new Date().getYear()){
+                    switch (date2.getMonth()){
+                        case 1: january++; break;
+                        case 2: february++; break;
+                        case 3: march++; break;
+                        case 4: april++; break;
+                        case 5: may++; break;
+                        case 6: jun++; break;
+                        case 7: july++; break;
+                        case 8: august++; break;
+                        case 9: september++; break;
+                        case 10: october++; break;
+                        case 11: november++; break;
+                        case 12: december++; break;
+                    }
+                }
+            }
+
+        }
+
+        verticalScale = usersInCompany.size();
+
+        MonthUserNo monthUserNo1 = new MonthUserNo("Januar",january);
+        MonthUserNo monthUserNo2 = new MonthUserNo("Februar",february);
+        MonthUserNo monthUserNo3 = new MonthUserNo("Mart",march);
+        MonthUserNo monthUserNo4 = new MonthUserNo("April",april);
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj",may);
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun",jun);
+        MonthUserNo monthUserNo7 = new MonthUserNo("Jul",july);
+        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust",august);
+        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar",september);
+        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar",october);
+        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar",november);
+        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar",december);
+
+        List<MonthUserNo> monthUserNos = new ArrayList<>();
+        monthUserNos.add(monthUserNo1);
+        monthUserNos.add(monthUserNo2);
+        monthUserNos.add(monthUserNo3);
+        monthUserNos.add(monthUserNo4);
+        monthUserNos.add(monthUserNo5);
+        monthUserNos.add(monthUserNo6);
+        monthUserNos.add(monthUserNo7);
+        monthUserNos.add(monthUserNo8);
+        monthUserNos.add(monthUserNo9);
+        monthUserNos.add(monthUserNo10);
+        monthUserNos.add(monthUserNo11);
+        monthUserNos.add(monthUserNo12);
+
+        return monthUserNos;
+    }
+
+
 }
