@@ -58,23 +58,29 @@ companyStatisticView={
                rows:[{
                    view:"chart",
                    type:"bar",
+                   value:"#number#",
+                   label:"#number#",
                    height:300,
                    radius:0,
-                   barWidth:40,
+                   barWidth:80,
                    yAxis:{
                        template:"",
-                       start:0, end:100, step:10
+                       start:0, end:10, step:1
                    },
                    xAxis:{
-                       title:"Broj odsutnih zaposlenih po mjesecu u tekućoj godini",
+                       title:"Odsutni po mjesecu",
+                       template:"'#month#'",
                        lines: false
                    },
                    padding:{
                        left:10,
                        right:10,
                        top:50
-                   }
-               },{
+                   },
+                   url:"/hub/company/statistics/all"
+
+                       },
+                   {
 cols:[{
     view: "chart",
     type:"donut",
@@ -89,15 +95,21 @@ cols:[{
 
 },{
     view: "chart",
-    type:"donut",
-
+    type:"pie",
+    value:"#number#",
+    color:"#color#",
     legend:{
         width: 75,
         align:"right",
-        valign:"middle"
+        valign:"middle",
+        template:"#month#"
     },
     shadow:0,
-    gradient:true}]
+    gradient:true,
+    pieInnerText:"#month#",
+
+    url:"/hub/company/statistics/all"
+}]
                }]
            }]
        }
