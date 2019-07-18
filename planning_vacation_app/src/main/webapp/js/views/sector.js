@@ -24,7 +24,7 @@ var sectorView = {
                         height: 70,
                         css: "companyPanelToolbar",
                         template: "<span class='fa fa-briefcase'></span> Sektori"
-                    }, {}, {}, {},
+                    }, {}, {},
                     {
                         css: "companies-counter",
                         rows: [

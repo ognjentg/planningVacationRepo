@@ -30,8 +30,8 @@
 }
 .companyPanelToolbarTop{
     background: #ffffff !important;
-    margin-left: 0 !important ;
-    margin-right: 0 !important ;
+    margin-left: 5px !important ;
+    margin-right: 5px !important ;
 }
 .myButton {
     background-color: #268fd5;
@@ -81,6 +81,7 @@
     -webkit-box-shadow: 0 8px 6px -6px black;
     -moz-box-shadow: 0 8px 6px -6px black;
     box-shadow: 0 8px 6px -6px black;
+    margin-right: 5px !important;
 
 }
 
@@ -147,6 +148,7 @@
     width: 200px !important;
     float: right;
     border-radius: 5px;
+    margin-right:5px !important;
 
 }
 

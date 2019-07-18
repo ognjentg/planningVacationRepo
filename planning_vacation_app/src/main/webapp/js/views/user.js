@@ -111,7 +111,7 @@ var profileView = {
                             view: "checkbox",
                             id: "receiveMail",
                             name: "receiveMail",
-                            label: "Da li želite da primate obavještenja na e-mail?",
+                            label: "Želim da primam obavještenja na e-mail.",
                             labelWidth: 320,
                             height: 35
                         },

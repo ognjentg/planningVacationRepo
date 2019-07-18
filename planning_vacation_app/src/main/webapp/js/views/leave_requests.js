@@ -93,7 +93,6 @@ leaveRequestsView = {
                         required: true,
                     }]
                 }, {
-
                     view: "datatable",
                     id: "leave_requestDT",
                     margin: 10,
