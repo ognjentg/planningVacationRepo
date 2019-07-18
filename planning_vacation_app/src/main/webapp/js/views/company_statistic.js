@@ -53,6 +53,29 @@ companyStatisticView={
                       return pom;
                    }
                }],
+
+               on:{
+                   onSelectChange:function(){
+                       var pom=$$("company_statisticDT").getSelectedId();
+                       console.log(pom.id);
+                       connection.sendAjax("GET",
+                           "/hub/company/statistics/user/" + pom.id,
+                           function (text, data, xhr) {
+                               pie = data.json();
+                              
+
+
+
+
+
+                           }, function (text, data, xhr) {
+                               util.messages.showErrorMessage(text);
+                           });
+
+                   }
+
+                   }
+               ,
                url: "/hub/user"
            },{
                rows:[{
@@ -60,6 +83,7 @@ companyStatisticView={
                    type:"bar",
                    value:"#number#",
                    label:"#number#",
+                   color:"#color#",
                    height:300,
                    radius:0,
                    barWidth:80,
@@ -84,11 +108,16 @@ companyStatisticView={
 cols:[{
     view: "chart",
     type:"donut",
+    id:"chartDonutId",
+   value:"#procentage#",
+    color:"#color#",
+
 
     legend:{
         width: 75,
         align:"right",
-        valign:"middle"
+        valign:"middle",
+        template:"#category#"
     },
     shadow:0,
     gradient:true
@@ -106,7 +135,7 @@ cols:[{
     },
     shadow:0,
     gradient:true,
-    pieInnerText:"#month#",
+    pieInnerText:"#number#",
 
     url:"/hub/company/statistics/all"
 }]
@@ -114,4 +143,5 @@ cols:[{
            }]
        }
     }
+
 }

@@ -307,8 +307,8 @@ public class CompanyController extends GenericController<Company, Integer> {
         MonthUserNo monthUserNo2 = new MonthUserNo("Februar",february,"#f58231");
         MonthUserNo monthUserNo3 = new MonthUserNo("Mart",march,"#ffe119");
         MonthUserNo monthUserNo4 = new MonthUserNo("April",april,"#bfef45");
-        MonthUserNo monthUserNo5 = new MonthUserNo("Maj",may,"3cb44b");
-        MonthUserNo monthUserNo6 = new MonthUserNo("Jun",jun,"42d4f4");
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj",may,"#3cb44b");
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun",jun,"#42d4f4");
         MonthUserNo monthUserNo7 = new MonthUserNo("Jul",july,"#4363d8");
         MonthUserNo monthUserNo8 = new MonthUserNo("Avgust",august,"#911eb4");
         MonthUserNo monthUserNo9 = new MonthUserNo("Septembar",september,"#f032e6");
