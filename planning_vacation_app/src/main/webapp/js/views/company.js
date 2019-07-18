@@ -1161,7 +1161,7 @@ var companyView = {
     },
 
     showCompanyDialog: {
-        view: "popup",
+        view: "fadeInWindow",
         id: "showCompanyDialog",
         modal: true,
         position: "center",

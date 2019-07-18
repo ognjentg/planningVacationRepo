@@ -715,6 +715,7 @@ var sectorView = {
             move: true,
             position: "center",
             modal: true,
+            height:220,
             body: {
                 id: "editSectorInside",
                 rows: [
@@ -724,7 +725,7 @@ var sectorView = {
                             view: "label",
                             label: "<span class='webix_icon fa-briefcase'></span> Izmjena sektora",
                             width: 400,
-                            height: 50
+                            height: 30
                         }, {}, {
                             hotkey: 'esc',
                             view: "icon",

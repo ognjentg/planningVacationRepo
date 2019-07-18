@@ -527,7 +527,7 @@ usergroupView = {
     },
 
     changeManagerDialog: {
-        view: "popup",
+        view: "fadeInWindow",
         width: 600,
         id: "changeManagerDialog",
         position: "center",
@@ -1467,7 +1467,7 @@ usergroupView = {
     ,
 
     employeeInfoDialog: {
-        view: "popup",
+        view: "fadeInWindow",
         id:
             "employeeInfoDialog",
         name:
@@ -1526,7 +1526,7 @@ usergroupView = {
                                 name: "firstName",
                                 label: "Ime",
                                 disabled: true,
-                                labelWidth: 150,
+                                labelWidth: 134,
                                 height: 35
                             },
                             {
@@ -1535,7 +1535,7 @@ usergroupView = {
                                 name: "lastName",
                                 label: "Prezime",
                                 disabled: true,
-                                labelWidth: 150,
+                                labelWidth: 134,
                                 height: 35
                             },
                             {
@@ -1544,7 +1544,7 @@ usergroupView = {
                                 name: "email",
                                 label: "E-mail",
                                 disabled: true,
-                                labelWidth: 150,
+                                labelWidth: 134,
                                 height: 35
                             },
                             {
@@ -1553,7 +1553,7 @@ usergroupView = {
                                 name: "userGroup",
                                 label: "Korisnička grupa",
                                 disabled: true,
-                                labelWidth: 150,
+                                labelWidth: 134,
                                 height: 35
                             },
                             {
@@ -1562,7 +1562,7 @@ usergroupView = {
                                 name: "startDate",
                                 label: "Početak rada",
                                 disabled: true,
-                                labelWidth: 150,
+                                labelWidth: 134,
                                 height: 35
                             },
                             {

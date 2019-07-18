@@ -12,7 +12,7 @@ var startedSelectedValues = [];
 var companyInfoView = {
 
     companyInfoDialog : {
-        view: "popup",
+        view: "fadeInWindow",
         id: "companyInfoDialog",
         name: "companyInfoDialog",
         position: "center",

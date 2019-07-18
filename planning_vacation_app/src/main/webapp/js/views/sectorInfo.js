@@ -10,7 +10,7 @@ var sector = null;
 var sectorInfoView = {
 
     sectorInfoDialog: {
-        view: "popup",
+        view: "fadeInWindow",
         id: "sectorInfoDialog",
         name: "sectorInfoDialog",
         position: "center",

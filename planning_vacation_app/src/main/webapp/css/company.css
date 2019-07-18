@@ -22,6 +22,12 @@
 .highlighted_header.header6{
     background-color: #fbfbfb !important;
 }
+
+.calendarToolbar{
+    margin-right: 5px !important;
+    margin-left: 5px !important;
+    margin-top: 5px !important;
+}
 .companyPanelToolbar{
     padding: 0px 0px;
     background: #ffffff !important;
