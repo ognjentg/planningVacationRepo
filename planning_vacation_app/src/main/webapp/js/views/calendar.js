@@ -53,7 +53,7 @@ var calendarView = {
                         template: "<span class='fa fa-briefcase'></span> Kalendar"
                     },
                     {
-                        css: "companies-counter right_margin",
+                        css: "companies-counter",
                         rows: [
                             {
                                 view: "template",

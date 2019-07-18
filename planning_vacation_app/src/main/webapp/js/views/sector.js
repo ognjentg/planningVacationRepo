@@ -26,7 +26,7 @@ var sectorView = {
                         template: "<span class='fa fa-briefcase'></span> Sektori"
                     }, {}, {},
                     {
-                        css: "companies-counter right_margin",
+                        css: "companies-counter",
                         rows: [
                             {
                                 view: "template",
@@ -35,7 +35,7 @@ var sectorView = {
                             },
                             {
                                 view: "label",
-                                label: "broj sektora",
+                                label: "Broj sektora",
                                 type: "header",
                                 css: "companies-counter"
                             },

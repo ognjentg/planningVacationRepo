@@ -60,18 +60,18 @@ var companyView = {
                 },
 
                 {
-                    css: "admin-counter",
+                    css: "admin-counter right_margin",
                     rows: [
                         {
                             view: "template",
                             id: "t2",
-                            css: "admin-counter",
+                            css: "admin-counter right_margin",
                         },
                         {
                             view: "label",
                             label: "Broj administratora",
                             type: "header",
-                            css: "admin-counter"
+                            css: "admin-counter right_margin"
                         },
 
                     ]
@@ -103,7 +103,7 @@ var companyView = {
                     css: "employee-counter",
                     rows: [
                         {view: "template", id: "t3", css: "employee-counter",},
-                        {view: "label", label: "broj zaposlenih", type: "header", css: "employee-counter"},
+                        {view: "label", label: "Broj zaposlenih", type: "header", css: "employee-counter"},
 
                     ]
 
