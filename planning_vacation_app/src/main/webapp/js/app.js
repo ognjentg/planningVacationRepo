@@ -1046,7 +1046,7 @@ var addDialogFirstAndLastName = function () {
                                 type: "form",
                                 align: "right",
                                 click: "mainLayout.saveUserFirstAndLastNameFunction",
-                                //hotkey: "enter",
+                                hotkey: "enter",
                                 width: 150
                             },]
                         },
@@ -1104,7 +1104,7 @@ showNotifications=function(){
                                         calendarView.selectPanel();
                                         $$("mainMenu").select("calendar");
                                     }
-                                    else if (userGroupKey == "sekretar"){
+                                    else if (userData.userGroupKey == "sekretar"){
                                         $$("mainMenu").select("secretary_sick_request");
                                         sickRequestsView.selectPanel();
                                     }

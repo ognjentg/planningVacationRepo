@@ -57,9 +57,9 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
         this.approverUserLastName = approverUserLastName;
     }
 
-    public String getApproverUserFisrtName() { return approverUserFirstName;}
+    public String getApproverUserFirstName() { return approverUserFirstName;}
 
-    public void setApproverUserFisrtName(String approverUserFirstName) { this.approverUserFirstName = approverUserFirstName; }
+    public void setApproverUserFirstName(String approverUserFirstName) { this.approverUserFirstName = approverUserFirstName; }
 
     public String getApproverUserLastName() { return approverUserLastName;}
 

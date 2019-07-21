@@ -19,6 +19,7 @@ public class Notification implements HasActive {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "id", nullable = false, unique = true)
     public Integer getId() {
         return id;
@@ -29,7 +30,7 @@ public class Notification implements HasActive {
     }
 
     @Basic
-    @Column(name = "receiver_user_id", nullable = false)
+    @Column(name = "receiver_user_id")
     public Integer getReceiverUserId() {
         return receiverUserId;
     }

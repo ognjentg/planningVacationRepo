@@ -2,9 +2,13 @@ package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
+import com.telegroupltd.planning_vacation_app.model.Notification;
 import com.telegroupltd.planning_vacation_app.model.SickLeave;
 import com.telegroupltd.planning_vacation_app.model.SickLeaveUserSickLeaveStatus;
+import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.repository.NotificationRepository;
 import com.telegroupltd.planning_vacation_app.repository.SickLeaveRepository;
+import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -26,7 +30,8 @@ import java.util.*;
 @Scope("request")
 public class SickLeaveController extends GenericHasActiveController<SickLeave,Integer> {
     private final SickLeaveRepository sickLeaveRepository;
-
+    private final NotificationRepository notificationRepository;
+    private final UserRepository userRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -34,10 +39,12 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     private String badRequestDelete;
 
     @Autowired
-    SickLeaveController(SickLeaveRepository sickLeaveRepository)
+    SickLeaveController(SickLeaveRepository sickLeaveRepository, NotificationRepository notificationRepository, UserRepository userRepository)
     {
         super(sickLeaveRepository);
         this.sickLeaveRepository = sickLeaveRepository;
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -78,7 +85,8 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     String insert(@RequestBody List<Date> dates) throws ParseException {
         if (dates.size() > 0) {
             dates.sort(Comparator.comparing(Date::toLocalDate));
-
+            Notification notification = new Notification();
+            User user = userRepository.getByIdAndActive(userBean.getUserUserGroupKey().getId(), (byte)1);
             Calendar cal = Calendar.getInstance();
             cal.roll(Calendar.DATE, -1);
             if (dates.get(0).before(cal.getTime())) {
@@ -88,6 +96,14 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
                 sickLeave.setDateFrom(new Timestamp(dates.get(0).getTime()));
                 sickLeave.setDateTo(new Timestamp(dates.get(dates.size() - 1).getTime()));
                 sickLeave.setSickLeaveStatusId(1);
+                notification.setTitle("Bolovanje");
+                notification.setLeaveType((byte) 4);
+                notification.setText("Korisnik " + user.getFirstName() + " " + user.getLastName() + " je poslao zahtjev za polovanje " +
+                         "u perioudu od " + dates.get(0) + " do " + dates.get(dates.size() - 1) + ".");
+                notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+                notification.setSeen((byte) 0);
+                notification.setActive((byte) 1);
+                notificationRepository.saveAndFlush(notification);
                 if (repo.saveAndFlush(sickLeave) != null) {
                     entityManager.refresh(sickLeave);
                     return "Zahtjev poslat.";
@@ -106,12 +122,32 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     public @ResponseBody
     void updateSickLeaveStatusUnjustified(@PathVariable Integer sickLeaveId){
         sickLeaveRepository.updateSickLeaveStatusUnjustified(sickLeaveId);
+        SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(sickLeave.getUserId());
+        notification.setTitle("Bolovanje");
+        notification.setText("Bolovanje u periodu od " + sickLeave.getDateFrom() + " do " + sickLeave.getDateTo() + " nije opravdano.");
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setLeaveType((byte) 4);
+        notification.setActive((byte) 1);
+        notificationRepository.saveAndFlush(notification);
     }
 
     @RequestMapping(value = "/updateSickLeaveStatusJustified/{sickLeaveId}", method = RequestMethod.PUT)
     public @ResponseBody
     void updateSickLeaveStatusJustified(@PathVariable Integer sickLeaveId){
         sickLeaveRepository.updateSickLeaveStatusJustified(sickLeaveId);
+        SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(sickLeave.getUserId());
+        notification.setTitle("Bolovanje");
+        notification.setText("Bolovanje u periodu od " + sickLeave.getDateFrom() + " do " + sickLeave.getDateTo() + " je opravdano.");
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setLeaveType((byte) 4);
+        notification.setActive((byte) 1);
+        notificationRepository.saveAndFlush(notification);
     }
 
     @Override

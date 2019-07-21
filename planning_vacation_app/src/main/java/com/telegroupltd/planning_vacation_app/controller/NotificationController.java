@@ -57,13 +57,19 @@ public class NotificationController extends GenericHasActiveController<Notificat
     @RequestMapping(value = "/getAllNotificationByUser/{id}", method = RequestMethod.GET)
     public @ResponseBody
     List<Notification> getAllNotificationByUser(@PathVariable Integer id) {
-        return notificationRepository.getAllByReceiverUserIdAndActive(id, (byte) 1);
+        List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActive(id, (byte) 1);
+        if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
+            notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+        return notifications;
     }
 
     @RequestMapping(value = "/getNotSeenNotificationByUser/{id}", method = RequestMethod.GET)
     public @ResponseBody
     List<Notification> getNotSeenNotificationByUser(@PathVariable Integer id) {
-        return notificationRepository.getAllByReceiverUserIdAndActiveAndSeen(id, (byte) 1, (byte) 0);
+        List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActiveAndSeen(id, (byte) 1, (byte) 0);
+        if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
+            notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+        return notifications;
     }
 
     // promjena seen-a u zavisnosti od toga da li je korisnik procitao notifikaciju ili je postavio da nije procitana

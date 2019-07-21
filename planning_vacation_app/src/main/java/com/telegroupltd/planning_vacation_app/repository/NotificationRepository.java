@@ -13,5 +13,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
     List<Notification> getAllByCompanyIdAndActive(Integer companyId, byte active);
     List<Notification> getAllByReceiverUserIdAndActive(Integer receiverUserId, byte active);
     List<Notification> getAllByReceiverUserIdAndActiveAndSeen(Integer receiverUserId, byte active, byte seen);
+    List<Notification> getAllByLeaveTypeAndCompanyIdAndActive(byte leaveType, Integer copmanyId, byte active);
+    List<Notification> getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(Integer receiverUserId, byte leaveType, Integer copmanyId, byte active);
+
 }
 

@@ -71,32 +71,15 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         Notification notification = new Notification();
         notification.setActive((byte) 1);
         notification.setSeen((byte) 0);
-        notification.setLeaveType(leaveRequest.getLeaveTypeId().byteValue());
         notification.setCompanyId(leaveRequest.getCompanyId());
         if (sectorId != null) {
             Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
             notification.setReceiverUserId(s.getSectorManagerId());
-            if ("Godišnji".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za godišnji odmor");
-            } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za odsustvo");
-            } else if ("Praznik".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za praznik");
-            }
-            notificationRepository.saveAndFlush(notification);
         } else {
             List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     2, (byte) 1);
             List<User> directors = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     3, (byte) 1);
-            if ("Godišnji".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za godišnji odmor");
-            } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za odsustvo");
-            } else if ("Praznik".equals(leaveRequest.getCategory())) {
-                notification.setTitle("Zahtjev za praznik");
-            }
-
             for (User user1 : directors) {
                 notification.setReceiverUserId(user1.getId());
                 notificationRepository.saveAndFlush(notification);
@@ -104,10 +87,20 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             for (User user : admins) {
                 System.out.println(user.getId());
                 notification.setReceiverUserId(user.getId());
-                notificationRepository.saveAndFlush(notification);
             }
 
         }
+        if ("Godišnji".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za godišnji odmor");
+            notification.setLeaveType((byte) 1);
+        } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za odsustvo");
+            notification.setLeaveType((byte) 2);
+        } else if ("Praznik".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za praznik");
+            notification.setLeaveType((byte) 3);
+        }
+        notificationRepository.saveAndFlush(notification);
         return leaveRequest;
     }
 
