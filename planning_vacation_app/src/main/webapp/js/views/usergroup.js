@@ -1173,11 +1173,10 @@ usergroupView = {
         var form = $$("addUserForm");
         if (form.validate()) {
             $$("save").disable();
-
             var newUser = {
                 email: form.getValues().email,
                 sectorId: sectorID,
-                userGroupId: 6,   //OCITATI KOJA JE USER GRUPA!!
+                userGroupId: $$("choseUserGroupCombo").getValue(),   //OCITATI KOJA JE USER GRUPA!!
                 companyId: userData.companyId,
                 pauseFlag: form.getValues().checkPauseFlag,
                 startDate: form.getValues().startDate

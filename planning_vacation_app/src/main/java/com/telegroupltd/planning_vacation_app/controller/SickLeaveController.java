@@ -87,6 +87,7 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
             dates.sort(Comparator.comparing(Date::toLocalDate));
             Notification notification = new Notification();
             User user = userRepository.getByIdAndActive(userBean.getUserUserGroupKey().getId(), (byte)1);
+            List<User> users = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), 4, (byte)1);
             Calendar cal = Calendar.getInstance();
             cal.roll(Calendar.DATE, -1);
             if (dates.get(0).before(cal.getTime())) {
@@ -103,7 +104,14 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
                 notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
                 notification.setSeen((byte) 0);
                 notification.setActive((byte) 1);
-                notificationRepository.saveAndFlush(notification);
+                for(User element : users){
+                    Notification temp = cloner.deepClone(notification);
+                    temp.setId(null);
+                    temp.setReceiverUserId(element.getId());
+                    notificationRepository.saveAndFlush(temp);
+                    notification = temp;
+
+                }
                 if (repo.saveAndFlush(sickLeave) != null) {
                     entityManager.refresh(sickLeave);
                     return "Zahtjev poslat.";

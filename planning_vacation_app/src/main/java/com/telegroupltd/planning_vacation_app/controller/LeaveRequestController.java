@@ -72,7 +72,23 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         notification.setActive((byte) 1);
         notification.setSeen((byte) 0);
         notification.setCompanyId(leaveRequest.getCompanyId());
-        if (sectorId != null) {
+        User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+        String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je psolao zahtjev za ";
+        if ("Godišnji".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za godišnji odmor");
+            notificationText += "godišnji odmor.";
+            notification.setLeaveType((byte) 1);
+        } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za odsustvo");
+            notification.setLeaveType((byte) 2);
+            notificationText += "odsustvo.";
+        } else if ("Praznik".equals(leaveRequest.getCategory())) {
+            notification.setTitle("Zahtjev za praznik");
+            notification.setLeaveType((byte) 3);
+            notificationText += "praznik.";
+        }
+        notification.setText(notificationText + " " + leaveRequest.getSenderComment());
+        if (sectorId != null && userTemp.getUserGroupId() == 6) {
             Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
             notification.setReceiverUserId(s.getSectorManagerId());
         } else {
@@ -81,26 +97,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             List<User> directors = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     3, (byte) 1);
             for (User user1 : directors) {
-                notification.setReceiverUserId(user1.getId());
-                notificationRepository.saveAndFlush(notification);
+                Notification temp = cloner.deepClone(notification);
+                temp.setId(null);
+                temp.setReceiverUserId(user1.getId());
+                notificationRepository.saveAndFlush(temp);
+                notification = temp;
             }
             for (User user : admins) {
-                System.out.println(user.getId());
-                notification.setReceiverUserId(user.getId());
+                Notification temp = cloner.deepClone(notification);
+                temp.setId(null);
+                temp.setReceiverUserId(user.getId());
+                notificationRepository.saveAndFlush(temp);
+                notification = temp;
             }
 
         }
-        if ("Godišnji".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za godišnji odmor");
-            notification.setLeaveType((byte) 1);
-        } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za odsustvo");
-            notification.setLeaveType((byte) 2);
-        } else if ("Praznik".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za praznik");
-            notification.setLeaveType((byte) 3);
-        }
-        notificationRepository.saveAndFlush(notification);
+
         return leaveRequest;
     }
 

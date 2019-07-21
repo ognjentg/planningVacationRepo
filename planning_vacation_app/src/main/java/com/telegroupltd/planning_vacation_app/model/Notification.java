@@ -30,7 +30,7 @@ public class Notification implements HasActive {
     }
 
     @Basic
-    @Column(name = "receiver_user_id")
+    @Column(name = "receiver_user_id", nullable = false)
     public Integer getReceiverUserId() {
         return receiverUserId;
     }
