@@ -165,11 +165,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
         List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
         List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
-<<<<<<< HEAD
+
         /*if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
-=======
+
        /* if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
->>>>>>> some fixes
+
             for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
                 if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != userBean.getUserUserGroupKey().getSectorId()){
                     users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
@@ -186,16 +186,15 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
             }
             return leaveRequestUserLeaveRequestStatuses;
-<<<<<<< HEAD
+
         }
 
-         */
         return leaveRequestUserLeaveRequestStatuses;
 
-=======
+
         }*/
         return leaveRequestUserLeaveRequestStatuses;
->>>>>>> some fixes
+
     }
 
     @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
