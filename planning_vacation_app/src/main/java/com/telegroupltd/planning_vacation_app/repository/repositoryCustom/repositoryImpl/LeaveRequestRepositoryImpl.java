@@ -77,18 +77,12 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "WHERE lr.active=1 AND sender_user_id=? "+
             "GROUP BY lr.id ";
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /*private static final String SQL_ALL_ABSENCES_HISTORY_USER = "SELECT lr.id, min(lrd.date) as date_from, max(lrd.date) as date_to "+
+    private static final String SQL_ALL_ABSENCES_HISTORY_USER = "SELECT lr.id,lrs.name AS status_name, category, min(lrd.date) as date_from, max(lrd.date) as date_to "+
             "FROM leave_request lr "+
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
             "JOIN  leave_request_date lrd  ON lrd.leave_request_id=lr.id "+
-            "WHERE lr.active=1 "+
-            "GROUP BY lr.id ";*/
-
-    private static final String SQL_ALL_ABSENCES_HISTORY_USER = "SELECT lr.id, min(lrd.date) as date_from, max(lrd.date) as date_to "+
-            "FROM leave_request lr "+
-            "JOIN  leave_request_date lrd  ON lrd.leave_request_id=lr.id "+
-            "WHERE lr.active=1 AND lr.category = 'Odsustvo' AND sender_user_id =? "+
+            //"WHERE lr.active=1 AND lr.category = 'Odsustvo' AND sender_user_id =? "+
+            "WHERE lr.active=1 AND sender_user_id =? "+
             "GROUP BY lr.id ";
 
 
@@ -96,13 +90,6 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     public List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id, Integer key) {
         return entityManager.createNativeQuery(SQL_ALL_ABSENCES_HISTORY_USER,"AbsenceHistoryUserMapping").setParameter(1,key).getResultList();
     }
-
-
-    /*@Override
-    public List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id) {
-        return entityManager.createNativeQuery(SQL_ALL_ABSENCES_HISTORY_USER,"AbsenceHistoryUserMapping").getResultList();
-    }*/
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id) {
