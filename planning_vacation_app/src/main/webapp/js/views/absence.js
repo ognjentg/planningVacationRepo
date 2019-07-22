@@ -118,10 +118,8 @@ var  absenceHistoryView = {
 
                     },
                     onClick: {
-                        ////////////////////////////////////////////////////////////////////
                         webix_icon: function (e, id) {
 
-                            webix.message("ASASASASASA");
                             console.log(id["column"]);
                             var action = id["column"];
 
@@ -130,9 +128,6 @@ var  absenceHistoryView = {
                                 paidLeaveBox.callback = function (result) {
                                     if (result == 1) {
 
-                                        webix.message("USAAAAA OOOO");
-
-                                        var form = $$("createRequestForm");
                                         var format = webix.Date.strToDate("%d.%m.%Y");
                                         var leaveRequest = {
                                             senderUserId: userData.id,
@@ -146,11 +141,8 @@ var  absenceHistoryView = {
                                             function (text, data, xhr) {
                                                 if (text) {
                                                     var tempData = JSON.parse(text);
-                                                   // var dates = calendarView.$$("periodsDT").serialize();
-                                                    webix.message("proso 1");
-                                                    webix.message("pauza");
+
                                                         var date1 = {
-                                                           // date: format("2019-10-10"),//format($$("absence_historyDT").dateFrom),//format($$("absence_historyDT").dateFrom.date), //format(value.date),
                                                             date: format($$("absence_historyDT").getSelectedItem().dateFrom),
                                                             leaveRequestId: tempData.id,
                                                             canceled: 0,
@@ -158,14 +150,12 @@ var  absenceHistoryView = {
                                                         };
 
                                                     var date2 = {
-                                                        // date: format("2019-10-10"),//format($$("absence_historyDT").dateFrom),//format($$("absence_historyDT").dateFrom.date), //format(value.date),
                                                         date: format($$("absence_historyDT").getSelectedItem().dateTo),
                                                         leaveRequestId: tempData.id,
                                                         canceled: 0,
                                                         paid: 1
                                                     }
 
-                                                        webix.message("proso 2");
                                                         connection.sendAjax("POST", "hub/leave_request_date/",
                                                             function (text, data, xhr) {
                                                                 if (text) {
@@ -196,17 +186,6 @@ var  absenceHistoryView = {
                                             }, function (text, data, xhr) {
                                                 util.messages.showErrorMessage(text);
                                             }, leaveRequest);
-
-
-
-                                       /* var item = $$("absence_historyDT").getItem(id);
-                                        $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                        connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
-                                            // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
-                                            util.messages.showMessage("Poslan zahtjev za otkazivanje");
-                                        }, function (text, data, xhr) {
-                                            util.messages.showErrorMessage(text);
-                                        }, item);*/
                                     }
 
                                 };
@@ -214,8 +193,7 @@ var  absenceHistoryView = {
                                 webix.confirm(paidLeaveBox);
                             }
                         }
-                        //////////////////////////////////////////////////////////
-                    }, //asa
+                    },
                 },
 
                 {
@@ -240,50 +218,6 @@ var  absenceHistoryView = {
             ]
         }
         },
-
-    /*sendCancellationPaidLeaveRequest: function () {
-        webix.message("USAAAAA OOOO");
-        var form = $$("createRequestForm");
-        var format = webix.Date.strToDate("%d.%m.%Y");
-        var leaveRequest = {
-            senderUserId: userData.id,
-            leaveTypeId: 1,
-            leaveRequestStatusId: 5,
-            companyId: userData.companyId,
-            senderComment: $$("comment").getValue(),
-            category: "Odsustvo"
-        }
-        connection.sendAjax("POST", "hub/leave_request/",
-            function (text, data, xhr) {
-                if (text) {
-                    var tempData = JSON.parse(text);
-                    var dates = $$("periodsDT").serialize();
-                    dates.forEach(function (value) {
-                        var date = {
-                            date: format(value.date),
-                            leaveRequestId: tempData.id,
-                            canceled: 0,
-                            paid: 1
-                        }
-                        connection.sendAjax("POST", "hub/leave_request_date/",
-                            function (text, data, xhr) {
-                                if (text) {
-                                    calendarView.getVacationDays();
-                                    scheduler.setCurrentView();
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                            }, date);
-                    })
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
-                    calendarView.deleteCurrentRequest();
-                } else
-                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-            }, function (text, data, xhr) {
-                util.messages.showErrorMessage(text);
-            }, leaveRequest);
-    },*/
 
     paidLeaveConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;

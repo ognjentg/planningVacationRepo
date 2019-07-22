@@ -186,7 +186,7 @@ leaveRequestsView = {
                         tooltip: "Prihvati zahtjev",
                         template: function(obj) {
                             var pom=obj.statusName;
-                            if((pom != "Odobreno")&&(pom!="Odbijeno")) {
+                            if((pom != "Odobreno")&&(pom!="Odbijeno")&&(pom!="Otkazano")) {
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
                             }
                             else return "";
@@ -198,7 +198,7 @@ leaveRequestsView = {
                         width: 35,
                         template: function(obj) {
                             var pom=obj.statusName;
-                            if((pom != "Odobreno")&&(pom!="Odbijeno"))
+                            if((pom != "Odobreno")&&(pom!="Odbijeno")&&(pom!="Otkazano"))
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                             else return "";
                         }
@@ -288,15 +288,27 @@ leaveRequestsView = {
         var item = $$("leave_requestDT").getItem(id);
         var id=$$("leave_requestDT").getSelectedId();
         $$("leave_requestDT").detachEvent("onBeforeDelete");
-        connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id+"/"+type+"/"+paid, function (text, data, xhr) {
-           // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-            util.messages.showMessage("Zahtjev odobren");
-            console.log("ZAHTJEV JE ODOBREN "+id+type+paid);
-        }, function (text, data, xhr) {
-            util.messages.showErrorMessage(text);
-        }, item);
-        util.dismissDialog('acceptDialogId');
-
+        var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
+        if( requestStatusName == "Otkazivanje"){
+            connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusCancellation/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
+                // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                util.messages.showMessage("Zahtjev otkazan");
+                console.log("ZAHTJEV JE OTKAZAN " + id + type + paid);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, item);
+            //calendarView.deleteCurrentRequest(); // TO DO
+            util.dismissDialog('acceptDialogId');
+        } else {
+            connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
+                // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                util.messages.showMessage("Zahtjev odobren");
+                console.log("ZAHTJEV JE ODOBREN " + id + type + paid);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, item);
+            util.dismissDialog('acceptDialogId');
+        }
 refreshOnData();
     },
 

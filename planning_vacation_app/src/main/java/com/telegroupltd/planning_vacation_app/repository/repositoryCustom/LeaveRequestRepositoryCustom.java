@@ -15,8 +15,6 @@ public interface LeaveRequestRepositoryCustom {
 
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id);
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////
-    /*public List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id);*/
     List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id,Integer key);
-    ////////////////////////////////////////////////////////////////////////////////////////////////
+    void updateLeaveRequestStatusCancelation(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId);
 }

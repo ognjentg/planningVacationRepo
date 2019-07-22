@@ -47,6 +47,14 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "SET lr.leave_request_status_id=2,lr.approver_user_id=?,lr.leave_type_id=?,lrd.paid=? " +
             "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
 
+    private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_CANCELLATION = "UPDATE leave_request lr " +
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id=lrs.id " +
+            "JOIN user u ON lr.sender_user_id=u.id " +
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
+            "JOIN vacation_days v on u.id = v.user_id " +
+            "SET lr.leave_request_status_id=6,lr.approver_user_id=?,lr.leave_type_id=?,lrd.paid=? " +
+            "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
+
     private static final String SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) as date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
@@ -121,6 +129,17 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @Override
     @Transactional
     public void updateLeaveRequestStatusApproved(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId) {
+        try{
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_CANCELLATION).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public void updateLeaveRequestStatusCancelation(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId) {
         try{
             entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
         }catch (Exception e){
