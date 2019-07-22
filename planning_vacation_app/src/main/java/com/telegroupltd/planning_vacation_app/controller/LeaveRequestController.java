@@ -94,6 +94,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         if (sectorId != null && userTemp.getUserGroupId() == 6) {
             Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
             notification.setReceiverUserId(s.getSectorManagerId());
+            notificationRepository.saveAndFlush(notification);
         } else {
             List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     2, (byte) 1);
@@ -164,7 +165,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
         List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
         List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
-        if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
+        /*if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
             for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
                 if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != userBean.getUserUserGroupKey().getSectorId()){
                     users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
@@ -182,6 +183,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             }
             return leaveRequestUserLeaveRequestStatuses;
         }
+
+         */
+        return leaveRequestUserLeaveRequestStatuses;
+
     }
 
     @RequestMapping(value = "/leaveRequestInfo/{id}", method = RequestMethod.GET)
@@ -238,6 +243,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             notification.setText("Praznik u periodu " + date1 + " - "
                         + date2 + " je odbijen.");
         }
+        notification.setText(notification.getText() + " " + approverComment);
         notificationRepository.saveAndFlush(notification);
         if(user.getReceiveMail() == (byte)1)
             emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());

@@ -1176,7 +1176,7 @@ usergroupView = {
             var newUser = {
                 email: form.getValues().email,
                 sectorId: sectorID,
-                userGroupId: $$("choseUserGroupCombo").getValue(),   //OCITATI KOJA JE USER GRUPA!!
+                userGroupId: $$("choseUserGroupCombo").getValue(),
                 companyId: userData.companyId,
                 pauseFlag: form.getValues().checkPauseFlag,
                 startDate: form.getValues().startDate

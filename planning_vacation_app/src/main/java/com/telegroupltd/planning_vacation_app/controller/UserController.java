@@ -40,7 +40,7 @@ public class UserController extends GenericController<User, Integer> {
     private final VacationDaysRepository vacationDaysRepository;
     private final ReligionLeaveRepository religionLeaveRepository;
     private final ConstraintsRepository constraintsRepository;
-
+    private final SectorRepository sectorRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -83,7 +83,7 @@ public class UserController extends GenericController<User, Integer> {
     @Value("Nova lozinka ne ispunjava pravila.")
     private String badRequestNewPassword;
     @Autowired
-    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository, ConstraintsRepository constraintsRepository){
+    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository, ConstraintsRepository constraintsRepository, SectorRepository sectorRepository){
         super(userRepository);
         this.userRepository=userRepository;
         this.companyRepository=companyRepository;
@@ -91,6 +91,7 @@ public class UserController extends GenericController<User, Integer> {
         this.vacationDaysRepository = vacationDaysRepository;
         this.religionLeaveRepository = religionLeaveRepository;
         this.constraintsRepository = constraintsRepository;
+        this.sectorRepository = sectorRepository;
     }
     //Used to send login information to the added user
     @Autowired
@@ -466,7 +467,7 @@ public class UserController extends GenericController<User, Integer> {
         if(user.getStartDate() == null)
             return Boolean.TRUE;
         LocalDate now = LocalDate.now();
-        LocalDate startDate = LocalDate.parse(user.getStartDate().toString());
+        LocalDate startDate = LocalDate.parse(user.getStartDate().toString().substring(0, 10));
         Period period = Period.between(now, startDate);
         if(user.getPauseFlag() != 0 && period.getMonths() <= 6)
             return Boolean.FALSE;
@@ -494,6 +495,7 @@ public class UserController extends GenericController<User, Integer> {
     String changeManager(@RequestBody ChangeManagerInformation changeManagerInformation) throws BadRequestException {
         User user = userRepository.findById(changeManagerInformation.getNewManager()).orElse(null);
         User user1 = userRepository.findById(changeManagerInformation.getNewEmployee()).orElse(null);
+        Sector sector = sectorRepository.getByIdAndActive(user.getSectorId(), (byte)1);
         System.out.println(changeManagerInformation.getNewEmployee());
         if (user != null) {
 
@@ -510,7 +512,8 @@ public class UserController extends GenericController<User, Integer> {
         } else {
             throw new BadRequestException("Neuspješna promjena pozicije!");
         }
-
+        sector.setSectorManagerId(user.getId());
+        sectorRepository.saveAndFlush(sector);
         return new String();
     }
 
