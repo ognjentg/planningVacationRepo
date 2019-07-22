@@ -31,6 +31,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     private NotificationRepository notificationRepository;
     @Autowired
     private SectorRepository sectorRepository;
+    @Autowired
+    com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
+
     @Value("Dodavanje nije moguće")
     private String badRequestInsert;
 
@@ -101,6 +104,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 temp.setId(null);
                 temp.setReceiverUserId(user1.getId());
                 notificationRepository.saveAndFlush(temp);
+                if(user1.getReceiveMail() == (byte)1)
+                    emailNotification.sendNotification(user1.getEmail(), temp.getTitle(), temp.getText());
                 notification = temp;
             }
             for (User user : admins) {
@@ -108,6 +113,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 temp.setId(null);
                 temp.setReceiverUserId(user.getId());
                 notificationRepository.saveAndFlush(temp);
+                if(user.getReceiveMail() == (byte)1)
+                    emailNotification.sendNotification(user.getEmail(), temp.getTitle(), temp.getText());
                 notification = temp;
             }
 
@@ -212,6 +219,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
         notification.setSeen((byte) 0);
         notification.setActive((byte) 1);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
@@ -231,6 +239,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                         + date2 + " je odbijen.");
         }
         notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
+
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
@@ -239,6 +250,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
+        User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
         if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
             Integer numOfVacationDays = leaveRequestDates.size();
             VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
@@ -305,6 +317,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                     + date2 + " je odobren.");
         }
         notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)

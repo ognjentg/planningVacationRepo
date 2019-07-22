@@ -20,4 +20,8 @@ public class Notification {
         String prettyText = "Vaša šifra: "+ password + "\n" +"Vaš PIN broj: "+ companyPin;
         emailService.sendMail(emailReceiver,"Vaši korisnički podaci.", prettyText);
     }
+
+    public void sendNotification(String emailReceiver, String title, String text){
+        emailService.sendMail(emailReceiver, title, text);
+    }
 }

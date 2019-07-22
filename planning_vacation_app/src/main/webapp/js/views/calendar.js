@@ -719,6 +719,7 @@ var calendarView = {
             util.messages.showErrorMessage("Nisu odabrani dani za odsustvo");
             return;
         }
+        $$("sendRequestButton").disable();
         if (selectedButton == buttons.VACATION)
             calendarView.sendVacationLeaveRequest();
         //else if(selectedButton == buttons.PAID)
@@ -799,8 +800,10 @@ var calendarView = {
                     calendarView.deleteCurrentRequest();
                 } else
                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                $$("sendRequestButton").enable();
             }, leaveRequest);
     },
     sendReligionLeaveRequest: function () {
@@ -841,8 +844,10 @@ var calendarView = {
                     calendarView.deleteCurrentRequest();
                 } else
                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                $$("sendRequestButton").enable();
             }, leaveRequest);
     },
     sendPaidLeaveRequest: function () {
@@ -883,8 +888,10 @@ var calendarView = {
                     calendarView.deleteCurrentRequest();
                 } else
                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                $$("sendRequestButton").enable();
             }, leaveRequest);
     },
 
@@ -904,8 +911,10 @@ var calendarView = {
                 util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
                 calendarView.deleteCurrentRequest();
                 calendarView.getSickDays();
+                $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                $$("sendRequestButton").enable();
             }, datesArr);
     },
     ruleset:

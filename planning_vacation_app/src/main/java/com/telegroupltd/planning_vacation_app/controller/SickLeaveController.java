@@ -34,7 +34,8 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     private final UserRepository userRepository;
     @PersistenceContext
     private EntityManager entityManager;
-
+    @Autowired
+    com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
     @Value("Brisanje nije moguće.")
     private String badRequestDelete;
 
@@ -109,6 +110,8 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
                     temp.setId(null);
                     temp.setReceiverUserId(element.getId());
                     notificationRepository.saveAndFlush(temp);
+                    if(user.getReceiveMail() == (byte)1)
+                        emailNotification.sendNotification(user.getEmail(), temp.getTitle(), temp.getText());
                     notification = temp;
 
                 }
@@ -131,6 +134,7 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     void updateSickLeaveStatusUnjustified(@PathVariable Integer sickLeaveId){
         sickLeaveRepository.updateSickLeaveStatusUnjustified(sickLeaveId);
         SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
+        User user = userRepository.getByIdAndActive(sickLeave.getUserId(), (byte)1);
         Notification notification = new Notification();
         notification.setReceiverUserId(sickLeave.getUserId());
         notification.setTitle("Bolovanje");
@@ -140,6 +144,8 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         notification.setLeaveType((byte) 4);
         notification.setActive((byte) 1);
         notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
     }
 
     @RequestMapping(value = "/updateSickLeaveStatusJustified/{sickLeaveId}", method = RequestMethod.PUT)
@@ -147,6 +153,7 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     void updateSickLeaveStatusJustified(@PathVariable Integer sickLeaveId){
         sickLeaveRepository.updateSickLeaveStatusJustified(sickLeaveId);
         SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
+        User user = userRepository.getByIdAndActive(sickLeave.getUserId(), (byte)1);
         Notification notification = new Notification();
         notification.setReceiverUserId(sickLeave.getUserId());
         notification.setTitle("Bolovanje");
@@ -156,6 +163,8 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         notification.setLeaveType((byte) 4);
         notification.setActive((byte) 1);
         notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
     }
 
     @Override
