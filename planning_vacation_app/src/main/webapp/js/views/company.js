@@ -1540,14 +1540,19 @@ function deleteSelected() {
 
                 });
 
-
+                var numberOfCompanies = $$("companyDT").count()-selectedItemsCheckBox.length;
+                if(numberOfCompanies>0){
+                    animateValue($$("t1"), 0, numberOfCompanies, 1000);
+                }else{
+                    animateValue($$("t1"), 0, 0, 1000);
+                }
                 selectedItemsCheckBox = [];
-
                 var control = $$("companyDT").getHeaderContent("mc1");
 
                 control.uncheck();
 
                 $$("companyDT").refresh();
+
 
             }
         };
