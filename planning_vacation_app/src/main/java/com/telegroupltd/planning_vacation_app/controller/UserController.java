@@ -331,7 +331,7 @@ public class UserController extends GenericController<User, Integer> {
             }
             newUser.setPauseFlag(user.getPauseFlag());
             newUser.setStartDate(user.getStartDate());
-            if(user.getSectorId() > 0)
+            if(user.getSectorId() != null && user.getSectorId() > 0)
                 newUser.setSectorId(user.getSectorId());  //It is sector manager's job
             else
              newUser.setSectorId(null); // Sa prethodnom linijom baci exception, pa sam ostavio ovo sa null
