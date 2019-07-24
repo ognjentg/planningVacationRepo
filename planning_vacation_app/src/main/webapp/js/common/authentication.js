@@ -83,14 +83,14 @@ var logout = function () {
     webix.ajax().get("hub/user/logout", function (text, data, xhr) {
         if (xhr.status == "200") {
             if (text == "Success") {
-                util.messages.showLogoutMessage();
+               // util.messages.showLogoutMessage();
                 connection.reload();
             } else {
-                util.messages.showLogoutErrorMessage();
+               // util.messages.showLogoutErrorMessage();
                 connection.reload();
             }
         } else {
-            util.messages.showLogoutErrorMessage();
+           // util.messages.showLogoutErrorMessage();
             connection.reload();
         }
     });

@@ -369,18 +369,18 @@ var sectorView = {
 
                 });
                 util.messages.showMessage("Uspjesno uklanjanje");
-                $$("deleteSectorsBtn").disable();
+                sectorsNumber = sectorsNumber - selectedItems.length;
+                if(sectorsNumber>0){
+                    animateValue($$("t1"), 0, sectorsNumber, 1000);
+                }else{
+                    animateValue($$("t1"), 0, 0, 1000);
+                }
                 selectedItems = [];
 
             }
         };
         webix.confirm(delBox);
-        sectorsNumber = sectorsNumber - selectedItems.length;
-        if(sectorsNumber>0){
-            animateValue($$("t1"), 0, sectorsNumber, 1000);
-        }else{
-            animateValue($$("t1"), 0, 0, 1000);
-        }
+        $$("deleteSectorsBtn").disable();
     },
 
     selectPanel: function(){

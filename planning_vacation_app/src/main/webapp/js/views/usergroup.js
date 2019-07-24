@@ -1604,8 +1604,13 @@ usergroupView = {
                         util.messages.showErrorMessage(text);
                         //alert(text);
                     }, id);
-                var numberOfEmployees = $$("usergroupDT").count();
-                usergroupView.refreshCouner();
+                var numberOfEmployees = $$("usergroupDT").count()-1;
+                if(numberOfEmployees>0){
+                    animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                }else{
+                    animateValue($$("t3"), 0, 0, 1000);
+                }
+                //usergroupView.refreshCouner();
 
             }
         };
@@ -1639,17 +1644,21 @@ usergroupView = {
                             }, element);
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
-                    var numberOfEmployees = $$("usergroupDT").count();
-                    usergroupView.refreshCouner();
+                    var numberOfEmployees = $$("usergroupDT").count()-selectedItems.length;
+                    if(numberOfEmployees>0){
+                        animateValue($$("t3"), 0, numberOfEmployees, 1000);
+                    }else{
+                        animateValue($$("t3"), 0, 0, 1000);
+                    }
+                    selectedItems = [];
 
                 }
-                var numberOfEmployees = $$("usergroupDT").count();
-                usergroupView.refreshCouner();
 
             };
             webix.confirm(delBox);
             $$("deleteSelectedButton").disable();
             $$("changeSectorOfSelectedButton").disable();
+            //selectedItems = [];
         }
     }
     ,
