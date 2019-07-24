@@ -1,5 +1,5 @@
 var URLAllLeaveRequests = "/hub/leave_request/leaveRequestInfo";
-var URLByLeaveRequestStatus =  "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/";
+var URLByLeaveRequestStatus = "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/";
 var leaveRequestsView;
 leaveRequestsView = {
     selectPanel: function () {
@@ -23,7 +23,7 @@ leaveRequestsView = {
                 });
             }
         }, webix.ui.window);
-        if(userData.userGroupKey == "sekretar"){
+        if (userData.userGroupKey == "sekretar") {
             $$("leave_requestDT").hideColumn("accept");
             $$("leave_requestDT").hideColumn("reject");
         }
@@ -39,14 +39,14 @@ leaveRequestsView = {
                         template: "<span class='webix_icon fa-book-medical'><\/span> Zahtjevi za odmor",
                         view: "label",
                         width: 400
-                    },{}, {
+                    }, {}, {
                         view: "combo",
                         width: 250,
                         id: "filterLeaveRequestsComboBox",
                         label: "Vrsta zahtjeva",
                         labelWidth: 100,
                         value: "4",
-                        editable:false,
+                        editable: false,
                         on: {
                             onChange(name) {
                                 $$("leave_requestDT").clearAll();
@@ -73,8 +73,7 @@ leaveRequestsView = {
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                }
-                                else  if (name===1){
+                                } else if (name === 1) {
                                     $$("leave_requestDT").hideColumn("typeId");
                                     $$("leave_requestDT").showColumn("accept");
                                     $$("leave_requestDT").showColumn("reject");
@@ -98,8 +97,8 @@ leaveRequestsView = {
                     margin: 10,
                     multiselect: false,
                     tooltip: {
-                        dx:-35, //20 by default
-                        dy:20
+                        dx: -35, //20 by default
+                        dy: 20
                     },
                     navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
                     select: "row", // cell
@@ -133,11 +132,11 @@ leaveRequestsView = {
                         id: "category",
                         sort: "string",
                         header: "Kategorija"
-                    },{
+                    }, {
                         id: "typeId",
                         sort: "string",
                         header: "Tip",
-                        hidden:"true"
+                        hidden: "true"
                     }, {
                         id: "firstName",
                         fillspace: true,
@@ -184,21 +183,20 @@ leaveRequestsView = {
                         header: "&nbsp;",
                         width: 35,
                         tooltip: "Prihvati zahtjev",
-                        template: function(obj) {
-                            var pom=obj.statusName;
-                            if((pom != "Odobreno")&&(pom!="Odbijeno")&&(pom!="Otkazano")) {
+                        template: function (obj) {
+                            var pom = obj.statusName;
+                            if ((pom != "Odobreno") && (pom != "Odbijeno") && (pom != "Otkazano")) {
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
-                            }
-                            else return "";
+                            } else return "";
                         }
                     }, {
                         id: "reject",
                         header: "&nbsp;",
                         tooltip: "Odbij zahtjev",
                         width: 35,
-                        template: function(obj) {
-                            var pom=obj.statusName;
-                            if((pom != "Odobreno")&&(pom!="Odbijeno")&&(pom!="Otkazano"))
+                        template: function (obj) {
+                            var pom = obj.statusName;
+                            if ((pom != "Odobreno") && (pom != "Odbijeno") && (pom != "Otkazano"))
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                             else return "";
                         }
@@ -226,13 +224,13 @@ leaveRequestsView = {
 
                             var action = id["column"];
                             $$("leave_requestDT").select(id);
-                            if (action === "reject"&&(userData.userGroupKey =="admin" || userData.userGroupKey =="direktor" || userData.userGroupKey =="menadzer")) {
+                            if (action === "reject" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey == "menadzer")) {
                                 var rejectLeaveBox = (webix.copy(leaveRequestsView.showRejectRequest(id)));
 
-                            } else if (action === "accept"&&(userData.userGroupKey =="admin" || userData.userGroupKey =="direktor" || userData.userGroupKey =="menadzer")) {
-                                var kategorija=$$("leave_requestDT").getSelectedItem().category;
+                            } else if (action === "accept" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey == "menadzer")) {
+                                var kategorija = $$("leave_requestDT").getSelectedItem().category;
                                 webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
-                                if("Godišnji"==kategorija || "Godisnji"==kategorija){
+                                if ("Godišnji" == kategorija || "Godisnji" == kategorija) {
                                     $$("radioId").hide();
                                 }
 
@@ -273,23 +271,23 @@ leaveRequestsView = {
             });
 
     },
-    acceptRequestFunction:function(){
+    acceptRequestFunction: function () {
         var type;//vraca tip odsustva(placeno(1),neplaceno(2))
         var paid;//setovanje boolean-a(placeno(1),neplaceno(0))
-        var pom=$$("radioId").getValue();
-        if(pom=="Plaćeno"){
-             type=1;
-             paid=1;
-        }else{
-             type=2;
-             paid=0;
+        var pom = $$("radioId").getValue();
+        if (pom == "Plaćeno") {
+            type = 1;
+            paid = 1;
+        } else {
+            type = 2;
+            paid = 0;
         }
 
         var item = $$("leave_requestDT").getItem(id);
-        var id=$$("leave_requestDT").getSelectedId();
+        var id = $$("leave_requestDT").getSelectedId();
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
-        if( requestStatusName == "Otkazivanje"){
+        if (requestStatusName == "Otkazivanje") {
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusCancellation/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
                 // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                 util.messages.showMessage("Zahtjev otkazan");
@@ -309,7 +307,7 @@ leaveRequestsView = {
             }, item);
             util.dismissDialog('acceptDialogId');
         }
-refreshOnData();
+        refreshOnData();
     },
 
     rejectRequest: {
@@ -361,18 +359,18 @@ refreshOnData();
                 },
                 {
 
-                        view: "text",
-                        id: "rejectComment",
-                        required: true,
-                        label:"Komentar:"
+                    view: "text",
+                    id: "rejectComment",
+                    required: true,
+                    label: "Komentar:"
 
 
                 }, {}, {}, {
                     cols: [{
                         view: "button",
                         label: "Odbij",
-                        id:"rejectButton",
-                        click:'leaveRequestsView.saveRejectedLeaveRequest',
+                        id: "rejectButton",
+                        click: 'leaveRequestsView.saveRejectedLeaveRequest',
                         hotkey: "enter"
                     }, {}, {
                         view: "button",
@@ -442,46 +440,46 @@ refreshOnData();
                         view: "label",
                         id: "comment"
                     }]
-                },{
+                }, {
                     cols: [{
                         view: "label",
-                        id:"commentApproverLabel",
+                        id: "commentApproverLabel",
                         label: "Komentar odbijanja:",
-                        hidden:true
-                    }, {},{
+                        hidden: true
+                    }, {}, {
                         view: "label",
                         id: "approverComment",
-                        hidden:true
+                        hidden: true
 
                     }]
 
-                },{
+                }, {
                     cols: [{
                         view: "label",
                         label: "Datum od:"
-                    }, {},{
+                    }, {}, {
                         view: "label",
                         id: "dateFromId"
 
                     }]
 
-                },{
+                }, {
 
                     cols: [{
                         view: "label",
                         label: "Datum do:"
 
-                    }, {},{
+                    }, {}, {
                         view: "label",
                         id: "dateToId"
                     }]
-                },{
+                }, {
 
                     cols: [{
                         view: "label",
                         label: "Obradio:"
 
-                    }, {},{
+                    }, {}, {
                         view: "label",
                         id: "approverUserName"
                     }]
@@ -501,20 +499,18 @@ refreshOnData();
                 $$("lname").setValue(user.lastName);
                 $$("status").setValue(user.statusName);
                 $$("comment").setValue(user.senderComment);
-                if(user.statusName == "Na čekanju"){
+                if (user.statusName == "Na čekanju") {
                     $$("approverUserName").setValue("-");
-                }
-                else
+                } else
                     $$("approverUserName").setValue(user.approverUserFirstName + " " + user.approverUserLastName);
-                if(user.approverComment!=null){
+                if (user.approverComment != null) {
                     $$("approverComment").setValue(user.approverComment);
                     $$("approverComment").show();
                     $$("commentApproverLabel").show();
                 }
-                var dF=new Date(user.dateFrom);
-                var dT=new Date(user.dateTo);
-                webix.Date.dateToStr("%d.%m.%Y.")(dT);
-                webix.Date.dateToStr("%d.%m.%Y.")(dF);
+                var format = webix.Date.dateToStr("%d.%m.%Y.");
+                var dF = format(new Date(user.dateFrom));
+                var dT = format(new Date(user.dateTo));
                 $$("dateFromId").setValue(dF);
                 $$("dateToId").setValue(dT);
                 setTimeout(function () {
@@ -527,34 +523,35 @@ refreshOnData();
 
     },
     saveRejectedLeaveRequest: function () {
-        var komentar=$$("rejectComment").getValue();
+        var komentar = $$("rejectComment").getValue();
 
-        if(komentar==""){
+        if (komentar == "") {
             util.messages.showErrorMessage("Komentar je obavezan");
+        } else {
+            id = $$("leave_requestDT").getSelectedId();
+
+            comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
+
+            connection.sendAjax("GET",
+                "/hub/leave_request/updateLeaveRequestStatusRejected/" + id + "/comment/" + comment, function (text, data, xhr) {
+                    //$$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                    util.messages.showMessage("Zahtjev odbijen");
+                }
+                , function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                });
+            util.dismissDialog("rejectRequestInfoId");
         }
-        else{
-        id=$$("leave_requestDT").getSelectedId();
-
-        comment=$$("rejectComment").getValue()?$$("rejectComment").getValue():"";
-
-        connection.sendAjax("GET",
-            "/hub/leave_request/updateLeaveRequestStatusRejected/" + id+ "/comment/" + comment,function (text, data, xhr) {
-                //$$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-                util.messages.showMessage("Zahtjev odbijen");}
-            , function (text, data, xhr) {
-                util.messages.showErrorMessage(text);
-            });
-        util.dismissDialog("rejectRequestInfoId");}
         refreshOnData();
     },
-    acceptDialog:{
-        view:"fadeInWindow",
-        id:"acceptDialogId",
+    acceptDialog: {
+        view: "fadeInWindow",
+        id: "acceptDialogId",
         position: "center",
         modal: true,
         move: true,
-        body:{
-            rows:[
+        body: {
+            rows: [
                 {
                     view: "toolbar",
                     cols: [{
@@ -568,7 +565,7 @@ refreshOnData();
                         align: "right",
                         click: 'util.dismissDialog(\'acceptDialogId\');'
                     }]
-                },{
+                }, {
                     cols: [{
                         view: "label",
                         label: "Ime:"
@@ -594,35 +591,34 @@ refreshOnData();
                     }]
                 },
                 {
-                    view:"radio",
-                    id:"radioId",
-                    options:["Plaćeno", "Neplaćeno"],
-                    value:"Plaćeno"
+                    view: "radio",
+                    id: "radioId",
+                    options: ["Plaćeno", "Neplaćeno"],
+                    value: "Plaćeno"
                 },
                 {
-                    cols:[{
-                            view:"button",
-                            id:"acceptButtonId",
-                            value: "Odobri",
-                            click:"leaveRequestsView.acceptRequestFunction"
+                    cols: [{
+                        view: "button",
+                        id: "acceptButtonId",
+                        value: "Odobri",
+                        click: "leaveRequestsView.acceptRequestFunction"
 
                     },
                         {
-                            view:"button",
-                            id:"ignoreButtonId",
+                            view: "button",
+                            id: "ignoreButtonId",
                             value: "Zatvori",
                             click: "util.dismissDialog('acceptDialogId')"
                         }
-                        ]
+                    ]
                 }
-                ]
+            ]
         }
-        }
-
-
+    }
 
 
 };
+
 function refreshOnData() {
     console.log("refresh data");
 
@@ -633,9 +629,9 @@ function refreshOnData() {
     var comboItemId = $$("filterLeaveRequestsComboBox").getValue();
     var URLCurrentUrl = null;
 
-    if(comboItemId == 4){
+    if (comboItemId == 4) {
         URLCurrentUrl = URLAllLeaveRequests;
-    }else{
+    } else {
         URLCurrentUrl = URLByLeaveRequestStatus
     } /*else if(comboItemId == 3){
         URLCurrentUrl = URLByLeaveRequestStatus+3;
@@ -645,7 +641,7 @@ function refreshOnData() {
         URLCurrentUrl = URLByLeaveRequestStatus+1;
     }*/
 
-    if(comboItemId == 4) {
+    if (comboItemId == 4) {
         webix.ajax(URLCurrentUrl, {
 
             error: function (text, data, xhr) {
@@ -668,7 +664,7 @@ function refreshOnData() {
             }
         });
     } else {
-        webix.ajax(URLCurrentUrl+comboItemId, {
+        webix.ajax(URLCurrentUrl + comboItemId, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -683,7 +679,7 @@ function refreshOnData() {
                         console.log("loaded data with success");
 
                         table.clearAll();
-                        table.load(URLCurrentUrl+comboItemId);
+                        table.load(URLCurrentUrl + comboItemId);
                         table.refresh();
                     }
                 }

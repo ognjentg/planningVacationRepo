@@ -292,7 +292,7 @@ var calendarView = {
                                     webix_icon: function (e, id) {
                                         var eventId = $$("periodsDT").getItem(id).eventId;
                                         var value = $$("periodsDT").getItem(id).date;
-                                        var date = new Date(value + "T22:00:00.000Z");
+                                        var date = format(new Date(value + "T22:00:00.000Z"));
                                         var index = selectedDays.indexOf(date.getTime());
                                         selectedDays.splice(index, 1);
                                         scheduler.setCurrentView();
@@ -577,7 +577,7 @@ var calendarView = {
             scheduler.setCurrentView();
             $$("periodsDT").clearAll();
             var tableData = [];
-            var format = webix.Date.dateToStr("%d.%m.%Y");
+            var format = webix.Date.dateToStr("%d.%m.%Y.");
             selectedDays.forEach(function (value) {
                 tableData.push({eventId: e.id, date: format(new Date(value))})
             });

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -124,30 +125,33 @@ public class NotificationController extends GenericHasActiveController<Notificat
         notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
         notification.setSeen((byte) 0);
         notification.setActive((byte) 1);
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(leaveRequestUserLeaveRequestStatus.getDateFrom());
+        String dateTo = format.format((leaveRequestUserLeaveRequestStatus.getDateTo()));
         if ("Godišnji".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
             notification.setTitle("Zahtjev za godišnji odmor");
             if (reject == 0)
-                notification.setTitle("Godišnji odmor u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijen.");
+                notification.setTitle("Godišnji odmor u periodu od " + dateFrom + " do "
+                + dateTo + " je odbijen.");
             else
-                notification.setText("Godišnji odmor u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobren.");
+                notification.setText("Godišnji odmor u periodu od " + dateFrom + " do "
+                        + dateTo + " je odobren.");
         } else if ("Odsustvo".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
             notification.setTitle("Zahtjev za odsustvo");
             if (reject == 0)
-                notification.setTitle("Odsustvo u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijeno.");
+                notification.setTitle("Odsustvo u periodu od " + dateFrom + " do "
+                        + dateTo + " je odbijeno.");
             else
-                notification.setText("Odsustvo u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobreno");
+                notification.setText("Odsustvo u periodu od " + dateFrom + " do "
+                        + dateTo + " je odobreno");
         } else if ("Praznik".equals(leaveRequestUserLeaveRequestStatus.getCategory())) {
             notification.setTitle("Zahtjev za praznik");
             if (reject == 0)
-                notification.setTitle("Praznik u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odbijen.");
+                notification.setTitle("Praznik u periodu od " + dateFrom + " do "
+                        + dateTo + " je odbijen.");
             else
-                notification.setText("Praznik u periodu " + leaveRequestUserLeaveRequestStatus.getDateFrom() + " - "
-                        + leaveRequestUserLeaveRequestStatus.getDateTo() + " je odobren.");
+                notification.setText("Praznik u periodu od " + dateFrom + " do "
+                        + dateTo + " je odobren.");
         }
     }
 }

@@ -233,22 +233,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         notification.setSeen((byte) 0);
         notification.setActive((byte) 1);
         User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
         String date1 = formatter.format(dateFrom.getTime());
         String date2 = formatter.format(dateTo.getTime());
         if ("Godišnji".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za godišnji odmor");
-             notification.setText("Godišnji odmor u periodu " + date1 + " - "
+             notification.setText("Godišnji odmor u periodu od " + date1 + " do "
                         + date2 + " je odbijen.");
         } else if ("Odsustvo".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu " + date1 + " - "
+            notification.setText("Odsustvo u periodu od " + date1 + " do "
                         + date2 + " je odbijeno.");
         } else if ("Praznik".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu " + date1 + " - "
+            notification.setText("Praznik u periodu od " + date1 + " do "
                         + date2 + " je odbijen.");
         }
         notification.setText(notification.getText() + " " + approverComment);
@@ -312,22 +312,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         notification.setSeen((byte) 0);
         notification.setActive((byte) 1);
         notification.setReceiverUserId(lrs.getSenderUserId());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
         String date1 = formatter.format(dateFrom.getTime());
         String date2 = formatter.format(dateTo.getTime());
         if ("Godišnji".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za godišnji odmor");
-            notification.setText("Godišnji odmor u periodu " + date1 + " - "
+            notification.setText("Godišnji odmor u periodu od " + date1 + " do "
                     + date2 + " je odobren.");
         } else if ("Odsustvo".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu " + date1 + " - "
+            notification.setText("Odsustvo u periodu od " + date1 + " do "
                     + date2 + " je odobreno.");
         } else if ("Praznik".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu " + date1 + " - "
+            notification.setText("Praznik u periodu od " + date1 + " do "
                     + date2 + " je odobren.");
         }
         notificationRepository.saveAndFlush(notification);
@@ -392,22 +392,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         notification.setSeen((byte) 0);
         notification.setActive((byte) 1);
         notification.setReceiverUserId(lrs.getSenderUserId());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
         String date1 = formatter.format(dateFrom.getTime());
         String date2 = formatter.format(dateTo.getTime());
         if ("Godišnji".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za godišnji odmor");
-            notification.setText("Godišnji odmor u periodu " + date1 + " - "
+            notification.setText("Godišnji odmor u periodu od " + date1 + " do "
                     + date2 + " je otkazan.");
         } else if ("Odsustvo".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu " + date1 + " - "
+            notification.setText("Odsustvo u periodu od" + date1 + " do "
                     + date2 + " je otkazan.");
         } else if ("Praznik".equals(lrs.getCategory())) {
             notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu " + date1 + " - "
+            notification.setText("Praznik u periodu od" + date1 + " do "
                     + date2 + " je otkazan.");
         }
         notificationRepository.saveAndFlush(notification);

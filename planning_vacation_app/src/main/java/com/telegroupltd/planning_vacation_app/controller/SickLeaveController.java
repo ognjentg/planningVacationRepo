@@ -137,8 +137,11 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         User user = userRepository.getByIdAndActive(sickLeave.getUserId(), (byte)1);
         Notification notification = new Notification();
         notification.setReceiverUserId(sickLeave.getUserId());
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(sickLeave.getDateFrom());
+        String dateTo = format.format(sickLeave.getDateTo());
         notification.setTitle("Bolovanje");
-        notification.setText("Bolovanje u periodu od " + sickLeave.getDateFrom() + " do " + sickLeave.getDateTo() + " nije opravdano.");
+        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " nije opravdano.");
         notification.setSeen((byte) 0);
         notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
         notification.setLeaveType((byte) 4);
@@ -157,7 +160,10 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         Notification notification = new Notification();
         notification.setReceiverUserId(sickLeave.getUserId());
         notification.setTitle("Bolovanje");
-        notification.setText("Bolovanje u periodu od " + sickLeave.getDateFrom() + " do " + sickLeave.getDateTo() + " je opravdano.");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(sickLeave.getDateFrom());
+        String dateTo = format.format(sickLeave.getDateTo());
+        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
         notification.setSeen((byte) 0);
         notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
         notification.setLeaveType((byte) 4);
