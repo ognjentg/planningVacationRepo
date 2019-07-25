@@ -17,9 +17,11 @@ var  absenceHistoryView = {
                 {
                     padding: 8,
                     view: "toolbar",
+                    css: {"background": "#ffffff !important"},
                     cols:[{
-                        template: "<span class='webix_icon fa-book-medical'><\/span> Istorija odsustva",
+                        template: "<span class='webix_icon fas fa-history'><\/span> Istorija odsustva",
                         view: "label",
+                        css: {"color": "black !important"},
                         width: 400
                     },{}
                     ]

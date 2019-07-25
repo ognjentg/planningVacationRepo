@@ -51,7 +51,7 @@ var calendarView = {
                         width: 140,
                         height: 70,
                         css: "companyPanelToolbar",
-                        template: "<span class='fa fa-briefcase'></span> Kalendar"
+                        template: "<span class='fa fa-calendar'></span> Kalendar"
                     },
                     {
                         css: "companies-counter",

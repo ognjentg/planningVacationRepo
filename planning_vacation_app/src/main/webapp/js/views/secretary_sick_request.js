@@ -20,10 +20,11 @@ var sickRequestsView = {
                 {
                     padding: 8,
                     view: "toolbar",
-                    css: "secretaryRequestToolbar",
+                    css: {"background": "#ffffff !important"},
                     cols: [{
-                        template: "<span class='webix_icon fa-book-medical'><\/span> Zahtjevi za bolovanje",
+                        template: "<span class='webix_icon far fa-envelope'><\/span> Zahtjevi za bolovanje",
                         view: "label",
+                        css: {"color": "black !important"},
                         width: 400
                     }, {},
                         {

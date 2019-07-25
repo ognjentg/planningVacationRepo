@@ -35,9 +35,11 @@ leaveRequestsView = {
                 {
                     padding: 8,
                     view: "toolbar",
+                    css: {"background": "#ffffff !important"},
                     cols: [{
-                        template: "<span class='webix_icon fa-book-medical'><\/span> Zahtjevi za odmor",
+                        template: "<span class='webix_icon fa-list'><\/span> Zahtjevi za odmor",
                         view: "label",
+                        css: {"color": "black !important"},
                         width: 400
                     }, {}, {
                         view: "combo",
@@ -80,6 +82,10 @@ leaveRequestsView = {
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                }
+                                if(userData.userGroupKey == "sekretar"){
+                                    $$("leave_requestDT").hideColumn("accept");
+                                    $$("leave_requestDT").hideColumn("reject");
                                 }
                             }
                         },
