@@ -12,6 +12,7 @@ import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
 import com.telegroupltd.planning_vacation_app.repository.SectorRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
+import com.telegroupltd.planning_vacation_app.util.SetAbscentPercent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -92,6 +93,18 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     Sector getSectorByManagerIdAndCompanyId(@PathVariable Integer companyId, @PathVariable Integer managerId){
         return sectorRepository.getBySectorManagerIdAndCompanyId(managerId, companyId);
     }
+
+    @RequestMapping(value = "/setAbscentPercent", method = RequestMethod.POST)
+    public @ResponseBody
+    boolean setAbscentPercent(@RequestBody SetAbscentPercent sap){
+        Sector sector = sectorRepository.findById(sap.getId()).orElse(null);
+        if(sector!=null){
+            sector.setMaxPercentageAbsentPeople(sap.getPercent());
+            repo.saveAndFlush(sector);
+            return true;
+        }else return true;
+    }
+
 
     @Override
     @Transactional

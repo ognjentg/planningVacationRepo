@@ -127,7 +127,19 @@ usergroupView = {
                         disabled: true,
                         css: "companyButton",
                         click: 'usergroupView.showChangeManagerDialog'
-                    }, {
+                    },
+                        {
+                            view: "button",
+                            id: "percent",
+                            type: "iconButton",
+                            icon: "user",
+                            label: "Maksimalno odsustvo (%)",
+                            width: 200,
+                            height: 40,
+                            align: "left",
+                            css: "companyButton",
+                            click: 'usergroupView.showPercentDialog'
+                        },{
                         view: "label",
                         id: "izaberiLabel",
                         label: "Izaberi sektor:",
@@ -384,6 +396,87 @@ usergroupView = {
         }
     },
 
+
+
+    percentDialog:{
+        view:"fadeInWindow",
+        id:"percentDialog",
+        position: "center",
+        body:{
+            rows:[
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Maksimalno odsustvo",
+                        autoWidth: true,
+                    }, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: function () {
+                            $$("addUserButton").enable();
+                            util.dismissDialog('percentDialog');
+                        }
+                    }]
+                },
+                {
+                    height:10
+                },
+                {
+                    cols:[
+                        {
+                            id: "percentText",
+                            view: "text",
+                            width:250,
+                            labelWidth:170,
+                            label: "Maksimalno odsustvo:"
+                        },
+                        {
+                            view: "label",
+                            label: " %",
+                            css:"percentOKbutton",
+                            width:20
+                        }
+                    ]
+                },
+                {
+                    height:10
+                },
+                {
+                    view:"button",
+                    label:"OK",
+                    align:"right",
+                    width:100,
+                    click: function () {
+                        if($$("percentText").getValue().length===0){
+                        }else{
+                            var temp = {
+                                percent: $$("percentText").getValue(),
+                                id: userData.companyId
+                            };
+                            connection.sendAjax("POST", "hub/sector/setAbscentPercent/",
+                                function (text, data, xhr) {
+                                if(text==="true")
+                                    util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
+                                else util.messages.showMessage("Greška! Pokušsjte ponovo!");
+
+                                },
+                                function (text, data, xhr) {
+                                    util.messages.showErrorMessage(text);
+                                },temp);
+                        }
+                        util.dismissDialog("percentDialog");
+                    }
+                }
+            ]
+        }
+    },
+
+    showPercentDialog : function(){
+        webix.ui(webix.copy(usergroupView.percentDialog)).show();
+    },
 
     addDialog: {
         view: "fadeInWindow",

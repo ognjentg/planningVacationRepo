@@ -100,7 +100,7 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
                 sickLeave.setSickLeaveStatusId(1);
                 notification.setTitle("Bolovanje");
                 notification.setLeaveType((byte) 4);
-                notification.setText("Korisnik " + user.getFirstName() + " " + user.getLastName() + " je poslao zahtjev za polovanje " +
+                notification.setText("Korisnik " + user.getFirstName() + " " + user.getLastName() + " je poslao zahtjev za bolovanje " +
                          "u perioudu od " + dates.get(0) + " do " + dates.get(dates.size() - 1) + ".");
                 notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
                 notification.setSeen((byte) 0);
