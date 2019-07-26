@@ -1138,9 +1138,11 @@ usergroupView = {
                         value: sector.name
                     });
                 });
-                console.log(data.text());
                 $$("choseSectorCombo").define("options", usergroupView.sectors);
-                $$("choseSectorCombo").setValue("-1");
+                if(userData.userGroupKey == "menadzer")
+                    $$("choseSectorCombo").setValue(userData.sectorId);
+                else
+                    $$("choseSectorCombo").setValue(-1);
                 $$("choseSectorCombo").refresh();
 
             } else {
@@ -1151,7 +1153,8 @@ usergroupView = {
         //  $$("choseSectorCombo").attachEvent("onAfterRender", webix.once(function(){
         //                         console.log('called once after first rendering:');
         //                   });
-        $$("choseSectorCombo").setValue("Svi sektori");
+
+
 
         //$$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
 
