@@ -422,53 +422,88 @@ usergroupView = {
                     }]
                 },
                 {
-                    height:10
-                },
-                {
-                    cols:[
+                    view:"form",
+                    width:400,
+                    id: "abscentFormID",
+                    name: "abscentFormID",
+                    css:"abscentForm",
+                    elements:[
                         {
-                            id: "percentText",
-                            view: "text",
-                            width:250,
-                            labelWidth:170,
-                            label: "Maksimalno odsustvo:"
+                            view: "combo",
+                            id: "sectorCombo",
+                            name: "sectorCombo",
+                            label: "Odaberi sektor",
+                            labelWidth: 150,
+                            value: "Sektor",
+                            required: true,
+                            invalidMessage: "Potrebno je odabrati sektor.",
+                            on: {
+                                // var input= $$("choseSectorCombo").getInputNode().value;
+                                onChange(id) {
+                                        connection.sendAjax("GET","hub/sector/getMaxAbscentBySector/" + id,function (text,data,xhr) {
+                                            if(text!="105.0"){
+                                                $$("percentText").define("placeholder", text);
+                                                $$("percentText").refresh();
+                                            }else{
+                                                util.messages.showErrorMessage("Odabir nije validan.");
+                                            }
+                                        },function (text,data,xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        })
+                                    }
+                                }
                         },
                         {
-                            view: "label",
-                            label: " %",
-                            css:"percentOKbutton",
-                            width:20
+                            cols:[
+                                {
+                                    id: "percentText",
+                                    view: "text",
+                                    label: "Maksimalno odsustvo:",
+                                    labelWidth:150,
+                                    required: true,
+                                    invalidMessage: "Potrebno je unijeti određenu vrijednost."
+                                },
+                                {
+                                    view: "label",
+                                    label: "%",
+                                    css:"percentOKbutton"
+                                }
+                            ]
+                        },
+                        {
+                            view:"button",
+                            label:"OK",
+                            align:"right",
+                            hotkey: "enter",
+                            width:100,
+                            click: function () {
+                                if($$("percentText").getValue().length===0 || $$("sectorCombo").getValue()==="Sektor"){
+                                    util.messages.showErrorMessage("Svi podaci moraju biti uneseni.");
+                                }else {
+                                    var temp = {
+                                        percent: $$("percentText").getValue(),
+                                        id: $$("sectorCombo").getValue()
+                                    };
+                                    if (temp.percent < 0 || temp.percent > 100) {
+                                        util.messages.showErrorMessage("Vrijednost mora biti između 0 i 100.");
+                                    } else {
+                                        connection.sendAjax("POST", "hub/sector/setAbscentPercent/",
+                                            function (text, data, xhr) {
+                                                if (text === "true")
+                                                    util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
+                                                else util.messages.showMessage("Greška! Pokušsjte ponovo!");
+
+                                            },
+                                            function (text, data, xhr) {
+                                                util.messages.showErrorMessage(text);
+                                            }, temp);
+
+                                        util.dismissDialog("percentDialog");
+                                    }
+                                }
+                            }
                         }
                     ]
-                },
-                {
-                    height:10
-                },
-                {
-                    view:"button",
-                    label:"OK",
-                    align:"right",
-                    width:100,
-                    click: function () {
-                        if($$("percentText").getValue().length===0){
-                        }else{
-                            var temp = {
-                                percent: $$("percentText").getValue(),
-                                id: userData.companyId
-                            };
-                            connection.sendAjax("POST", "hub/sector/setAbscentPercent/",
-                                function (text, data, xhr) {
-                                if(text==="true")
-                                    util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
-                                else util.messages.showMessage("Greška! Pokušsjte ponovo!");
-
-                                },
-                                function (text, data, xhr) {
-                                    util.messages.showErrorMessage(text);
-                                },temp);
-                        }
-                        util.dismissDialog("percentDialog");
-                    }
                 }
             ]
         }
@@ -476,6 +511,7 @@ usergroupView = {
 
     showPercentDialog : function(){
         webix.ui(webix.copy(usergroupView.percentDialog)).show();
+        $$("sectorCombo").define("options", usergroupView.changeSectors);
     },
 
     addDialog: {
@@ -1071,6 +1107,7 @@ usergroupView = {
 
         usergroupView.sectors = [];
         usergroupView.changeSectors = [];
+        usergroupView.abscentSectors = [];
 
         webix.ajax().get("hub/sector").then(function (data) {
             //response text

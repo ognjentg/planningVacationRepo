@@ -19,6 +19,10 @@
     line-height: 34px;
     white-space: normal;
 }
+
+.abscentForm{
+    border:none;
+}
 .highlighted_header.header6{
     background-color: #fbfbfb !important;
 }

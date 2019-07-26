@@ -81,6 +81,15 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
         return sectorRepository.getByIdAndActive(sectorId,(byte) 1);
     }
 
+    @RequestMapping(value = "/getMaxAbscentBySector/{id}", method = RequestMethod.GET)
+    public @ResponseBody
+    Double getMaxAbscentBySector(@PathVariable Integer id){
+        Sector sec = sectorRepository.getByIdAndActive(id, (byte) 1);
+        if(sec!=null){
+        return sec.getMaxPercentageAbsentPeople();
+        }
+        else return 105.0;
+    }
 
     @RequestMapping(value = "/updateUsersFromSector/{sectorId}", method = RequestMethod.PUT)
     public @ResponseBody
