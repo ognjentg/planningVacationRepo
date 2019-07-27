@@ -131,6 +131,7 @@ usergroupView = {
                         {
                             view: "button",
                             id: "percent",
+                            name: "percent",
                             type: "iconButton",
                             icon: "user",
                             label: "Maksimalno odsustvo (%)",
@@ -423,85 +424,62 @@ usergroupView = {
                 },
                 {
                     view:"form",
-                    width:400,
+                    width:350,
                     id: "abscentFormID",
                     name: "abscentFormID",
                     css:"abscentForm",
                     elements:[
-                        {
-                            view: "combo",
-                            id: "sectorCombo",
-                            name: "sectorCombo",
-                            label: "Odaberi sektor",
-                            labelWidth: 150,
-                            value: "Sektor",
-                            required: true,
-                            invalidMessage: "Potrebno je odabrati sektor.",
-                            on: {
-                                // var input= $$("choseSectorCombo").getInputNode().value;
-                                onChange(id) {
-                                        connection.sendAjax("GET","hub/sector/getMaxAbscentBySector/" + id,function (text,data,xhr) {
-                                            if(text!="105.0"){
-                                                $$("percentText").define("placeholder", text);
-                                                $$("percentText").refresh();
-                                            }else{
-                                                util.messages.showErrorMessage("Odabir nije validan.");
-                                            }
-                                        },function (text,data,xhr) {
-                                            util.messages.showErrorMessage(text);
-                                        })
-                                    }
-                                }
-                        },
                         {
                             cols:[
                                 {
                                     id: "percentText",
                                     view: "text",
                                     label: "Maksimalno odsustvo:",
-                                    labelWidth:150,
+                                    labelWidth: 150,
                                     required: true,
+                                    width:200,
                                     invalidMessage: "Potrebno je unijeti određenu vrijednost."
                                 },
                                 {
                                     view: "label",
                                     label: "%",
                                     css:"percentOKbutton"
-                                }
-                            ]
-                        },
-                        {
-                            view:"button",
-                            label:"OK",
-                            align:"right",
-                            hotkey: "enter",
-                            width:100,
-                            click: function () {
-                                if($$("percentText").getValue().length===0 || $$("sectorCombo").getValue()==="Sektor"){
-                                    util.messages.showErrorMessage("Svi podaci moraju biti uneseni.");
-                                }else {
-                                    var temp = {
-                                        percent: $$("percentText").getValue(),
-                                        id: $$("sectorCombo").getValue()
-                                    };
-                                    if (temp.percent < 0 || temp.percent > 100) {
-                                        util.messages.showErrorMessage("Vrijednost mora biti između 0 i 100.");
-                                    } else {
-                                        connection.sendAjax("POST", "hub/sector/setAbscentPercent/",
-                                            function (text, data, xhr) {
-                                                if (text === "true")
-                                                    util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
-                                                else util.messages.showMessage("Greška! Pokušsjte ponovo!");
+                                },
+                                {
+                                    view:"button",
+                                    label:"OK",
+                                    align:"right",
+                                    hotkey: "enter",
+                                    width:100,
+                                    click: function () {
+                                        if($$("percentText").getValue().length===0){
+                                            util.messages.showErrorMessage("Potrebno je unijeti vrijednost.");
+                                        }else {
+                                            var temp = {
+                                                percent: $$("percentText").getValue(),
+                                                id: userData.sectorId
+                                            };
+                                            if (temp.percent < 0 || temp.percent > 100) {
+                                                util.messages.showErrorMessage("Vrijednost mora biti između 0 i 100.");
+                                            } else {
+                                                connection.sendAjax("POST", "hub/sector/setAbscentPercent/",
+                                                    function (text, data, xhr) {
+                                                        if (text === "true")
+                                                            util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
+                                                        else util.messages.showMessage("Greška! Pokušsjte ponovo!");
 
-                                            },
-                                            function (text, data, xhr) {
-                                                util.messages.showErrorMessage(text);
-                                            }, temp);
+                                                    },
+                                                    function (text, data, xhr) {
+                                                        util.messages.showErrorMessage(text);
+                                                    }, temp);
 
-                                        util.dismissDialog("percentDialog");
+                                                util.dismissDialog("percentDialog");
+                                            }
+                                        }
                                     }
                                 }
-                            }
+
+                            ]
                         }
                     ]
                 }
@@ -511,7 +489,14 @@ usergroupView = {
 
     showPercentDialog : function(){
         webix.ui(webix.copy(usergroupView.percentDialog)).show();
-        $$("sectorCombo").define("options", usergroupView.changeSectors);
+        connection.sendAjax("GET","hub/sector/getMaxAbscentBySector/"+userData.sectorId,function (text,data,xhr) {
+            if(text!="105.0") {
+                $$("percentText").define("placeholder", text);
+                $$("percentText").refresh();
+            }
+        },function (text,data,xhr) {
+            util.messages.showErrorMessage("Greska.");
+        });
     },
 
     addDialog: {
@@ -1096,6 +1081,9 @@ usergroupView = {
             // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
             // columns.removeAt(4);
             // $$("companyDT").refreshColumns();
+        }
+        if(user != "manager"){
+            $$("percent").hide();
         }
         if (user === "manager") {// rukovodioc ne moze gledati ostale sektore
             $$("choseSectorCombo").hide();
