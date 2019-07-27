@@ -713,6 +713,25 @@ var calendarView = {
                 }
             }
         });
+        //Dohvatanje kolektivnog godišnjeg
+        webix.ajax("hub/colectiveVacation/getByCompanyId/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    var colectiveVacationDays = data.json();
+                    colectiveVacationDays.forEach(function (element) {
+                        getDates(new Date(element.dateFrom), new Date(element.dateTo)).forEach(function (value) {
+                            calendarView.vacationRequestApproved.push(value.getTime());
+                        });
+                    });
+                    scheduler.setCurrentView();
+                }
+            }
+        });
     },
     showSendDialog: function () {
         if ($$("periodsDT").count() == 0) {
