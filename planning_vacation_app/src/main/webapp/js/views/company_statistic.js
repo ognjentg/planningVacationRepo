@@ -1,13 +1,194 @@
 var companyStatisticView;
+var achart = {
+    cols: [{
+        view: "chart",
+        type: "bar",
+        value: "#number#",
+        label: "#number#",
+        color: "#color#",
+        gradient: "rising",
+        radius: 0,
+        barWidth: 80,
+        yAxis: {
+            template: "",
+            start: 0, end: 10, step: 1
+        },
+        xAxis: {
+            template: "'#month#'",
+            title:"Broj odsutnih zaposlenih po mjesecu",
+            lines: false
+        },
+        padding: {
+            left: 10,
+            right: 10,
+            top: 50,
+            bottom: 70
+        },
+        url: "/hub/company/statistics/all"
+    }]
+
+
+};
+var bchart = {
+    view: "chart",
+    type: "spline",
+    value: "#number#",
+    item: {
+        borderColor: "#ffffff",
+        color: "#000000"
+    },
+    line: {
+        color: "#ff9900",
+        width: 3
+    },
+    xAxis: {
+        template: "'#month#",
+        title:"Broj odsutnih zaposlenih po mjesecu"
+    },
+    offset: 0,
+    yAxis: {
+        start: 0,
+        end: 10,
+        step: 1,
+        template: function (obj) {
+            return (obj % 20 ? "" : obj)
+        }
+    },
+    padding: {
+        bottom: 70
+    },
+    url: "/hub/company/statistics/all"
+};
+
+var cchart = {
+    view: "chart",
+    type: "bar",
+    barWidth: 20,
+    radius: 2,
+    width: 1000,
+    alpha: 0.7,
+    gradient: "rising",
+    xAxis: {
+        template: "'#month#",
+        title:"Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
+    },
+    yAxis: {
+        start: 0,
+        step: 1,
+        end: 10
+    },
+    legend: {
+        values: [{text: "Godišnji", color: "#4aa397"}, {
+            text: "Praznik",
+            color: "#69ba00"
+        }, {text: "Odsustvo", color: "#de619c", markerType: "item"}],
+        valign: "middle",
+        align: "right",
+        width: 90,
+        layout: "y"
+    },
+    series: [
+        {
+            value: "#vacation#",
+            color: "#4aa397",
+            tooltip: {
+                template: "#vacation#"
+            }
+        },
+        {
+            value: "#religion#",
+            color: "#69ba00",
+            tooltip: {
+                template: "#religion#"
+            }
+        },
+        {
+            type: "line",
+            value: "#leave#",
+            color: "#36abee",
+            item: {
+                borderColor: "#b7286c",
+                color: "#de619c",
+                type: "s"
+            },
+            line: {
+                color: "#de619c",
+                width: 2
+            },
+            tooltip: {
+                template: "#leave#"
+            }
+        }
+    ],
+    padding: {
+        bottom: 60
+    },
+    url: "/hub/company/statistics/all"
+};
+
+var dchart = {
+    view: "chart",
+    width: 1000,
+    type: "area",
+    xAxis: {
+        template: "'#month#",
+        title:"Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
+    },
+    yAxis: {
+        start: 0,
+        step: 1,
+        end: 10
+    },
+    legend: {
+        values: [{text: "Godišnji", color: "#58dccd"}, {text: "Praznik", color: "#914ad8"}, {
+            text: "Odsustvo",
+            color: "#36abee"
+        }],
+        valign: "middle",
+        align: "right",
+        width: 90,
+        layout: "y"
+    },
+    eventRadius: 5,
+    series: [
+        {
+            alpha: 0.7,
+            value: "#vacation#",
+            color: "#58dccd",
+            tooltip: {
+                template: "type: A<br/>value: #vacation#"
+            }
+        },
+        {
+            alpha: 0.5,
+            value: "#religion#",
+            color: "#914ad8",
+            tooltip: {
+                template: "type: B<br/>value: #religion#"
+            }
+        },
+        {
+            alpha: 0.5,
+            value: "#leave#",
+            color: "#36abee",
+            tooltip: {
+                template: "type: C<br/>value: #leave#"
+            }
+        }
+    ], padding: {
+        bottom: 60
+    },
+    url: "/hub/company/statistics/all"
+}
 
 companyStatisticView = {
 
     selectPanel: function () {
-        $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
+        $$("main").removeView(rightPanel);
         rightPanel = "companyStatisticPanel";
 
 
-        var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
+        var panelCopy = webix.copy(this.getPanel());
         $$("main").addView(panelCopy);
         webix.protoUI({
             name: "fadeInWindow",
@@ -29,108 +210,43 @@ companyStatisticView = {
             id: "companyStatisticPanel",
             cols: [{
                 rows: [{
-                    cols:[{
-                        view: "chart",
-                        type: "bar",
-                        value: "#number#",
-                        label: "#number#",
-                        color: "#color#",
-                        height: 300,
-                        radius: 0,
-                        barWidth: 80,
-                        yAxis: {
-                            template: "",
-                            start: 0, end: 10, step: 1
-                        },
-                        xAxis: {
-                            title: "Odsutni po mjesecu",
-                            template: "'#month#'",
-                            lines: false
-                        },
-                        padding: {
-                            left: 10,
-                            right: 10,
-                            top: 50
-                        },
-                        url: "/hub/company/statistics/all"
-                    }]
+                    padding: 8,
+                    view: "toolbar",
+                    css: {"background": "#ffffff !important"},
+                    cols: [
+                        {
+                            template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika kompanije",
+                            view: "label",
+                            css: {"color": "black !important"},
+                            width: 400
+                        }
+                    ]
+                },{
+                        view: "carousel",
+                        css: "webix_dark",
+                        id: "parts",
+                        cols: [
+                            achart, bchart
+                        ]
+
 
 
                 },
                     {
                         cols: [{
-                            view: "datatable",
-                            id: "company_statisticDT",
-                            width: 180,
-                            navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
-                            select: "row",
-                            multiselect: false,
-                            columns: [{
-                                id: "id",
-                                hidden: true
-                            }, {
-                                id: "firstName",
-                                hidden: true
-                            }, {
-                                id: "lastName",
-                                hidden: true
-                            }, {
-                                id: "lfName",
-                                header: "Zaposleni",
-                                width: 180,
-                                sort: "string",
-                                template: function (obj) {
-                                    var pom = obj.firstName + " " + obj.lastName;
-                                    return pom;
-                                }
-                            }],
-
-                            on: {
-                                onSelectChange: function () {
-                                    var pom = $$("company_statisticDT").getSelectedId();
-                                    console.log(pom.id);
-                                    connection.sendAjax("GET",
-                                        "/hub/company/statistics/user/" + pom.id,
-                                        function (text, data, xhr) {
-                                            pie = data.json();
-                                            $$("chartDonutId").clearAll();
-                                            $$("chartDonutId").parse(pie);
-
-
-                                        }, function (text, data, xhr) {
-                                            util.messages.showErrorMessage(text);
-                                        });
-
-                                }
-
-                            }
-                            ,
-                            url: "/hub/user"
-                        }, {
-                            view: "chart",
-                            type: "donut",
-                            id: "chartDonutId",
-                            value: "#procentage#",
-                            color: "#color#",
-
-
-                            legend: {
-                                width: 75,
-                                align: "right",
-                                valign: "middle",
-                                template: "#category#"
-                            },
-                            shadow: 0,
-                            gradient: true,
-                            pieInnerText: "#procentage#"
-
+                            view: "carousel",
+                            css: "webix_dark",
+                            width: 1000,
+                            id: "parts",
+                            cols: [
+                                cchart, dchart
+                            ]
                         }, {
                             view: "chart",
                             type: "pie",
                             value: "#number#",
                             color: "#color#",
                             legend: {
-                                width: 75,
                                 align: "right",
                                 valign: "middle",
                                 template: "#month#"
@@ -141,6 +257,8 @@ companyStatisticView = {
 
                             url: "/hub/company/statistics/all"
                         }]
+                    },{
+                    height: 10
                     }]
             }]
         }

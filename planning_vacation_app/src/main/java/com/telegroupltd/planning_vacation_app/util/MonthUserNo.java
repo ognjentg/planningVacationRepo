@@ -6,6 +6,33 @@ public class MonthUserNo {
     private double procentage;
     private String category;
     private String color;
+    private int vacation;
+    private int leave;
+    private int religion;
+
+    public int getVacation() {
+        return vacation;
+    }
+
+    public void setVacation(int vacation) {
+        this.vacation = vacation;
+    }
+
+    public int getLeave() {
+        return leave;
+    }
+
+    public void setLeave(int leave) {
+        this.leave = leave;
+    }
+
+    public int getReligion() {
+        return religion;
+    }
+
+    public void setReligion(int religion) {
+        this.religion = religion;
+    }
 
     public String getCategory() {
         return category;
@@ -27,6 +54,15 @@ public class MonthUserNo {
         this.procentage = procentage;
         this.category = category;
         this.color=color;
+    }
+
+    public MonthUserNo(String month, int number,String color, int vacation, int leave, int religion) {
+        this.month = month;
+        this.number = number;
+        this.color=color;
+        this.vacation=vacation;
+        this.leave=leave;
+        this.religion=religion;
     }
 
     public double getProcentage() {
