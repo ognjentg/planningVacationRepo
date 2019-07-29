@@ -23,7 +23,8 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "JOIN leave_request_type lrt ON lr.leave_type_id=lrt.id "+
             "JOIN user au ON lr.approver_user_id=au.id OR lr.approver_user_id IS NULL " +
             "WHERE lr.active=1 "+
-            "GROUP BY lr.id ";
+            "GROUP BY lr.id "+
+            "ORDER BY field(status_name,\"Na čekanju\",\"Otkazivanje\",\"Odobreno\",\"Odbijeno\",\"Otkazano\") ";
 
     private static final String SQL_SHOW_ON_WAIT_REQUESTS = "SELECT lr.id, category, sender_comment, approver_comment,sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
@@ -48,13 +49,23 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "SET lr.leave_request_status_id=2,lr.approver_user_id=?,lr.leave_type_id=?,lrd.paid=? " +
             "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
 
-    private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_CANCELLATION = "UPDATE leave_request lr " +
+    /*private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCEL = "UPDATE leave_request lr " +
             "JOIN leave_request_status lrs ON lr.leave_request_status_id=lrs.id " +
             "JOIN user u ON lr.sender_user_id=u.id " +
             "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
             "JOIN vacation_days v on u.id = v.user_id " +
             "SET lr.leave_request_status_id=6,lr.approver_user_id=?,lr.leave_type_id=?,lrd.paid=? " +
+            "WHERE lr.id=? AND lrd.leave_request_id=lr.id "; */
+
+    ///////////////////////////////////////////////////////////
+    private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCEL = "UPDATE leave_request lr " +
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id=lrs.id " +
+            "JOIN user u ON lr.sender_user_id=u.id " +
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
+            "JOIN vacation_days v on u.id = v.user_id " +
+            "SET lr.leave_request_status_id=6 " +
             "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
+    ////////////////////////////////////////////////////////
 
     private static final String SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) as date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
@@ -101,7 +112,27 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "JOIN  leave_request_date lrd  ON lrd.leave_request_id=lr.id "+
             //"WHERE lr.active=1 AND lr.category = 'Odsustvo' AND sender_user_id =? "+
             "WHERE lr.active=1 AND sender_user_id =? "+
-            "GROUP BY lr.id ";
+            "GROUP BY lr.id "+
+            "ORDER BY field(status_name,\"Odobreno\",\"Odbijeno\",\"Otkazivanje\",\"Otkazano\") ";
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////
+    private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCELLATION = "UPDATE leave_request lr " +
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id=lrs.id " +
+            "JOIN user u ON lr.sender_user_id=u.id " +
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
+            "JOIN vacation_days v on u.id = v.user_id " +
+            "SET lr.leave_request_status_id=5 " +
+            "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
+    /////////////////////////////////////////////////////////////////////////////////////////SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_APPROVED
+    private static final String SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_APPROVED = "UPDATE leave_request lr " +
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id=lrs.id " +
+            "JOIN user u ON lr.sender_user_id=u.id " +
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
+            "JOIN vacation_days v on u.id = v.user_id " +
+            "SET lr.leave_request_status_id=2 " +
+            "WHERE lr.id=? AND lrd.leave_request_id=lr.id ";
+    ///////////////////////////////////////////////////////////////////////////////////////////
 
 
     @Override
@@ -145,24 +176,67 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     @Transactional
     public void updateLeaveRequestStatusApproved(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId) {
         try{
-            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_CANCELLATION).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+            //entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_CANCELLATION).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+
         }catch (Exception e){
             e.printStackTrace();
         }
 
+    }
+    /*
+    @Override
+    @Transactional
+    public void updateLeaveRequestStatusToCancel(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId) {
+        try{
+            //entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCEL).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    */
+
+    ////////////////////////////////////////////////////////////
+    @Override
+    @Transactional
+    public void updateLeaveRequestStatusToCancel(Integer leaveRequestId) {
+        try{
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCEL).setParameter(1,leaveRequestId).executeUpdate();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    ///////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////////
+    @Override
+    @Transactional
+    public void updateLeaveRequestStatusToCancellation(Integer leaveRequestId) {
+        try{
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_CANCELLATION).setParameter(1,leaveRequestId).executeUpdate();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
     @Transactional
-    public void updateLeaveRequestStatusCancelation(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId) {
+    public void updateLeaveRequestStatusToApproved(Integer leaveRequestId) {
         try{
-            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_APPROVED).setParameter(3,paid).setParameter(2, leaveRequestTypeId).setParameter(4,leaveRequestId).setParameter(1,approverId).executeUpdate();
+            entityManager.createNativeQuery(SQL_UPDATE_LEAVE_REQUEST_STATUS_TO_APPROVED).setParameter(1,leaveRequestId).executeUpdate();
+
         }catch (Exception e){
             e.printStackTrace();
         }
-
     }
 
+    /////////////////////////////////////////////////////////////////////
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id) {
         return entityManager.createNativeQuery(SQL_SHOW_ON_WAIT_REQUESTS,"LeaveRequestUserLeaveRequestStatusMapping").getResultList();

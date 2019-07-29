@@ -60,7 +60,7 @@ var  absenceHistoryView = {
                             id: "id",
                             header: "#",
                             width: 50,
-                            hidden: "true",
+                           // hidden: "true",
                         },
                         {
                             id: "statusName",
@@ -142,6 +142,18 @@ var  absenceHistoryView = {
                                         connection.sendAjax("POST", "hub/leave_request/",
                                             function (text, data, xhr) {
                                                 if (text) {
+
+                                                    var item = $$("absence_historyDT").getItem(id);
+                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
+                                                        // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                                                        refreshOnThisData();
+                                                    }, function (text, data, xhr) {
+                                                        util.messages.showErrorMessage(text);
+                                                    }, item);
+
+                                                    /*
                                                     var tempData = JSON.parse(text);
 
                                                         var date1 = {
@@ -180,16 +192,26 @@ var  absenceHistoryView = {
                                                             util.messages.showErrorMessage(text);
                                                         }, date2);
 
-                                                    //})
+
+                                                    var item = $$("absence_historyDT").getItem(id);
+                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
+                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                                                        refreshOnThisData();
+                                                    }, function (text, data, xhr) {
+                                                        util.messages.showErrorMessage(text);
+                                                    }, item);
+
+
+
                                                     util.messages.showMessage("Zahtjev uspjesno poslan");
-                                                    //calendarView.deleteCurrentRequest();
-                                                } else
+                                               */ } else
                                                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
                                             }, function (text, data, xhr) {
                                                 util.messages.showErrorMessage(text);
                                             }, leaveRequest);
                                     }
-
+                                    refreshOnAbsenceData();
                                 };
                                 //refreshOnThisData();
                                 webix.confirm(paidLeaveBox);
@@ -234,3 +256,74 @@ var  absenceHistoryView = {
     },
 
 };
+
+function refreshOnAbsenceData() {
+    console.log("refresh data");
+
+
+    webix.extend($$("absence_historyDT"), webix.ProgressBar);
+
+    var table = webix.$$("absence_historyDT");
+   // var comboItemId = $$("filterLeaveRequestsComboBox").getValue();
+    var URLCurrentUrl = "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString();
+
+   // if (comboItemId == 4) {
+    //    URLCurrentUrl = URLAllLeaveRequests;
+   // } else {
+    //    URLCurrentUrl = URLByLeaveRequestStatus
+   // }
+    /*else if(comboItemId == 3){
+        URLCurrentUrl = URLByLeaveRequestStatus+3;
+    }else if(comboItemId == 2){
+        URLCurrentUrl = URLByLeaveRequestStatus+2;
+    }else if(comboItemId == 1){
+        URLCurrentUrl = URLByLeaveRequestStatus+1;
+    }*/
+
+   // if (comboItemId == 4) {
+        webix.ajax(URLCurrentUrl, {
+
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                    //alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl);
+                        table.refresh();
+                    }
+                }
+            }
+        });
+   // }
+    /*else {
+        webix.ajax(URLCurrentUrl + comboItemId, {
+
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                    //alert("No data to load! Check your internet connection and try again.");
+                    table.hideProgress();
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        console.log("loaded data with success");
+
+                        table.clearAll();
+                        table.load(URLCurrentUrl + comboItemId);
+                        table.refresh();
+                    }
+                }
+            }
+        });
+    }*/
+}

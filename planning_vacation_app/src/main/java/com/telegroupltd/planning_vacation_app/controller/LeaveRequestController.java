@@ -208,6 +208,54 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
     }
 
+    ///////////////////////////////////////////////////////////////////////updateLeaveRequestStatusCancellation
+    @RequestMapping(value = "/updateLeaveRequestStatusToCancellation/{leaveRequestId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusToCancellation(@PathVariable Integer leaveRequestId){
+        leaveRequestRepository.updateLeaveRequestStatusToCancellation(leaveRequestId);
+        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(lrs.getSenderUserId());
+        notification.setTitle("Bolovanje");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(lrs.getDateFrom());
+        String dateTo = format.format(lrs.getDateTo());
+        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setLeaveType((byte) 4);
+        notification.setActive((byte) 1);
+        notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
+    }
+    ///////////////////////////////////////////////////////////////////////////
+
+    @RequestMapping(value = "/updateLeaveRequestStatusToApproved/{leaveRequestId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId){
+        leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId);
+        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(lrs.getSenderUserId());
+        notification.setTitle("Bolovanje");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(lrs.getDateFrom());
+        String dateTo = format.format(lrs.getDateTo());
+        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setLeaveType((byte) 4);
+        notification.setActive((byte) 1);
+        notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
+    }
+
+    /////////////////////////////////////////////////////////////////////////////
+
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.GET)
     public @ResponseBody
     void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) throws BadRequestException {
@@ -309,9 +357,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         emailNotification.createNotification(user, notificationTitle, notificationText, (byte)(int)leaveRequest.getLeaveTypeId());
     }
 
-    @RequestMapping(value = "/updateLeaveRequestStatusCancellation/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
     public @ResponseBody
-   void updateLeaveRequestStatusCancelation(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException{
+   void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException{
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
@@ -356,7 +404,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             religionLeave.setNumberOfDaysUsed(leaveRequestDates.size() - religionLeave.getNumberOfDaysUsed());
             religionLeaveRepository.saveAndFlush(religionLeave);
         }
-        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
+        leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
         lrs.setLeaveTypeId(leaveRequestTypeId);
         Notification notification = new Notification();
@@ -385,7 +433,33 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                     + date2 + " je otkazan.");
         }
         notificationRepository.saveAndFlush(notification);
+    }*/
+
+    ///////////////////////////////////////////////////////////////////////////////
+    @RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId){
+        leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
+        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
+        Notification notification = new Notification();
+        notification.setReceiverUserId(lrs.getSenderUserId());
+        notification.setTitle("Bolovanje");
+        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
+        String dateFrom = format.format(lrs.getDateFrom());
+        String dateTo = format.format(lrs.getDateTo());
+        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
+        notification.setLeaveType((byte) 4);
+        notification.setActive((byte) 1);
+        notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() == (byte)1)
+            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
     public @ResponseBody

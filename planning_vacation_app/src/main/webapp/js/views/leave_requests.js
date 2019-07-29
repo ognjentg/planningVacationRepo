@@ -82,6 +82,20 @@ leaveRequestsView = {
                                     connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                     $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                } else if (name === 5) {
+                                    $$("leave_requestDT").hideColumn("typeId");
+                                    $$("leave_requestDT").showColumn("accept");
+                                    $$("leave_requestDT").showColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                }else if (name === 6) {
+                                    $$("leave_requestDT").hideColumn("typeId");
+                                    $$("leave_requestDT").hideColumn("accept");
+                                    $$("leave_requestDT").hideColumn("reject");
+                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
                                 }
                                 if(userData.userGroupKey == "sekretar"){
                                     $$("leave_requestDT").hideColumn("accept");
@@ -129,7 +143,7 @@ leaveRequestsView = {
                         id: "id",
                         header: "#",
                         width: 50,
-                        hidden: "true",
+                       // hidden: "true",
                     }, {
                         id: "statusName",
                         sort: "string",
@@ -294,16 +308,21 @@ leaveRequestsView = {
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
         if (requestStatusName == "Otkazivanje") {
-            connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusCancellation/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
-                // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-                util.messages.showMessage("Zahtjev otkazan");
-                console.log("ZAHTJEV JE OTKAZAN " + id + type + paid);
+            webix.message("DA OTKAZIVANJE !!!");
+            var item = $$("leave_requestDT").getItem(id);
+            $$("leave_requestDT").detachEvent("onBeforeDelete");
+            connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
+                // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                refreshOnThisData();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
             //calendarView.deleteCurrentRequest(); // TO DO
             util.dismissDialog('acceptDialogId');
+
         } else {
+            webix.message("U pitanju je: "+requestStatusName.toString());
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
                 // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                 util.messages.showMessage("Zahtjev odobren");
@@ -529,7 +548,29 @@ leaveRequestsView = {
 
     },
     saveRejectedLeaveRequest: function () {
-        var komentar = $$("rejectComment").getValue();
+
+        ///////////////////////////////////////////////////////////////////////
+        var id = $$("leave_requestDT").getSelectedId();
+        $$("leave_requestDT").detachEvent("onBeforeDelete");
+        var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
+        if (requestStatusName == "Otkazivanje") {
+            webix.message("DA OTKAZIVANJE !!!");
+            var item = $$("leave_requestDT").getItem(id);
+            $$("leave_requestDT").detachEvent("onBeforeDelete");
+            connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id, function (text, data, xhr) {
+                // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
+                util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                refreshOnThisData();
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, item);
+            util.dismissDialog("rejectRequestInfoId");
+
+            refreshOnData();
+        } else {
+        ////////////////////////////////////////////////////////////////////////
+
+            var komentar = $$("rejectComment").getValue();
 
         if (komentar == "") {
             util.messages.showErrorMessage("Komentar je obavezan");
@@ -549,6 +590,7 @@ leaveRequestsView = {
             util.dismissDialog("rejectRequestInfoId");
         }
         refreshOnData();
+    }
     },
     acceptDialog: {
         view: "fadeInWindow",
