@@ -12,7 +12,7 @@ public interface LeaveRequestRepositoryCustom {
     void updateLeaveRequestStatusApproved(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationForWait(Integer id);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationById(Integer id);
-
+    Integer getNumOfAbsentPeopleFilteredBySectorId(Integer sectorId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id);
 
     List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id,Integer key);

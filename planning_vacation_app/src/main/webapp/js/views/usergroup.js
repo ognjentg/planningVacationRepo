@@ -1380,6 +1380,19 @@ usergroupView = {
     ,
     refreshCouner: function() {
         animateValue($$("t3"), 0, $$("usergroupDT").count(), 1000);
+        if($$("choseSectorCombo").getValue() > 0){
+            connection.sendAjax("GET", "hub/leave_request/numOfAbsentPeople/" + $$("choseSectorCombo").getValue(),
+                function (text, data, xhr) {
+                var numOfAbsentPeople = data.json();
+                var percent = Math.round(numOfAbsentPeople / $$("usergroupDT").count() * 100);
+                animatePercentage($$("t1"), 0,  percent, 1000);
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                });
+        }
+        else
+            $$("t1").setHTML("<p>-</p>");
+
     },
     changeSector: function () {
         console.log("method change sector");
@@ -2024,4 +2037,38 @@ function getDatesFromRange(startDate, stopDate) {
     } while (currentDate <= stopDate);
 
     return dateArray;
+}
+
+function animatePercentage(id, start, end, duration)
+{
+    console.log("counter start");
+
+    if (end === null) {
+
+        end = 0;
+
+        id.setHTML(`<p>${end}%</p>`);
+
+        return;
+    }
+
+    if (end === 0) {
+
+        id.setHTML(`<p>${end}%</p>`);
+
+        return;
+    }
+
+    var range = end - start;
+    var current = start;
+    var increment = end > start ? 1 : -1;
+    increment = end == start ? 0: increment;
+    var stepTime = Math.abs(Math.floor(duration / range));
+    var timer = setInterval(function () {
+        current += increment;
+        id.setHTML(`<p>${current}%</p>`);
+        if (current === end) {
+            clearInterval(timer);
+        }
+    }, stepTime);
 }

@@ -413,5 +413,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         Leaves leaves = new Leaves(leaveRequests, isAbsent);
         return leaves;
     }
+
+    @RequestMapping(value = "/numOfAbsentPeople/{sectorId}", method = RequestMethod.GET)
+    public @ResponseBody
+    Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId){
+        return leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorId(sectorId);
+    }
 }
 
