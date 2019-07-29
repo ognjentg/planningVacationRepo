@@ -143,7 +143,7 @@ leaveRequestsView = {
                         id: "id",
                         header: "#",
                         width: 50,
-                       // hidden: "true",
+                        hidden: "true",
                     }, {
                         id: "statusName",
                         sort: "string",
