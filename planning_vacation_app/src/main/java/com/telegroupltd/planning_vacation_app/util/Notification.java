@@ -1,7 +1,12 @@
 package com.telegroupltd.planning_vacation_app.util;
 
+import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
+import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.UserUserGroupKey;
+import com.telegroupltd.planning_vacation_app.repository.NotificationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,6 +14,21 @@ public class Notification {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    NotificationRepository notificationRepository;
+
+    @Value("User is null.")
+    private String noUser;
+
+    @Value("Pogrešan je naslov.")
+    private String noTitle;
+
+    @Value("Pogrešan je tekst.")
+    private String noText;
+
+
+
     /*
     Metoda koja ce  na email adresu korisnika slati podatke neophodne za njegovo prijavljivanje: korisnicko ime, lozinku  i PIN kompanije
      */
@@ -24,4 +44,44 @@ public class Notification {
     public void sendNotification(String emailReceiver, String title, String text){
         emailService.sendMail(emailReceiver, title, text);
     }
+
+    public void createNotification(User user, String title, String text, Byte leaveType) throws BadRequestException {
+        if(user == null)
+            throw new BadRequestException(noUser);
+        if(title == null)
+            throw new BadRequestException(noTitle);
+        if(text == null)
+            throw new BadRequestException(noText);
+        com.telegroupltd.planning_vacation_app.model.Notification notification = new com.telegroupltd.planning_vacation_app.model.Notification();
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(user.getCompanyId());
+        notification.setActive((byte) 1);
+        notification.setText(text);
+        notification.setTitle(title);
+        notification.setReceiverUserId(user.getId());
+        notification.setLeaveType(leaveType);
+        notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() != null && user.getReceiveMail() == (byte)1 && user.getEmail() != null)
+            sendNotification(user.getEmail(), title, text);
+    }
+
+    public void createNotification(UserUserGroupKey user, String title, String text, Byte leaveType) throws BadRequestException{
+        if(title == null)
+            throw new BadRequestException(noTitle);
+        if(text == null)
+            throw new BadRequestException(noText);
+        com.telegroupltd.planning_vacation_app.model.Notification notification = new com.telegroupltd.planning_vacation_app.model.Notification();
+        notification.setSeen((byte) 0);
+        notification.setCompanyId(user.getCompanyId());
+        notification.setActive((byte) 1);
+        notification.setText(text);
+        notification.setTitle(title);
+        notification.setReceiverUserId(user.getId());
+        notification.setLeaveType(leaveType);
+        notificationRepository.saveAndFlush(notification);
+        if(user.getReceiveMail() != null && user.getReceiveMail() == (byte)1 && user.getEmail() != null)
+            sendNotification(user.getEmail(), title, text);
+
+    }
+
 }

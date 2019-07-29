@@ -71,52 +71,38 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         if (repo.saveAndFlush(leaveRequest) == null)
             throw new BadRequestException(badRequestInsert);
         logCreateAction(leaveRequest);
-        Notification notification = new Notification();
-        notification.setActive((byte) 1);
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(leaveRequest.getCompanyId());
+        String notificationTitle = "";
+        Byte leaveType = 0;
         User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-        String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je psolao zahtjev za ";
+        String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je poslao zahtjev za ";
         if ("Godišnji".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za godišnji odmor");
+            notificationTitle = "Zahtjev za godišnji odmor";
             notificationText += "godišnji odmor.";
-            notification.setLeaveType((byte) 1);
+            leaveType = 1;
         } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za odsustvo");
-            notification.setLeaveType((byte) 2);
+            notificationTitle = "Zahtjev za odsustvo";
+            leaveType = 2;
             notificationText += "odsustvo.";
         } else if ("Praznik".equals(leaveRequest.getCategory())) {
-            notification.setTitle("Zahtjev za praznik");
-            notification.setLeaveType((byte) 3);
+            notificationTitle = "Zahtjev za praznik";
+            leaveType = 3;
             notificationText += "praznik.";
         }
-        notification.setText(notificationText + " " + leaveRequest.getSenderComment());
+        notificationText += " " + leaveRequest.getSenderComment();
         if (sectorId != null && userTemp.getUserGroupId() == 6) {
             Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
-            notification.setReceiverUserId(s.getSectorManagerId());
-            notificationRepository.saveAndFlush(notification);
+            User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte)1);
+            emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
         } else {
             List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     2, (byte) 1);
             List<User> directors = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
                     3, (byte) 1);
             for (User user1 : directors) {
-                Notification temp = cloner.deepClone(notification);
-                temp.setId(null);
-                temp.setReceiverUserId(user1.getId());
-                notificationRepository.saveAndFlush(temp);
-                if(user1.getReceiveMail() == (byte)1)
-                    emailNotification.sendNotification(user1.getEmail(), temp.getTitle(), temp.getText());
-                notification = temp;
+                emailNotification.createNotification(user1, notificationTitle, notificationText, leaveType);
             }
             for (User user : admins) {
-                Notification temp = cloner.deepClone(notification);
-                temp.setId(null);
-                temp.setReceiverUserId(user.getId());
-                notificationRepository.saveAndFlush(temp);
-                if(user.getReceiveMail() == (byte)1)
-                    emailNotification.sendNotification(user.getEmail(), temp.getTitle(), temp.getText());
-                notification = temp;
+                emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
             }
 
         }
@@ -224,38 +210,32 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.GET)
     public @ResponseBody
-    void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
+    void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) throws BadRequestException {
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(lrs.getSenderUserId());
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setSeen((byte) 0);
-        notification.setActive((byte) 1);
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
         User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
         String date1 = formatter.format(dateFrom.getTime());
         String date2 = formatter.format(dateTo.getTime());
+        String notificationTitle = "";
+        String notificationText = "";
         if ("Godišnji".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za godišnji odmor");
-             notification.setText("Godišnji odmor u periodu od " + date1 + " do "
-                        + date2 + " je odbijen.");
+            notificationTitle = "Zahtjev za godišnji odmor";
+            notificationText = "Godišnji odmor u periodu od " + date1 + " do "
+                        + date2 + " je odbijen.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu od " + date1 + " do "
-                        + date2 + " je odbijeno.");
+            notificationTitle = "Zahtjev za odsustvo";
+            notificationText = "Odsustvo u periodu od " + date1 + " do "
+                        + date2 + " je odbijeno.";
         } else if ("Praznik".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu od " + date1 + " do "
-                        + date2 + " je odbijen.");
+            notificationTitle = "Zahtjev za praznik";
+            notificationText = "Praznik u periodu od " + date1 + " do "
+                        + date2 + " je odbijen.";
         }
-        notification.setText(notification.getText() + " " + approverComment);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
-
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte)(int)leaveRequest.getLeaveTypeId());
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
@@ -305,34 +285,28 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
         lrs.setLeaveTypeId(leaveRequestTypeId);
-        Notification notification = new Notification();
-        System.out.println(lrs.getSenderUserId());
 
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setSeen((byte) 0);
-        notification.setActive((byte) 1);
-        notification.setReceiverUserId(lrs.getSenderUserId());
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
         String date1 = formatter.format(dateFrom.getTime());
         String date2 = formatter.format(dateTo.getTime());
+        String notificationTitle = "";
+        String notificationText = "";
         if ("Godišnji".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za godišnji odmor");
-            notification.setText("Godišnji odmor u periodu od " + date1 + " do "
-                    + date2 + " je odobren.");
+            notificationTitle = "Zahtjev za godišnji odmor";
+            notificationText = "Godišnji odmor u periodu od " + date1 + " do "
+                    + date2 + " je odobren.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu od " + date1 + " do "
-                    + date2 + " je odobreno.");
+            notificationTitle = "Zahtjev za odsustvo";
+            notificationText = "Odsustvo u periodu od " + date1 + " do "
+                    + date2 + " je odobreno.";
         } else if ("Praznik".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu od " + date1 + " do "
-                    + date2 + " je odobren.");
+            notificationTitle = "Zahtjev za praznik";
+            notificationText = "Praznik u periodu od " + date1 + " do "
+                    + date2 + " je odobreno.";
         }
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte)(int)leaveRequest.getLeaveTypeId());
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusCancellation/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)

@@ -83,10 +83,9 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
     @RequestMapping(value = "/addSickLeaveRequest", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    String insert(@RequestBody List<Date> dates) throws ParseException {
+    String insert(@RequestBody List<Date> dates) throws BadRequestException {
         if (dates.size() > 0) {
             dates.sort(Comparator.comparing(Date::toLocalDate));
-            Notification notification = new Notification();
             User user = userRepository.getByIdAndActive(userBean.getUserUserGroupKey().getId(), (byte)1);
             List<User> users = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), 4, (byte)1);
             Calendar cal = Calendar.getInstance();
@@ -98,22 +97,10 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
                 sickLeave.setDateFrom(new Timestamp(dates.get(0).getTime()));
                 sickLeave.setDateTo(new Timestamp(dates.get(dates.size() - 1).getTime()));
                 sickLeave.setSickLeaveStatusId(1);
-                notification.setTitle("Bolovanje");
-                notification.setLeaveType((byte) 4);
-                notification.setText("Korisnik " + user.getFirstName() + " " + user.getLastName() + " je poslao zahtjev za bolovanje " +
-                         "u perioudu od " + dates.get(0) + " do " + dates.get(dates.size() - 1) + ".");
-                notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-                notification.setSeen((byte) 0);
-                notification.setActive((byte) 1);
+                String notificationText = "Korisnik " + user.getFirstName() + " " + user.getLastName() + " je poslao zahtjev za bolovanje " +
+                        "u perioudu od " + dates.get(0) + " do " + dates.get(dates.size() - 1) + ".";
                 for(User element : users){
-                    Notification temp = cloner.deepClone(notification);
-                    temp.setId(null);
-                    temp.setReceiverUserId(element.getId());
-                    notificationRepository.saveAndFlush(temp);
-                    if(user.getReceiveMail() == (byte)1)
-                        emailNotification.sendNotification(user.getEmail(), temp.getTitle(), temp.getText());
-                    notification = temp;
-
+                    emailNotification.createNotification(element, "Bolovanje", notificationText, (byte)4);
                 }
                 if (repo.saveAndFlush(sickLeave) != null) {
                     entityManager.refresh(sickLeave);
@@ -131,46 +118,26 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
 
     @RequestMapping(value = "/updateSickLeaveStatusUnjustified/{sickLeaveId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateSickLeaveStatusUnjustified(@PathVariable Integer sickLeaveId){
+    void updateSickLeaveStatusUnjustified(@PathVariable Integer sickLeaveId) throws  BadRequestException{
         sickLeaveRepository.updateSickLeaveStatusUnjustified(sickLeaveId);
         SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
         User user = userRepository.getByIdAndActive(sickLeave.getUserId(), (byte)1);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(sickLeave.getUserId());
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
         String dateFrom = format.format(sickLeave.getDateFrom());
         String dateTo = format.format(sickLeave.getDateTo());
-        notification.setTitle("Bolovanje");
-        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " nije opravdano.");
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setLeaveType((byte) 4);
-        notification.setActive((byte) 1);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
+        emailNotification.createNotification(user, "Bolovanje", "Bolovanje u periodu od " + dateFrom + " do " + dateTo + " nije opravdano.", (byte)4);
     }
 
     @RequestMapping(value = "/updateSickLeaveStatusJustified/{sickLeaveId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateSickLeaveStatusJustified(@PathVariable Integer sickLeaveId){
+    void updateSickLeaveStatusJustified(@PathVariable Integer sickLeaveId) throws BadRequestException{
         sickLeaveRepository.updateSickLeaveStatusJustified(sickLeaveId);
         SickLeave sickLeave = sickLeaveRepository.getByIdAndActive(sickLeaveId, (byte) 1);
         User user = userRepository.getByIdAndActive(sickLeave.getUserId(), (byte)1);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(sickLeave.getUserId());
-        notification.setTitle("Bolovanje");
         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
         String dateFrom = format.format(sickLeave.getDateFrom());
         String dateTo = format.format(sickLeave.getDateTo());
-        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setLeaveType((byte) 4);
-        notification.setActive((byte) 1);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());
+        emailNotification.createNotification(user, "Bolovanje", "Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.", (byte)4);
     }
 
     @Override

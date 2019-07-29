@@ -47,7 +47,23 @@ usergroupView = {
                     css: "companyPanelToolbar",
                     template: "<span class='fa fa-users'></span> Zaposleni"
                 }, {}, {}, {},
-
+                    {
+                        css: "employee-counter right_margin",
+                        rows: [
+                            {
+                                view: "template",
+                                id: "t1",
+                                css: "employee-counter",
+                                template: "<p>-</p>"
+                            },
+                            {
+                                view: "label",
+                                label: "Trenutno odsustvo sektora",
+                                type: "header",
+                                css: "employee-counter"
+                            },
+                        ]
+                    },
                     {
                         css: "employee-counter right_margin",
                         rows: [
@@ -175,7 +191,7 @@ usergroupView = {
 
                                 if (sectorID == -2 || sectorID == -1) {
                                     $$("changeManagerBtn").disable();
-                                } else $$("changeManagerBtn").enable()
+                                } else $$("changeManagerBtn").enable();
 
                             }
                         }
@@ -1294,10 +1310,13 @@ usergroupView = {
         var form = $$("addUserForm");
         if (form.validate()) {
             $$("save").disable();
+            var userGroupId = $$("choseUserGroupCombo").getValue();
+            if(!userGroupId)
+                userGroupId = 6;
             var newUser = {
                 email: form.getValues().email,
                 sectorId: sectorID,
-                userGroupId: $$("choseUserGroupCombo").getValue(),
+                userGroupId: userGroupId,
                 companyId: userData.companyId,
                 pauseFlag: form.getValues().checkPauseFlag,
                 startDate: form.getValues().startDate
