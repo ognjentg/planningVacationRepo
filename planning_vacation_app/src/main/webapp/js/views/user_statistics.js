@@ -2,7 +2,7 @@ var userStatisticsView;
 
 var first = {
     cols: [{
-        id:"firstID",
+        id: "firstID",
         view: "chart",
         type: "bar",
         value: "#number#",
@@ -17,7 +17,7 @@ var first = {
         },
         xAxis: {
             template: "'#month#'",
-            title:"Broj odsutnih zaposlenih po mjesecu",
+            title: "Broj odsutnih dana zaposlenog po mjesecu",
             lines: false
         },
         padding: {
@@ -31,7 +31,7 @@ var first = {
 
 };
 var second = {
-    id:"secondID",
+    id: "secondID",
     view: "chart",
     type: "spline",
     value: "#number#",
@@ -45,7 +45,7 @@ var second = {
     },
     xAxis: {
         template: "'#month#",
-        title:"Broj odsutnih zaposlenih po mjesecu"
+        title: "Broj odsutnih dana zaposlenog po mjesecu"
     },
     offset: 0,
     yAxis: {
@@ -103,7 +103,7 @@ var CHART = {
             return (obj % 20 ? "" : obj)
         }
     },
-    padding:{
+    padding: {
         bottom: 70
     }
 };
@@ -128,7 +128,8 @@ var aChart = {
     },
 
     xAxis: {
-        template: "'#category#"
+        template: "'#category#",
+        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
     },
     yAxis: {
         title: "Procenat",
@@ -163,7 +164,8 @@ var bChart = {
         shadow: false
     },
     xAxis: {
-        template: "'#category#"
+        template: "'#category#",
+        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
     },
     yAxis: {
         title: "Procenat",
@@ -192,7 +194,8 @@ var cChart = {
         width: 3
     },
     xAxis: {
-        template: "'#category#"
+        template: "'#category#",
+        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
     },
     yAxis: {
         title: "Procenat",
@@ -217,7 +220,8 @@ var dChart = {
         template: "#procentage#"
     },
     xAxis: {
-        template: "'#category#"
+        template: "'#category#",
+        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
     },
     yAxis: {
         title: "Procenat",
@@ -563,6 +567,14 @@ userStatisticsView = {
                     }],
 
                     on: {
+                        onBeforeLoad:function(){
+                            this.showOverlay("Učitavanje...");
+                        },
+                        onAfterLoad:function(){
+                            this.hideOverlay();
+                            if (!this.count())
+                                this.showOverlay("Izvinite, nema podataka.");
+                        },
                         onSelectChange: function () {
                             var pom = $$("user_statisticsDT").getSelectedId();
                             console.log(pom.id);
@@ -574,39 +586,97 @@ userStatisticsView = {
                                     $$("chartDonutId").clearAll();
                                     $$("chartDonutId").parse(pie);
 
+                                    if (!$$("chartDonutId").count()) { //if no data is available
+                                        webix.extend($$("chartDonutId"), webix.OverlayBox);
+                                        $$("chartDonutId").showOverlay("<div><img src='https://loading.io/spinners/coffee/index.coffee-cup-drink-loader.svg'></img></div><div style='margin:75px; font-size:20px;'>Nema podataka</div>");
+
+                                    } else {
+                                        $$("chartDonutId").hideOverlay();
+                                    }
+
+
                                     $$("aChartId").clearAll();
                                     $$("aChartId").parse(pie);
+
+                                    if (!$$("aChartId").count()) { //if no data is available
+                                        webix.extend($$("aChartId"), webix.OverlayBox);
+                                        $$("aChartId").showOverlay("</div><div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("aChartId").hideOverlay();
+                                    }
 
                                     $$("bChartId").clearAll();
                                     $$("bChartId").parse(pie);
 
+                                    if (!$$("bChartId").count()) { //if no data is available
+                                        webix.extend($$("bChartId"), webix.OverlayBox);
+                                        $$("bChartId").showOverlay("</div><div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("bChartId").hideOverlay();
+                                    }
+
                                     $$("cChartId").clearAll();
                                     $$("cChartId").parse(pie);
+
+                                    if (!$$("cChartId").count()) { //if no data is available
+                                        webix.extend($$("cChartId"), webix.OverlayBox);
+                                        $$("cChartId").showOverlay("</div><div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("cChartId").hideOverlay();
+                                    }
 
                                     $$("dChartId").clearAll();
                                     $$("dChartId").parse(pie);
 
+                                    if (!$$("dChartId").count()) { //if no data is available
+                                        webix.extend($$("dChartId"), webix.OverlayBox);
+                                        $$("dChartId").showOverlay("</div><div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("dChartId").hideOverlay();
+                                    }
+
                                     $$("chartChatID").clearAll();
                                     $$("chartChatID").parse(pie);
+
+                                    if (!$$("chartChatID").count()) { //if no data is available
+                                        webix.extend($$("chartChatID"), webix.OverlayBox);
+                                        $$("chartChatID").showOverlay("<div style='margin:75px; font-size:20px;'>Nema podataka</div>");
+                                    } else {
+                                        $$("chartChatID").hideOverlay();
+                                    }
 
                                 }, function (text, data, xhr) {
                                     util.messages.showErrorMessage(text);
                                 });
                             connection.sendAjax("GET",
-                                "/hub/company/statistics/user/new/"+pom.id,
+                                "/hub/company/statistics/user/new/" + pom.id,
                                 function (text, data, xhr) {
                                     var temp = data.json();
 
                                     $$("firstID").clearAll();
                                     $$("firstID").parse(temp);
 
+                                    if (!$$("firstID").count()) { //if no data is available
+                                        webix.extend($$("firstID"), webix.OverlayBox);
+                                        $$("firstID").showOverlay("<div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("firstID").hideOverlay();
+                                    }
+
                                     $$("secondID").clearAll();
                                     $$("secondID").parse(temp);
+
+                                    if (!$$("secondID").count()) { //if no data is available
+                                        webix.extend($$("secondID"), webix.OverlayBox);
+                                        $$("secondID").showOverlay("<div style='...'>Nema podataka</div>");
+                                    } else {
+                                        $$("secondID").hideOverlay();
+                                    }
+
                                 });
 
                         }
-                    }
-                    ,
+                    },
                     url: "/hub/user"
                 }, {
                     rows: [
@@ -623,8 +693,9 @@ userStatisticsView = {
                                 view: "carousel",
                                 css: "webix_dark",
                                 id: "parts",
+                                width: 800,
                                 cols: [
-                                    aChart, bChart, cChart, dChart
+                                    first, second
                                 ]
                             }]
                         }, {
@@ -637,12 +708,13 @@ userStatisticsView = {
                                     cols: [
                                         chart1, chart2, chart3
                                     ]
-                                }, {
+                                },
+                                {
                                     view: "carousel",
                                     css: "webix_dark",
                                     id: "parts",
                                     cols: [
-                                        first, second
+                                        aChart, bChart, cChart, dChart
                                     ]
                                 }
                             ]

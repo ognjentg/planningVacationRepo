@@ -83,7 +83,11 @@ usergroupView = {
                         icon: "fas fa-line-chart",
                         css: "companyButton floatMeRight",
                         align: "right",
-                        autowidth: true
+                        autowidth: true,
+                        click: function () {
+                            userStatisticsView.selectPanel();
+
+                        }
                     }
                 ]
             },
