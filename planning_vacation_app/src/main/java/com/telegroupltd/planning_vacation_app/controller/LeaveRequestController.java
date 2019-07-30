@@ -46,6 +46,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Value("Korisnik nema dovoljno godišnjeg")
     private String notEnoughDays;
 
+    @Value("Ima previše odsustva u sektoru")
+    private String tooMuchAbsent;
+
     @Autowired
     public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository, VacationDaysRepository vacationDaysRepository, LeaveRequestDateRepository leaveRequestDateRepository, ReligionLeaveRepository religionLeaveRepository) {
         super(leaveRequestRepository);
@@ -188,6 +191,18 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id) {
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
         return lrs;
+    }
+
+    @RequestMapping(value = "/canGoOnVacationByDate/{date}", method = RequestMethod.GET)
+    public @ResponseBody
+    Boolean canGoOnVacationByDate(@PathVariable Date date){
+        Double maxPercentageAbsentPeople = sectorRepository.getByIdAndActive(userBean.getUserUserGroupKey().getSectorId(), (byte)1).getMaxPercentageAbsentPeople();
+        Integer numOfUsersInSector = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), (byte)1).size();
+        Double percentage = (double)leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) / (double)numOfUsersInSector;
+        if(percentage >= maxPercentageAbsentPeople)
+            return Boolean.FALSE;
+        else
+            return Boolean.TRUE;
     }
 
     @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)

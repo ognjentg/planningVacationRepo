@@ -725,7 +725,8 @@ var calendarView = {
                     var colectiveVacationDays = data.json();
                     colectiveVacationDays.forEach(function (element) {
                         getDates(new Date(element.dateFrom), new Date(element.dateTo)).forEach(function (value) {
-                            calendarView.vacationRequestApproved.push(value.getTime());
+                            value.setHours(0);
+                            vacationRequestApproved.push(value.getTime());
                         });
                     });
                     scheduler.setCurrentView();

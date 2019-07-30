@@ -3,13 +3,8 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
-import com.telegroupltd.planning_vacation_app.model.ColectiveVacation;
-import com.telegroupltd.planning_vacation_app.model.Notification;
-import com.telegroupltd.planning_vacation_app.model.VacationDays;
-import com.telegroupltd.planning_vacation_app.repository.ColectiveVacationRepository;
-import com.telegroupltd.planning_vacation_app.repository.NotificationRepository;
-import com.telegroupltd.planning_vacation_app.repository.UserRepository;
-import com.telegroupltd.planning_vacation_app.repository.VacationDaysRepository;
+import com.telegroupltd.planning_vacation_app.model.*;
+import com.telegroupltd.planning_vacation_app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -42,7 +37,9 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     @Autowired
     private VacationDaysRepository vacationDaysRepository;
     @Autowired
-    private NotificationRepository notificationRepository;
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private LeaveRequestDateRepository leaveRequestDateRepository;
     @Autowired
     private com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
     @PersistenceContext
@@ -135,24 +132,26 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
                         Date dateFrom = new Date(colectiveVacation.getDateFrom().getTime());
                         Date dateTo = new Date(colectiveVacation.getDateTo().getTime());
                         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
-
-                        long numOfDays = Math.abs(TimeUnit.DAYS.convert(dateFrom.getTime() - dateTo.getTime(), TimeUnit.MILLISECONDS));
+                        long numOfDays = Math.abs(TimeUnit.DAYS.convert(dateFrom.getTime() - dateTo.getTime(), TimeUnit.MILLISECONDS)) + 1;
                         userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte)1).forEach(element -> {
                             VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-                            Notification notification = new Notification();
-                            notification.setReceiverUserId(element.getId());
-                            notification.setTitle("Kolektivni godišnji odmor");
-                            notification.setText("Kolektivni godišnji odmor će se održati od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + ".");
-                            notification.setActive((byte) 1);
-                            notification.setCompanyId(element.getCompanyId());
-                            notification.setSeen((byte)0);
-                            notificationRepository.saveAndFlush(notification);
-                            //if(element.getEmail() != null && element.getReceiveMail() != null && element.getReceiveMail() == (byte)1)
-                             //   emailNotification.sendNotification(element.getEmail(), notification.getTitle(), notification.getText());
+                            try {
+                                emailNotification.createNotification(element, "Kolektivni godišnji odmor", "Kolektivni godišnji odmor će se održati od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + ".", null);
+                            }
+                            catch (BadRequestException e){
+
+                            }
                             if(vacationDays != null){
                                 vacationDays.setUsedDays(vacationDays.getUsedDays() + (int)numOfDays);
                                 vacationDaysRepository.saveAndFlush(vacationDays);
                             }
+                        });
+                        List<LeaveRequestLeaveRequestDays> leaveRequestLeaveRequestDays = leaveRequestRepository.getAllLeaveRequestDaysDaysFilteredByPeriodAndCompanyId(colectiveVacation.getDateFrom(), colectiveVacation.getDateTo(), userBean.getUserUserGroupKey().getCompanyId());
+                        leaveRequestLeaveRequestDays.forEach(element -> {
+                            leaveRequestDateRepository.deleteById(element.getLeaveRequestDateId());
+                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                            vacationDays.setUsedDays(vacationDays.getUsedDays() - 1);
+                            vacationDaysRepository.saveAndFlush(vacationDays);
                         });
                     }
                 }
@@ -194,16 +193,12 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
                     long numOfDays = Math.abs(TimeUnit.DAYS.convert(dateFrom.getTime() - dateTo.getTime(), TimeUnit.MILLISECONDS));
                     userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte)1).forEach(element -> {
                         VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-                        Notification notification = new Notification();
-                        notification.setReceiverUserId(element.getId());
-                        notification.setTitle("Kolektivni godišnji odmor");
-                        notification.setText("Kolektivni godišnji odmor od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + " je otkazan.");
-                        notification.setActive((byte) 1);
-                        notification.setCompanyId(element.getCompanyId());
-                        notification.setSeen((byte)0);
-                        notificationRepository.saveAndFlush(notification);
-                        //if(element.getEmail() != null && element.getReceiveMail() != null && element.getReceiveMail() == (byte)1)
-                          //  emailNotification.sendNotification(element.getEmail(), notification.getTitle(), notification.getText());
+                        try {
+                            emailNotification.createNotification(element, "Kolektivni godišnji odmor", "Kolektivni godišnji odmor od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + " je otkazan.", null);
+                        }
+                        catch (BadRequestException e){
+
+                        }
                         if(vacationDays != null){
                             vacationDays.setUsedDays(vacationDays.getUsedDays() - (int)numOfDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);

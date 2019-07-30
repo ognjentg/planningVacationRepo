@@ -38,11 +38,11 @@ public class Notification {
     public void sendLoginLink(String emailReceiver, String username, String password, String companyPin) {
         //TODO: Add ability to format the message with configuration.
         String prettyText = "Vaša šifra: "+ password + "\n" +"Vaš PIN broj: "+ companyPin;
-        emailService.sendMail(emailReceiver,"Vaši korisnički podaci.", prettyText);
+        new Thread(() -> emailService.sendMail(emailReceiver,"Vaši korisnički podaci.", prettyText)).start();
     }
 
     public void sendNotification(String emailReceiver, String title, String text){
-        emailService.sendMail(emailReceiver, title, text);
+        new Thread(() -> emailService.sendMail(emailReceiver, title, text)).start();
     }
 
     public void createNotification(User user, String title, String text, Byte leaveType) throws BadRequestException {
@@ -65,23 +65,5 @@ public class Notification {
             sendNotification(user.getEmail(), title, text);
     }
 
-    public void createNotification(UserUserGroupKey user, String title, String text, Byte leaveType) throws BadRequestException{
-        if(title == null)
-            throw new BadRequestException(noTitle);
-        if(text == null)
-            throw new BadRequestException(noText);
-        com.telegroupltd.planning_vacation_app.model.Notification notification = new com.telegroupltd.planning_vacation_app.model.Notification();
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(user.getCompanyId());
-        notification.setActive((byte) 1);
-        notification.setText(text);
-        notification.setTitle(title);
-        notification.setReceiverUserId(user.getId());
-        notification.setLeaveType(leaveType);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() != null && user.getReceiveMail() == (byte)1 && user.getEmail() != null)
-            sendNotification(user.getEmail(), title, text);
-
-    }
 
 }
