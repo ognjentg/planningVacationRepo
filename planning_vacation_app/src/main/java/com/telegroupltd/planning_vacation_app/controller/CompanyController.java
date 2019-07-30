@@ -245,6 +245,8 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         for (LeaveRequest leaveRequest : leaveRequests) {
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
+            if(leaveRequestDates.size()<1)
+                return null;
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             Date firstDay = leaveRequestDates.get(0).getDate();
             Date lastDay = leaveRequestDates.get(leaveRequestDates.size() - 1).getDate();
@@ -815,6 +817,8 @@ public class CompanyController extends GenericController<Company, Integer> {
         List<User> usersInCompany = new ArrayList<>();
         List<LeaveRequest> leaveRequests = new ArrayList<>();
 
+        if(leaveRequests.size() < 1)
+            return null;
 
         if (userBean.getUserUserGroupKey().getUserGroupKey() == "admin" || userBean.getUserUserGroupKey().getUserGroupKey() == "direktor" || userBean.getUserUserGroupKey().getUserGroupKey() == "sekretar") {
             usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
@@ -840,7 +844,11 @@ public class CompanyController extends GenericController<Company, Integer> {
         Integer leave1 = 0, leave2 = 0, leave3 = 0, leave4 = 0, leave5 = 0, leave6 = 0, leave7 = 0, leave8 = 0, leave9 = 0, leave10 = 0, leave11 = 0, leave12 = 0;
 
         for (LeaveRequest leaveRequest : leaveRequests) {
+            System.out.println(leaveRequest.getCategory());
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
+            if(leaveRequestDates.size()<1){
+                return null;
+            }
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             Date firstDay = leaveRequestDates.get(0).getDate();
             Date lastDay = leaveRequestDates.get(leaveRequestDates.size() - 1).getDate();
