@@ -524,23 +524,47 @@ var showApp = function () {
     webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
         success: function (text, data, xhr) {
             numberOfUnreadNotifications = 0;
+            notifications = [];
             var userNotifications = data.json();
             var notification;
             for (var i = 0; i < userNotifications.length; i++) {
-                if (userNotifications[i].seen == 0)
+                if (userNotifications[i].seen == 0){
                     numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
-                notification = {
-                    id: userNotifications[i].id,
-                    title: userNotifications[i].title,
-                    text: userNotifications[i].text,
-                    active: userNotifications[i].active,
-                    seen: userNotifications[i].seen,
-                    receiverUserId: userNotifications[i].receiverUserId,
-                    companyId: userNotifications[i].companyId,
-                    leaveType: userNotifications[i].leaveType,
-                };
-                notifications.push(notification);
-                //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
+                    notification = {
+                        id: userNotifications[i].id,
+                        title: userNotifications[i].title,
+                        text: userNotifications[i].text,
+                        active: userNotifications[i].active,
+                        seen: userNotifications[i].seen,
+                        receiverUserId: userNotifications[i].receiverUserId,
+                        companyId: userNotifications[i].companyId,
+                        leaveType: userNotifications[i].leaveType,
+                    };
+                    notifications.push(notification);
+                    //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
+                }
+            }
+            if(notifications.length<10){
+                var leng=10-notifications.length;
+                var j=0;
+                for (var i = 0; i < leng; i++){
+                    if (userNotifications[j].seen == 1) {
+                        notification = {
+                            id: userNotifications[i].id,
+                            title: userNotifications[i].title,
+                            text: userNotifications[i].text,
+                            active: userNotifications[i].active,
+                            seen: userNotifications[i].seen,
+                            receiverUserId: userNotifications[i].receiverUserId,
+                            companyId: userNotifications[i].companyId,
+                            leaveType: userNotifications[i].leaveType,
+                        };
+                        notifications.push(notification);
+                    }else{
+                        i--;
+                    }
+                    j++;
+                }
             }
             $$("notificationBtn").config.badge = numberOfUnreadNotifications;
             $$("notificationBtn").refresh();
@@ -1103,11 +1127,11 @@ showNotifications = function () {
                     borderless: true,
                     template: function (obj) {
                         if (obj.seen)
-                            return "<span class='m_title'>" + (obj.title) + "</span>" + "<span class='cbx'><input type='checkbox' class='cb' checked='checked'></span>" +
-                                "<span class='message'>" + (obj.text) + "</span>";
-                        return "<span class='m_title'>" + (obj.title) + "</span>" + "<span class='cbx'><input type='checkbox' class='cb'></span>" +
-                            "<span class='message'>" + (obj.text) + "</span>";
-                    }, //ima problem kad je neki item u listi cekiran, pa kad ponovo predjes na njega poveca se brojac
+                            return "<span style='color:green' class='m_title' >" + (obj.title) + "</span>"  +
+                                "<span style='color:green' class='message'>" + (obj.text) + "</span>";
+                        return "<span style='color:red' class='m_title'>" + (obj.title) + "</span>" +
+                            "<span style='color:red' class='message'>" + (obj.text) + "</span>";
+                    },
                     css: "notifications",
                     width: 300,
                     type: {
@@ -1140,9 +1164,29 @@ showNotifications = function () {
                                 }
 
                             }
+
+
+                            if(item.seen==0){
+                                numberOfUnreadNotifications--;
+                                item.seen=1;
+                                var updatedNotifications = [];
+                                var updatedNotification = notifications.filter(
+                                    function (element) {
+                                        return element.id == item.id;
+                                    });
+                                updatedNotifications.push(updatedNotification[0]);
+                                connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
+                                    function (text, data, xhr) {
+                                    }, function (text, data, xhr) {
+                                        alert(text)
+                                    }, updatedNotifications);
+
+                                $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+                                $$("notificationBtn").refresh();
+                            }
                         }
                     },
-                    onClick: {
+                   /* onClick: {
                         cb: function (e, id) {
                             var item = this.getItem(id);
                             if (item.seen == 1)
@@ -1167,7 +1211,7 @@ showNotifications = function () {
                             $$("notificationBtn").refresh();
 
                         },
-                    },
+                    },*/
                 }
             ]
         }
@@ -1176,7 +1220,7 @@ showNotifications = function () {
     list.parse(notifications);
 
     //oboji zelenom elemente notifikacije koje se su procitane, a crvenom notifikacije koje nisu
-    $$("notificationList").data.each(function (obj) {
+    /*$$("notificationList").data.each(function (obj) {
         webix.html.addCss(obj, "list");
         if (obj.seen) {
             //      obj._appendTo('ul.list')
@@ -1184,7 +1228,7 @@ showNotifications = function () {
 
         }
         $$("notificationList").refresh();
-    });
+    });*/
 };
 
 

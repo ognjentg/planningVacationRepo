@@ -236,7 +236,6 @@ var calendarView = {
                                     calendarView.deleteCurrentRequest();
                                     if (name === 4) {
                                         calendarView.religionLeave();
-                                        console.log("analaketa");
                                     } else if (name === 3) {
                                         calendarView.sickLeave();
                                     } else if (name === 2) {
