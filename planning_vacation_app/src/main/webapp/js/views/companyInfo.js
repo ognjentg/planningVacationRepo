@@ -17,8 +17,8 @@ var companyInfoView = {
         name: "companyInfoDialog",
         position: "center",
         modal: true,
-        width:950,
-        height:520,
+        width:1100,
+        height:580,
         body:
             {
             rows:[
@@ -42,6 +42,130 @@ var companyInfoView = {
     },
             {
             cols:[
+                {///
+                    width:350,
+                    rows:[
+                        {
+                            view:"form",
+                            id:"companyInfoForm",
+                            name:"companyInfoForm",
+                            width:650,
+                            elementsConfig: {
+                                labelWidth: 190,
+                                bottomPadding: 18
+                            },
+                            elements:[
+                                {
+                                    view:"text",
+                                    id:"companyName",
+                                    name:"companyName",
+                                    label:"Naziv kompanije:",
+                                    required:true,
+                                    invalidMessage: "Niste unijeli naziv kompanije",
+                                },
+                                {
+                                    view:"text",
+                                    label:"PIN:",
+                                    id:"companyPin",
+                                    disabled:true
+                                },
+                                {
+                                    view:"text",
+                                    label:"Broj dana godišnjeg:",
+                                    id:"vacationDays",
+                                },
+                                {
+                                    view:"text",
+                                    label:"Maksimalni period godišnjeg:",
+                                    id:"maxVacDaysPeriod",
+                                },
+                                {
+                                    view:"text",
+                                    label:"Period opravdanja bolovanja:",
+                                    id:"sickDays",
+                                },
+                                {
+                                    view:"multicombo",
+                                    id:"nonWorkingDaysInWeek",
+                                    name:"nonWorkingDaysInWeek",
+                                    value: "",
+                                    label: "Sedmični neradni dani:",
+                                    placeholder:"Neradni dani u sedmici",
+                                    newValues: true,
+                                    suggest: days,
+                                    on:{}
+                                },
+                                {
+                                    view: "uploader",
+                                    id: "photoUploader",
+                                    required:true,
+                                    invalidMessage: "Niste odabrali logo.",
+                                    width: 400,
+                                    height: 50,
+                                    value: "Dodajte logo",
+                                    on: {
+                                        onBeforeFileAdd: function (upload) {
+                                            var type = upload.type.toLowerCase();
+                                            console.log(type);
+                                            if (type === "jpg" || type === "png" || type === "jpeg") {
+                                                var file = upload.file;
+                                                if(file.size > 1048576){
+                                                    util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                                    return false;
+                                                }
+                                                var reader = new FileReader();
+                                                reader.onload = function (event) {
+                                                    var img = new Image();
+                                                    img.onload = function (ev) {
+                                                        if (img.width > 220 || img.height > 50) {
+                                                            util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                                        } else {
+                                                            var newDocument = {
+                                                                name: file['name'],
+                                                                content: event.target.result.split("base64,")[1],
+                                                            };
+                                                            $$("companyLogoList").clearAll();
+                                                            $$("companyLogoList").add(newDocument);
+
+                                                        }
+                                                    };
+                                                    img.src = event.target.result;
+                                                };
+                                                reader.readAsDataURL(file);
+                                                return false;
+                                            } else {
+                                                util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+
+                                                return false;
+                                            }
+
+                                        }
+                                    }
+                                },
+                                {
+                                    view: "list",
+                                    name: "companyLogoList",
+                                    rules: {
+                                        content: webix.rules.isNotEmpty
+                                    },
+                                    scroll: false,
+                                    id: "companyLogoList",
+                                    width: 372,
+                                    type: {
+                                        height: "auto"
+                                    },
+                                    css: "relative image-upload",
+                                    template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+                                    onClick: {
+                                        'delete-file': function (e, id) {
+                                            this.remove(id);
+                                            return false;
+                                        }
+                                    }
+                                },]},
+
+                    ]
+                },
                 {
                     width:350,
                     rows:[
@@ -229,126 +353,8 @@ var companyInfoView = {
                                 }}
                         },
                     ]
-                },
-                {
-                    width:350,
-                    rows:[
-                {
-                    view:"form",
-                    id:"companyInfoForm",
-                    name:"companyInfoForm",
-                    width:600,
-                    elementsConfig: {
-                        labelWidth: 140,
-                        bottomPadding: 18
-                    },
-                    elements:[
-                        {
-                            view:"text",
-                            id:"companyName",
-                            name:"companyName",
-                            label:"Naziv kompanije:",
-                            required:true,
-                            invalidMessage: "Niste unijeli naziv kompanije",
-                        },
-                        {
-                            view:"text",
-                            label:"PIN:",
-                            id:"companyPin",
-                            disabled:true
-                        },
-                        {
-                            view:"text",
-                            label:"Broj dana godišnjeg:",
-                            id:"vacationDays",
-                        },
-                        {
-                            view:"text",
-                            label:"Broj dana bolovanja:",
-                            id:"sickDays",
-                        },
-                         {
-                            view:"multicombo",
-                            id:"nonWorkingDaysInWeek",
-                            name:"nonWorkingDaysInWeek",
-                            value: "",
-                            label: "Sedmični neradni dani:",
-                            placeholder:"Neradni dani u sedmici",
-                            newValues: true,
-                            suggest: days,
-                            on:{}
-                        },
-                        {
-                            view: "uploader",
-                            id: "photoUploader",
-                            required:true,
-                            invalidMessage: "Niste odabrali logo.",
-                            width: 400,
-                            height: 50,
-                            value: "Dodajte logo",
-                            on: {
-                                onBeforeFileAdd: function (upload) {
-                                    var type = upload.type.toLowerCase();
-                                    console.log(type);
-                                    if (type === "jpg" || type === "png" || type === "jpeg") {
-                                        var file = upload.file;
-                                        if(file.size > 1048576){
-                                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
-                                            return false;
-                                        }
-                                        var reader = new FileReader();
-                                        reader.onload = function (event) {
-                                            var img = new Image();
-                                            img.onload = function (ev) {
-                                                if (img.width > 220 || img.height > 50) {
-                                                    util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
-                                                } else {
-                                                    var newDocument = {
-                                                        name: file['name'],
-                                                        content: event.target.result.split("base64,")[1],
-                                                    };
-                                                    $$("companyLogoList").clearAll();
-                                                    $$("companyLogoList").add(newDocument);
-
-                                                }
-                                            };
-                                            img.src = event.target.result;
-                                        };
-                                        reader.readAsDataURL(file);
-                                        return false;
-                                    } else {
-                                        util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
-
-                                        return false;
-                                    }
-
-                                }
-                            }
-                        },
-                        {
-                            view: "list",
-                            name: "companyLogoList",
-                            rules: {
-                                content: webix.rules.isNotEmpty
-                            },
-                            scroll: false,
-                            id: "companyLogoList",
-                            width: 372,
-                            type: {
-                                height: "auto"
-                            },
-                            css: "relative image-upload",
-                            template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
-                            onClick: {
-                                'delete-file': function (e, id) {
-                                    this.remove(id);
-                                    return false;
-                                }
-                            }
-                        },]},
-
-                    ]
                 }
+
             ]
 
         },
@@ -434,6 +440,7 @@ var companyInfoView = {
                 var constraints = data.json();
                 $$("vacationDays").setValue(constraints.maxVacationDays);
                 $$("sickDays").setValue(constraints.sickLeaveJustificationPeriodLength);
+                $$("maxVacDaysPeriod").setValue(constraints.vacationPeriodLength);
             });
 
         connection.sendAjax("GET",
@@ -537,6 +544,7 @@ var companyInfoView = {
      var companyId = userData.companyId;
      var companyName = $$("companyName").getValue();
      var numberOfVacationDays = $$("vacationDays").getValue();
+     var maxVacDaysPeriod = $$("maxVacDaysPeriod").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
      var companyPin = $$("companyPin").getValue();
 
@@ -617,7 +625,7 @@ var companyInfoView = {
         var constraints = {
             companyId:companyId,
             maxVacationDays:numberOfVacationDays,
-            vacationPeriodLength:1,
+            vacationPeriodLength:maxVacDaysPeriod,
             sickLeaveJustificationPeriodLength:numberOfSickDays
         }
 
