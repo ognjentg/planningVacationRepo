@@ -117,6 +117,20 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "WHERE lr.active=1 AND sender_user_id=? "+
             "GROUP BY lr.id ";
 
+
+    //*****************************************
+    private static final String SQL_ALL_REQUESTS_FOR_USER_FILTERED_BY_STATUS = "SELECT lr.id, category, sender_comment, approver_comment, sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
+            "FROM leave_request lr "+
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
+            "JOIN user u ON lr.sender_user_id=u.id "+
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
+            "JOIN leave_request_type lrt ON lr.leave_type_id=lrt.id "+
+            "JOIN user au ON lr.approver_user_id=au.id OR lr.approver_user_id IS NULL " +
+            "WHERE lr.active=1 AND sender_user_id=? AND lrs.key=? "+
+            "GROUP BY lr.id ";
+    //*****************************************
+
+
     private static final String SQL_ALL_ABSENCES_HISTORY_USER = "SELECT lr.id,lrs.name AS status_name, category, min(lrd.date) as date_from, max(lrd.date) as date_to "+
             "FROM leave_request lr "+
             "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
@@ -159,6 +173,13 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserId(Integer id) {
         return entityManager.createNativeQuery(SQL_ALL_REQUESTS_FOR_USER,"LeaveRequestUserLeaveRequestStatusMapping").setParameter(1,id).getResultList();
     }
+
+    //******************************
+    @Override
+    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(Integer id, String key) {
+        return entityManager.createNativeQuery(SQL_ALL_REQUESTS_FOR_USER_FILTERED_BY_STATUS,"LeaveRequestUserLeaveRequestStatusMapping").setParameter(1,id).setParameter(2,key).getResultList();
+    }
+    //******************************
 
 
     @Override

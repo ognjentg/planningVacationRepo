@@ -1,5 +1,7 @@
 var URLAllLeaveRequests = "/hub/leave_request/leaveRequestInfo";
 var URLByLeaveRequestStatus = "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/";
+var URLAllLeaveRequestsBySector = "/hub/leave_request/leaveRequestFilteredBySectorId/";
+var URLByLeaveRequestStatusBySector = "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/";
 var leaveRequestsView;
 leaveRequestsView = {
     selectPanel: function () {
@@ -27,6 +29,7 @@ leaveRequestsView = {
             $$("leave_requestDT").hideColumn("accept");
             $$("leave_requestDT").hideColumn("reject");
         }
+        refreshOnData();
     },
     getPanel: function () {
         return {
@@ -48,55 +51,104 @@ leaveRequestsView = {
                         label: "Vrsta zahtjeva",
                         labelWidth: 100,
                         value: "4",
-                        editable: false,
+                        placeholder: "Svi",
+                        align: "left",
                         on: {
                             onChange(name) {
                                 $$("leave_requestDT").clearAll();
 
 
-                                if (name === 4) {
-                                    $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").showColumn("accept");
-                                    $$("leave_requestDT").showColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete")
-                                } else if (name === 3) {
-                                    $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").hideColumn("accept");
-                                    $$("leave_requestDT").hideColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                } else if (name === 2) {
-                                    $$("leave_requestDT").showColumn("typeId");
-                                    $$("leave_requestDT").hideColumn("accept");
-                                    $$("leave_requestDT").hideColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                } else if (name === 1) {
-                                    $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").showColumn("accept");
-                                    $$("leave_requestDT").showColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                } else if (name === 5) {
-                                    $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").showColumn("accept");
-                                    $$("leave_requestDT").showColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                }else if (name === 6) {
-                                    $$("leave_requestDT").hideColumn("typeId");
-                                    $$("leave_requestDT").hideColumn("accept");
-                                    $$("leave_requestDT").hideColumn("reject");
-                                    connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
-                                    $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                if(userData.userGroupKey == "menadzer"){
+                                    if (name === 4) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorId/" +userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorId/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete")
+                                    } else if (name === 3) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 2) {
+                                        $$("leave_requestDT").showColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 1) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 5) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    }else if (name === 6) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    }
+                                }else{
+                                    if (name === 4) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete")
+                                    } else if (name === 3) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 2) {
+                                        $$("leave_requestDT").showColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 1) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    } else if (name === 5) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").showColumn("accept");
+                                        $$("leave_requestDT").showColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    }else if (name === 6) {
+                                        $$("leave_requestDT").hideColumn("typeId");
+                                        $$("leave_requestDT").hideColumn("accept");
+                                        $$("leave_requestDT").hideColumn("reject");
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
+                                        $$("leave_requestDT").detachEvent("onBeforeDelete");
+                                    }
                                 }
+
+
                                 if(userData.userGroupKey == "sekretar"){
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
@@ -675,63 +727,116 @@ function refreshOnData() {
 
     var table = webix.$$("leave_requestDT");
     var comboItemId = $$("filterLeaveRequestsComboBox").getValue();
+    var sectorId = userData.sectorId;
     var URLCurrentUrl = null;
 
-    if (comboItemId == 4) {
-        URLCurrentUrl = URLAllLeaveRequests;
-    } else {
-        URLCurrentUrl = URLByLeaveRequestStatus
-    } /*else if(comboItemId == 3){
-        URLCurrentUrl = URLByLeaveRequestStatus+3;
-    }else if(comboItemId == 2){
-        URLCurrentUrl = URLByLeaveRequestStatus+2;
-    }else if(comboItemId == 1){
-        URLCurrentUrl = URLByLeaveRequestStatus+1;
-    }*/
 
-    if (comboItemId == 4) {
-        webix.ajax(URLCurrentUrl, {
+    if(userData.userGroupKey == "menadzer"){
+        if (comboItemId == 4) {
+            URLCurrentUrl = URLAllLeaveRequestsBySector;
+        } else {
+            URLCurrentUrl = URLByLeaveRequestStatusBySector;
+        }
+    }else{
+        if (comboItemId == 4) {
+            URLCurrentUrl = URLAllLeaveRequests;
+        } else {
+            URLCurrentUrl = URLByLeaveRequestStatus;
+        }
+    }
 
-            error: function (text, data, xhr) {
-                if (xhr.status != 200) {
-                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    //alert("No data to load! Check your internet connection and try again.");
-                    table.hideProgress();
-                }
-            },
-            success: function (text, data, xhr) {
-                if (xhr.status === 200) {
-                    if (data.json() != null) {
-                        console.log("loaded data with success");
+    if(userData.userGroupKey == "menadzer"){
+        if (comboItemId == 4) {
+            webix.ajax(URLCurrentUrl + sectorId, {
 
-                        table.clearAll();
-                        table.load(URLCurrentUrl);
-                        table.refresh();
+                error: function (text, data, xhr) {
+                    if (xhr.status != 200) {
+                        util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                        //alert("No data to load! Check your internet connection and try again.");
+                        table.hideProgress();
+                    }
+                },
+                success: function (text, data, xhr) {
+                    if (xhr.status === 200) {
+                        if (data.json() != null) {
+                            console.log("loaded data with success");
+
+                            table.clearAll();
+                            table.load(URLCurrentUrl + sectorId);
+                            table.refresh();
+                        }
                     }
                 }
-            }
-        });
-    } else {
-        webix.ajax(URLCurrentUrl + comboItemId, {
+            });
+        } else {
+            webix.ajax(URLCurrentUrl + comboItemId + "/" + sectorId, {
 
-            error: function (text, data, xhr) {
-                if (xhr.status != 200) {
-                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    //alert("No data to load! Check your internet connection and try again.");
-                    table.hideProgress();
-                }
-            },
-            success: function (text, data, xhr) {
-                if (xhr.status === 200) {
-                    if (data.json() != null) {
-                        console.log("loaded data with success");
+                error: function (text, data, xhr) {
+                    if (xhr.status != 200) {
+                        util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                        //alert("No data to load! Check your internet connection and try again.");
+                        table.hideProgress();
+                    }
+                },
+                success: function (text, data, xhr) {
+                    if (xhr.status === 200) {
+                        if (data.json() != null) {
+                            console.log("loaded data with success");
 
-                        table.clearAll();
-                        table.load(URLCurrentUrl + comboItemId);
-                        table.refresh();
+                            table.clearAll();
+                            table.load(URLCurrentUrl + comboItemId + "/" + sectorId);
+                            table.refresh();
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
+
+    }else{
+        if (comboItemId == 4) {
+            webix.ajax(URLCurrentUrl, {
+
+                error: function (text, data, xhr) {
+                    if (xhr.status != 200) {
+                        util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                        //alert("No data to load! Check your internet connection and try again.");
+                        table.hideProgress();
+                    }
+                },
+                success: function (text, data, xhr) {
+                    if (xhr.status === 200) {
+                        if (data.json() != null) {
+                            console.log("loaded data with success");
+
+                            table.clearAll();
+                            table.load(URLCurrentUrl);
+                            table.refresh();
+                        }
+                    }
+                }
+            });
+        } else {
+            webix.ajax(URLCurrentUrl + comboItemId, {
+
+                error: function (text, data, xhr) {
+                    if (xhr.status != 200) {
+                        util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                        //alert("No data to load! Check your internet connection and try again.");
+                        table.hideProgress();
+                    }
+                },
+                success: function (text, data, xhr) {
+                    if (xhr.status === 200) {
+                        if (data.json() != null) {
+                            console.log("loaded data with success");
+
+                            table.clearAll();
+                            table.load(URLCurrentUrl + comboItemId);
+                            table.refresh();
+                        }
+                    }
+                }
+            });
+        }
     }
 }

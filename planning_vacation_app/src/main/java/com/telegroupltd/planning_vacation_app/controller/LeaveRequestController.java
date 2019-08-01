@@ -508,5 +508,34 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId){
         return leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorId(sectorId);
     }
-}
+
+
+    @RequestMapping(value = "/leaveRequestFilteredBySectorId/{sectorId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorId( @PathVariable Integer sectorId) {
+        List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
+        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
+        for(var i=0;i< users.size();i++){
+            User user=users.get(i);
+            List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+            list.addAll(pom);
+        }
+        return list;
+    }
+
+
+    @RequestMapping(value = "/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/{key}/{sectorId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorIdAndLeaveRequestStatus( @PathVariable String key, @PathVariable Integer sectorId) {
+        List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
+        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
+        for(var i=0;i< users.size();i++){
+            User user=users.get(i);
+            List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(),key);
+            list.addAll(pom);
+        }
+        return list;
+    }
+
+    }
 

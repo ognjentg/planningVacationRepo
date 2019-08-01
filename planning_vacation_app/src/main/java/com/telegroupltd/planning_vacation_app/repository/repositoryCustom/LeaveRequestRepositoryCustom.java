@@ -23,4 +23,5 @@ public interface LeaveRequestRepositoryCustom {
     void updateLeaveRequestStatusToCancellation(Integer leaveRequestId);
 
     void updateLeaveRequestStatusToApproved(Integer leaveRequestId);
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(Integer id, String key);
 }

@@ -521,60 +521,6 @@ var showApp = function () {
     var localMenuData = null;
 
 
-    webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
-        success: function (text, data, xhr) {
-            numberOfUnreadNotifications = 0;
-            notifications = [];
-            var userNotifications = data.json();
-            var notification;
-            for (var i = 0; i < userNotifications.length; i++) {
-                if (userNotifications[i].seen == 0){
-                    numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
-                    notification = {
-                        id: userNotifications[i].id,
-                        title: userNotifications[i].title,
-                        text: userNotifications[i].text,
-                        active: userNotifications[i].active,
-                        seen: userNotifications[i].seen,
-                        receiverUserId: userNotifications[i].receiverUserId,
-                        companyId: userNotifications[i].companyId,
-                        leaveType: userNotifications[i].leaveType,
-                    };
-                    notifications.push(notification);
-                    //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
-                }
-            }
-            if(notifications.length<10){
-                var leng=10-notifications.length;
-                var j=0;
-                for (var i = 0; i < leng; i++){
-                    if (userNotifications[j].seen == 1) {
-                        notification = {
-                            id: userNotifications[i].id,
-                            title: userNotifications[i].title,
-                            text: userNotifications[i].text,
-                            active: userNotifications[i].active,
-                            seen: userNotifications[i].seen,
-                            receiverUserId: userNotifications[i].receiverUserId,
-                            companyId: userNotifications[i].companyId,
-                            leaveType: userNotifications[i].leaveType,
-                        };
-                        notifications.push(notification);
-                    }else{
-                        i--;
-                    }
-                    j++;
-                }
-            }
-            $$("notificationBtn").config.badge = numberOfUnreadNotifications;
-            $$("notificationBtn").refresh();
-
-        },
-        error: function (text, data, xhr) {
-            alert(text)
-        }
-    });
-
     if (userData != null) {
         if (userData.userGroupKey !== "superadmin") {
             $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
@@ -697,6 +643,9 @@ var showApp = function () {
             break;
     }
 //templateView.selectPanel();
+
+    getNotifications();
+    //window.setInterval(getNotifications, 15000);
 };
 
 //login and logout
@@ -1218,18 +1167,90 @@ showNotifications = function () {
     });
     var list = $$("notificationList");
     list.parse(notifications);
+   // window.setTimeout(updateNotifications, 15000);
+};
+updateNotifications = function () {
 
-    //oboji zelenom elemente notifikacije koje se su procitane, a crvenom notifikacije koje nisu
-    /*$$("notificationList").data.each(function (obj) {
-        webix.html.addCss(obj, "list");
-        if (obj.seen) {
-            //      obj._appendTo('ul.list')
-        } else {
+    console.log("USLOOOOOOOO");
+
+    /*for(var i=0;i<notifications.length;i++){
+        var notification = notifications.filter(
+            function (element) {
+                return element.id == i;
+            });
+        if(notification.seen == 0){
+            notification.seen = 1;
+            numberOfUnreadNotifications--;
+            var updatedNotifications = [];
+            updatedNotifications.push(notification);
+            connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
+                function (text, data, xhr) {
+                }, function (text, data, xhr) {
+                    alert(text)
+                }, updatedNotifications);
 
         }
-        $$("notificationList").refresh();
-    });*/
+        $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+        $$("notificationBtn").refresh();
+    }*/
 };
+    getNotifications = function () {
+        console.log("USLO U GET");
+        notifications=[];
+        webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
+            success: function (text, data, xhr) {
+                numberOfUnreadNotifications = 0;
+                notifications = [];
+                var userNotifications = data.json();
+                var notification;
+                for (var i = 0; i < userNotifications.length; i++) {
+                    if (userNotifications[i].seen == 0){
+                        numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
+                        notification = {
+                            id: userNotifications[i].id,
+                            title: userNotifications[i].title,
+                            text: userNotifications[i].text,
+                            active: userNotifications[i].active,
+                            seen: userNotifications[i].seen,
+                            receiverUserId: userNotifications[i].receiverUserId,
+                            companyId: userNotifications[i].companyId,
+                            leaveType: userNotifications[i].leaveType,
+                        };
+                        notifications.push(notification);
+                        //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
+                    }
+                }
+                if(notifications.length<10){
+                    var leng=10-notifications.length;
+                    var j=0;
+                    for (var i = 0; i < leng; i++){
+                        if (userNotifications[j].seen == 1) {
+                            notification = {
+                                id: userNotifications[i].id,
+                                title: userNotifications[i].title,
+                                text: userNotifications[i].text,
+                                active: userNotifications[i].active,
+                                seen: userNotifications[i].seen,
+                                receiverUserId: userNotifications[i].receiverUserId,
+                                companyId: userNotifications[i].companyId,
+                                leaveType: userNotifications[i].leaveType,
+                            };
+                            notifications.push(notification);
+                        }else{
+                            i--;
+                        }
+                        j++;
+                    }
+                }
+                $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+                $$("notificationBtn").refresh();
+
+            },
+            error: function (text, data, xhr) {
+                alert(text)
+            }
+        });
+    };
 
 
 //main call
