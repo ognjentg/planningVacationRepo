@@ -150,7 +150,10 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
                         leaveRequestLeaveRequestDays.forEach(element -> {
                             leaveRequestDateRepository.deleteById(element.getLeaveRequestDateId());
                             VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-                            vacationDays.setUsedDays(vacationDays.getUsedDays() - 1);
+                            Integer numOfUsedDays = vacationDays.getUsedDays() - 1;
+                            if(numOfUsedDays < 0)
+                                numOfUsedDays = 0;
+                            vacationDays.setUsedDays(numOfUsedDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);
                         });
                     }
@@ -200,7 +203,10 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
 
                         }
                         if(vacationDays != null){
-                            vacationDays.setUsedDays(vacationDays.getUsedDays() - (int)numOfDays);
+                            Integer numOfUsedDays = vacationDays.getUsedDays() - (int)numOfDays;
+                            if(numOfUsedDays < 0)
+                                numOfUsedDays = 0;
+                            vacationDays.setUsedDays(numOfUsedDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);
                         }
                     });

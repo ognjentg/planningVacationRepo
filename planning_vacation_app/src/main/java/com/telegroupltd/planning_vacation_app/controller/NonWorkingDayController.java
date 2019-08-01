@@ -3,10 +3,18 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequestLeaveRequestDays;
 import com.telegroupltd.planning_vacation_app.model.NonWorkingDay;
+import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.VacationDays;
+import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
 import com.telegroupltd.planning_vacation_app.repository.NonWorkingDayRepository;
+import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.repository.VacationDaysRepository;
 import com.telegroupltd.planning_vacation_app.session.UserBean;
+import com.telegroupltd.planning_vacation_app.util.Notification;
 import com.telegroupltd.planning_vacation_app.util.Validator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -22,16 +30,22 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/hub/nonWorkingDay")
 @Scope("request")
 public class NonWorkingDayController extends GenericHasActiveController<NonWorkingDay, Integer> {
     private final NonWorkingDayRepository nonWorkingDayRepository;
+
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private VacationDaysRepository vacationDaysRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private Notification emailNotification;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -103,7 +117,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     @RequestMapping(value = "/addNonWorkingDays", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public @ResponseBody
-    void insert(@RequestBody List<NonWorkingDay> nonWorkingDays) throws ParseException {
+    void insert(@RequestBody List<NonWorkingDay> nonWorkingDays) throws ParseException, BadRequestException {
 
         for (NonWorkingDay nonWorkingDay : nonWorkingDays) {
             NonWorkingDay newNonWorkingDay = new NonWorkingDay();
@@ -127,7 +141,25 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
             if (!isExist) {
                 if (repo.saveAndFlush(newNonWorkingDay) != null) {
                     entityManager.refresh(newNonWorkingDay);
-
+                    nonWorkingDays.forEach(element -> {
+                        List<LeaveRequestLeaveRequestDays> leaveRequestLeaveRequestDays = leaveRequestRepository.getAllLeaveRequestDaysDaysFilteredByPeriodAndCompanyId(element.getDay(), element.getDay(), userBean.getUserUserGroupKey().getCompanyId());
+                        leaveRequestLeaveRequestDays.forEach(elementTemp -> {
+                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(elementTemp.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                            Integer numOfUsedDays = vacationDays.getUsedDays() - 1;
+                            if(numOfUsedDays < 0)
+                                numOfUsedDays = 0;
+                            vacationDays.setUsedDays(numOfUsedDays);
+                            vacationDaysRepository.saveAndFlush(vacationDays);
+                        });
+                    });
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
+                    String dates = "";
+                    for(NonWorkingDay temp : nonWorkingDays){
+                        dates += formatter.format(temp.getDay()) + ", ";
+                    }
+                    for(User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1)){
+                        emailNotification.createNotification(user, "Neradni dani", " Dani: " + dates + "će biti neradni.", null);
+                    }
                 }
             }
         }
@@ -145,7 +177,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
 
     @RequestMapping(method = RequestMethod.DELETE)
     public @ResponseBody
-    String delete(@PathVariable NonWorkingDay nonWorkingDay1) throws ParseException {
+    String delete(@PathVariable NonWorkingDay nonWorkingDay1) throws BadRequestException {
 
         List<NonWorkingDay> nonWorkingDaysList = getNonWorkingDayForCompany(nonWorkingDay1.getCompanyId());
         for (NonWorkingDay nonWorkingDay : nonWorkingDaysList) {
@@ -153,8 +185,13 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
             String date2 = nonWorkingDay.getDay().toString();
             if (nonWorkingDay.getActive() == 1 && date1.equals(date2)) {
                 nonWorkingDay.setActive((byte)0);
-                if (repo.saveAndFlush(nonWorkingDay) != null)
+                SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
+                if (repo.saveAndFlush(nonWorkingDay) != null){
+                    for(User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1)){
+                        emailNotification.createNotification(user, "Neradni dan", "Neadni dan " + formatter.format(nonWorkingDay1.getDay()) + " je promijenjen u radni.", null);
+                    }
                     return "Uspjesno";
+                }
             }
         }
         return "Neuspjesno";

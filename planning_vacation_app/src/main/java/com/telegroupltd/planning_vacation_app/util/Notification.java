@@ -62,7 +62,12 @@ public class Notification {
         notification.setLeaveType(leaveType);
         notificationRepository.saveAndFlush(notification);
         if(user.getReceiveMail() != null && user.getReceiveMail() == (byte)1 && user.getEmail() != null)
-            sendNotification(user.getEmail(), title, text);
+            try {
+                sendNotification(user.getEmail(), title, text);
+            }
+            catch (Throwable thr){
+                thr.printStackTrace();
+            }
     }
 
 

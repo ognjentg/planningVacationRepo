@@ -60,7 +60,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t2",
                                 css: "companies-counter",
-                                template: "<p>Učitavanje</p>"
+                                template: "<p>-</p>"
                             },
                             {
                                 view: "label",
@@ -77,7 +77,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t1",
                                 css: "companies-counter",
-                                template: "<p>Učitavanje</p>"
+                                template: "<p>-</p>"
                             },
                             {
                                 view: "label",
@@ -94,7 +94,7 @@ var calendarView = {
                                 view: "template",
                                 id: "t3",
                                 css: "companies-counter",
-                                template: "<p>Učitavanje</p>"
+                                template: "<p>-</p>"
                             },
                             {
                                 view: "label",
