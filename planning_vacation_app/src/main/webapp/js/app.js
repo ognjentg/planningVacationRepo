@@ -69,6 +69,9 @@ var menuActions = function (id) {
         case "user_statistics":
             userStatisticsView.selectPanel();
             break;
+        case "sector_statistics":
+            sectorStatisticsView.selectPanel();
+            break;
     }
 
 };
@@ -103,6 +106,10 @@ var menuAdmin = [
     }, {
         id: "user_statistics",
         value: "Statistika korisnika",
+        icon: "fas fa-pie-chart"
+    }, {
+        id: "sector_statistics",
+        value: "Statistika sektora",
         icon: "fas fa-pie-chart"
     }
 
@@ -146,6 +153,10 @@ var menuDirector = [
         id: "user_statistics",
         value: "Statistika korisnika",
         icon: " fas fa-pie-chart"
+    }, {
+        id: "sector_statistics",
+        value: "Statistika sektora",
+        icon: "fas fa-pie-chart"
     }
     /*    {
               id: "collectiveVacation",
@@ -194,7 +205,7 @@ var menuSecretary = [
          }*/
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     }, {
         id: "company_statistic",
@@ -203,6 +214,11 @@ var menuSecretary = [
     }, {
         id: "user_statistics",
         value: "Statistika korisnika",
+        icon: "fas fa-pie-chart"
+    },
+    {
+        id: "sector_statistics",
+        value: "Statistika sektora",
         icon: "fas fa-pie-chart"
     }
 ];
