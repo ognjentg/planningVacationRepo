@@ -502,7 +502,7 @@ sectorStatisticsView = {
 
     selectPanel: function () {
         $$("main").removeView(rightPanel);
-        rightPanel = "userStatisticsPanel";
+        rightPanel = "sectorStatisticsPanel";
 
 
         var panelCopy = webix.copy(this.getPanel());
@@ -524,7 +524,7 @@ sectorStatisticsView = {
     },
     getPanel: function () {
         return {
-            id: "userStatisticsPanel",
+            id: "sectorStatisticsPanel",
 
             rows: [{
                 padding: 8,
