@@ -335,7 +335,30 @@ var init = function () {
         }
     });
 }
+/*
+var firstLogin={
+    id: "firstLogin",
+    width: "auto",
+    height: "auto",
+    css:"fadeInAnimation",
+    rows: [
+        {
 
+        },
+        {
+            view: "multiview",
+            cells: [
+                {id: "listView", view: "list" },
+                {id: "formView", view: "htmlform" },
+                {id: "emptyView" }
+            ]
+        },
+        {
+
+        }
+        ]
+};
+*/
 var mainLayout = {
     id: "app",
     width: "auto",
@@ -636,19 +659,24 @@ var menuEvents = {
 var mainApp;
 var showApp = function () {
 
-    var companyInfoItems = [
-        {id: "0", value: "O kompaniji", icon: "info-circle"},
-        {id: "sep1", $template: "Separator"}];
+var companyInfoItems = [
+    {id: "0", value: "O kompaniji", icon: "info-circle"},
+    {id:"sep1", $template: "Separator"}];
 
-    var subMenuItems = [
-        {id: "1", value: "O programu", icon: "info-circle"},
-        {id: "sep2", $template: "Separator"},
-        {id: "2", value: "Promjena lozinke", icon: "lock"},
-        {id: "sep3", $template: "Separator"},
-        {id: "3", value: "Profil", icon: "user"},
-        {id: "sep4", $template: "Separator"},
-        {id: "4", value: "Odjava", icon: "sign-out"}
-    ]
+var subMenuItems = [
+    {id: "1", value: "O programu", icon: "info-circle"},
+    {id:"sep2", $template: "Separator"},
+    {id: "2", value: "Promjena lozinke", icon: "lock"},
+    {id:"sep3", $template: "Separator"},
+    {id: "3", value: "Profil", icon: "user"},
+    {id:"sep4", $template: "Separator"},
+    {id: "4", value: "Odjava", icon: "sign-out"}
+]
+//Ako je admin i ako je ulogovan 1. put na sistem:
+  /*  if(userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null && userData.photo==null){
+
+    }*/
+
 
     if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
