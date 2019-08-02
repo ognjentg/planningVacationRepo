@@ -24,4 +24,6 @@ public interface LeaveRequestRepositoryCustom {
 
     void updateLeaveRequestStatusToApproved(Integer leaveRequestId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(Integer id, String key);
+    List<String> getLeaveRequestsCategoryBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequestStatusId);
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestsBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequstStatusId);
 }

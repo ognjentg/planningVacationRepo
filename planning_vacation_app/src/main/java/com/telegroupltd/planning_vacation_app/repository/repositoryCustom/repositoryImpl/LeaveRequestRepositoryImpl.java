@@ -164,6 +164,20 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "join user u on lr.sender_user_id = u.id " +
             "where u.active = 1 and lr.active = 1 and lrd.active = 1 and (lr.category = \"Godišnji\" or lr.category = \"Praznik\") and lrd.date between DATE (?) and DATE (?) and u.company_id = ?;";
 
+    private static final String GET_LEAVE_REQUESTS_CATEGORY_BY_SECTOR_ID_AND_COMPANY_ID_AND_LEAVE_REQUESTS_STATUS_ID =
+            "SELECT lr.category from user u join leave_request lr on u.id = lr.sender_user_id " +
+                    "where u.sector_id = ? and u.company_id = ? and lr.leave_request_status_id = ?";
+
+    private static final String GET_LEAVE_REQUESTS_BY_SECTOR_ID_AND_COMPANY_ID_AND_LEAVE_REQUESTS_STATUS_ID = "SELECT lr.id, category, sender_comment, approver_comment, sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
+            "FROM leave_request lr "+
+            "JOIN leave_request_status lrs ON lr.leave_request_status_id = lrs.id "+
+            "JOIN user u ON lr.sender_user_id=u.id "+
+            "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id "+
+            "JOIN leave_request_type lrt ON lr.leave_type_id=lrt.id "+
+            "JOIN user au ON lr.approver_user_id=au.id OR lr.approver_user_id IS NULL " +
+            "WHERE lr.active=1 and u.sector_id = ? and u.company_id = ? and lr.leave_request_status_id = ? "+
+            "GROUP BY lr.id ";
+
     @Override
     public List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id, Integer key) {
         return entityManager.createNativeQuery(SQL_ALL_ABSENCES_HISTORY_USER,"AbsenceHistoryUserMapping").setParameter(1,key).getResultList();
@@ -292,4 +306,13 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
         return entityManager.createNativeQuery(GET_LEAVE_REQUEST_DATES_BY_PERIOD_AND_COMPANY_ID, "LeaveRequestLeaveRequestDaysMapping").setParameter(1, dateFrom).setParameter(2, dateTo).setParameter(3, companyId).getResultList();
     }
 
+    @Override
+    public List<String> getLeaveRequestsCategoryBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequestStatusId) {
+        return entityManager.createNativeQuery(GET_LEAVE_REQUESTS_CATEGORY_BY_SECTOR_ID_AND_COMPANY_ID_AND_LEAVE_REQUESTS_STATUS_ID).setParameter(1, sectorId).setParameter(2, companyId).setParameter(3, leaveRequestStatusId).getResultList();
+    }
+
+    @Override
+    public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestsBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequestStatusId) {
+        return entityManager.createNativeQuery(GET_LEAVE_REQUESTS_BY_SECTOR_ID_AND_COMPANY_ID_AND_LEAVE_REQUESTS_STATUS_ID, "LeaveRequestUserLeaveRequestStatusMapping").setParameter(1, sectorId).setParameter(2, companyId).setParameter(3, leaveRequestStatusId).getResultList();
+    }
 }
