@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.sql.Date;
 import java.util.*;
 
+@SuppressWarnings("ALL")
 @RequestMapping(value = "/hub/sector")
 @RestController
 @Scope("request")
@@ -194,7 +195,7 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
             System.out.println(leaveRequest.getSenderUserId());
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
             if(leaveRequestDates.size()<1)
-                return null;
+                break;
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             java.util.Date firstDay = leaveRequestDates.get(0).getDate();
             java.util.Date lastDay = leaveRequestDates.get(leaveRequestDates.size() - 1).getDate();

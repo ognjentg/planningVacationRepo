@@ -224,10 +224,16 @@ public class CompanyController extends GenericController<Company, Integer> {
         if (userBean.getUserUserGroupKey().getUserGroupKey() == "admin" || userBean.getUserUserGroupKey().getUserGroupKey() == "direktor" || userBean.getUserUserGroupKey().getUserGroupKey() == "sekretar") {
             usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusIdAndSenderUserId(companyId, (byte) 1, 2,id);
+            if(leaveRequests.size()==0){
+                return null;
+            }
         } else if (userBean.getUserUserGroupKey().getUserGroupKey() == "menadzer") {
             Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
             usersInCompany = userRepository.getAllByCompanyIdAndSectorIdAndActive(companyId, sectorId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusIdAndSenderUserId(companyId, (byte) 1, 2, id);
+            if(leaveRequests.size()==0){
+                return null;
+            }
             int i = 0;
             for (LeaveRequest leaveRequest : leaveRequests) {
                 if (!usersInCompany.contains(userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1))) {
@@ -247,7 +253,7 @@ public class CompanyController extends GenericController<Company, Integer> {
         for (LeaveRequest leaveRequest : leaveRequests) {
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
             if(leaveRequestDates.size()<1)
-                return null;
+                break;
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             Date firstDay = leaveRequestDates.get(0).getDate();
             Date lastDay = leaveRequestDates.get(leaveRequestDates.size() - 1).getDate();
@@ -818,16 +824,23 @@ public class CompanyController extends GenericController<Company, Integer> {
         List<User> usersInCompany = new ArrayList<>();
         List<LeaveRequest> leaveRequests = new ArrayList<>();
 
-        if(leaveRequests.size() < 1)
-            return null;
+
 
         if (userBean.getUserUserGroupKey().getUserGroupKey() == "admin" || userBean.getUserUserGroupKey().getUserGroupKey() == "direktor" || userBean.getUserUserGroupKey().getUserGroupKey() == "sekretar") {
             usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte) 1, 2);
+            if(leaveRequests.size() < 1){
+                System.out.println("Ovdje me vratiiii");
+                return null;
+            }
         } else if (userBean.getUserUserGroupKey().getUserGroupKey() == "menadzer") {
             Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
             usersInCompany = userRepository.getAllByCompanyIdAndSectorIdAndActive(companyId, sectorId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte) 1, 2);
+            if(leaveRequests.size() < 1){
+                System.out.println("Ovdje me vratiiii");
+                return null;
+            }
             int i = 0;
             for (LeaveRequest leaveRequest : leaveRequests) {
                 if (!usersInCompany.contains(userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1))) {
@@ -845,10 +858,11 @@ public class CompanyController extends GenericController<Company, Integer> {
         Integer leave1 = 0, leave2 = 0, leave3 = 0, leave4 = 0, leave5 = 0, leave6 = 0, leave7 = 0, leave8 = 0, leave9 = 0, leave10 = 0, leave11 = 0, leave12 = 0;
 
         for (LeaveRequest leaveRequest : leaveRequests) {
-            System.out.println(leaveRequest.getCategory());
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
-            if(leaveRequestDates.size()<1){
-                return null;
+            System.out.println(leaveRequestDates.size());
+            if(leaveRequestDates.size()==0){
+                System.out.println("Ipak ovdjee");
+                break;
             }
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             Date firstDay = leaveRequestDates.get(0).getDate();
