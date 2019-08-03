@@ -743,7 +743,13 @@ usergroupView = {
                                 }]
                         }
 
-                    ]
+                    ],
+                    scheme:{
+                        $change: function (item) {
+                            if(item.position == "menadzer" || item.position == "menadžer")
+                                item.$css = "current_manager_style";
+                        }
+                    },
 
                 }, {
                     height: 15
@@ -1914,7 +1920,8 @@ usergroupView = {
             if (has == true)
                 return "sick_day";
         };
-        connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
+        //connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
+        connection.sendAjax("GET", "hub/vacation_days/byUserId/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var days = data.json();
                 var daysLeft = days.totalDays - days.usedDays;
@@ -1929,7 +1936,8 @@ usergroupView = {
             });
         var startDate;
         var endDate;
-        connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
+        //connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
+        connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var leaves = data.json();
                 var status = "";
@@ -1967,7 +1975,8 @@ usergroupView = {
                 util.messages.showErrorMessage(text);
             });
         var stat = "Opravdano";
-        connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + employee.id,
+       // connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + employee.id,
+        connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var sickLeaves = data.json();
                 sickLeaves.forEach(function (value) {

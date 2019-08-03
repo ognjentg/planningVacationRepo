@@ -302,6 +302,7 @@ function refreshOnThisData() {
     var comboItemId = $$("filterRequestsComboBox").getValue();
     var URLCurrentUrl = null;
 
+
     if(comboItemId == 4){
         URLCurrentUrl = URLAllSickLeave;
     } else {

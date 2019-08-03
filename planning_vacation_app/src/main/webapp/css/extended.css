@@ -345,3 +345,10 @@ element.style {
 ul.list {
 	background-color: red;
 }
+
+
+.current_manager_style{
+	 font-weight:bold;
+	 color:#B51454;
+ }
+

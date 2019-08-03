@@ -1,5 +1,6 @@
 
-var  absenceHistoryView = {
+var  absenceHistoryView;
+absenceHistoryView = {
 
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
@@ -8,6 +9,33 @@ var  absenceHistoryView = {
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
     },
+   /* selectPanel: function () {
+        $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
+        rightPanel = "absenceHistoryPanel";
+
+
+        var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
+        $$("main").addView(panelCopy);
+        webix.protoUI({
+            name: "fadeInWindow",
+            $init: function () {
+                this.$ready.push(function () {
+                    this.attachEvent("onShow", function () {
+                        this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                    })
+                    this.attachEvent("onHide", function () {
+                        this.$view.style.display = "block";
+                        this.$view.className += " animated fadeOutUpBig";
+                    })
+                });
+            }
+        }, webix.ui.window);
+        if (userData.userGroupKey == "sekretar") {
+            $$("leave_requestDT").hideColumn("accept");
+            $$("leave_requestDT").hideColumn("reject");
+        }
+        //refreshOnData();
+    },*/
 
     getPanel: function () {
         return {
@@ -110,6 +138,13 @@ var  absenceHistoryView = {
                                 else return "";
                             }
                         },
+                        {
+                            id: "view",
+                            header: "&nbsp;",
+                            tooltip: "Pregled",
+                            width: 35,
+                            template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-eye'></span>"
+                        }
                         ],
                     url: "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString(),
                     on: {
@@ -215,6 +250,9 @@ var  absenceHistoryView = {
                                 };
                                 //refreshOnThisData();
                                 webix.confirm(paidLeaveBox);
+                            } else if (action === "view" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
+                                //var viewLeaveBox = (webix.copy(absenceHistoryView.showApproverSenderCommentInfo(id)));
+                                webix.message("TO DO");
                             }
                         }
                     },
@@ -253,6 +291,148 @@ var  absenceHistoryView = {
             width: 500,
             text: "Da li ste sigurni da želite otkazati odsustvo ?"
         };
+    },
+
+    showApproverSenderCommentInfo: function (id) {
+        webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
+
+        /*connection.sendAjax("GET",
+            "/hub/leave_request/leaveRequestInfo/" + id,
+            function (text, data, xhr) {
+                user = data.json();
+                $$("fname").setValue(user.firstName);
+                $$("lname").setValue(user.lastName);
+                $$("status").setValue(user.statusName);
+                $$("comment").setValue(user.senderComment);
+                if (user.statusName == "Na čekanju") {
+                    $$("approverUserName").setValue("-");
+                } else
+                    $$("approverUserName").setValue(user.approverUserFirstName + " " + user.approverUserLastName);
+                if (user.approverComment != null) {
+                    $$("approverComment").setValue(user.approverComment);
+                    $$("approverComment").show();
+                    $$("commentApproverLabel").show();
+                }
+                var format = webix.Date.dateToStr("%d.%m.%Y.");
+                var dF = format(new Date(user.dateFrom));
+                var dT = format(new Date(user.dateTo));
+                $$("dateFromId").setValue(dF);
+                $$("dateToId").setValue(dT);
+                setTimeout(function () {
+                    $$("leaveRequestInfoId").show();
+                }, 0);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });*/
+
+
+    },
+
+    approverSenderCommentInfo: {
+
+       // view: "fadeInWindow",
+        view: "popup",
+        id: "approverSenderCommentInfoId",
+        position: "center",
+        modal: true,
+        move: true,
+        body: {
+
+            padding: 15,
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Informacije o zahtjevu:",
+                        width: 400,
+                    }, {}, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: 'util.dismissDialog(\'approverSenderCommentInfoId\');'
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Ime:"
+                    }, {}, {
+                        view: "label",
+                        id: "fname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Prezime:"
+                    }, {}, {
+                        view: "label",
+                        id: "lname"
+
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Status:"
+                    }, {}, {
+                        view: "label",
+                        id: "status"
+                    }]
+                },
+                {
+                    cols: [{
+                        view: "label",
+                        label: "Komentar pošiljaoca:"
+                    }, {}, {
+                        view: "label",
+                        id: "comment"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        id: "commentApproverLabel",
+                        label: "Komentar odbijanja:",
+                        hidden: true
+                    }, {}, {
+                        view: "label",
+                        id: "approverComment",
+                        hidden: true
+
+                    }]
+
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Datum od:"
+                    }, {}, {
+                        view: "label",
+                        id: "dateFromId"
+
+                    }]
+
+                }, {
+
+                    cols: [{
+                        view: "label",
+                        label: "Datum do:"
+
+                    }, {}, {
+                        view: "label",
+                        id: "dateToId"
+                    }]
+                }, {
+
+                    cols: [{
+                        view: "label",
+                        label: "Obradio:"
+
+                    }, {}, {
+                        view: "label",
+                        id: "approverUserName"
+                    }]
+                }
+            ]
+        }
     },
 
 };

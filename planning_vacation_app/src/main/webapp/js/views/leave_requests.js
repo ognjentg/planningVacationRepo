@@ -29,7 +29,7 @@ leaveRequestsView = {
             $$("leave_requestDT").hideColumn("accept");
             $$("leave_requestDT").hideColumn("reject");
         }
-        refreshOnData();
+        //refreshOnData();
     },
     getPanel: function () {
         return {
@@ -360,25 +360,19 @@ leaveRequestsView = {
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
         if (requestStatusName == "Otkazivanje") {
-            webix.message("DA OTKAZIVANJE !!!");
             var item = $$("leave_requestDT").getItem(id);
             $$("leave_requestDT").detachEvent("onBeforeDelete");
             connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
-                // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
                 util.messages.showMessage("Zahtjev postavljen na otkazivanje");
                 refreshOnThisData();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
-            //calendarView.deleteCurrentRequest(); // TO DO
             util.dismissDialog('acceptDialogId');
-
         } else {
-            webix.message("U pitanju je: "+requestStatusName.toString());
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
-                // $$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
                 util.messages.showMessage("Zahtjev odobren");
-                console.log("ZAHTJEV JE ODOBREN " + id + type + paid);
+                refreshOnData();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
@@ -436,11 +430,14 @@ leaveRequestsView = {
                 },
                 {
 
-                    view: "text",
+                    view: "textarea",
                     id: "rejectComment",
                     required: true,
-                    label: "Komentar:"
-
+                    label: "Komentar:",
+                    height: 150,
+                    attributes:{
+                        maxlength:128
+                    }
 
                 }, {}, {}, {
                     cols: [{
@@ -606,7 +603,6 @@ leaveRequestsView = {
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
         if (requestStatusName == "Otkazivanje") {
-            webix.message("DA OTKAZIVANJE !!!");
             var item = $$("leave_requestDT").getItem(id);
             $$("leave_requestDT").detachEvent("onBeforeDelete");
             connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id, function (text, data, xhr) {
@@ -720,6 +716,7 @@ leaveRequestsView = {
 };
 
 function refreshOnData() {
+
     console.log("refresh data");
 
 
@@ -793,6 +790,7 @@ function refreshOnData() {
         }
 
     }else{
+
         if (comboItemId == 4) {
             webix.ajax(URLCurrentUrl, {
 
@@ -816,10 +814,12 @@ function refreshOnData() {
                 }
             });
         } else {
-            webix.ajax(URLCurrentUrl + comboItemId, {
+            webix.ajax(URLCurrentUrl+comboItemId, {
+
 
                 error: function (text, data, xhr) {
                     if (xhr.status != 200) {
+
                         util.messages.showMessage("No data to load! Check your internet connection and try again.");
                         //alert("No data to load! Check your internet connection and try again.");
                         table.hideProgress();
@@ -831,7 +831,7 @@ function refreshOnData() {
                             console.log("loaded data with success");
 
                             table.clearAll();
-                            table.load(URLCurrentUrl + comboItemId);
+                            table.load(URLCurrentUrl+comboItemId);
                             table.refresh();
                         }
                     }
