@@ -335,7 +335,7 @@ var adminsView = {
                     rules: {
                         "email": function (value) {
                             if (!value) {
-                                $$("addNewAdminForm").elements.email.config.invalidMessage = 'Emsil je obavezno unijeti.';
+                                $$("addNewAdminForm").elements.email.config.invalidMessage = 'Email je obavezno unijeti.';
                                 return false;
                             } else {
                                 return true;
@@ -401,8 +401,6 @@ var adminsView = {
                     util.messages.showErrorMessage(text);
                     button.enable();
                 }, newAdmin);
-
-
         } else {
             button.enable();
         }

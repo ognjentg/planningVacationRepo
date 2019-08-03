@@ -705,7 +705,6 @@ var companyView = {
                         required: true,
                         height:35
                     },
-
                     {
                         view: "text",
                         id: "pin",
@@ -716,25 +715,6 @@ var companyView = {
                         label: "PIN kompanije:",
                         required: true,
                         height:35
-
-
-                    },
-                    {
-
-                        id: "addAdmin",
-                        view: "button",
-                        value: "Dodajte admina",
-                        type: "form",
-                        align: "right",
-                        hotkey: "esc",
-                        width: 150,
-                        margin: 50,
-                        hidden: true,
-                        click: function () {
-                            webix.ui(webix.copy(adminsView.showAddNewAdminDialog()));
-                        }
-
-
                     },
 
                     {  css:"companyFormButtons",
@@ -857,11 +837,11 @@ var companyView = {
                 }, function (text, data, xhr) {
                     if (text.includes("pin_UNIQUE")) {
                         // alert("Izabrani PIN već postoji. Unesite drugi PIN.");
-                        util.messages.showMessage("Izabrani PIN već postoji. Unesite drugi PIN.");
+                        util.messages.showErrorMessage("Izabrani PIN već postoji. Unesite drugi PIN.");
                     }
                     if (text.includes("name_UNIQUE")) {
                         // alert("Izabrani naziv već postoji. Unesite drugi naziv.");
-                        util.messages.showMessage("Izabrani naziv već postoji. Unesite drugi naziv.");
+                        util.messages.showErrorMessage("Izabrani naziv već postoji. Unesite drugi naziv.");
                     }
 
                 }, newCompany);

@@ -498,7 +498,7 @@ public class UserController extends GenericController<User, Integer> {
         Sector sector = sectorRepository.getByIdAndActive(user.getSectorId(), (byte)1);
         System.out.println(changeManagerInformation.getNewEmployee());
         if (user != null) {
-
+            sector.setSectorManagerId(user.getId());
             user.setUserGroupId(5);
             if (repo.saveAndFlush(user) == null) {
                 throw new BadRequestException("Neuspješna promjena pozicije!");

@@ -1037,7 +1037,14 @@ usergroupView = {
             util.messages.showErrorMessage("Odabir sektora nije validan.")
 
         } else {
-            $$("changeManagerTable").define("url", "hub/user/custom/bySector/" + sector);
+            var id;
+            usergroupView.sectors.forEach(function (sec) {
+                if(sec.value===sector){
+                    id = sec.id;
+                }
+            });
+            $$("changeManagerTable").define("url", "hub/user/custom/bySector/" + id);
+            $$("usergroupDT").detachEvent("onBeforeDelete");
             $$("changeManagerDialog").show();
         }
     },
@@ -1198,7 +1205,12 @@ usergroupView = {
         if (user === "manager") {// rukovodioc ne moze gledati ostale sektore
             $$("choseSectorCombo").hide();
             $$("izaberiLabel").hide();
+
         }
+        if(user!="manager"){
+            $$("percent").hide();
+        }
+
         console.log("u selectPanel");
 
 
@@ -1242,8 +1254,7 @@ usergroupView = {
         $$("usergroupDT").clearAll();
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + sector.id);
         $$("usergroupDT").detachEvent("onBeforeDelete");
-    }
-    ,
+    },
 
     showAddDialog: function () {
         var options = [];
