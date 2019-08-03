@@ -368,7 +368,7 @@ var adminsView = {
     },
     showAddNewAdminDialog: function () {
         $$("addNewAdminButton").disable();
-        webix.ui(webix.copy(adminsView.addNewAdminDialog)).show();
+        webix.ui(adminsView.addNewAdminDialog).show();
         webix.UIManager.setFocus("email");
     },
     addNewAdmin: function () {
@@ -390,6 +390,7 @@ var adminsView = {
                         var userTemp = JSON.parse(text);
                         $$("adminsDT").parse(userTemp);
                         currentDialog.hide();
+                        webix.UIManager.removeHotKey("enter", null);
                         util.messages.showMessage("Admin uspješno dodan.");
                         numberOfAdmins = numberOfAdmins + 1;
                         animateValue($$("t2"), 0, numberOfAdmins, 100);

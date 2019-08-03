@@ -794,6 +794,7 @@ var companyView = {
 
     showAddDialog: function () {
         $$("addCompanyBtn").disable();
+        webix.UIManager.removeHotKey("enter", null);
         webix.ui(webix.copy(companyView.addDialog)).show();
         webix.UIManager.setFocus("name");
 
@@ -1216,6 +1217,7 @@ var companyView = {
 
 
     showChangeCompanyDialog: function (company) {
+        webix.UIManager.removeHotKey("enter", null);
         if (userData.userGroupKey == "admin") {
             webix.ui(webix.copy(companyView.adminChangeCompanyDialog));
             var form = $$("adminChangeCompanyForm");
@@ -1264,6 +1266,7 @@ var companyView = {
     showShowCompanyDialog: function (company) {
 
         webix.ui(webix.copy(companyView.showCompanyDialog));
+        webix.UIManager.removeHotKey("enter", null);
         var form = $$("showCompanyForm");
 
         form.elements.name.setValue(company.name);
@@ -1326,18 +1329,24 @@ var companyView = {
                     if (text) {
                         util.messages.showMessage("Kompanija uspješno izmjenjena.");
                         $$("companyDT").updateItem(newCompany.id, newCompany);
+                        util.dismissDialog('changeCompanyDialog');
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
+                        $$("changeCompany").enable();
                 }, function (text, data, xhr) {
+                console.log("TEXT " + text);
+                if(text.includes("pin_UNIQUE"))
+                    util.messages.showErrorMessage("Postoji kompanija sa unesenim PIN-om.");
+                else if (text.includes("name_UNIQUE"))
+                    util.messages.showErrorMessage("Postoji kompanija sa unesenim imenom.");
+                else
                     util.messages.showErrorMessage(text);
+                $$("changeCompany").enable();
+
                     // alert(text);
                 }, newCompany);
 
-            if (userData.userGroupKey == "superadmin") {
 
-                $$("changeCompany").enable();
-                util.dismissDialog('changeCompanyDialog');
-            }
 
         }
 

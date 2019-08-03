@@ -970,6 +970,8 @@ var calendarView = {
                 return true;
             },
             doesNotStartInFuture: function (date) {
+                if(date.getTime() == getToday().getTime())
+                    return true;
                 var temp = $$("periodsDT").serialize()[0];
                 if (temp == null)
                     return calendarView.ruleset.isNotInPast(date);
