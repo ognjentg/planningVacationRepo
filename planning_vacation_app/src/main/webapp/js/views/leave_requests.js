@@ -189,11 +189,18 @@ leaveRequestsView = {
                                 obj.dateFrom = new Date(obj.dateFrom);
                             if (obj.dateTo)
                                 obj.dateTo = new Date(obj.dateTo);
-                        }
+                        },
+
+                            $sort:{
+                                by:"id",
+                                dir:"asc"
+                            }
+
                     },
                     columns: [{
                         id: "id",
                         header: "#",
+                        sort:"int",
                         width: 50,
                         hidden: "true",
                     }, {

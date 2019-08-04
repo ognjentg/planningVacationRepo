@@ -1990,7 +1990,7 @@ usergroupView = {
                 scheduler.setCurrentView();
             },
             function (text, data, xhr) {
-                util.messages.showErrorMessage("ne valja");
+                util.messages.showErrorMessage(text);
             });
         $$("employeeVacationInfoDialog").show();
         setTimeout(function () {
