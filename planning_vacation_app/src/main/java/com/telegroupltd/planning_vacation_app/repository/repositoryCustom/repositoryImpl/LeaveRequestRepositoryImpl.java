@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -85,17 +86,17 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "join leave_request lr on user.id = lr.sender_user_id " +
             "join leave_request_date lrd on lr.id = lrd.leave_request_id " +
             "join leave_request_status lrs on lr.leave_request_status_id = lrs.id " +
-            "where ((lrs.name = \"Odobreno\" OR lrs.name = \"Otkazivanje\" AND lr.active = 1 AND lrd.date = DATE (NOW()))" +
+            "where (((lrs.name = \"Odobreno\" OR lrs.name = \"Otkazivanje\") AND lr.active = 1 AND lrd.date = DATE (NOW()))" +
             " OR (DATE (NOW()) BETWEEN sl.date_from AND sl.date_to AND sl.active = 1 AND sls.name = \"Opravdano\"))  AND sector_id = ?;";
 
-    private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "select distinct user.id from user " +
-            "join sick_leave sl on user.id = sl.user_id " +
-            "join sick_leave_status sls on sl.sick_leave_status_id = sls.id " +
-            "join leave_request lr on user.id = lr.sender_user_id " +
-            "join leave_request_date lrd on lr.id = lrd.leave_request_id " +
-            "join leave_request_status lrs on lr.leave_request_status_id = lrs.id " +
-            "where ((lrs.name = \"Odobreno\" OR lrs.name = \"Otkazivanje\" AND lr.active = 1 AND lrd.date = DATE(?))" +
-            " OR (DATE (NOW()) BETWEEN sl.date_from AND sl.date_to AND sl.active = 1 AND sls.name = \"Opravdano\"))  AND sector_id = ?;";
+    private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "select distinct user.id from user\n" +
+            "            join sick_leave sl on user.id = sl.user_id\n" +
+            "            join sick_leave_status sls on sl.sick_leave_status_id = sls.id\n" +
+            "            join leave_request lr on user.id = lr.sender_user_id\n" +
+            "            join leave_request_date lrd on lr.id = lrd.leave_request_id\n" +
+            "            join leave_request_status lrs on lr.leave_request_status_id = lrs.id\n" +
+            "            where (((lrs.name = \"Odobreno\" OR lrs.name = \"Otkazivanje\") AND lr.active = 1 AND lrd.date = DATE(?))\n" +
+            "            OR (DATE (?) BETWEEN sl.date_from AND sl.date_to AND sl.active = 1 AND sls.name = \"Opravdano\")) AND sector_id = ?;";
 
     private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment,sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
@@ -212,8 +213,9 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
     }
 
     @Override
-    public Integer getNumOfAbsentPeopleFilteredBySectorIdAndDate(Integer sectorId, Date date){
-        return entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, date).setParameter(2, sectorId).getResultList().size();
+    public Integer getNumOfAbsentPeopleFilteredBySectorIdAndDate(Integer sectorId, Date tempDate){
+        String date = "\"" + new SimpleDateFormat("yyyy-mm-dd").format(tempDate) + "\"";
+        return entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, date).setParameter(2, date).setParameter(3, sectorId).getResultList().size();
     }
 
     @Override

@@ -10,4 +10,5 @@ import java.util.List;
 public interface SectorRepositoryCustom {
     List<SectorUser> getSectorsInformation(Integer companyId);
     void updateUsersFromSector(Integer sectorId);
+    Integer getNumberOfUsersInSector(Integer sectorId);
 }

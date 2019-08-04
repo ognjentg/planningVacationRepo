@@ -46,7 +46,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Value("Korisnik nema dovoljno godišnjeg")
     private String notEnoughDays;
 
-    @Value("Ima previše odsustva u sektoru")
+    @Value("Dani odabrani u godišnjem su prezauzeti.")
     private String tooMuchAbsent;
 
     @Autowired
@@ -193,16 +193,20 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return lrs;
     }
 
-    @RequestMapping(value = "/canGoOnVacationByDate/{date}", method = RequestMethod.GET)
+    @RequestMapping(value = "/canGoOnVacationByDates/{dates}", method = RequestMethod.GET)
     public @ResponseBody
-    Boolean canGoOnVacationByDate(@PathVariable Date date){
-        Double maxPercentageAbsentPeople = sectorRepository.getByIdAndActive(userBean.getUserUserGroupKey().getSectorId(), (byte)1).getMaxPercentageAbsentPeople();
-        Integer numOfUsersInSector = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), (byte)1).size();
-        Double percentage = (double)leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) / (double)numOfUsersInSector;
-        if(percentage >= maxPercentageAbsentPeople)
-            return Boolean.FALSE;
-        else
-            return Boolean.TRUE;
+    void canGoOnVacationByDates(@PathVariable List<Date> dates) throws BadRequestException{
+        if(userBean.getUserUserGroupKey().getSectorId() != null){
+            Integer numOfUsersInSector = sectorRepository.getNumberOfUsersInSector(userBean.getUserUserGroupKey().getSectorId());
+            for(Date date : dates){
+                Double maxPercentageAbsentPeople = sectorRepository.getByIdAndActive(userBean.getUserUserGroupKey().getSectorId(), (byte)1).getMaxPercentageAbsentPeople();
+                if(maxPercentageAbsentPeople == null)
+                    return;
+                Double percentage = ((double)leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) + 1) / (double)numOfUsersInSector * 100;
+                if(percentage >= maxPercentageAbsentPeople)
+                    throw new BadRequestException(tooMuchAbsent);
+            }
+        }
     }
 
     @RequestMapping(value = "/leaveRequestInfoWait", method = RequestMethod.GET)

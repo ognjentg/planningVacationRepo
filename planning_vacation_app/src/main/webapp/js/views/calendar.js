@@ -792,38 +792,56 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Godišnji"
         }
-        connection.sendAjax("POST", "hub/leave_request/",
-            function (text, data, xhr) {
-                if (text) {
-                    var tempData = JSON.parse(text);
-                    var dates = $$("periodsDT").serialize();
-                    dates.forEach(function (value) {
-                        var date = {
-                            date: format(value.date),
-                            leaveRequestId: tempData.id,
-                            canceled: 0,
-                            paid: 1
-                        }
-                        connection.sendAjax("POST", "hub/leave_request_date/",
-                            function (text, data, xhr) {
-                                if (text) {
-                                    calendarView.getVacationDays();
-                                    scheduler.setCurrentView();
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                            }, date);
-                    });
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
-                    calendarView.deleteCurrentRequest();
-                } else
-                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                $$("sendRequestButton").enable();
-            }, function (text, data, xhr) {
+        var temp = $$("periodsDT").serialize();
+        var dates = [];
+        temp.forEach(function (value) { dates.push(format(value.date));});
+        webix.ajax("hub/leave_request/canGoOnVacationByDates/" + dates.toString(), {
+            error: function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
                 $$("sendRequestButton").enable();
-            }, leaveRequest);
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    connection.sendAjax("POST", "hub/leave_request/",
+                        function (text, data, xhr) {
+                            if (text) {
+                                var tempData = JSON.parse(text);
+                                var dates = $$("periodsDT").serialize();
+                                dates.forEach(function (value) {
+                                    var date = {
+                                        date: format(value.date),
+                                        leaveRequestId: tempData.id,
+                                        canceled: 0,
+                                        paid: 1
+                                    }
+                                    connection.sendAjax("POST", "hub/leave_request_date/",
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                                calendarView.getVacationDays();
+                                                scheduler.setCurrentView();
+                                            } else
+                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, date);
+                                });
+                                util.messages.showMessage("Zahtjev uspjesno poslan");
+                                calendarView.deleteCurrentRequest();
+                            } else
+                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            $$("sendRequestButton").enable();
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                            $$("sendRequestButton").enable();
+                        }, leaveRequest);
+                }
+                else{
+                    util.messages.showErrorMessage("Dani odabrani u godišnjem su prezauzeti.")
+                    $$("sendRequestButton").enable();
+                }
+            }
+        })
+
     },
     sendReligionLeaveRequest: function () {
         var form = $$("createRequestForm");
