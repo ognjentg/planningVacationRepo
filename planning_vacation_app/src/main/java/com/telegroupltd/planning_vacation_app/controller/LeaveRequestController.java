@@ -203,7 +203,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 if(maxPercentageAbsentPeople == null)
                     return;
                 Double percentage = ((double)leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) + 1) / (double)numOfUsersInSector * 100;
-                if(percentage >= maxPercentageAbsentPeople)
+                if(percentage > maxPercentageAbsentPeople)
                     throw new BadRequestException(tooMuchAbsent);
             }
         }

@@ -716,31 +716,22 @@ usergroupView = {
                         },
                         {
                             id: "firstName",
+                            header: "Ime",
                             fillspace: true,
                             editable: false,
-                            sort: "string",
-                            header: ["<span class='webix_icon fa fa-user'/>Ime",
-                                {
-                                    content: "textFilter", value: "", icon: "wxi-search"
-                                }]
+                            sort: "string"
                         }, {
                             id: "lastName",
+                            header: "Prezime",
                             fillspace: true,
                             editable: false,
-                            sort: "string",
-                            header: ["<span class='webix_icon fa fa-user'/>Prezime",
-                                {
-                                    content: "textFilter", value: "", icon: "wxi-search"
-                                }]
+                            sort: "string"
                         }, {
                             id: "position",
+                            header: "Pozicija",
                             fillspace: true,
                             editable: false,
-                            sort: "string",
-                            header: ["<span class='webix_icon fa fa-briefcase'/>Pozicija",
-                                {
-                                    content: "textFilter", value: "", icon: "wxi-search"
-                                }]
+                            sort: "string"
                         }
 
                     ],

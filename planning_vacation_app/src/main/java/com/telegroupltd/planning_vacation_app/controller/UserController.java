@@ -561,6 +561,7 @@ public class UserController extends GenericController<User, Integer> {
 
         return userRepository.getAllExtendedBySectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), sectorId);
     }
+
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.PUT)
     public @ResponseBody
     String deleteUser(@PathVariable Integer id) throws BadRequestException{

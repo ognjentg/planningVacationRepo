@@ -428,7 +428,10 @@ var calendarView = {
             },
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
-                    calendarView.canGoOnVacation = text;
+                    if(text == "false")
+                        calendarView.canGoOnVacation = false;
+                    else
+                        calendarView.canGoOnVacation = true;
                 }
             }
         });

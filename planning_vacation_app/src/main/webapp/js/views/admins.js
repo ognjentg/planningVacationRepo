@@ -48,17 +48,17 @@ var adminsView = {
                         },
                         {
                             id: "email",
-                            header: "EMAIL",
+                            header: "Email",
                             width: 200,
                         },
                         {
                             id: "firstName",
-                            header: "IME",
+                            header: "Ime",
                             width: 200
                         },
                         {
                             id: "lastName",
-                            header: "PREZIME",
+                            header: "Prezime",
                             width: 200
                         },
                         {
@@ -208,17 +208,17 @@ var adminsView = {
                         },
                         {
                             id: "email",
-                            header: "EMAIL",
+                            header: "Email",
                             width: 200,
                         },
                         {
                             id: "firstName",
-                            header: "IME",
+                            header: "Ime",
                             width: 200
                         },
                         {
                             id: "lastName",
-                            header: "PREZIME",
+                            header: "Prezime",
                             width: 200
                         },
                         {

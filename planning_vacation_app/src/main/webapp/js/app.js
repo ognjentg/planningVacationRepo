@@ -505,8 +505,11 @@ var mainLayout = {
                         }
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
-                        alert(text);
+                        $$("saveUserFirstAndLastName").enable();
                     }, newUser);
+            }
+            else{
+                $$("saveUserFirstAndLastName").enable();
             }
         }
     },
@@ -1049,7 +1052,6 @@ var login = function () {
 };
 
 var addDialogFirstAndLastName = function () {
-
     return {
         view: "popup",
         id: "addFirstAndLastNameDialog",
@@ -1286,7 +1288,11 @@ showAddFirstAndLastNameDialog = function () {
     webix.ui(webix.copy(addDialogFirstAndLastName()));
     setTimeout(function () {
         $$("addFirstAndLastNameDialog").show();
+        webix.UIManager.removeHotKey("enter", null);
+        $$("saveUserFirstAndLastName").define("hotkey", "enter");
     }, 0);
+
+
 };
 
 showChangePasswordDialog = function () {
