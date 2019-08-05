@@ -605,7 +605,6 @@ leaveRequestsView = {
     },
     saveRejectedLeaveRequest: function () {
 
-        ///////////////////////////////////////////////////////////////////////
         var id = $$("leave_requestDT").getSelectedId();
         $$("leave_requestDT").detachEvent("onBeforeDelete");
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
@@ -623,7 +622,6 @@ leaveRequestsView = {
 
             refreshOnData();
         } else {
-        ////////////////////////////////////////////////////////////////////////
 
             var komentar = $$("rejectComment").getValue();
 
@@ -633,6 +631,9 @@ leaveRequestsView = {
             id = $$("leave_requestDT").getSelectedId();
 
             comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
+
+            webix.message("APPROVER COMMENT: ");
+            webix.message(comment.toString());
 
             connection.sendAjax("GET",
                 "/hub/leave_request/updateLeaveRequestStatusRejected/" + id + "/comment/" + comment, function (text, data, xhr) {
