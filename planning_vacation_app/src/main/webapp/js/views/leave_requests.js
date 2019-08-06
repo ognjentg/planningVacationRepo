@@ -518,7 +518,8 @@ leaveRequestsView = {
                         view: "label",
                         label: "Komentar pošiljaoca:"
                     }, {}, {
-                        view: "label",
+                        view: "button",
+                        template:"<span class='webix_icon fa-eye'></span>",
                         id: "comment"
                     }]
                 }, {
@@ -528,7 +529,8 @@ leaveRequestsView = {
                         label: "Komentar odbijanja:",
                         hidden: true
                     }, {}, {
-                        view: "label",
+                        view: "button",
+                        template:"<span class='webix_icon fa-eye'></span>",
                         id: "approverComment",
                         hidden: true
 
@@ -602,6 +604,16 @@ leaveRequestsView = {
             });
 
 
+    },
+    senderCommentDialog:{
+        view:"popup",
+        id:"senderCommentPopup",
+        rows:[
+            {
+                view:"label",
+                label:"Komentar pošiljaoca: "
+            }
+        ]
     },
     saveRejectedLeaveRequest: function () {
 

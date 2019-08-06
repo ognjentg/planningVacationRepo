@@ -1880,12 +1880,12 @@ usergroupView = {
         var sickLeaveDays = [];
         var employee = $$("usergroupDT").getItem(id.row);
 
-
         scheduler.config.readonly = true;
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
         scheduler.templates.month_date_class = function (date) {
             var has = false;
+
             vacationDays.forEach(function (value) {
                 if (webix.Date.equal(value, date))
                     has = true;
@@ -1899,12 +1899,14 @@ usergroupView = {
             });
             if (has == true)
                 return "day_off";
+
             unpaidDaysOff.forEach(function (value) {
                 if (webix.Date.equal(value, date))
                     has = true;
             });
             if (has == true)
                 return "unpaid_day_off";
+
             sickLeaveDays.forEach(function (value) {
                 if (webix.Date.equal(value, date))
                     has = true;
@@ -1931,6 +1933,33 @@ usergroupView = {
             });
         var startDate;
         var endDate;
+
+        //Dohvatanje kolektivnog godišnjeg
+        webix.ajax("hub/colectiveVacation/getByCompanyId/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    var colectiveVacationDays = data.json();
+                    colectiveVacationDays.forEach(function (element) {
+                        startDate = new Date(element.dateFrom);
+                        endDate = new Date(element.dateTo);
+                        var dates = getDatesFromRange(startDate, endDate);
+                        dates.forEach(function (value) {
+                            value.setHours(0);
+                            vacationDays.push(value);
+                        });
+
+                    });
+                    scheduler.setCurrentView();
+                }
+            }
+        });
+
+
         //connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
         connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {

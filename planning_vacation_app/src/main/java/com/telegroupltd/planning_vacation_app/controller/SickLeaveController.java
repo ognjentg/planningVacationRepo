@@ -167,8 +167,6 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         for (SickLeaveUserSickLeaveStatus rsl : remove){
             leaves.remove(rsl);
         }
-        for(SickLeaveUserSickLeaveStatus sl :leaves)
-            System.out.println("bolovanje od "+sl.getDateFrom()+" do "+sl.getDateTo()+" ime "+sl.getFirstName());
         return leaves;
     }
 }
