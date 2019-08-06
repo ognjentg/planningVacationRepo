@@ -77,11 +77,11 @@ var menuActions = function (id) {
 };
 
 var menuSuperAdmin = [
-    {
+    /*{
         id: "company",
         value: "Kompanije",
         icon: "briefcase"
-    }
+    }*/
 ];
 
 var menuAdmin = [
@@ -689,8 +689,8 @@ var showApp = function () {
     rightPanel = "emptyRightPanel";
     switch (userData.userGroupKey) {
         case "superadmin":
-            //$$("menu-collapse").hide();
-            $$("mainMenu").select("company");
+            $$("menu-collapse").hide();
+            //$$("mainMenu").select("company");
             companyView.selectPanel();
             break;
         case "admin":

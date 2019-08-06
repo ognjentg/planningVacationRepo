@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @RequestMapping(value = "hub/user")
@@ -41,6 +42,10 @@ public class UserController extends GenericController<User, Integer> {
     private final ReligionLeaveRepository religionLeaveRepository;
     private final ConstraintsRepository constraintsRepository;
     private final SectorRepository sectorRepository;
+
+    @Autowired
+    private ColectiveVacationRepository colectiveVacationRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -366,9 +371,15 @@ public class UserController extends GenericController<User, Integer> {
                 if(user.getUserGroupId()!=superAdmin) {
                    notification.sendLoginLink(user.getEmail().trim(), newUser.getUsername(),  newPassword , (companyRepository.getById(newUser.getCompanyId())).getPin());  //slacemo username,password i PIN kompanije na email adresu
                 }
+                List<ColectiveVacation> colectiveVacations = colectiveVacationRepository.getAllByCompanyIdAndActive(user.getCompanyId(), (byte)1);
+                Integer numOfVacationDays = 0;
+                for(ColectiveVacation temp : colectiveVacations){
+                    if(temp.getDateFrom().getTime() >= Calendar.getInstance().getTimeInMillis());
+                        numOfVacationDays += (int)TimeUnit.DAYS.convert(temp.getDateTo().getTime() - temp.getDateFrom().getTime(), TimeUnit.MILLISECONDS);
+                }
                 VacationDays vacationDays = new VacationDays();
                 Constraints constraints = constraintsRepository.getByCompanyIdAndActive(newUser.getCompanyId(), (byte)1);
-                vacationDays.setUsedDays(0);
+                vacationDays.setUsedDays(numOfVacationDays);
                 vacationDays.setActive((byte)1);
                 vacationDays.setTotalDays(constraints.getMaxVacationDays());
                 vacationDays.setUserId(newUser.getId());

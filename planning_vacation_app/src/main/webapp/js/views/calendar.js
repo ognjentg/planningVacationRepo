@@ -608,11 +608,7 @@ var calendarView = {
              $$("periodsDT").parse(tableData);
          });*/
         //2. started working...
-        schedulerEvents.push(scheduler.attachEvent("onClick", function (id, e) {
-            //dhtmlx.message("proba");
-            // calendarView.showEventInfo(id);
-            console.log(schedulerEvents);
-        }));
+
 
         //Inicijalizacija i postavljanje na trenutni datum
         var date = new Date();

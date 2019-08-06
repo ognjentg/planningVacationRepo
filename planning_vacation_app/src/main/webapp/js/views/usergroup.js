@@ -354,6 +354,7 @@ usergroupView = {
                     },
                     onClick: {
                         webix_icon: function (e, id) {
+                            $$("usergroupDT").select(id);
                             console.log(id["column"]);
                             var action = id["column"];
                             if ((action === "delete" || action === "sector") && (user === "secretary" || user === "menager")) {
@@ -1911,7 +1912,10 @@ usergroupView = {
             if (has == true)
                 return "sick_day";
         };
-        //connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
+        scheduler.attachEvent("onEmptyClick", function (selectedDate, s){
+
+        } );
+            //connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
         connection.sendAjax("GET", "hub/vacation_days/byUserId/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var days = data.json();
