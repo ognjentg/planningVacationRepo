@@ -320,8 +320,7 @@ var init = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    showFirstLogin();
-                                   // showApp();
+                                    showApp();
                                 } else {
                                     showLogin();
                                 }
@@ -1323,8 +1322,11 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    showFirstLogin(); //uspjesan login, prikaz layout-a za to...
-                                    //showApp();
+                                    if(userData.firstLogin === 1) {
+                                        showFirstLogin(); //uspjesan login, prikaz layout-a za to...
+                                    }else {
+                                        showApp();
+                                    }
                                 } else {
                                     util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
                                 }
