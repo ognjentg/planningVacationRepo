@@ -320,7 +320,11 @@ var init = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    showApp();
+                                    if( userData.firstName==null && userData.lastName==null /*userData.firstLogin === 1*/) {
+                                        showFirstLogin(); //uspjesan login, prikaz layout-a za to...
+                                    }else {
+                                        showApp();
+                                    }
                                 } else {
                                     showLogin();
                                 }
@@ -823,6 +827,8 @@ console.log("Usao u if showFirstLogin");
         webix.extend($$("firstLoginWizard"), webix.ProgressBar);
 
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
+    }else{
+        showApp();
     }
 };
 
@@ -1322,7 +1328,7 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if(userData.firstLogin === 1) {
+                                    if(userData.firstName==null && userData.lastName==null /*userData.firstLogin === 1*/) {
                                         showFirstLogin(); //uspjesan login, prikaz layout-a za to...
                                     }else {
                                         showApp();
