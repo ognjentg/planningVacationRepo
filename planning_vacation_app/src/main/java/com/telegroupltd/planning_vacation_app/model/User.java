@@ -20,6 +20,7 @@ public class User implements HasActive {
     private Integer userGroupId;
     private Byte active;
     private Byte pauseFlag;
+    private Byte firstLogin;
     private Date startDate;
     private String firstName;
     private String lastName;
@@ -32,7 +33,7 @@ public class User implements HasActive {
 
     }
     public User(Integer id, String username, String password,  String email, Byte pauseFlag, Date startDate ,String firstName, String lastName,
-                String salt, Byte receiveMail, Integer sectorId,
+                String salt, Byte receiveMail, Byte firstLogin, Integer sectorId,
                 byte[] photo, Integer userGroupId, Integer company_id, Byte active)
     {
         this.id = id;
@@ -40,6 +41,7 @@ public class User implements HasActive {
         this.username = username;
         this.password = password;
         this.pauseFlag = pauseFlag;
+        this.firstLogin = firstLogin;
         this.startDate = startDate;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -152,6 +154,16 @@ public class User implements HasActive {
 
     public void setPauseFlag(Byte pauseFlag) {
         this.pauseFlag = pauseFlag;
+    }
+
+    @Basic
+    @Column(name = "first_login", nullable = false)
+    public Byte getFirstLogin() {
+        return firstLogin;
+    }
+
+    public void setFirstLogin(Byte firstLogin) {
+        this.firstLogin = firstLogin;
     }
 
     @Basic

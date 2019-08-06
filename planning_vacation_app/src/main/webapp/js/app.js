@@ -483,20 +483,58 @@ var mainLayout = {
                             util.dismissDialog('addFirstAndLastNameDialog');
                             util.messages.showMessage("Ime i prezime  uspješno dodano.");
                             switch (userData.userGroupKey) {
+                                case "superadmin":
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 0;
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 0);
+                                    break;
                                 case "admin":
-                                    showChangePasswordDialog();
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 2;
+                                            showChangePasswordDialog();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 2);
                                     break;
                                 case "direktor":
-                                    showChangePasswordDialog();
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 2;
+                                            showChangePasswordDialog();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 2);
                                     break;
                                 case "sekretar":
-                                    showChangePasswordDialog();
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 2;
+                                            showChangePasswordDialog();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 2);
                                     break;
                                 case "menadzer":
-                                    showChangePasswordDialog();
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 2;
+                                            showChangePasswordDialog();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 2);
                                     break;
                                 case "zaposleni":
-                                    showChangePasswordDialog();
+                                    connection.sendAjax("POST", "hub/user/firstLogin",
+                                        function (text, data, xhr) {
+                                            userData.firstLogin = 2;
+                                            showChangePasswordDialog();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        }, 2);
                                     break;
                             }
                         } else {
@@ -530,10 +568,46 @@ var mainLayout = {
                         util.messages.showMessage("Uspješna izmjena lozinke.");
                         switch (userData.userGroupKey) {
                             case "admin":
-                                // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
+                                connection.sendAjax("POST", "hub/user/firstLogin",
+                                    function (text, data, xhr) {
+                                        userData.firstLogin = 3;
+                                        // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, 3);
+                                break;
+                            case "direktor":
+                                connection.sendAjax("POST", "hub/user/firstLogin",
+                                    function (text, data, xhr) {
+                                        userData.firstLogin = 0;
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, 0);
+                                break;
+                            case "sekretar":
+                                connection.sendAjax("POST", "hub/user/firstLogin",
+                                    function (text, data, xhr) {
+                                        userData.firstLogin = 0;
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, 0);
                                 break;
                             case "menadzer":
-                                // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
+                                connection.sendAjax("POST", "hub/user/firstLogin",
+                                    function (text, data, xhr) {
+                                        userData.firstLogin = 3;
+                                        // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, 3);
+                                break;
+                            case "zaposleni":
+                                connection.sendAjax("POST", "hub/user/firstLogin",
+                                    function (text, data, xhr) {
+                                        userData.firstLogin = 0;
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    }, 0);
                                 break;
                         }
                     } else {
@@ -542,10 +616,12 @@ var mainLayout = {
                     }
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
+                    $$("changePasswordBtn").enable();
                 }, passwordInformation);
 
+        } else {
+            $$("changePasswordBtn").enable();
         }
-        $$("changePasswordBtn").enable();
     }
 };
 
@@ -604,43 +680,58 @@ var showApp = function () {
             case "superadmin":
                 localMenuData = webix.copy(menuSuperAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
                 }
                 break;
             case "admin":
                 localMenuData = webix.copy(menuAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
+                } else if(userData.firstLogin === 2) {
+                    showChangePasswordDialog();
+                } else if(userData.firstLogin === 3) {
+                    // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
                 }
                 break;
             case "direktor":
                 localMenuData = webix.copy(menuDirector);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
+                } else if(userData.firstLogin === 2) {
+                    showChangePasswordDialog();
                 }
                 break;
             case "sekretar":
                 localMenuData = webix.copy(menuSecretary);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
+                } else if(userData.firstLogin === 2) {
+                    showChangePasswordDialog();
                 }
                 break;
             case "menadzer":
                 localMenuData = webix.copy(menuSectorManager);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
+                } else if(userData.firstLogin === 2) {
+                    showChangePasswordDialog();
+                } else if(userData.firstLogin === 3) {
+                    // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
                 }
                 break;
             case "zaposleni":
                 localMenuData = webix.copy(menuWorker);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
-                if (userData.firstName == null || userData.lastName == null) {
+                console.log("AAAA: " + userData.firstLogin);
+                if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
+                } else if(userData.firstLogin === 2) {
+                    showChangePasswordDialog();
                 }
                 break;
         }
@@ -1134,7 +1225,7 @@ var dialogChangePassword = function () {
         body: {
             id: "aboutInside",
             css: "aboutInside",
-            width: 450,
+            width: 550,
             margin: 0,
             type: "clean",
             rows: [{
@@ -1142,7 +1233,7 @@ var dialogChangePassword = function () {
                 cols: [{
                     view: "label",
                     label: "<span class='webix_icon fa-briefcase'></span> Promjena lozinke",
-                    width: 400,
+                    width: 500,
                     height: 50
                 }, {},]
             },

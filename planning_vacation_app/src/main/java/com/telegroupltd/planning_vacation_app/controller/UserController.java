@@ -639,6 +639,20 @@ public class UserController extends GenericController<User, Integer> {
         return userRepository.getAllUsersWithoutSector(companyId);
     }
 
+    @RequestMapping(value = "/firstLogin", method = RequestMethod.POST)
+    public @ResponseBody String firstLogin(@RequestBody Byte firstLogin) throws BadRequestException {
+        User user = userRepository.findById(userBean.getUserUserGroupKey().getId()).orElse(null);
+        if(user != null) {
+            user.setFirstLogin(firstLogin);
+            if(repo.saveAndFlush(user) != null){
+                userBean.getUserUserGroupKey().setFirstLogin(firstLogin);
+                return "Success";
+            }
+            throw new BadRequestException(badRequestUpdate);
+        }
+        throw new BadRequestException(badRequestNoUser);
+    }
+
 
 
 
