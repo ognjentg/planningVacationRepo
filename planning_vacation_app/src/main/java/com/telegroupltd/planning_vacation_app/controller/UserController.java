@@ -170,31 +170,31 @@ public class UserController extends GenericController<User, Integer> {
     UserUserGroupKey login(@RequestBody UserLoginInformation userLoginInformation) throws ForbiddenException {
         User user = userRepository.login(userLoginInformation.getEmail(), userLoginInformation.getPassword(), userLoginInformation.getCompanyPin());
         String tempKey="";
-        switch (user.getUserGroupId()) {
-            case 1:
-                tempKey = "superadmin";
-                break;
-            case 2:
-                tempKey = "admin";
-                break;
-            case 3:
-                tempKey = "direktor";
-                break;
-            case 4:
-                tempKey = "sekretar";
-                break;
-            case 5:
-                tempKey="menadzer";
-                break;
-            case 6:
-                tempKey="zaposleni";
-                break;
-        }
 
-        UserUserGroupKey userUserGroupKey = new UserUserGroupKey(user,tempKey);
         if (user == null) {
             throw new ForbiddenException("Forbidden");
         } else {
+            switch (user.getUserGroupId()) {
+                case 1:
+                    tempKey = "superadmin";
+                    break;
+                case 2:
+                    tempKey = "admin";
+                    break;
+                case 3:
+                    tempKey = "direktor";
+                    break;
+                case 4:
+                    tempKey = "sekretar";
+                    break;
+                case 5:
+                    tempKey = "menadzer";
+                    break;
+                case 6:
+                    tempKey = "zaposleni";
+                    break;
+            }
+            UserUserGroupKey userUserGroupKey = new UserUserGroupKey(user,tempKey);
             userBean.setUserUserGroupKey(userUserGroupKey);
             userBean.setAuthorized(true);
            // return userBean.getUserUserGroupKey();

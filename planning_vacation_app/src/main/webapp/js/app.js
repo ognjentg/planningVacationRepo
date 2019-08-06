@@ -290,6 +290,8 @@ var settingsMenuActions = function (id) {
 var panel = {id: "empty"};
 var rightPanel = null;
 
+var firstLoginPanel = null;
+
 var userData = null;
 var companyData = null;
 
@@ -318,7 +320,8 @@ var init = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    showApp();
+                                    showFirstLogin();
+                                   // showApp();
                                 } else {
                                     showLogin();
                                 }
@@ -336,29 +339,177 @@ var init = function () {
     });
 }
 /*
-var firstLogin={
-    id: "firstLogin",
+var step=0.3333333333333;  //KORAK UVECAVANJA
+var value=0;   //POCETNA VRIJEDNOST
+
+webix.ui({
+ id:"app",
+ margin:5,
+ //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
+ rows:[
+   { type:"header", template:"Unesite Vase podatke" },
+  {
+     view: "tabview",
+     cells:[
+         {
+     header: "Profil",
+     body: {
+       id: "formView1",
+       //view: "form"
+       // form config
+     }
+   },
+         {
+     header: "Kompanija",
+     body: {
+       id: "formView2",
+       //view: "list"
+       // list config
+     }
+   },
+   {
+     header: "Ogranicenja",
+     body: {
+       id: "formView3",
+       //view: "form"
+       // form config
+     }
+   }
+     ]
+   },
+//   { view:"segmented", options:["Profil", "Kompanija", "Ogranicenja"]
+//  },
+   { height:0 },
+   {
+     cols:[
+     { view:"button", value:"Reload with Progress Bar", click:function(){ show_progress_bar(2000); }}
+   ]
+   }
+ ]
+});
+
+//adding ProgressBar functionality to layout
+webix.extend($$("app"), webix.ProgressBar);
+
+function show_progress_bar(delay){
+ value=value+step;  // OVDJE KORAK UVECAM
+ $$("app").disable();
+ $$("app").showProgress({
+   type:"top",
+   delay:delay,
+   hide:false,
+   position:value  // OVDJE POZICIJU SETUJEM
+ });
+ setTimeout(function(){
+   $$("app").enable();
+ }, delay);
+};
+ */
+var step=0.3333333333333;  //KORAK UVECAVANJA
+var value=0;   //POCETNA VRIJEDNOST
+
+var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
+    id: "firstLoginPanel",
     width: "auto",
     height: "auto",
-    css:"fadeInAnimation",
+    css: "fadeInAnimation",
     rows: [
         {
-
-        },
+            cols: [{
+                id: "companyLogoImage",
+                name: "companyLogoImage",
+                view: "template",
+                width: 220,
+                css: "logoInside",
+                template: "<img src='#src#'/>",
+                data: {src: null}
+            }, {
+                view: "toolbar",
+                css: "mainToolbar",
+                autowidth: true,
+                height: 50,
+                cols: [
+                    {
+                        view: "label",
+                        label: "<b>Planiranje godišnjeg odmora</b>",
+                        width: "auto"
+                    }
+                ]
+            }]
+        },{height:20},
         {
-            view: "multiview",
-            cells: [
-                {id: "listView", view: "list" },
-                {id: "formView", view: "htmlform" },
-                {id: "emptyView" }
+            id:"firstLoginWizard",
+            margin:5,
+            //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
+            rows:[
+                { type:"header", template:"Unesite Vase podatke" }, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
+                {
+                    view: "tabview",
+                    cells:[
+                        {
+                            header: "Profil",
+                            body: {
+                                id: "formProfileInformation",
+                                //view: "form"
+                                // form config
+                            }
+                        },
+                        {
+                            header: "Kompanija",
+                            body: {
+                                id: "formCompanyInformation",
+                                //view: "list"
+                                // list config
+                            }
+                        },
+                        {
+                            header: "Ogranicenja",
+                            body: {
+                                id: "formConstrainsInformation",
+                                view: "form",
+                                elements: [{
+                                    id: "saveInformation",
+                                    view: "button",
+                                    label: "Sacuvajte",
+                                    type: "iconButton",
+                                    //icon: "sign-in",
+                                    click: "showApp",
+                                    align: "left",
+                                    hotkey: "enter",
+                                    width: 580,
+                                    height: 40
+                                }]
+                            }
+                        }
+                    ]
+                },
+                { height:0 },
+                {
+                    cols:[
+                        { view:"button", value:"Reload with Progress Bar", click:function(){ firstLoginLayout.show_progress_bar(2000); }}
+                    ]
+                },
+                {height:20}
+
             ]
-        },
-        {
-
         }
-        ]
-};
-*/
+    ],
+
+    show_progress_bar: function (delay) {
+        value=value+step;  // OVDJE KORAK UVECAM
+        $$("firstLoginWizard").disable();
+        $$("firstLoginWizard").showProgress({
+            type:"bottom",
+            delay:delay,
+            hide:false,
+            position:value  // OVDJE POZICIJU SETUJEM
+        });
+        setTimeout(function(){
+            $$("firstLoginWizard").enable();
+        }, delay);
+    }
+}
+
 var mainLayout = {
     id: "app",
     width: "auto",
@@ -451,6 +602,7 @@ var mainLayout = {
             ]
         }
     ],
+
 
     saveUserFirstAndLastNameFunction: function () {
         var form = $$("addFirstAndLastNameForm");
@@ -656,7 +808,27 @@ var menuEvents = {
         menuActions(item);
     }
 }
+
+var firstLogin;
+var showFirstLogin = function () {
+    console.log("Usao u showFirstLogin");
+    //Ako je admin i ako je ulogovan 1. put na sistem:
+    if(userData != null && userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null ){
+        //todo: switch
+console.log("Usao u if showFirstLogin");
+         var main = webix.copy(firstLoginLayout);
+         firstLogin = webix.ui(main, panel);
+         panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
+
+//adding ProgressBar functionality to layout
+        webix.extend($$("firstLoginWizard"), webix.ProgressBar);
+
+        $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
+    }
+};
+
 var mainApp;
+
 var showApp = function () {
 
 var companyInfoItems = [
@@ -672,11 +844,6 @@ var subMenuItems = [
     {id:"sep4", $template: "Separator"},
     {id: "4", value: "Odjava", icon: "sign-out"}
 ]
-//Ako je admin i ako je ulogovan 1. put na sistem:
-  /*  if(userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null && userData.photo==null){
-
-    }*/
-
 
     if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
@@ -687,7 +854,6 @@ var subMenuItems = [
     for (var i = 0; i < subMenuItems.length; i++)
         settingsMenu.push(subMenuItems[i]);
 
-
     console.log("Company data: ");
     console.log(companyData);
     var main = webix.copy(mainLayout);
@@ -696,7 +862,6 @@ var subMenuItems = [
 //$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
 //**************
     var localMenuData = null;
-
 
     if (userData != null) {
         if (userData.userGroupKey !== "superadmin") {
@@ -715,6 +880,7 @@ var subMenuItems = [
             case "admin":
                 localMenuData = webix.copy(menuAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
+/*<<<<<<< HEAD
                 if (userData.firstLogin === 1) {
                     showAddFirstAndLastNameDialog();
                 } else if(userData.firstLogin === 2) {
@@ -722,6 +888,11 @@ var subMenuItems = [
                 } else if(userData.firstLogin === 3) {
                     // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
                 }
+=======*/
+               /* if (userData.firstName == null || userData.lastName == null) {
+                    showAddFirstAndLastNameDialog();
+                }*/
+//>>>>>>> Wizard for first admin's login
                 break;
             case "direktor":
                 localMenuData = webix.copy(menuDirector);
@@ -1152,7 +1323,8 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    showApp();
+                                    showFirstLogin(); //uspjesan login, prikaz layout-a za to...
+                                    //showApp();
                                 } else {
                                     util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
                                 }
