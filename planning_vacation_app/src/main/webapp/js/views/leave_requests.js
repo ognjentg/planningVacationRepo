@@ -520,7 +520,8 @@ leaveRequestsView = {
                     }, {}, {
                         view: "button",
                         template:"<span class='webix_icon fa-eye'></span>",
-                        id: "comment"
+                        id: "comment",
+                        click:'leaveRequestsView.showSenderComment'
                     }]
                 }, {
                     cols: [{
@@ -571,6 +572,39 @@ leaveRequestsView = {
         }
 
     },
+    senderCommentDialog:{
+        view:"popup",
+        id:"senderCommentDialog",
+        position: "center",
+        modal: true,
+        move: true,
+        body:{
+            rows:[
+                {
+                    view: "toolbar",
+                    cols: [
+                        {
+                            view: "label",
+                            width: 400,
+                            label: "Komentar pošiljaoca"
+                        },
+                        {},
+                        {
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            hotkey: "esc",
+                            click: "util.dismissDialog('senderCommentDialog')"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    showSenderComment: function(){
+        webix.ui(webix.copy(usergroupView.senderCommentDialog));
+        $$("senderCommentDialog").show();
+    },
     showLeaveRequestInfo: function (id) {
         webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo));
 
@@ -604,16 +638,6 @@ leaveRequestsView = {
             });
 
 
-    },
-    senderCommentDialog:{
-        view:"popup",
-        id:"senderCommentPopup",
-        rows:[
-            {
-                view:"label",
-                label:"Komentar pošiljaoca: "
-            }
-        ]
     },
     saveRejectedLeaveRequest: function () {
 
