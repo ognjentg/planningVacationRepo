@@ -63,8 +63,8 @@ leaveRequestsView = {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").showColumn("accept");
                                         $$("leave_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorId/" +userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorId/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestInfo");
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                                         $$("leave_requestDT").detachEvent("onBeforeDelete")
                                     } else if (name === 3) {
                                         $$("leave_requestDT").hideColumn("typeId");
@@ -748,7 +748,7 @@ function refreshOnData() {
 
     if(userData.userGroupKey == "menadzer"){
         if (comboItemId == 4) {
-            URLCurrentUrl = URLAllLeaveRequestsBySector;
+            URLCurrentUrl = URLAllLeaveRequests;
         } else {
             URLCurrentUrl = URLByLeaveRequestStatusBySector;
         }
@@ -762,7 +762,7 @@ function refreshOnData() {
 
     if(userData.userGroupKey == "menadzer"){
         if (comboItemId == 4) {
-            webix.ajax(URLCurrentUrl + sectorId, {
+            webix.ajax(URLCurrentUrl, {
 
                 error: function (text, data, xhr) {
                     if (xhr.status != 200) {
@@ -777,7 +777,7 @@ function refreshOnData() {
                             console.log("loaded data with success");
 
                             table.clearAll();
-                            table.load(URLCurrentUrl + sectorId);
+                            table.load(URLCurrentUrl);
                             table.refresh();
                         }
                     }

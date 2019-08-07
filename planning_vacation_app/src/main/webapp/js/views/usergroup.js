@@ -58,7 +58,7 @@ usergroupView = {
                             },
                             {
                                 view: "label",
-                                label: "Trenutno odsustvo sektora",
+                                label: "Trenutno odsutno",
                                 type: "header",
                                 css: "employee-counter"
                             },
@@ -114,7 +114,7 @@ usergroupView = {
                         id: "deleteSelectedButton",
                         view: "button",
                         type: "iconButton",
-                        label: "Izbrisi zaposlene",
+                        label: "Izbriši zaposlene",
                         icon: "trash",
                         width: 200,
                         height: 40,
@@ -1196,7 +1196,6 @@ usergroupView = {
         usergroupView.createDatatableContextMenu();
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
             $$("addUserButton").hide();
-            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             $$("usergroupDT").hideColumn("delete");
             $$("usergroupDT").hideColumn("sector");
         }
@@ -1252,6 +1251,14 @@ usergroupView = {
         $$("usergroupDT").clearAll();
         $$("usergroupDT").define("url", "hub/user/custom/bySector/" + sector.id);
         $$("usergroupDT").detachEvent("onBeforeDelete");
+        connection.sendAjax("GET", "hub/leave_request/numOfAbsentPeople/" + sector.id,
+            function (text, data, xhr) {
+                var numOfAbsentPeople = data.json();
+                var percent = Math.round(numOfAbsentPeople / $$("usergroupDT").count() * 100);
+                animatePercentage($$("t1"), 0,  percent, 1000);
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
     },
 
     showAddDialog: function () {

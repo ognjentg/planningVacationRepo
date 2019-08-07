@@ -243,7 +243,7 @@ var companyInfoView = {
                         },
                         {
                             view:"label",
-                            label: "Kolektivni godisnji odmori:",
+                            label: "Kolektivni godišnji odmori:",
                             align:"left"
                         },
                         {

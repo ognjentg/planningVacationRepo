@@ -205,7 +205,7 @@ var menuSecretary = [
          }*/
     {
         id: "absence_history",
-        value: "Istorija odsustava",
+        value: "Istorija odsustva",
         icon: "fas fa-history"
     }, {
         id: "company_statistic",
@@ -1620,10 +1620,10 @@ showNotifications = function () {
                     borderless: true,
                     template: function (obj) {
                         if (obj.seen)
-                            return "<span style='color:green' class='m_title' >" + (obj.title) + "</span>"  +
-                                "<span style='color:green' class='message'>" + (obj.text) + "</span>";
-                        return "<span style='color:red' class='m_title'>" + (obj.title) + "</span>" +
-                            "<span style='color:red' class='message'>" + (obj.text) + "</span>";
+                            return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>"  +
+                                "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>";
+                        return "<span style='color:darkgrey;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
+                            "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>";
                     },
                     css: "notifications",
                     width: 300,
@@ -1633,7 +1633,7 @@ showNotifications = function () {
                     },
                     on: {
                         "onItemClick": function (id, e, node) {
-                            if (e.target.type != "checkbox") {
+                            //if (e.target.type != "checkbox") {
                                 var item = this.getItem(id);
                                 if ("Bolovanje" == item.title) {
                                     if (userData.userGroupKey == "zaposleni") {
@@ -1656,7 +1656,7 @@ showNotifications = function () {
                                     }
                                 }
 
-                            }
+                            //}
 
 
                             if(item.seen==0){

@@ -152,37 +152,18 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
-        List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
-        List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
-
-        /*if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
-
-       /* if(userBean.getUserUserGroupKey().getUserGroupId()==5) {
-
-            for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
-                if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != userBean.getUserUserGroupKey().getSectorId()){
-                    users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
-                }
-
+        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList();
+        if(userBean.getUserUserGroupKey().getUserGroupKey()=="menadzer"){
+            List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),userBean.getUserUserGroupKey().getSectorId(), (byte)1);
+            for(var i=0;i< users.size();i++){
+                User user=users.get(i);
+                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+                list.addAll(pom);
             }
-            return leaveRequestUserLeaveRequestStatuses;
+        }else{
+            list = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
         }
-        else {
-            for (LeaveRequestUserLeaveRequestStatus leaveRequestUserLeaveRequestStatus : leaveRequestUserLeaveRequestStatuses) {
-                if(users.get(leaveRequestUserLeaveRequestStatus.getSenderUserId()).getSectorId() != null){
-                    users.remove(leaveRequestUserLeaveRequestStatus.getSenderUserId());
-                }
-
-            }
-            return leaveRequestUserLeaveRequestStatuses;
-
-        }
-
-        return leaveRequestUserLeaveRequestStatuses;
-
-
-        }*/
-        return leaveRequestUserLeaveRequestStatuses;
+        return list;
 
     }
 
@@ -514,18 +495,24 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     }
 
 
-    @RequestMapping(value = "/leaveRequestFilteredBySectorId/{sectorId}", method = RequestMethod.GET)
+   /* @RequestMapping(value = "/leaveRequestFilteredBySectorId/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorId( @PathVariable Integer sectorId) {
-        List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
-        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
-        for(var i=0;i< users.size();i++){
-            User user=users.get(i);
-            List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
-            list.addAll(pom);
+         List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
+        List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
+        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList();
+        if(userBean.getUserUserGroupKey().getUserGroupKey()=="menadzer"){
+            List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
+            for(var i=0;i< users.size();i++){
+                User user=users.get(i);
+                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+                list.addAll(pom);
+            }
+        }else{
+            list = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
         }
         return list;
-    }
+    }*/
 
 
     @RequestMapping(value = "/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/{key}/{sectorId}", method = RequestMethod.GET)

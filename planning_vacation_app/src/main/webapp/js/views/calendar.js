@@ -98,7 +98,7 @@ var calendarView = {
                             },
                             {
                                 view: "label",
-                                label: "Preostalo dana za praznike",
+                                label: "Preostalo dana za religijske praznike",
                                 type: "header",
                                 css: "companies-counter"
                             },
@@ -130,17 +130,17 @@ var calendarView = {
                                 {},
                                 {
                                     view: "label",
-                                    label: "Godišnji",
+                                    label: "Godišnji odmor",
                                     align: "center"
                                 },
                                 {
                                     view: "label",
-                                    label: "Plaćeno",
+                                    label: "Plaćeno odsustvo",
                                     align: "center"
                                 },
                                 {
                                     view: "label",
-                                    label: "Neplaćeno",
+                                    label: "Neplaćeno odsustvo",
                                     align: "center"
                                 },
                                 {
@@ -150,7 +150,7 @@ var calendarView = {
                                 },
                                 {
                                     view: "label",
-                                    label: "Religijsko",
+                                    label: "Religijski praznici",
                                     align: "center"
                                 }
                             ]
@@ -249,7 +249,7 @@ var calendarView = {
                         }, {
                             view: "label",
                             id: "leaveTypeLabel",
-                            label: "Zahtjev za godišnjim odmorom",
+                            label: "Zahtjev za godišnji odmor",
                             css: {"font-style": "bold", "font-size": "150%"},
                             type: "header",
                             width: 400,
@@ -318,7 +318,7 @@ var calendarView = {
                                     // height:200,  //without setted height, we can do resizeing
                                     autoWidth: true,
                                     tooltip: "U komentaru možete objasniti detalje Vašeg zahtjeva.",
-                                    placeholder: "Ovdje unesite komentar ako imate"
+                                    placeholder: "Unesite komentar "
                                 }, {
                                     height: 10
                                 }, {
@@ -1027,7 +1027,7 @@ var calendarView = {
     religionLeave: function () {
 
         selectedButton = buttons.RELIGIOUS;
-        $$("leaveTypeLabel").setValue("Zahtjev za religijsko odsustvo");
+        $$("leaveTypeLabel").setValue("Zahtjev za religijske praznike");
         $$("comment").show();
         $$("commentLabel").show();
 
