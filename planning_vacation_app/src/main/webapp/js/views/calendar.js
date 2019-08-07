@@ -60,13 +60,13 @@ var calendarView = {
                                 view: "template",
                                 id: "t2",
                                 css: "companies-counter",
-                                template: "<p>-</p>"
+                                template: "<p>-</p>",
                             },
                             {
                                 view: "label",
                                 label: "Stari godišnji",
                                 type: "header",
-                                css: "companies-counter"
+                                css: "companies-counter",
                             }
                         ]
                     },
@@ -77,13 +77,13 @@ var calendarView = {
                                 view: "template",
                                 id: "t1",
                                 css: "companies-counter",
-                                template: "<p>-</p>"
+                                template: "<p>-</p>",
                             },
                             {
                                 view: "label",
                                 label: "Novi godišnji",
                                 type: "header",
-                                css: "companies-counter"
+                                css: "companies-counter",
                             },
                         ]
                     },
@@ -94,13 +94,13 @@ var calendarView = {
                                 view: "template",
                                 id: "t3",
                                 css: "companies-counter",
-                                template: "<p>-</p>"
+                                template: "<p>-</p>",
                             },
                             {
                                 view: "label",
                                 label: "Preostalo dana za religijske praznike",
                                 type: "header",
-                                css: "companies-counter"
+                                css: "companies-counter",
                             },
 
                         ]
@@ -369,7 +369,8 @@ var calendarView = {
                         var dates = data.json();
                         for (var i = 0; i < dates.length; i++) {
                             var tempDate = new Date(dates[i].day);
-                            tempDate.setHours(00, 00, 00);
+                            //tempDate.setHours(00, 00, 00);
+                            tempDate.setHours(0,0,0,0);
                             nonWorkingDays[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
