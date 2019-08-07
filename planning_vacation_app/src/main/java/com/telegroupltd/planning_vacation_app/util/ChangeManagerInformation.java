@@ -4,8 +4,9 @@ public class ChangeManagerInformation {
 
     private Integer newManager, newEmployee;
 
-    public ChangeManagerInformation(Integer newManager,Integer bla) {
+    public ChangeManagerInformation(Integer newManager,Integer newEmployee) {
         this.newManager = newManager;
+        this.newEmployee = newEmployee;
     }
 
     public Integer getNewManager() { return newManager; }
