@@ -410,6 +410,7 @@ function show_progress_bar(delay){
  */
 var step=0.3333333333333;  //KORAK UVECAVANJA
 var value=0;   //POCETNA VRIJEDNOST
+///<div id="myDiv">Default Template with some text inside</div>
 
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
     id: "firstLoginPanel",
@@ -447,6 +448,23 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
             rows:[
                 { type:"header", template:"Unesite Vase podatke" }, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
                 {
+                view: "template",
+                    width: 400,
+                    height:70,
+                   // css: "progressNodes",
+///////////////////////////////////////////////////////////////////////////
+                template: '<br><section>\n' +
+                    '\n' +
+                    '  <ol class="progress-bar">\n' +
+                    '    <li class="is-complete"><span></span></li>  \n' +
+                    '    <li class="is-complete"><span></span></li>  \n' +
+                    '    <li class="is-active"><span></span></li>\n' +
+                    '    <li><span></span></li>' +
+                    '  </ol>' +
+                    '</section>'
+///////////////////////////////////////////////////////////////////////////
+            },
+                {
                     view: "tabview",
                     cells:[
                         {
@@ -455,6 +473,14 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
                                 id: "formProfileInformation",
                                 //view: "form"
                                 // form config
+                            }
+                        },
+                        {
+                            header: "Lozinka",
+                            body: {
+                                id: "formChangePassword",
+                                //view: "list"
+                                // list config
                             }
                         },
                         {
@@ -814,6 +840,7 @@ var menuEvents = {
 
 var firstLogin;
 var showFirstLogin = function () {
+
     console.log("Usao u showFirstLogin");
     //Ako je admin i ako je ulogovan 1. put na sistem:
     if(userData != null && userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null ){
@@ -827,6 +854,8 @@ console.log("Usao u if showFirstLogin");
         webix.extend($$("firstLoginWizard"), webix.ProgressBar);
 
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
+
+
     }else{
         showApp();
     }

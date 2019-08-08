@@ -5,6 +5,7 @@
     --color-gray-light: #bbb;
     --color-gray-disabled: #e8e8e8;
     --color-green: #53a318;
+    --color-blue: #3498db;
     --color-green-dark: #383;
     --font-size-small: .75rem;
     --font-size-default: .875rem;
@@ -33,23 +34,25 @@ section {
 }
 
 .progress-bar {
+    width: 78%;
     display: flex;
     justify-content: space-between;
     list-style: none;
     padding: 0;
-    margin: 0 0 1rem 0;
+    /*margin: 0 0 1rem 0;*/
+    margin:auto;
 }
 .progress-bar li {
     flex: 2;
     position: relative;
-    padding: 0 0 14px 0;
+    padding: 0 0 15px 0; /*koliko su slova podignuta*/
     font-size: var(--font-size-default);
-    line-height: 1.5;
-    color: var(--color-green);
-    font-weight: 600;
+    line-height: 3;
+    color: var(--color-blue);
+    font-weight: 1000;
     white-space: nowrap;
     overflow: visible;
-    min-width: 0;
+    min-width: 5;
     text-align: center;
     border-bottom: 2px solid var(--color-gray-disabled);
 }
@@ -63,14 +66,14 @@ section {
 .progress-bar li:before {
     content: "";
     display: block;
-    width: 8px;
-    height: 8px;
+    width: 40px; /*velicina kruga*/
+    height: 40px;
     background-color: var(--color-gray-disabled);
     border-radius: 50%;
     border: 2px solid var(--color-white);
     position: absolute;
-    left: calc(50% - 6px);
-    bottom: -7px;
+    left: calc(50% - 20px);
+    bottom: -23px;
     z-index: 3;
     transition: all .2s ease-in-out;
 }
@@ -85,7 +88,7 @@ section {
     transition: opacity .3s ease-in-out;
 }
 .progress-bar li:not(.is-active) span {
-    opacity: 0;
+    opacity: ;
 }
 .progress-bar .is-complete:not(:first-child):after,
 .progress-bar .is-active:not(:first-child):after {
@@ -96,7 +99,7 @@ section {
     bottom: -2px;
     left: -50%;
     z-index: 2;
-    border-bottom: 2px solid var(--color-green);
+    border-bottom: 4px solid var(--color-blue);
 }
 .progress-bar li:last-child span {
     width: 200%;
@@ -112,15 +115,15 @@ section {
 }
 
 .progress-bar .is-complete:before {
-    background-color: var(--color-green);
+    background-color: var(--color-blue);
 }
 
-.progress-bar .is-active:before,
-.progress-bar li:hover:before,
-.progress-bar .is-hovered:before {
+.progress-bar .is-active:before
+/*.progress-bar li:hover:before,
+.progress-bar .is-hovered:before */{
     background-color: var(--color-white);
-    border-color: var(--color-green);
-}
+    border-color: var(--color-blue);
+}/*
 .progress-bar li:hover:before,
 .progress-bar .is-hovered:before {
     transform: scale(1.33);
@@ -134,7 +137,7 @@ section {
 .progress-bar:hover li:not(:hover) span {
     opacity: 0;
 }
-
+*/
 .x-ray .progress-bar,
 .x-ray .progress-bar li {
     border: 1px dashed red;
