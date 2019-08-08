@@ -42,6 +42,7 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     private LeaveRequestDateRepository leaveRequestDateRepository;
     @Autowired
     private com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
+
     @PersistenceContext
     private EntityManager entityManager;
 

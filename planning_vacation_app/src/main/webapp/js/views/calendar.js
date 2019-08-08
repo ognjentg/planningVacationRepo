@@ -521,7 +521,7 @@ var calendarView = {
                 else
                     selectedDays.splice(index, 1);
             } else if ([buttons.SICK].includes(selectedButton) &&
-                calendarView.ruleset.doesNotStartInFuture(selectedDate.getTime())) {
+                calendarView.ruleset.doesNotStartInFuture(selectedDate)) {
                 util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
             } else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
                 days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
@@ -989,7 +989,7 @@ var calendarView = {
             },
             doesNotStartInFuture: function (date) {
                 if(date.getTime() == getToday().getTime())
-                    return true;
+                    return false;
                 var temp = $$("periodsDT").serialize()[0];
                 if (temp == null)
                     return calendarView.ruleset.isNotInPast(date);

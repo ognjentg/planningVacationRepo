@@ -25,12 +25,15 @@ import java.util.*;
 @RestController
 @Scope("request")
 public class SectorController extends GenericHasActiveController<Sector, Integer> {
-
     private final SectorRepository sectorRepository;
-    private final CompanyRepository companyRepository;
-    private final LeaveRequestRepository leaveRequestRepository;
-    private final LeaveRequestDateRepository leaveRequestDateRepository;
-    private final UserRepository userRepository;
+    @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private LeaveRequestDateRepository leaveRequestDateRepository;
+    @Autowired
+    private UserRepository userRepository;
 
 
     @Value("Ne postoji sektor.")
@@ -45,10 +48,6 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     public SectorController(SectorRepository sectorRepository, CompanyRepository companyRepository, LeaveRequestRepository leaveRequestRepository, LeaveRequestDateRepository leaveRequestDateRepository, UserRepository userRepository){
         super(sectorRepository);
         this.sectorRepository=sectorRepository;
-        this.companyRepository=companyRepository;
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.leaveRequestDateRepository = leaveRequestDateRepository;
-        this.userRepository = userRepository;
     }
 
     @Override

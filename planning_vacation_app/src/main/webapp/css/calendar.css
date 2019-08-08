@@ -7,10 +7,10 @@
 }
 /* Boja danjašnjeg dana */
 .today .dhx_month_head{
-    background-color: #cc0005 /*!important;*/
+    background-color: #25a652 !important;
 }
 .today .dhx_month_body{
-    background-color: #cc0005 /* !important;*/
+    background-color: #25a652 !important;
 }
 /* Boja za selektovane dane */
 .selected_day .dhx_month_head {
@@ -63,9 +63,7 @@
 .unpaid_day_off .dhx_month_body{
     background-color: #BBBF95; /*#edc13e;*/
 }
-.dhx_now .dhx_month_body, .dhx_now .dhx_month_head {
-    background:none !important;
-}
+
 /* Boja za labelu neplaceni dani u legendi */
 .unpaid_day_label {
     color: #BBBF95; /*#edc13e;*/

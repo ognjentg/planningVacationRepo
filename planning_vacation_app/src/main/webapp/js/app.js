@@ -1674,7 +1674,7 @@ showNotifications = function () {
                                         sickRequestsView.selectPanel();
                                     }
                                 }
-                                else {
+                                else if("Kolektivni godišnji odmor" != item.title) {
                                     if (userData.userGroupKey == "zaposleni") {
                                         $$("mainMenu").select("absence_history");
                                         absenceHistoryView.selectPanel();

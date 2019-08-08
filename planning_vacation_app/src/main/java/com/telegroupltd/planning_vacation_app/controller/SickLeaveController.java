@@ -2,13 +2,13 @@ package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
-import com.telegroupltd.planning_vacation_app.model.Notification;
 import com.telegroupltd.planning_vacation_app.model.SickLeave;
 import com.telegroupltd.planning_vacation_app.model.SickLeaveUserSickLeaveStatus;
 import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.NotificationRepository;
 import com.telegroupltd.planning_vacation_app.repository.SickLeaveRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.util.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -30,22 +30,23 @@ import java.util.*;
 @Scope("request")
 public class SickLeaveController extends GenericHasActiveController<SickLeave,Integer> {
     private final SickLeaveRepository sickLeaveRepository;
-    private final NotificationRepository notificationRepository;
-    private final UserRepository userRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
-    com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
+    Notification emailNotification;
+
     @Value("Brisanje nije moguće.")
     private String badRequestDelete;
 
     @Autowired
-    SickLeaveController(SickLeaveRepository sickLeaveRepository, NotificationRepository notificationRepository, UserRepository userRepository)
+    SickLeaveController(SickLeaveRepository sickLeaveRepository)
     {
         super(sickLeaveRepository);
         this.sickLeaveRepository = sickLeaveRepository;
-        this.notificationRepository = notificationRepository;
-        this.userRepository = userRepository;
     }
 
     @Override

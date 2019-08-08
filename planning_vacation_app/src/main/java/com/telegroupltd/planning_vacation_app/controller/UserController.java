@@ -34,15 +34,20 @@ import java.util.stream.Collectors;
 @Scope("request")
 @SuppressWarnings("ALL")
 public class UserController extends GenericController<User, Integer> {
-
     private final UserRepository userRepository;
-    private final CompanyRepository companyRepository;
-    private final UserGroupRepository userGroupRepository;
-    private final VacationDaysRepository vacationDaysRepository;
-    private final ReligionLeaveRepository religionLeaveRepository;
-    private final ConstraintsRepository constraintsRepository;
-    private final SectorRepository sectorRepository;
 
+    @Autowired
+    private CompanyRepository companyRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
+    @Autowired
+    private VacationDaysRepository vacationDaysRepository;
+    @Autowired
+    private ReligionLeaveRepository religionLeaveRepository;
+    @Autowired
+    private ConstraintsRepository constraintsRepository;
+    @Autowired
+    private SectorRepository sectorRepository;
     @Autowired
     private ColectiveVacationRepository colectiveVacationRepository;
 
@@ -87,16 +92,11 @@ public class UserController extends GenericController<User, Integer> {
     private String badRequestOldPassword;
     @Value("Nova lozinka ne ispunjava pravila.")
     private String badRequestNewPassword;
+
     @Autowired
-    public UserController(UserRepository userRepository, CompanyRepository companyRepository,UserGroupRepository userGroupRepository, VacationDaysRepository vacationDaysRepository, ReligionLeaveRepository religionLeaveRepository, ConstraintsRepository constraintsRepository, SectorRepository sectorRepository){
+    public UserController(UserRepository userRepository){
         super(userRepository);
         this.userRepository=userRepository;
-        this.companyRepository=companyRepository;
-        this.userGroupRepository=userGroupRepository;
-        this.vacationDaysRepository = vacationDaysRepository;
-        this.religionLeaveRepository = religionLeaveRepository;
-        this.constraintsRepository = constraintsRepository;
-        this.sectorRepository = sectorRepository;
     }
     //Used to send login information to the added user
     @Autowired
@@ -381,7 +381,10 @@ public class UserController extends GenericController<User, Integer> {
                 Constraints constraints = constraintsRepository.getByCompanyIdAndActive(newUser.getCompanyId(), (byte)1);
                 vacationDays.setUsedDays(numOfVacationDays);
                 vacationDays.setActive((byte)1);
-                vacationDays.setTotalDays(constraints.getMaxVacationDays());
+                if(constraints != null)
+                    vacationDays.setTotalDays(constraints.getMaxVacationDays());
+                else
+                    vacationDays.setTotalDays(20);
                 vacationDays.setUserId(newUser.getId());
                 vacationDays.setYear(Calendar.getInstance().get(Calendar.YEAR));
                 vacationDaysRepository.saveAndFlush(vacationDays);

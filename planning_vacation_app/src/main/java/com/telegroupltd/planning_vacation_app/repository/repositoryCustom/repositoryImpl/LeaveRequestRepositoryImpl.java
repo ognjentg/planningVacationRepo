@@ -81,19 +81,14 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "WHERE lr.active = 1 AND lrs.key=? "+
             "GROUP BY lr.id ";
 
-    private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID = "select distinct user.id from user " +
-            "join sick_leave sl on user.id = sl.user_id " +
-            "join sick_leave_status sls on sl.sick_leave_status_id = sls.id " +
-            "join leave_request lr on user.id = lr.sender_user_id " +
-            "join leave_request_date lrd on lr.id = lrd.leave_request_id " +
-            "join leave_request_status lrs on lr.leave_request_status_id = lrs.id " +
-            "where (((lrs.name = \"Odobreno\" OR lrs.name = \"Otkazivanje\") AND lr.active = 1 AND lrd.date = DATE (NOW()))" +
-            " OR (DATE (NOW()) BETWEEN sl.date_from AND sl.date_to AND sl.active = 1 AND sls.name = \"Opravdano\"))  AND sector_id = ?;";
+    private static final String GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "SELECT COUNT(DISTINCT user.id) FROM user " +
+            "JOIN sick_leave sl ON user.id=sl.user_id " +
+            "WHERE user.active=1 AND sl.active=1 AND sl.sick_leave_status_id=2 AND (DATE(?) BETWEEN sl.date_from AND sl.date_to) AND user.sector_id =? ";
 
-    private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "select count(distinct user.id) from user " +
-            "join leave_request lr on user.id = lr.sender_user_id " +
-            "join leave_request_date lrd on lr.id = lrd.leave_request_id " +
-            "where user.active = 1 and lr.active = 1 and lrd.active = 1 and lrd.date = date(?) and sector_id = ?;";
+    private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "SELECT COUNT(DISTINCT user.id) FROM user " +
+            "JOIN leave_request lr ON user.id=lr.sender_user_id " +
+            "JOIN leave_request_date lrd ON lr.id=lrd.leave_request_id " +
+            "WHERE user.active=1 AND lr.active=1 AND lrd.active=1 AND lrd.date=date(?) AND sector_id=?";
 
     private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment,sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
@@ -206,13 +201,15 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
 
     @Override
     public Integer getNumOfAbsentPeopleFilteredBySectorId(Integer sectorId){
-        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, "NOW()").setParameter(2, sectorId).getSingleResult()).intValue();
+        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, "NOW()").setParameter(2, sectorId).getSingleResult()).intValue() +
+                ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, "NOW()").setParameter(2, sectorId).getSingleResult()).intValue();
     }
 
     @Override
     public Integer getNumOfAbsentPeopleFilteredBySectorIdAndDate(Integer sectorId, Date tempDate){
-        String date = "\"" + new SimpleDateFormat("yyyy-MM-dd").format(tempDate) + "\"";
-        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, tempDate).setParameter(2, sectorId).getSingleResult()).intValue();
+        //String date = "\"" + new SimpleDateFormat("yyyy-MM-dd").format(tempDate) + "\"";
+        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, tempDate).setParameter(2, sectorId).getSingleResult()).intValue() +
+                ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, tempDate).setParameter(2, sectorId).getSingleResult()).intValue();
     }
 
     @Override

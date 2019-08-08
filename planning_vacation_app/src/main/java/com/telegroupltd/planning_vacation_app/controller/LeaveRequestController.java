@@ -23,10 +23,15 @@ import java.util.*;
 @Scope("request")
 public class LeaveRequestController extends GenericHasActiveController<LeaveRequest, Integer> {
     private final LeaveRequestRepository leaveRequestRepository;
-    private final UserRepository userRepository;
-    private final VacationDaysRepository vacationDaysRepository;
-    private final LeaveRequestDateRepository leaveRequestDateRepository;
-    private final ReligionLeaveRepository religionLeaveRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private VacationDaysRepository vacationDaysRepository;
+    @Autowired
+    private LeaveRequestDateRepository leaveRequestDateRepository;
+    @Autowired
+    private ReligionLeaveRepository religionLeaveRepository;
     @Autowired
     private NotificationRepository notificationRepository;
     @Autowired
@@ -50,13 +55,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     private String tooMuchAbsent;
 
     @Autowired
-    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository, UserRepository userRepository, VacationDaysRepository vacationDaysRepository, LeaveRequestDateRepository leaveRequestDateRepository, ReligionLeaveRepository religionLeaveRepository) {
+    public LeaveRequestController(LeaveRequestRepository leaveRequestRepository) {
         super(leaveRequestRepository);
         this.leaveRequestRepository = leaveRequestRepository;
-        this.userRepository = userRepository;
-        this.vacationDaysRepository = vacationDaysRepository;
-        this.leaveRequestDateRepository = leaveRequestDateRepository;
-        this.religionLeaveRepository = religionLeaveRepository;
     }
 
     @Transactional
@@ -491,7 +492,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/numOfAbsentPeople/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
     Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId){
-        return leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorId(sectorId);
+        Integer tmp = leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorId(sectorId);
+        return tmp;
     }
 
 

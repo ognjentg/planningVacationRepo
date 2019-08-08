@@ -33,11 +33,14 @@ import java.util.*;
 @Scope("request")
 @SuppressWarnings("ALL")
 public class CompanyController extends GenericController<Company, Integer> {
-
     private final CompanyRepository companyRepository;
-    private final UserRepository userRepository;
-    private final LeaveRequestRepository leaveRequestRepository;
-    private final LeaveRequestDateRepository leaveRequestDateRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private LeaveRequestRepository leaveRequestRepository;
+    @Autowired
+    private LeaveRequestDateRepository leaveRequestDateRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -64,9 +67,6 @@ public class CompanyController extends GenericController<Company, Integer> {
     public CompanyController(CompanyRepository companyRepository, UserRepository userRepository, LeaveRequestRepository leaveRequestRepository, LeaveRequestDateRepository leaveRequestDateRepository) {
         super(companyRepository);
         this.companyRepository = companyRepository;
-        this.userRepository = userRepository;
-        this.leaveRequestRepository = leaveRequestRepository;
-        this.leaveRequestDateRepository = leaveRequestDateRepository;
     }
 
     @Override

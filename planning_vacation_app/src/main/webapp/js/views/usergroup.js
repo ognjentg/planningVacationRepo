@@ -2030,7 +2030,7 @@ usergroupView = {
         var date = new Date();
         scheduler.config.xml_date = "%Y-%m-%d %H:%i";
         scheduler.locale = locale_sr_latin;
-        scheduler.init('employeeCalendar', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
+        scheduler.init('employeeCalendar', null,"month");
         scheduler.setCurrentView();
 
     }
