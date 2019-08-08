@@ -290,7 +290,6 @@ var settingsMenuActions = function (id) {
 var panel = {id: "empty"};
 var rightPanel = null;
 
-var firstLoginPanel = null;
 
 var userData = null;
 var companyData = null;
@@ -412,7 +411,7 @@ var step=0.3333333333333;  //KORAK UVECAVANJA
 var value=0;   //POCETNA VRIJEDNOST
 ///<div id="myDiv">Default Template with some text inside</div>
 
-var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
+var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
     width: "auto",
     height: "auto",
@@ -471,8 +470,110 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
                             header: "Profil",
                             body: {
                                 id: "formProfileInformation",
-                                //view: "form"
-                                // form config
+                                view: "form",
+                                width: 500,
+                                elementsConfig: {
+                                    labelWidth: 140,
+                                    bottomPadding: 18
+                                },
+                                elements: [
+                                    {
+                                        view: "text",
+                                        id: "base64ImageUser",
+                                        name: "base64ImageUser",
+                                        hidden: true
+                                    },
+                                    {
+                                        cols: [
+                                            {},
+                                            {
+                                                view: "template",
+                                                id: "preview",
+                                                name: "preview",
+                                                template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                                                data: {src: null},
+                                                height: 200,
+                                                width: 200,
+                                            },
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        cols: [
+                                            {},
+                                            {
+                                                view: "uploader",
+                                                id: "photoUploader",
+                                                name: "photoUploader",
+                                                value: "Odaberi sliku",
+                                                link: "photo",
+                                                multiple: false,
+                                                autosend: false,
+                                                accept: "image/*",
+                                                width: 150,
+                                                on: {
+                                                    onBeforeFileAdd: function (upload) {
+                                                        var file = upload.file;
+                                                        if(file.size > 1048576){
+                                                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                                            return false;
+                                                        }
+                                                        var reader = new FileReader();
+                                                        reader.onload = function (ev) {
+                                                            $$("preview").setValues({src: ev.target.result});
+                                                            $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
+                                                        }
+                                                        reader.readAsDataURL(file)
+                                                        return false;
+                                                    }
+                                                }
+                                            },
+                                            {}
+                                        ]
+                                    },
+                                    {
+                                        view: "text",
+                                        required: true,
+                                        id: "firstName",
+                                        name: "firstName",
+                                        label: "Ime",
+                                        invalidMessage: "Niste unijeli ime.",
+                                        labelWidth: 100,
+                                        height: 35
+                                    },
+                                    {
+                                        view: "text",
+                                        required: true,
+                                        id: "lastName",
+                                        name: "lastName",
+                                        label: "Prezime",
+                                        invalidMessage: "Niste unijeli prezime.",
+                                        labelWidth: 100,
+                                        height: 35
+                                    },
+                                    {
+                                        view: "checkbox",
+                                        id: "receiveMail",
+                                        name: "receiveMail",
+                                        label: "Želim da primam obavještenja na e-mail.",
+                                        labelWidth: 320,
+                                        height: 35
+                                    },
+                                    {
+                                        cols: [
+                                            {
+                                                view: "button",
+                                                id: "saveProfileButton",
+                                                name: "saveProfileButton",
+                                                hotkey: "enter",
+                                                label: "Sačuvaj",
+                                                type: "iconButton",
+                                                icon: "save",
+                                                click: "firstLoginLayout.save"
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
                         },
                         {
@@ -499,7 +600,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
                                 elements: [{
                                     id: "saveInformation",
                                     view: "button",
-                                    label: "Sacuvajte",
+                                    label: "Sacuvajte i predjite na aplikaciju",
                                     type: "iconButton",
                                     //icon: "sign-in",
                                     click: "showApp",
@@ -513,17 +614,17 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
                     ]
                 },
                 { height:0 },
-                {
+              /*  {
                     cols:[
                         { view:"button", value:"Reload with Progress Bar", click:function(){ firstLoginLayout.show_progress_bar(2000); }}
                     ]
-                },
+                },*/
                 {height:20}
 
             ]
         }
     ],
-
+/*
     show_progress_bar: function (delay) {
         value=value+step;  // OVDJE KORAK UVECAM
         $$("firstLoginWizard").disable();
@@ -536,8 +637,41 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout
         setTimeout(function(){
             $$("firstLoginWizard").enable();
         }, delay);
+    },
+*/
+    save: function () {
+        var profileForm = $$("formProfileInformation");
+        if (profileForm.validate()) {
+            $$("saveProfileButton").disable();
+            var dataToSend = $$("formProfileInformation").getValues();
+            var objectToSend = {
+                firstName: dataToSend.firstName,
+                lastName: dataToSend.lastName,
+                receiveMail: dataToSend.receiveMail,
+                photo: dataToSend.base64ImageUser,
+                companyId: userData.companyId
+            };
+            webix.ajax().headers({
+                "Content-type": "application/json"
+            }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
+                error: function (text, data, xhr) {
+                    $$("saveProfileButton").enable();
+                    util.messages.showErrorMessage(text);
+                },
+                success: function (text, data, xhr) {
+                    userData.firstName = dataToSend.firstName;
+                    userData.lastName = dataToSend.lastName;
+                    userData.receiveMail = dataToSend.receiveMail;
+                    userData.photo = objectToSend.photo;
+                    util.dismissDialog("profileDialog");
+                    util.messages.showMessage("Izmjene uspješno sačuvane.");
+                }
+            })
+        }
     }
 }
+
+
 
 var mainLayout = {
     id: "app",
