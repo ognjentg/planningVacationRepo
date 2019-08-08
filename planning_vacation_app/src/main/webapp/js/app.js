@@ -984,7 +984,7 @@ var subMenuItems = [
     rightPanel = "emptyRightPanel";
     switch (userData.userGroupKey) {
         case "superadmin":
-            $$("menu-collapse").hide();
+            //$$("menu-collapse").hide();
             //$$("mainMenu").select("company");
             companyView.selectPanel();
             break;

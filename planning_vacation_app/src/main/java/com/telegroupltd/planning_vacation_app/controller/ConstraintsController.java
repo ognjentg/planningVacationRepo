@@ -68,6 +68,7 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         newConstraints.setVacationPeriodLength(constraints.getVacationPeriodLength());
         newConstraints.setCompanyId(constraints.getCompanyId());
         newConstraints.setActive((byte)1);
+        newConstraints.setMaxOldVacationPeriodLength(constraints.getMaxOldVacationPeriodLength());
 
         Constraints baseConstraints = findById(constraints.getCompanyId());
 
@@ -75,7 +76,8 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
             if (baseConstraints.getMaxVacationDays() == constraints.getMaxVacationDays() &&
                     baseConstraints.getSickLeaveJustificationPeriodLength() == constraints.getSickLeaveJustificationPeriodLength() &&
-                    baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()) {
+                    baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()
+            && baseConstraints.getMaxOldVacationPeriodLength() == constraints.getMaxOldVacationPeriodLength()) {
                 return constraints;
             } else {
                 update(constraints.getCompanyId(), baseConstraints);

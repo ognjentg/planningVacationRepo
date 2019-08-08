@@ -81,6 +81,11 @@ var companyInfoView = {
                                 },
                                 {
                                     view:"text",
+                                    label:"Period starog godišnjeg:",
+                                    id:"maxOldVacationPeriod",
+                                },
+                                {
+                                    view:"text",
                                     label:"Period opravdanja bolovanja:",
                                     id:"sickDays",
                                 },
@@ -441,6 +446,7 @@ var companyInfoView = {
                 $$("vacationDays").setValue(constraints.maxVacationDays);
                 $$("sickDays").setValue(constraints.sickLeaveJustificationPeriodLength);
                 $$("maxVacDaysPeriod").setValue(constraints.vacationPeriodLength);
+                $$("maxOldVacationPeriod").setValue(constraints.maxOldVacationPeriodLength);
             });
 
         connection.sendAjax("GET",
@@ -547,6 +553,8 @@ var companyInfoView = {
      var maxVacDaysPeriod = $$("maxVacDaysPeriod").getValue();
      var numberOfSickDays = $$("sickDays").getValue();
      var companyPin = $$("companyPin").getValue();
+     var maxOldVacationPeriod = $$("maxOldVacationPeriod").getValue();
+     webix.message(maxOldVacationPeriod.toString());
 
      var validation = $$("companyInfoForm").validate();
      if(validation){
@@ -626,7 +634,8 @@ var companyInfoView = {
             companyId:companyId,
             maxVacationDays:numberOfVacationDays,
             vacationPeriodLength:maxVacDaysPeriod,
-            sickLeaveJustificationPeriodLength:numberOfSickDays
+            sickLeaveJustificationPeriodLength:numberOfSickDays,
+            maxOldVacationPeriodLength:maxOldVacationPeriod,
         }
 
         connection.sendAjax("POST", "/hub/constraints",

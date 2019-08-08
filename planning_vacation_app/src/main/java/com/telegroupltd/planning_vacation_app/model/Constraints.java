@@ -13,6 +13,7 @@ public class Constraints implements HasActive {
     private Integer sickLeaveJustificationPeriodLength;
     private Integer companyId;
     private Byte active;
+    private Integer maxOldVacationPeriodLength;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +76,17 @@ public class Constraints implements HasActive {
         this.active = active;
     }
 
+
+    @Basic
+    @Column(name = "max_old_vacation_period_length", nullable = false)
+    public Integer getMaxOldVacationPeriodLength() {
+        return maxOldVacationPeriodLength;
+    }
+
+    public void setMaxOldVacationPeriodLength(Integer maxOldVacationPeriodLength) {
+        this.maxOldVacationPeriodLength = maxOldVacationPeriodLength;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -85,11 +97,12 @@ public class Constraints implements HasActive {
                 Objects.equals(vacationPeriodLength, that.vacationPeriodLength) &&
                 Objects.equals(sickLeaveJustificationPeriodLength, that.sickLeaveJustificationPeriodLength) &&
                 Objects.equals(companyId, that.companyId) &&
-                Objects.equals(active, that.active);
+                Objects.equals(active, that.active) &&
+                Objects.equals(maxOldVacationPeriodLength, that.maxOldVacationPeriodLength);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, maxVacationDays, vacationPeriodLength, sickLeaveJustificationPeriodLength, companyId, active);
+        return Objects.hash(id, maxVacationDays, vacationPeriodLength, sickLeaveJustificationPeriodLength, companyId, active, maxOldVacationPeriodLength);
     }
 }
