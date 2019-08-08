@@ -3,6 +3,7 @@ var URLByLeaveRequestStatus = "/hub/leave_request/leaveRequestFilteredByLeaveReq
 var URLAllLeaveRequestsBySector = "/hub/leave_request/leaveRequestFilteredBySectorId/";
 var URLByLeaveRequestStatusBySector = "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/";
 var leaveRequestsView;
+var tempComment,rejComment;
 leaveRequestsView = {
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
@@ -58,7 +59,7 @@ leaveRequestsView = {
                                 $$("leave_requestDT").clearAll();
 
 
-                                if(userData.userGroupKey == "menadzer"){
+                                if (userData.userGroupKey == "menadzer") {
                                     if (name === 4) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").showColumn("accept");
@@ -70,39 +71,39 @@ leaveRequestsView = {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").hideColumn("accept");
                                         $$("leave_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 2) {
                                         $$("leave_requestDT").showColumn("typeId");
                                         $$("leave_requestDT").hideColumn("accept");
                                         $$("leave_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 1) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").showColumn("accept");
                                         $$("leave_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 5) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").showColumn("accept");
                                         $$("leave_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                    }else if (name === 6) {
+                                    } else if (name === 6) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").hideColumn("accept");
                                         $$("leave_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
-                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name+"/"+userData.sectorId);
+                                        connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
+                                        $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/" + name + "/" + userData.sectorId);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
                                     }
-                                }else{
+                                } else {
                                     if (name === 4) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").showColumn("accept");
@@ -138,7 +139,7 @@ leaveRequestsView = {
                                         connection.attachAjaxEvents("leave_requestDT", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                         $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/" + name);
                                         $$("leave_requestDT").detachEvent("onBeforeDelete");
-                                    }else if (name === 6) {
+                                    } else if (name === 6) {
                                         $$("leave_requestDT").hideColumn("typeId");
                                         $$("leave_requestDT").hideColumn("accept");
                                         $$("leave_requestDT").hideColumn("reject");
@@ -149,7 +150,7 @@ leaveRequestsView = {
                                 }
 
 
-                                if(userData.userGroupKey == "sekretar"){
+                                if (userData.userGroupKey == "sekretar") {
                                     $$("leave_requestDT").hideColumn("accept");
                                     $$("leave_requestDT").hideColumn("reject");
                                 }
@@ -191,16 +192,16 @@ leaveRequestsView = {
                                 obj.dateTo = new Date(obj.dateTo);
                         },
 
-                            $sort:{
-                                by:"id",
-                                dir:"asc"
-                            }
+                        $sort: {
+                            by: "id",
+                            dir: "asc"
+                        }
 
                     },
                     columns: [{
                         id: "id",
                         header: "#",
-                        sort:"int",
+                        sort: "int",
                         width: 50,
                         hidden: "true",
                     }, {
@@ -442,8 +443,8 @@ leaveRequestsView = {
                     required: true,
                     label: "Komentar:",
                     height: 150,
-                    attributes:{
-                        maxlength:128
+                    attributes: {
+                        maxlength: 128
                     }
 
                 }, {}, {}, {
@@ -519,9 +520,9 @@ leaveRequestsView = {
                         label: "Komentar pošiljaoca:"
                     }, {}, {
                         view: "button",
-                        template:"<span class='webix_icon fa-eye'></span>",
+                        template: "<span style = 'cursor:pointer;' class='webix_icon fa-eye'></span>",
                         id: "comment",
-                        click:'leaveRequestsView.showSenderComment'
+                        click: 'leaveRequestsView.showSenderComment'
                     }]
                 }, {
                     cols: [{
@@ -531,9 +532,10 @@ leaveRequestsView = {
                         hidden: true
                     }, {}, {
                         view: "button",
-                        template:"<span class='webix_icon fa-eye'></span>",
+                        template: "<span style = 'cursor:pointer;' class='webix_icon fa-eye'></span>",
                         id: "approverComment",
-                        hidden: true
+                        hidden: true,
+                        click:'leaveRequestsView.showRejectComment'
 
                     }]
 
@@ -572,14 +574,14 @@ leaveRequestsView = {
         }
 
     },
-    senderCommentDialog:{
-        view:"popup",
-        id:"senderCommentDialog",
+    senderCommentDialog: {
+        view: "popup",
+        id: "senderCommentDialog",
         position: "center",
         modal: true,
         move: true,
-        body:{
-            rows:[
+        body: {
+            rows: [
                 {
                     view: "toolbar",
                     cols: [
@@ -597,13 +599,71 @@ leaveRequestsView = {
                             click: "util.dismissDialog('senderCommentDialog')"
                         }
                     ]
+                },
+                {
+                    view:"form",
+                    height:200,
+                    elements:[
+                        {
+                            view: "textarea",
+                            id:"senderCommentLabel"
+                        }
+                    ]
                 }
             ]
         }
     },
-    showSenderComment: function(){
-        webix.ui(webix.copy(usergroupView.senderCommentDialog));
+    rejectCommentDialog: {
+        view: "popup",
+        id: "rejectCommentDialog",
+        position: "center",
+        modal: true,
+        move: true,
+        body: {
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [
+                        {
+                            view: "label",
+                            width: 400,
+                            label: "Komentar odbijanja"
+                        },
+                        {},
+                        {
+                            view: "icon",
+                            icon: "close",
+                            align: "right",
+                            hotkey: "esc",
+                            click: "util.dismissDialog('rejectCommentDialog')"
+                        }
+                    ]
+                },
+                {
+                    view:"form",
+                    height:200,
+                    elements:[
+                        {
+                            view: "textarea",
+                            id:"rejectCommentLabel"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    showSenderComment: function () {
+        webix.ui(webix.copy(leaveRequestsView.senderCommentDialog));
         $$("senderCommentDialog").show();
+        $$("senderCommentLabel").setValue(tempComment);
+
+    },
+    showRejectComment: function () {
+        webix.ui(webix.copy(leaveRequestsView.rejectCommentDialog));
+        $$("rejectCommentDialog").show();
+        $$("rejectCommentLabel").setValue(rejComment);
+
     },
     showLeaveRequestInfo: function (id) {
         webix.ui(webix.copy(leaveRequestsView.leaveRequestInfo));
@@ -615,13 +675,13 @@ leaveRequestsView = {
                 $$("fname").setValue(user.firstName);
                 $$("lname").setValue(user.lastName);
                 $$("status").setValue(user.statusName);
-                $$("comment").setValue(user.senderComment);
+                tempComment = user.senderComment;
                 if (user.statusName == "Na čekanju") {
                     $$("approverUserName").setValue("-");
                 } else
                     $$("approverUserName").setValue(user.approverUserFirstName + " " + user.approverUserLastName);
                 if (user.approverComment != null) {
-                    $$("approverComment").setValue(user.approverComment);
+                    rejComment = user.approverComment;
                     $$("approverComment").show();
                     $$("commentApproverLabel").show();
                 }
@@ -661,26 +721,26 @@ leaveRequestsView = {
 
             var komentar = $$("rejectComment").getValue();
 
-        if (komentar == "") {
-            util.messages.showErrorMessage("Komentar je obavezan");
-        } else {
-            id = $$("leave_requestDT").getSelectedId();
+            if (komentar == "") {
+                util.messages.showErrorMessage("Komentar je obavezan");
+            } else {
+                id = $$("leave_requestDT").getSelectedId();
 
-            comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
-            
+                comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
 
-            connection.sendAjax("GET",
-                "/hub/leave_request/updateLeaveRequestStatusRejected/" + id + "/comment/" + comment, function (text, data, xhr) {
-                    //$$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
-                    util.messages.showMessage("Zahtjev odbijen");
-                }
-                , function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                });
-            util.dismissDialog("rejectRequestInfoId");
+
+                connection.sendAjax("GET",
+                    "/hub/leave_request/updateLeaveRequestStatusRejected/" + id + "/comment/" + comment, function (text, data, xhr) {
+                        //$$("leave_requestDT").remove($$("leave_requestDT").getSelectedItem().id);
+                        util.messages.showMessage("Zahtjev odbijen");
+                    }
+                    , function (text, data, xhr) {
+                        util.messages.showErrorMessage(text);
+                    });
+                util.dismissDialog("rejectRequestInfoId");
+            }
+            refreshOnData();
         }
-        refreshOnData();
-    }
     },
     acceptDialog: {
         view: "fadeInWindow",
@@ -770,13 +830,13 @@ function refreshOnData() {
     var URLCurrentUrl = null;
 
 
-    if(userData.userGroupKey == "menadzer"){
+    if (userData.userGroupKey == "menadzer") {
         if (comboItemId == 4) {
             URLCurrentUrl = URLAllLeaveRequests;
         } else {
             URLCurrentUrl = URLByLeaveRequestStatusBySector;
         }
-    }else{
+    } else {
         if (comboItemId == 4) {
             URLCurrentUrl = URLAllLeaveRequests;
         } else {
@@ -784,7 +844,7 @@ function refreshOnData() {
         }
     }
 
-    if(userData.userGroupKey == "menadzer"){
+    if (userData.userGroupKey == "menadzer") {
         if (comboItemId == 4) {
             webix.ajax(URLCurrentUrl, {
 
@@ -831,7 +891,7 @@ function refreshOnData() {
             });
         }
 
-    }else{
+    } else {
 
         if (comboItemId == 4) {
             webix.ajax(URLCurrentUrl, {
@@ -856,7 +916,7 @@ function refreshOnData() {
                 }
             });
         } else {
-            webix.ajax(URLCurrentUrl+comboItemId, {
+            webix.ajax(URLCurrentUrl + comboItemId, {
 
 
                 error: function (text, data, xhr) {
@@ -873,7 +933,7 @@ function refreshOnData() {
                             console.log("loaded data with success");
 
                             table.clearAll();
-                            table.load(URLCurrentUrl+comboItemId);
+                            table.load(URLCurrentUrl + comboItemId);
                             table.refresh();
                         }
                     }
