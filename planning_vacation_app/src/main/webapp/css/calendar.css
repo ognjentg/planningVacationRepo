@@ -7,10 +7,10 @@
 }
 /* Boja danjašnjeg dana */
 .today .dhx_month_head{
-    background-color: #CCCCCC !important;
+    background-color: #cc0005 /*!important;*/
 }
 .today .dhx_month_body{
-    background-color: #CCCCCC !important;
+    background-color: #cc0005 /* !important;*/
 }
 /* Boja za selektovane dane */
 .selected_day .dhx_month_head {

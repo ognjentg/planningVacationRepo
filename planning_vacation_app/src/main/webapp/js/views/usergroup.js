@@ -109,7 +109,7 @@ usergroupView = {
                         css: "companyButton",
                         align: "left",
                         //disabled: true,
-                        click: 'usergroupView.showAddDialog'
+                        click: 'usergroupView.showAddUserDialog'
                     }, {
                         id: "deleteSelectedButton",
                         view: "button",
@@ -520,7 +520,7 @@ usergroupView = {
         });
     },
 
-    addDialog: {
+    addUserDialog: {
         view: "fadeInWindow",
         id: "addUserDialog",
         position: "center",
@@ -1261,10 +1261,11 @@ usergroupView = {
             });
     },
 
-    showAddDialog: function () {
+    showAddUserDialog: function () {
         var options = [];
         $$("addUserButton").disable();
-        webix.ui(webix.copy(usergroupView.addDialog)).show();
+        $$("btn").hide();
+        webix.ui(webix.copy(usergroupView.addUserDialog)).show();
         webix.UIManager.setFocus("email");
         if (sectorID !== -2) {
             $$("choseUserGroupCombo").hide();

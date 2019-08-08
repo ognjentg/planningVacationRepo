@@ -289,7 +289,6 @@ public class UserController extends GenericController<User, Integer> {
                         userBean.getUserUserGroupKey().setFirstName(user.getFirstName());
                         userBean.getUserUserGroupKey().setLastName(user.getLastName());
                         logUpdateAction(user, oldUser);
-
                         return "Success";
                     }
                     throw new BadRequestException(badRequestBinaryLength.replace("{tekst}", "slike"));
@@ -364,6 +363,7 @@ public class UserController extends GenericController<User, Integer> {
                 //}
             }
             //Superadmin will be added from workbench.
+            newUser.setFirstLogin((byte)1);
 
             if((newUser = repo.saveAndFlush(newUser)) != null){
                 entityManager.refresh(newUser);

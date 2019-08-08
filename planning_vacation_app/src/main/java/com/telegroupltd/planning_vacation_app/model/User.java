@@ -177,7 +177,7 @@ public class User implements HasActive {
     }
 
     @Basic
-    @Column(name = "first_name", nullable = true, length = 128)
+    @Column(name = "first_name", nullable = true, length = 128, insertable = false)
     public String getFirstName() {
         return firstName;
     }
