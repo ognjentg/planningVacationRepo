@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequestMapping(value = "/hub/notification")
 @RestController
@@ -61,6 +62,8 @@ public class NotificationController extends GenericHasActiveController<Notificat
         List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActive(id, (byte) 1);
         if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
             notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+
+       notifications=notifications.stream().sorted((n1,n2)-> n2.getCreated().compareTo(n1.getCreated())).collect(Collectors.toList());
         return notifications;
     }
 

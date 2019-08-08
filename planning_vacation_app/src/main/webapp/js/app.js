@@ -1176,7 +1176,7 @@ var subMenuItems = [
 //templateView.selectPanel();
 
     getNotifications();
-    //window.setInterval(getNotifications, 15000);
+    window.setInterval(getNotifications, 15000);
 };
 
 //login and logout
@@ -1769,7 +1769,7 @@ showNotifications = function () {
         view: "popup",
         id: "notificationMenu",
         head: "Submenu",
-        height: 400,
+        height: 300,
         body: {
             rows: [
                 {
@@ -1784,14 +1784,17 @@ showNotifications = function () {
                     template: function (obj) {
                         if (obj.seen)
                             return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>"  +
-                                "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>";
+                                "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>" +
+                                "<time style='color:lightgrey' datetime='DD.MM.YYY hh:mm:ss'>" + (obj.created) + "</time>"
+                                ;
                         return "<span style='color:darkgrey;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
-                            "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>";
+                            "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
+                            "<time style='color:darkgrey;font-weight:bold' datetime='DD.MM.YYY hh:mm:ss'>" + (obj.created) + "</time>";
                     },
                     css: "notifications",
                     width: 300,
                     type: {
-                        height: 80,
+                        height: 90,
                         width: 350 /* BEWARE needs to be more than specified in extended-orange.css for contactName and message_text */
                     },
                     on: {
@@ -1842,32 +1845,6 @@ showNotifications = function () {
                             }
                         }
                     },
-                   /* onClick: {
-                        cb: function (e, id) {
-                            var item = this.getItem(id);
-                            if (item.seen == 1)
-                                numberOfUnreadNotifications++;
-                            else
-                                numberOfUnreadNotifications--;
-                            item.seen = item.seen ? 0 : 1;
-                            //ako je sada seen 1 znaci da ce kad se izvrsi ovaj event biti seen 0, tj. poruka ce biti neprocitana i obrnuto
-                            var updatedNotifications = [];
-                            var updatedNotification = notifications.filter(
-                                function (element) {
-                                    return element.id == item.id;
-                                });
-                            updatedNotifications.push(updatedNotification[0]);
-                            connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
-                                function (text, data, xhr) {
-                                }, function (text, data, xhr) {
-                                    alert(text)
-                                }, updatedNotifications);
-
-                            $$("notificationBtn").config.badge = numberOfUnreadNotifications;
-                            $$("notificationBtn").refresh();
-
-                        },
-                    },*/
                 }
             ]
         }
@@ -1922,9 +1899,9 @@ updateNotifications = function () {
                             receiverUserId: userNotifications[i].receiverUserId,
                             companyId: userNotifications[i].companyId,
                             leaveType: userNotifications[i].leaveType,
+                            created: userNotifications[i].created,
                         };
                         notifications.push(notification);
-                        //treba jos datum, bilo bi fino i to prikazati kad se doda u tabeli notification
                     }
                 }
                 if(notifications.length<10){
@@ -1941,6 +1918,7 @@ updateNotifications = function () {
                                 receiverUserId: userNotifications[i].receiverUserId,
                                 companyId: userNotifications[i].companyId,
                                 leaveType: userNotifications[i].leaveType,
+                                created: userNotifications[i].created,
                             };
                             notifications.push(notification);
                         }else{

@@ -3,6 +3,7 @@ package com.telegroupltd.planning_vacation_app.model;
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 
@@ -16,6 +17,7 @@ public class Notification implements HasActive {
     private Byte leaveType;
     private Byte seen;
     private Byte active;
+    private Timestamp created;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -99,6 +101,16 @@ public class Notification implements HasActive {
         this.active = active;
     }
 
+    @Basic
+    @Column(name = "created", nullable = true, insertable = false, updatable = false)
+    public Timestamp getCreated() {
+        return created;
+    }
+
+    public void setCreated(Timestamp created) {
+        this.created = created;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -111,7 +123,8 @@ public class Notification implements HasActive {
                 Objects.equals(text, that.text) &&
                 Objects.equals(leaveType, that.leaveType) &&
                 Objects.equals(seen, that.seen) &&
-                Objects.equals(active, that.active);
+                Objects.equals(active, that.active) &&
+                Objects.equals(created, that.created);
     }
 
     @Override
