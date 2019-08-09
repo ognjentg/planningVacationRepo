@@ -309,7 +309,12 @@ leaveRequestsView = {
 
                             } else if (action === "accept" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey == "menadzer")) {
                                 var kategorija = $$("leave_requestDT").getSelectedItem().category;
-                                webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
+                                var status = $$("leave_requestDT").getSelectedItem().statusName
+                                if(status == "Otkazivanje" ){
+                                    webix.ui(webix.copy(leaveRequestsView.cancellationDialog)).show();
+                                } else {
+                                    webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
+                                }
                                 if ("Godišnji" == kategorija || "Godisnji" == kategorija) {
                                     $$("radioId").hide();
                                 }
@@ -376,7 +381,8 @@ leaveRequestsView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
-            util.dismissDialog('acceptDialogId');
+            //util.dismissDialog('acceptDialogId');
+            util.dismissDialog('cancellationDialogId');
         } else {
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
                 util.messages.showMessage("Zahtjev odobren");
@@ -812,7 +818,80 @@ leaveRequestsView = {
                 }
             ]
         }
-    }
+    },
+
+    cancellationDialog: {
+        view: "fadeInWindow",
+        id: "cancellationDialogId",
+        position: "center",
+        modal: true,
+        move: true,
+        body: {
+            rows: [
+                {
+                    view: "toolbar",
+                    cols: [{
+                        view: "label",
+                        label: "<span class='webix_icon fa-user'></span> Otkazivanje zahtjeva :",
+                        width: 400,
+                    }, {}, {
+                        hotkey: 'esc',
+                        view: "icon",
+                        icon: "close",
+                        align: "right",
+                        click: 'util.dismissDialog(\'cancellationDialogId\');'
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Ime:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptFname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Prezime:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptLname"
+                    }]
+                }, {
+                    cols: [{
+                        view: "label",
+                        label: "Kategorija:"
+                    }, {}, {
+                        view: "label",
+                        id: "acceptCategory"
+                    }]
+                },
+                {
+                    view: "radio",
+                    id: "radioId",
+                    options: ["Plaćeno", "Neplaćeno"],
+                    value: "Plaćeno",
+                    hidden: true,
+                },
+                {
+                    cols: [{
+                        view: "button",
+                        id: "acceptButtonId",
+                        value: "Otkaži",
+                        click: "leaveRequestsView.acceptRequestFunction"
+
+                    },
+                        {
+                            view: "button",
+                            id: "ignoreButtonId",
+                            value: "Zatvori",
+                            click: "util.dismissDialog('cancellationDialogId')"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
 
 
 };

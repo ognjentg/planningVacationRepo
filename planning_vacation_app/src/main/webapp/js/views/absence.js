@@ -88,7 +88,7 @@ absenceHistoryView = {
                             id: "id",
                             header: "#",
                             width: 50,
-                           // hidden: "true",
+                            hidden: "true",
                         },
                         {
                             id: "statusName",
@@ -187,66 +187,13 @@ absenceHistoryView = {
                                                     }, function (text, data, xhr) {
                                                         util.messages.showErrorMessage(text);
                                                     }, item);
-
-                                                    /*
-                                                    var tempData = JSON.parse(text);
-
-                                                        var date1 = {
-                                                            date: format($$("absence_historyDT").getSelectedItem().dateFrom),
-                                                            leaveRequestId: tempData.id,
-                                                            canceled: 0,
-                                                            paid: 1
-                                                        };
-
-                                                    var date2 = {
-                                                        date: format($$("absence_historyDT").getSelectedItem().dateTo),
-                                                        leaveRequestId: tempData.id,
-                                                        canceled: 0,
-                                                        paid: 1
-                                                    }
-
-                                                        connection.sendAjax("POST", "hub/leave_request_date/",
-                                                            function (text, data, xhr) {
-                                                                if (text) {
-                                                                    calendarView.getVacationDays();
-                                                                    scheduler.setCurrentView();
-                                                                } else
-                                                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                                            }, function (text, data, xhr) {
-                                                                util.messages.showErrorMessage(text);
-                                                            }, date1);
-
-                                                    connection.sendAjax("POST", "hub/leave_request_date/",
-                                                        function (text, data, xhr) {
-                                                            if (text) {
-                                                                calendarView.getVacationDays();
-                                                                scheduler.setCurrentView();
-                                                            } else
-                                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                                        }, function (text, data, xhr) {
-                                                            util.messages.showErrorMessage(text);
-                                                        }, date2);
-
-
-                                                    var item = $$("absence_historyDT").getItem(id);
-                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
-                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
-                                                        refreshOnThisData();
-                                                    }, function (text, data, xhr) {
-                                                        util.messages.showErrorMessage(text);
-                                                    }, item);
-
-
-
-                                                    util.messages.showMessage("Zahtjev uspjesno poslan");
-                                               */ } else
+                                                    refreshOnAbsenceData();
+                                                } else
                                                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
                                             }, function (text, data, xhr) {
                                                 util.messages.showErrorMessage(text);
                                             }, leaveRequest);
                                     }
-                                    refreshOnAbsenceData();
                                 };
                                 webix.confirm(paidLeaveBox);
                             } else if (action === "view" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
