@@ -82,13 +82,15 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "GROUP BY lr.id ";
 
     private static final String GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "SELECT COUNT(DISTINCT user.id) FROM user " +
-            "JOIN sick_leave sl ON user.id=sl.user_id " +
-            "WHERE user.active=1 AND sl.active=1 AND sl.sick_leave_status_id=2 AND (DATE(?) BETWEEN sl.date_from AND sl.date_to) AND user.sector_id =? ";
+            "JOIN sick_leave sl on user.id = sl.user_id " +
+            "WHERE user.active=1 AND sl.active=1 AND sl.active=1 " +
+            "AND sl.sick_leave_status_id=2 AND :date BETWEEN sl.date_from AND sl.date_to AND user.sector_id=:sectorId ; ";
 
     private static final String GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "SELECT COUNT(DISTINCT user.id) FROM user " +
-            "JOIN leave_request lr ON user.id=lr.sender_user_id " +
-            "JOIN leave_request_date lrd ON lr.id=lrd.leave_request_id " +
-            "WHERE user.active=1 AND lr.active=1 AND lrd.active=1 AND lrd.date=date(?) AND sector_id=?";
+            "JOIN leave_request lr on user.id = lr.sender_user_id " +
+            "JOIN leave_request_date lrd on lr.id = lrd.leave_request_id " +
+            "WHERE user.active=1 AND lr.active=1 AND lrd.active=1 " +
+            "AND (lr.leave_request_status_id=2 OR 5) AND lrd.date=:date AND user.sector_id=:sectorId ; ";
 
     private static final String SQL_GET_LEAVE_REQUEST_INFO_BY_ID="SELECT lr.id, category, sender_comment, approver_comment,sender_user_id, u.first_name, u.last_name, lrs.name AS status_name, min(lrd.date) AS date_from, max(lrd.date) AS date_to, lrt.name AS type_name, au.first_name AS approver_user_first_name, au.last_name AS approver_user_last_name "+
             "FROM leave_request lr "+
@@ -201,15 +203,18 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
 
     @Override
     public Integer getNumOfAbsentPeopleFilteredBySectorId(Integer sectorId){
-        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, "NOW()").setParameter(2, sectorId).getSingleResult()).intValue() +
-                ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, "NOW()").setParameter(2, sectorId).getSingleResult()).intValue();
+        Integer first = ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter("date", "DATE(NOW())").setParameter("sectorId", sectorId).getSingleResult()).intValue();
+        Integer second = ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter("date", "DATE(NOW())").setParameter("sectorId", sectorId).getSingleResult()).intValue();
+        return first + second;
+
     }
 
     @Override
     public Integer getNumOfAbsentPeopleFilteredBySectorIdAndDate(Integer sectorId, Date tempDate){
-        //String date = "\"" + new SimpleDateFormat("yyyy-MM-dd").format(tempDate) + "\"";
-        return ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, tempDate).setParameter(2, sectorId).getSingleResult()).intValue() +
-                ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter(1, tempDate).setParameter(2, sectorId).getSingleResult()).intValue();
+        String date = new SimpleDateFormat("yyyy-MM-dd").format(tempDate);
+        Integer first = ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter("date", date).setParameter("sectorId", sectorId).getSingleResult()).intValue();
+        Integer second = ((BigInteger)entityManager.createNativeQuery(GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE).setParameter("date", date).setParameter("sectorId", sectorId).getSingleResult()).intValue();
+        return first + second;
     }
 
     @Override

@@ -1046,27 +1046,27 @@ var calendarView = {
                         if (data.json() != null) {
                             var leaves = data.json(); //ALL seaves!!!!  ALL
                             for (var i = 0; i < leaves.length; i++) {
-                                if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && leaves[i].statusName == "Odobreno") { //TODO: ne prepoznaje ovaj atribut!
+                                if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje")) { //TODO: ne prepoznaje ovaj atribut!
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestApproved.push(day.getTime());
                                         // console.log(vacationRequestApproved);
                                     })
-                                } else if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && leaves[i].statusName != "Odobreno" && leaves[i].statusName != "Odbijeno") {
+                                } else if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") &&  leaves[i].statusName == "Na čekanju") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestWaiting.push(day.getTime());
                                         console.log(vacationRequestWaiting);
                                     })
-                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName != "Odobreno" && leaves[i].statusName != "Odbijeno") {
+                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Na čekanju") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestWaiting.push(day.getTime());
                                         console.log(vacationRequestWaiting);
                                     })
-                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Odobreno" && leaves[i].typeName == "Plaćeno") { //
+                                } else if (leaves[i].category == "Odsustvo" && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje")&& leaves[i].typeName == "Plaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedPaid.push(day.getTime());
                                         console.log(leaveRequestApprovedPaid);
                                     })
-                                } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Odobreno" && leaves[i].typeName == "Neplaćeno") { //
+                                } else if (leaves[i].category == "Odsustvo" && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje") && leaves[i].typeName == "Neplaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedUnpaid.push(day.getTime());
                                         console.log(leaveRequestApprovedUnpaid);

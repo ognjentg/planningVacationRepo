@@ -232,7 +232,7 @@ var sectorView = {
                 },
                 onClick: {
                     webix_icon: function (e, id) {
-
+                        $$("sectorDT").select(id);
                         console.log(id["column"]);
                         var action = id["column"];
                         if (action === "delete" && userData.userGroupKey == "sekretar") {
@@ -853,7 +853,7 @@ var sectorView = {
                 name: form.getValues().name,
                 sectorManagerId: $$("managerCombo").getValue(),
                 maxAbsentPeople: null,
-                maxPercentageAbsentPeople: null,
+                maxPercentageAbsentPeople: $$("sectorDT").getSelectedItem().max_percentage_absent_people,
                 companyId: userData.companyId,
                 active:1
             }

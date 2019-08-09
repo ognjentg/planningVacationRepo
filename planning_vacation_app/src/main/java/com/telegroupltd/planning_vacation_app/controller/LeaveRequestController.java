@@ -492,7 +492,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/numOfAbsentPeople/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
     Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId){
-        Integer tmp = leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorId(sectorId);
+        Integer tmp = leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(sectorId, new Date());
         return tmp;
     }
 
