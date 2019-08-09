@@ -979,7 +979,7 @@ usergroupView = {
                 {
                     view: "template",
                     gravity: 2.5,
-                    height: 550,
+                    height: 460,
                     width: 550,
                     template: "<div id=\"employeeCalendar\" class=\"dhx_cal_container\" style='width:100%; height:100%;'>\n" +
                         "\t<div class=\"dhx_cal_navline\">\n" +
