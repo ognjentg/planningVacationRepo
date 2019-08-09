@@ -1988,7 +1988,7 @@ usergroupView = {
                             dates.forEach(function (value) {
                                 vacationDays.push(value);
                             });
-                        } else if (element.category === "Slobodno")
+                        } else if (element.category === "Odsustvo")
                             dates.forEach(function (value) {
                                 daysOff.push(value);
                             });
