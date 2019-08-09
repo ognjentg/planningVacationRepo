@@ -86,6 +86,11 @@ var menuSuperAdmin = [
 
 var menuAdmin = [
     {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "fa fa-calendar"
+    },
+    {
         id: "usergroup",
         value: "Zaposleni",
         icon: "users"
@@ -121,6 +126,11 @@ var menuAdmin = [
 ];
 
 var menuDirector = [
+    {
+        id: "calendar",
+        value: "Kalendar",
+        icon: "fa fa-calendar"
+    },
     /*   {
               id: "requests",
               value: "Zahtjevi",
@@ -1152,12 +1162,12 @@ var subMenuItems = [
             companyView.selectPanel();
             break;
         case "admin":
-            $$("mainMenu").select("usergroup");
-            usergroupView.selectPanel();
+            $$("mainMenu").select("calendar");
+            calendarView.selectPanel();
             break;
         case "direktor":
-            $$("mainMenu").select("usergroup");
-            usergroupView.selectPanel();
+            $$("mainMenu").select("calendar");
+            calendarView.selectPanel();
             break;
         case "sekretar":
             $$("mainMenu").select("calendar");

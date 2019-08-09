@@ -70,10 +70,17 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         System.out.println("Kreiranje zahtjeva");
         Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
         System.out.println("Sector id = " + sectorId);
+        if("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())){
+            leaveRequest.setLeaveRequestStatusId(2);
+            if ((leaveRequest = repo.saveAndFlush(leaveRequest)) == null)
+                throw new BadRequestException(badRequestInsert);
+            return leaveRequest;
+        }
         if (leaveRequest.getCategory().length() >= 45)
             throw new BadRequestException(badRequestInsert);
         if (repo.saveAndFlush(leaveRequest) == null)
             throw new BadRequestException(badRequestInsert);
+
         logCreateAction(leaveRequest);
         String notificationTitle = "";
         Byte leaveType = 0;
