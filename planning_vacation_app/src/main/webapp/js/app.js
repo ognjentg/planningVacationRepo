@@ -309,7 +309,20 @@ var init = function () {
     localize();
     webix.ui(panel);
     panel = $$("empty");
-
+    webix.protoUI({
+        name: "fadeInWindow",
+        $init: function () {
+            this.$ready.push(function () {
+                this.attachEvent("onShow", function () {
+                    this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                })
+                this.attachEvent("onHide", function () {
+                    this.$view.style.display = "block";
+                    this.$view.className += " animated fadeOutUpBig";
+                })
+            });
+        }
+    }, webix.ui.window);
     webix.ajax("hub/user/state", {
         error: function (text, data, xhr) {
             if (xhr.status == 403) { // TODO praksa obrisati || true uslov nakon sto se napravi hub/state endpoint na backendu
