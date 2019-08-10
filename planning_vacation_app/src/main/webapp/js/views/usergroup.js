@@ -2006,6 +2006,43 @@ usergroupView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
+        connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/5/" + $$("usergroupDT").getSelectedItem().id,
+            function (text, data, xhr) {
+                var leaves = data.json();
+                var status = "";
+                if (leaves.isAbsent == true)
+                    status = "Odsutan";
+                else
+                    status = "Prisutan";
+                $$("current_status").setValue("Trenutni status: " + status);
+                var reqs = webix.toArray(leaves.leaves);
+                reqs.forEach(function (element) {
+                    startDate = new Date(element.dateFrom);
+                    endDate = new Date(element.dateTo);
+                    var dates = getDatesFromRange(startDate, endDate);
+                    if (element.typeName === "Plaćeno") {
+                        if (element.category === "Godišnji") {
+                            dates.forEach(function (value) {
+                                vacationDays.push(value);
+                            });
+                        } else if (element.category === "Odsustvo")
+                            dates.forEach(function (value) {
+                                daysOff.push(value);
+                            });
+                    } else if (element.typeName === "Neplaćeno") {
+                        console.log("neplaćeno: " + startDate + " - " + endDate);
+                        dates.forEach(function (value) {
+
+                            unpaidDaysOff.push(value);
+                        });
+                    }
+
+                });
+                scheduler.setCurrentView();
+
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            });
         var stat = "Opravdano";
        // connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + employee.id,
         connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + $$("usergroupDT").getSelectedItem().id,
