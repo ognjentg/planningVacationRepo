@@ -714,8 +714,6 @@ leaveRequestsView = {
             var item = $$("leave_requestDT").getItem(id);
             $$("leave_requestDT").detachEvent("onBeforeDelete");
             connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id, function (text, data, xhr) {
-                // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
-                util.messages.showMessage("Zahtjev postavljen na otkazivanje");
                 refreshOnThisData();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);

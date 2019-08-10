@@ -1037,7 +1037,7 @@ usergroupView = {
         } else {
             var id;
             usergroupView.sectors.forEach(function (sec) {
-                if(sec.value===sector){
+                if(sec.id===sector){
                     id = sec.id;
                 }
             });

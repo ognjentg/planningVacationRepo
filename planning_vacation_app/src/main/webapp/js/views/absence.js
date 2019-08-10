@@ -1,14 +1,6 @@
-
 var  absenceHistoryView;
 absenceHistoryView = {
 
-    /*selectPanel: function () {
-        $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
-        rightPanel = "absenceHistoryPanel"; // novi rightPanel će biti facultyPanel
-
-        var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
-        $$("main").addView(panelCopy);
-    },*/
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
         rightPanel = "absenceHistoryPanel";
@@ -34,7 +26,6 @@ absenceHistoryView = {
             $$("leave_requestDT").hideColumn("accept");
             $$("leave_requestDT").hideColumn("reject");
         }
-        //refreshOnData();
     },
 
     getPanel: function () {
@@ -63,10 +54,10 @@ absenceHistoryView = {
                         dx:-35, //20 by default
                         dy:20
                     },
-                    navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
-                    select: "row", // cell
-                    resizeColumn: true, // omogucen resize kolona korisniku
-                    resizeRow: true, // omogucen resize redova korisniku
+                    navigation: true,
+                    select: "row",
+                    resizeColumn: true,
+                    resizeRow: true,
                     onContext: {},
                     pager: "pagerA",
                     scheme: {
@@ -127,12 +118,10 @@ absenceHistoryView = {
                             header: "&nbsp;",
                             tooltip: "Otkazi odsustvo",
                             width: 35,
-                            //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
-                           // click: 'absenceHistoryView.sendCancellationPaidLeaveRequest',
                             template: function(obj) {
                                 var pom=obj.dateFrom;
                                 var secondPom = obj.statusName;
-                                if((pom > new Date()) && (secondPom == "Odobreno")) {
+                                if((pom > new Date()) && (secondPom == "Odobreno" || secondPom == "Na čekanju")) {
                                     return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                                 }
                                 else return "";
@@ -151,6 +140,7 @@ absenceHistoryView = {
 
                         onAfterContextMenu: function (item) {
                             this.select(item.row);
+
                         }
 
                     },
@@ -161,43 +151,73 @@ absenceHistoryView = {
                             var action = id["column"];
 
                             if (action === "reject" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
-                                var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveConfirm(" odsustva")));
-                                paidLeaveBox.callback = function (result) {
-                                    if (result == 1) {
 
-                                        var format = webix.Date.strToDate("%d.%m.%Y");
-                                        var leaveRequest = {
-                                            senderUserId: userData.id,
-                                            leaveTypeId: 1,
-                                            leaveRequestStatusId: 5,
-                                            companyId: userData.companyId,
-                                            senderComment: "",//$$("comment").getValue(),
-                                            category: $$("absence_historyDT").getSelectedItem().category,
+
+                                webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
+
+                                connection.sendAjax("GET",
+                                    "/hub/leave_request/leaveRequestInfo/" + id,
+                                    function (text, data, xhr) {
+                                        user = data.json();
+                                        statusNameTMP = user.statusName;
+                                        if(statusNameTMP == "Odobreno"){
+                                            var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveApprovedConfirm(" odsustva")));
+                                        } else {
+                                            var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveRequestConfirm(" odsustva")));
                                         }
-                                        connection.sendAjax("POST", "hub/leave_request/",
-                                            function (text, data, xhr) {
-                                                if (text) {
+                                        paidLeaveBox.callback = function (result) {
+                                            if (result == 1) {
 
+                                                var format = webix.Date.strToDate("%d.%m.%Y");
+                                                var leaveRequest = {
+                                                    senderUserId: userData.id,
+                                                    leaveTypeId: 1,
+                                                    leaveRequestStatusId: 5,
+                                                    companyId: userData.companyId,
+                                                    senderComment: "",//$$("comment").getValue(),
+                                                    category: $$("absence_historyDT").getSelectedItem().category,
+                                                }
+
+                                                if (statusNameTMP == "Odobreno"){
+                                                    connection.sendAjax("POST", "hub/leave_request/",
+                                                        function (text, data, xhr) {
+                                                            if (text) {
+
+                                                                var item = $$("absence_historyDT").getItem(id);
+                                                                $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                                connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
+                                                                    util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                                                                    refreshOnAbsenceData();
+                                                                }, function (text, data, xhr) {
+                                                                    util.messages.showErrorMessage(text);
+                                                                }, item);
+                                                                refreshOnAbsenceData();
+                                                            } else
+                                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                                        }, function (text, data, xhr) {
+                                                            util.messages.showErrorMessage(text);
+                                                        }, leaveRequest);
+                                                } else {
                                                     var item = $$("absence_historyDT").getItem(id);
                                                     $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
-                                                        // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
-                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
-                                                        refreshOnThisData();
+                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
+                                                        refreshOnAbsenceData();
                                                     }, function (text, data, xhr) {
                                                         util.messages.showErrorMessage(text);
                                                     }, item);
-                                                    refreshOnAbsenceData();
-                                                } else
-                                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                            }, function (text, data, xhr) {
-                                                util.messages.showErrorMessage(text);
-                                            }, leaveRequest);
-                                    }
-                                };
-                                webix.confirm(paidLeaveBox);
+                                                }
+
+                                            }
+                                        };
+                                        webix.confirm(paidLeaveBox);
+                                        setTimeout(function () {
+                                        }, 0);
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    });
                             } else if (action === "view" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
                                 var viewAbsenceCommentInfoBox = (webix.copy(absenceHistoryView.showApproverSenderCommentInfo(id)));
+
                             }
                         }
                     },
@@ -226,7 +246,7 @@ absenceHistoryView = {
         }
         },
 
-    paidLeaveConfirm: function (titleEntity, textEntity) {
+    paidLeaveApprovedConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;
         if (textEntity) text = textEntity;
         return {
@@ -234,7 +254,19 @@ absenceHistoryView = {
             ok: "Da",
             cancel: "Ne",
             width: 500,
-            text: "Da li ste sigurni da želite otkazati odsustvo ?"
+            text: "Da li ste sigurni da želite otkazati odobreno odsustvo ?"
+        };
+    },
+
+    paidLeaveRequestConfirm: function (titleEntity, textEntity) {
+        var text = titleEntity;
+        if (textEntity) text = textEntity;
+        return {
+            title: "Otkazivanje " + titleEntity,
+            ok: "Da",
+            cancel: "Ne",
+            width: 500,
+            text: "Da li ste sigurni da želite otkazati zahtjev za odsustvo ?"
         };
     },
 
@@ -246,8 +278,6 @@ absenceHistoryView = {
         position: "center",
         modal: true,
         move: true,
-       // height:250,
-       // width:300,
         body: {
 
             padding: 15,
@@ -301,19 +331,20 @@ absenceHistoryView = {
                         id: "comment",
                         height: 100,
                         width: 200,
+                        readonly: true,
                     }]
                 }, {
                     cols: [{
                         view: "label",
                         id: "commentApproverLabel",
                         label: "Komentar odbijanja:",
-                        //hidden: true
+                        hidden: true
                     }, {}, {
                         view: "textarea",
                         id: "approverComment",
-                       // hidden: true
                         height: 100,
                         width: 200,
+                        readonly: true,
                     }]
 
                 }, {
@@ -381,11 +412,12 @@ absenceHistoryView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
-
-
     },
 
 };
+
+
+
 
 function refreshOnAbsenceData() {
     console.log("refresh data");
@@ -394,29 +426,13 @@ function refreshOnAbsenceData() {
     webix.extend($$("absence_historyDT"), webix.ProgressBar);
 
     var table = webix.$$("absence_historyDT");
-   // var comboItemId = $$("filterLeaveRequestsComboBox").getValue();
     var URLCurrentUrl = "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString();
 
-   // if (comboItemId == 4) {
-    //    URLCurrentUrl = URLAllLeaveRequests;
-   // } else {
-    //    URLCurrentUrl = URLByLeaveRequestStatus
-   // }
-    /*else if(comboItemId == 3){
-        URLCurrentUrl = URLByLeaveRequestStatus+3;
-    }else if(comboItemId == 2){
-        URLCurrentUrl = URLByLeaveRequestStatus+2;
-    }else if(comboItemId == 1){
-        URLCurrentUrl = URLByLeaveRequestStatus+1;
-    }*/
-
-   // if (comboItemId == 4) {
         webix.ajax(URLCurrentUrl, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
                     util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    //alert("No data to load! Check your internet connection and try again.");
                     table.hideProgress();
                 }
             },
@@ -432,28 +448,4 @@ function refreshOnAbsenceData() {
                 }
             }
         });
-   // }
-    /*else {
-        webix.ajax(URLCurrentUrl + comboItemId, {
-
-            error: function (text, data, xhr) {
-                if (xhr.status != 200) {
-                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    //alert("No data to load! Check your internet connection and try again.");
-                    table.hideProgress();
-                }
-            },
-            success: function (text, data, xhr) {
-                if (xhr.status === 200) {
-                    if (data.json() != null) {
-                        console.log("loaded data with success");
-
-                        table.clearAll();
-                        table.load(URLCurrentUrl + comboItemId);
-                        table.refresh();
-                    }
-                }
-            }
-        });
-    }*/
 }
