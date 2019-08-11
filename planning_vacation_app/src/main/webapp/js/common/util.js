@@ -42,7 +42,8 @@ var util = {
         inc: function () {
             if (this.state == 0)
                 document.getElementById("preloader").style.display = "block";
-            document.getElementById("menu-collapse").style.display = "none";
+            if(document.getElementById("menu-collapse")!=null)
+                document.getElementById("menu-collapse").style.display = "none";
             this.state++;
         },
 
@@ -51,13 +52,15 @@ var util = {
             this.state--;
             if (this.state == 0)
                 document.getElementById("preloader").style.display = "none";
-            document.getElementById("menu-collapse").style.display = "block";
+            if(document.getElementById("menu-collapse")!=null)
+                document.getElementById("menu-collapse").style.display = "block";
         },
 
         reset: function () {
             this.state = 0;
             document.getElementById("preloader").style.display = "none";
-            document.getElementById("menu-collapse").style.display = "block";
+            if(document.getElementById("menu-collapse")!=null)
+                document.getElementById("menu-collapse").style.display = "block";
         }
     },
 
