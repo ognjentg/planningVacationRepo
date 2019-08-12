@@ -603,8 +603,133 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                             header: "Lozinka",
                             body: {
                                 id: "formChangePassword",
-                                //view: "list"
-                                // list config
+                                view: "form",
+                                width: 500,
+                                elementsConfig: {
+                                    labelWidth: 140,
+                                    bottomPadding: 18
+                                },
+                                elements: [
+                                    {
+                                        view: "text",
+                                        id: "oldPassword",
+                                        type: "password",
+                                        name:"oldPassword",
+                                        label: "Trenutna lozinka:",
+                                        invalidMessage:"Unesite lozinku!",
+                                        required: true
+
+                                    },
+                                    {
+                                        view: "text",
+                                        label: "Nova lozinka:",
+                                        id: "newPassword",
+                                        name:"newPassword",
+                                        type: "password",
+                                        invalidMessage:"Unesite lozinku!",
+                                        required: true,
+                                        bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
+                                        keyPressTimeout:1000,
+                                        on: {
+                                            'onTimedKeyPress': function () {
+                                                var typed = $$("newPassword").getValue();
+                                                var strength=0;
+                                                var re1=/[0-9]/;
+                                                var re2=/[A-Z]/;
+                                                var re3=/[@#$%^&+=]/;
+                                                if(re1.test(typed))
+                                                    strength++;
+                                                if (re2.test(typed))
+                                                    strength++;
+                                                if (re3.test(typed))
+                                                    strength++;
+                                                if(typed.length>=8)
+                                                    strength++;
+                                                switch(strength){
+                                                    case 0:
+                                                    case 1:
+                                                    case 2:
+                                                        $$("strength").setValue("Jačina lozinke: slabo");
+                                                        $$("strength").show();
+                                                        break;
+                                                    case 3:
+                                                        $$("strength").setValue("Jačina lozinke: srednje");
+                                                        $$("strength").show();
+                                                        break;
+                                                    case 4:
+                                                        $$("strength").setValue("Jačina lozinke: jako");
+                                                        $$("strength").show();
+                                                        break;
+                                                }
+
+                                            }
+
+                                        }
+
+                                    },
+                                    {
+                                        view: "label",
+                                        id:"strength",
+                                        name:"strength",
+                                        hidden:true,
+                                        height:15,
+                                        align:"right"
+                                    },
+                                    {
+                                        view: "text",
+                                        label: "Potvrda nove lozinke:",
+                                        id: "newPasswordConfirmation",
+                                        name:"newPasswordConfirmation",
+                                        invalidMessage:"Unesite lozinku!",
+                                        type: "password",
+                                        required: true,
+
+                                    },
+
+                                    {
+                                        view: "button",
+                                        id: "changePasswordBtn",
+                                        name: "changePasswordBtn",
+                                        label: "Sačuvaj",
+                                        width: 150,
+                                        click: "firstLoginLayout.savePassword",
+                                        align: "right",
+                                        hotkey: "enter"
+                                    }
+                                ],
+                                rules: {
+                                    "oldPassword":function (value) {
+                                        if (!value)
+                                            return false;
+                                        return true;
+                                    },
+                                    "newPassword": function (value) {
+                                        if(value.length<8){
+                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
+                                            return false;}
+                                        if (value == $$("oldPassword").getValue()){
+                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
+                                            return false;
+                                        }
+                                        var re = /[0-9A-Z@#$%^&+=]/;
+                                        if (!re.test(value)) {
+                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
+                                            return false;
+                                        }
+                                        return true;
+                                    },
+                                    "newPasswordConfirmation":function (value) {
+                                        if (!value)
+                                            return false;
+                                        if(value!=$$("formChangePassword").getValues().newPassword)
+                                        {
+                                            $$('formChangePassword').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
+                                            return false;}
+
+                                        return true;
+
+                                    },
+                                }
                             }
                         },
                         {
@@ -690,6 +815,35 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                 }
             })
+        }
+    },
+    
+    savePassword: function () {
+        var changePasswordForm = $$("formChangePassword");
+        if (changePasswordForm.validate()) {
+            console.log("AAAAAAAAAAAAa");
+            $$("changePasswordBtn").disable();
+            console.log("BBBBBBBBBBBB");
+            var passwordInformation = {
+                oldPassword: $$("oldPassword").getValue(),
+                newPassword: $$("newPassword").getValue(),
+                newPasswordConfirmation: $$("newPasswordConfirmation").getValue()
+            };
+
+            connection.sendAjax("POST", "hub/user/updatePassword",
+                function (text, data, xhr) {
+                    if (text) {
+                        util.messages.showMessage("Uspješna izmjena lozinke.");
+                        $$("changePasswordBtn").enable();
+                        // Prebacivanje na sljedeci panel
+                    } else {
+                        util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
+                        $$("changePasswordBtn").enable();
+                    }
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                    $$("changePasswordBtn").enable();
+                }, passwordInformation);
         }
     }
 }
@@ -910,78 +1064,6 @@ var mainLayout = {
             else{
                 $$("saveUserFirstAndLastName").enable();
             }
-        }
-    },
-
-    changePasswordFirstLoginFunction: function() {
-        $$("changePasswordBtn").disable();
-        if ($$("changePasswordFirstLoginForm").validate()) {
-            var passwordInformation = {
-                oldPassword: $$("oldPassword").getValue(),
-                newPassword: $$("newPassword").getValue(),
-                newPasswordConfirmation: $$("newPasswordConfirmation").getValue()
-            };
-
-            connection.sendAjax("POST", "hub/user/updatePassword",
-                function (text, data, xhr) {
-                    if (text) {
-                        util.dismissDialog('changePasswordDialogFirstLogin');
-                        util.messages.showMessage("Uspješna izmjena lozinke.");
-                        switch (userData.userGroupKey) {
-                            case "admin":
-                                connection.sendAjax("POST", "hub/user/firstLogin",
-                                    function (text, data, xhr) {
-                                        userData.firstLogin = 3;
-                                        // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, 3);
-                                break;
-                            case "direktor":
-                                connection.sendAjax("POST", "hub/user/firstLogin",
-                                    function (text, data, xhr) {
-                                        userData.firstLogin = 0;
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, 0);
-                                break;
-                            case "sekretar":
-                                connection.sendAjax("POST", "hub/user/firstLogin",
-                                    function (text, data, xhr) {
-                                        userData.firstLogin = 0;
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, 0);
-                                break;
-                            case "menadzer":
-                                connection.sendAjax("POST", "hub/user/firstLogin",
-                                    function (text, data, xhr) {
-                                        userData.firstLogin = 3;
-                                        // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, 3);
-                                break;
-                            case "zaposleni":
-                                connection.sendAjax("POST", "hub/user/firstLogin",
-                                    function (text, data, xhr) {
-                                        userData.firstLogin = 0;
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    }, 0);
-                                break;
-                        }
-                    } else {
-                        util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
-                        $$("changePasswordBtn").enable();
-                    }
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    $$("changePasswordBtn").enable();
-                }, passwordInformation);
-
-        } else {
-            $$("changePasswordBtn").enable();
         }
     }
 };
@@ -1606,168 +1688,6 @@ var addDialogFirstAndLastName = function () {
     };
 };
 
-var dialogChangePassword = function () {
-
-    return {
-        view: "popup",
-        id: "changePasswordDialogFirstLogin",
-        move: true,
-        position: "center",
-        padding: 0,
-        type: "clean",
-        modal: true,
-        body: {
-            id: "aboutInside",
-            css: "aboutInside",
-            width: 550,
-            margin: 0,
-            type: "clean",
-            rows: [{
-                view: "toolbar",
-                cols: [{
-                    view: "label",
-                    label: "<span class='webix_icon fa-briefcase'></span> Promjena lozinke",
-                    width: 500,
-                    height: 50
-                }, {},]
-            },
-                {
-                    view: "form",
-                    id: "changePasswordFirstLoginForm",
-                    name: "changePasswordFirstLoginForm",
-                    width: 500,
-                    elementsConfig: {
-                        labelWidth: 140,
-                        bottomPadding: 18
-                    },
-                    elements: [
-                        {
-                            view: "text",
-                            id: "oldPassword",
-                            type: "password",
-                            name:"oldPassword",
-                            label: "Trenutna lozinka:",
-                            invalidMessage:"Unesite lozinku!",
-                            required: true
-
-                        },
-                        {
-                            view: "text",
-                            label: "Nova lozinka:",
-                            id: "newPassword",
-                            name:"newPassword",
-                            type: "password",
-                            invalidMessage:"Unesite lozinku!",
-                            required: true,
-                            bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
-                            keyPressTimeout:1000,
-                            on: {
-                                'onTimedKeyPress': function () {
-                                    var typed = $$("newPassword").getValue();
-                                    var strength=0;
-                                    var re1=/[0-9]/;
-                                    var re2=/[A-Z]/;
-                                    var re3=/[@#$%^&+=]/;
-                                    if(re1.test(typed))
-                                        strength++;
-                                    if (re2.test(typed))
-                                        strength++;
-                                    if (re3.test(typed))
-                                        strength++;
-                                    if(typed.length>=8)
-                                        strength++;
-                                    switch(strength){
-                                        case 0:
-                                        case 1:
-                                        case 2:
-                                            $$("strength").setValue("Jačina lozinke: slabo");
-                                            $$("strength").show();
-                                            break;
-                                        case 3:
-                                            $$("strength").setValue("Jačina lozinke: srednje");
-                                            $$("strength").show();
-                                            break;
-                                        case 4:
-                                            $$("strength").setValue("Jačina lozinke: jako");
-                                            $$("strength").show();
-                                            break;
-                                    }
-
-                                }
-
-                            }
-
-                        },
-                        {
-                            view: "label",
-                            id:"strength",
-                            name:"strength",
-                            hidden:true,
-                            height:15,
-                            align:"right"
-                        },
-                        {
-                            view: "text",
-                            label: "Potvrda nove lozinke:",
-                            id: "newPasswordConfirmation",
-                            name:"newPasswordConfirmation",
-                            invalidMessage:"Unesite lozinku!",
-                            type: "password",
-                            required: true,
-
-                        },
-
-                        {
-                            view: "button",
-                            id: "changePasswordBtn",
-                            name: "changePasswordBtn",
-                            label: "U redu",
-                            width: 150,
-                            click: "mainLayout.changePasswordFirstLoginFunction",
-                            align: "right",
-                            hotkey: "enter"
-                        }
-                    ],
-                    rules: {
-                        "oldPassword":function (value) {
-                            if (!value)
-                                return false;
-                            return true;
-                        },
-                        "newPassword": function (value) {
-                            if(value.length<8){
-                                $$('changePasswordFirstLoginForm').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
-                                return false;}
-                            if (value == $$("oldPassword").getValue()){
-                                $$('changePasswordFirstLoginForm').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
-                                return false;
-                            }
-                            var re = /[0-9A-Z@#$%^&+=]/;
-                            if (!re.test(value)) {
-                                $$('changePasswordFirstLoginForm').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
-                                return false;
-                            }
-                            return true;
-                        },
-                        "newPasswordConfirmation":function (value) {
-                            if (!value)
-                                return false;
-                            if(value!=$$("changePasswordFirstLoginForm").getValues().newPassword)
-                            {
-                                $$('changePasswordFirstLoginForm').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
-                                return false;}
-
-                            return true;
-
-                        },
-                    }
-                }
-            ]
-        }
-    };
-
-}
-
 
 showAddFirstAndLastNameDialog = function () {
     webix.ui(webix.copy(addDialogFirstAndLastName()));
@@ -1778,13 +1698,6 @@ showAddFirstAndLastNameDialog = function () {
     }, 0);
 
 
-};
-
-showChangePasswordDialog = function () {
-    webix.ui(webix.copy(dialogChangePassword()));
-    setTimeout(function () {
-        $$("changePasswordDialogFirstLogin").show();
-    }, 0);
 };
 
 showNotifications = function () {
