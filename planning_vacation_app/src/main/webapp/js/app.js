@@ -736,7 +736,98 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                             header: "Kompanija",
                             body: {
                                 id: "formCompanyInformation",
-                                //view: "list"
+                                view: "form",
+                                name:"formCompanyInformation",
+                                width:650,
+                                elementsConfig: {
+                                    labelWidth: 190,
+                                    bottomPadding: 18
+                                },
+                                elements:[
+                                    {
+                                        view:"text",
+                                        id:"companyName",
+                                        name:"companyName",
+                                        label:"Naziv kompanije:",
+                                        required:true,
+                                        invalidMessage: "Niste unijeli naziv kompanije",
+                                    },
+                                    {
+                                        view:"text",
+                                        label:"PIN:",
+                                        id:"companyPin",
+                                        disabled:true,
+                                        hidden:true
+                                    },
+                                    {
+                                        view: "uploader",
+                                        id: "photoUploader",
+                                        required:true,
+                                        invalidMessage: "Niste odabrali logo.",
+                                        width: 400,
+                                        height: 50,
+                                        value: "Dodajte logo",
+                                        on: {
+                                            onBeforeFileAdd: function (upload) {
+                                                var type = upload.type.toLowerCase();
+                                                console.log(type);
+                                                if (type === "jpg" || type === "png" || type === "jpeg") {
+                                                    var file = upload.file;
+                                                    if(file.size > 1048576){
+                                                        util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                                        return false;
+                                                    }
+                                                    var reader = new FileReader();
+                                                    reader.onload = function (event) {
+                                                        var img = new Image();
+                                                        img.onload = function (ev) {
+                                                            if (img.width > 220 || img.height > 50) {
+                                                                util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                                            } else {
+                                                                var newDocument = {
+                                                                    name: file['name'],
+                                                                    content: event.target.result.split("base64,")[1],
+                                                                };
+                                                                $$("companyLogoList").clearAll();
+                                                                $$("companyLogoList").add(newDocument);
+
+                                                            }
+                                                        };
+                                                        img.src = event.target.result;
+                                                    };
+                                                    reader.readAsDataURL(file);
+                                                    return false;
+                                                } else {
+                                                    util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+
+                                                    return false;
+                                                }
+
+                                            }
+                                        }
+                                    },
+                                    {
+                                        view: "list",
+                                        name: "companyLogoList",
+                                        rules: {
+                                            content: webix.rules.isNotEmpty
+                                        },
+                                        scroll: false,
+                                        id: "companyLogoList",
+                                        width: 372,
+                                        type: {
+                                            height: "auto"
+                                        },
+                                        css: "relative image-upload",
+                                        template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+                                        onClick: {
+                                            'delete-file': function (e, id) {
+                                                this.remove(id);
+                                                return false;
+                                            }
+                                        }
+                                    }
+                                ]
                                 // list config
                             }
                         },
@@ -1088,6 +1179,21 @@ console.log("Usao u if showFirstLogin");
          var main = webix.copy(firstLoginLayout);
          firstLogin = webix.ui(main, panel);
          panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
+        var companyId = userData.companyId;
+
+        connection.sendAjax("GET",
+            "hub/company/" + companyId, function (text, data, xhr) {
+                var company = data.json();
+                $$("companyName").setValue(company.name);
+                $$("companyPin").setValue(company.pin);
+                var newDocument = {
+                    name: '',
+                    content: company.logo,
+                };
+
+                $$("companyLogoList").clearAll();
+                $$("companyLogoList").add(newDocument);
+            });
 
 //adding ProgressBar functionality to layout
         webix.extend($$("firstLoginWizard"), webix.ProgressBar);
