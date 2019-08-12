@@ -51,7 +51,12 @@ var sectorView = {
                         label: " Statistika  ",
                         icon: "fas fa-line-chart",
                         css: "companyButton floatMeRight",
-                        autowidth: true
+                        autowidth: true,
+                        click: function () {
+                            sectorStatisticsView.selectPanel();
+
+                        }
+
                     }
                 ]
             },

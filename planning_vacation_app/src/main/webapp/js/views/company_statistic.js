@@ -1,6 +1,7 @@
 var companyStatisticView;
 var achart = {
     cols: [{
+        id:"aChart",
         view: "chart",
         type: "bar",
         value: "#number#",
@@ -15,7 +16,7 @@ var achart = {
         },
         xAxis: {
             template: "'#month#'",
-            title:"Broj odsutnih zaposlenih po mjesecu",
+            title: "Broj odsutnih zaposlenih po mjesecu",
             lines: false
         },
         padding: {
@@ -43,7 +44,7 @@ var bchart = {
     },
     xAxis: {
         template: "'#month#",
-        title:"Broj odsutnih zaposlenih po mjesecu"
+        title: "Broj odsutnih zaposlenih po mjesecu"
     },
     offset: 0,
     yAxis: {
@@ -61,6 +62,7 @@ var bchart = {
 };
 
 var cchart = {
+    id:"cChart",
     view: "chart",
     type: "bar",
     barWidth: 20,
@@ -70,7 +72,7 @@ var cchart = {
     gradient: "rising",
     xAxis: {
         template: "'#month#",
-        title:"Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
+        title: "Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
     },
     yAxis: {
         start: 0,
@@ -132,7 +134,7 @@ var dchart = {
     type: "area",
     xAxis: {
         template: "'#month#",
-        title:"Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
+        title: "Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
     },
     yAxis: {
         start: 0,
@@ -208,59 +210,138 @@ companyStatisticView = {
     getPanel: function () {
         return {
             id: "companyStatisticPanel",
-            cols: [{
-                rows: [{
-                    padding: 8,
-                    view: "toolbar",
-                    css: {"background": "#ffffff !important"},
-                    cols: [
-                        {
-                            template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika kompanije",
-                            view: "label",
-                            css: {"color": "black !important"},
-                            width: 400
+            rows: [{
+                cols: [
+                    {
+                        padding: 8,
+                        height: 70,
+                        view: "toolbar",
+                        css: {"background": "#ffffff !important"},
+                        cols: [
+                            {
+                                template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika kompanije",
+                                view: "label",
+                                css: {"color": "black !important"},
+                            }
+                        ]
+                    }, {},
+                    {
+                        view: "button",
+                        id: "archiveBtn",
+                        name: "archiveBtn",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u tabele",
+                        width: 100,
+                        height: 50,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn").disable();
+                                webix.toPDF("chartPIE", {
+                                        docHeader: {
+                                            text: "Statistika kompanije",
+                                            textAlign: "center"
+
+                                        },
+                                        columns: {
+                                            "number": {header: "Broj odsutnih"},
+                                            "month": {header: "Mjesec"},
+                                            "vacation": {header: "Kategorija - godišnji odmor"},
+                                            "leave": {header: "Kategorija - odsustvo"},
+                                            "religion": {header: "Kategorija - praznik"}
+
+                                        },
+                                        autowidth: true
+                                    }
+                                );
+                                $$("archiveBtn").enable();
+
+                            }
                         }
-                    ]
-                },{
+                    },
+                    {
+                        view: "button",
+                        id: "archiveBtn2",
+                        name: "archiveBtn2",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u slike",
+                        width: 100,
+                        height: 50,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn2").disable();
+                                webix.toPNG("chartPIE");
+                                webix.toPNG("aChart");
+                                webix.toPNG("cChart");
+                                $$("archiveBtn2").enable();
+
+                            }
+                        }
+                    }
+                ]
+
+            }, {
+                view: "carousel",
+                css: "webix_dark",
+                id: "parts",
+                cols: [
+                    achart, bchart
+                ]
+
+
+            },
+                {
+                    cols: [{
                         view: "carousel",
                         css: "webix_dark",
+                        width: 1000,
                         id: "parts",
                         cols: [
-                            achart, bchart
+                            cchart, dchart
                         ]
+                    }, {
+                        id: "chartPIE",
+                        view: "chart",
+                        type: "pie",
+                        value: "#number#",
+                        color: "#color#",
+                        legend: {
+                            align: "right",
+                            valign: "middle",
+                            template: "#month#"
+                        },
+                        shadow: 0,
+                        gradient: true,
+                        pieInnerText: "#number#",
 
+                        url: "/hub/company/statistics/all",
+                        on:{
+                            onBeforeLoad:function(){
+                                $$("archiveBtn").disable();
+                                $$("archiveBtn2").disable();
 
-
-                },
-                    {
-                        cols: [{
-                            view: "carousel",
-                            css: "webix_dark",
-                            width: 1000,
-                            id: "parts",
-                            cols: [
-                                cchart, dchart
-                            ]
-                        }, {
-                            view: "chart",
-                            type: "pie",
-                            value: "#number#",
-                            color: "#color#",
-                            legend: {
-                                align: "right",
-                                valign: "middle",
-                                template: "#month#"
                             },
-                            shadow: 0,
-                            gradient: true,
-                            pieInnerText: "#number#",
+                            onAfterLoad:function(){
+                                $$("archiveBtn").enable();
+                                $$("archiveBtn2").enable();
 
-                            url: "/hub/company/statistics/all"
-                        }]
-                    },{
-                    height: 10
+                            }
+                        }
                     }]
-            }]
+                }, {
+                    height: 10
+                }]
         }
     }
 
