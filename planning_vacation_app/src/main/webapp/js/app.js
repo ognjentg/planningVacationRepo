@@ -1947,7 +1947,11 @@ updateNotifications = function () {
                         }else{
                             i--;
                         }
-                        j++;
+                        if(j< userNotifications.length - 1){
+                            j++;
+                        }else{
+                            break;
+                        }
                     }
                 }
                 $$("notificationBtn").config.badge = numberOfUnreadNotifications;

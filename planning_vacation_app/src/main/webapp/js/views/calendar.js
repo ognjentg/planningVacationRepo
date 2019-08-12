@@ -26,6 +26,7 @@ var calendarView = {
     freeDays: 20,
     nonWorkingDays: null,
     nonWorkingdDaysInWeek: null,
+    collectiveVacationDays: [],
     vacationRequestWaiting: [],
     vacationRequestApproved: [],
     leaveRequestWaiting: [],
@@ -405,6 +406,34 @@ var calendarView = {
                 }
             }
         });
+
+        //Dohvatanje dana kolektivnog godisnjeg odmora
+        collectiveVacationDays=[];
+        webix.ajax("/hub/colectiveVacation/getColectiveVacationByCompany/" + userData.companyId, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        var dates = data.json();
+                        for (var i = 0; i < dates.length; i++) {
+                            var tempDate = new Date(dates[i].day);
+                            //tempDate.setHours(00, 00, 00);
+                            tempDate.setHours(0,0,0,0);
+                            collectiveVacationDays[i] = tempDate.getTime();
+                            scheduler.blockTime(tempDate, "fullday");
+                        }
+                        calendarView.nonWorkingDays = nonWorkingDays;
+                        scheduler.setCurrentView();
+                    }
+                }
+            }
+        });
+
+
         //Dohvatanje ograničenja kompanije /hub/constraints
         webix.ajax("hub/constraints/" + userData.companyId, {
             error: function (text, data, xhr) {
@@ -793,8 +822,13 @@ var calendarView = {
             category: "Godišnji"
         }
         var temp = $$("periodsDT").serialize();
+        for(var i=0;i<temp.length;i++){
+            console.log("temp "+temp[i].date);
+        }
         var dates = [];
+        var datesGetTime=[];
         temp.forEach(function (value) { dates.push(format(value.date));});
+        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
         webix.ajax("hub/leave_request/canGoOnVacationByDates/" + dates.toString(), {
             error: function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
@@ -802,12 +836,82 @@ var calendarView = {
             },
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
+
+                    var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
+                    var day = 1000 * 60 * 60 * 24;
+
+                    var m=0;
+                    for (var i = 0; i < datesGetTimeCopy.length - 1; i++) {
+                        if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
+                            var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
+                            for (var j = 1; j < daysDifference; j++) {
+                                var nextDay = datesGetTimeCopy[i] + day * j;
+                                var nextDayInWeek = (new Date(nextDay).getDay());
+                                if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+
+                                    var datesForWrite=[];
+                                    for(var k=m; k<(i+1);k++){
+                                        datesForWrite.push(temp[k]);
+                                    }
+                                    console.log("m= "+m);
+                                    console.log("i= "+i);
+                                    connection.sendAjax("POST", "hub/leave_request/",
+                                        function (text, data, xhr) {
+                                            if (text) {
+                                                var tempData = JSON.parse(text);
+                                                var dates = datesForWrite;
+                                                console.log("prvi zahtjev");
+                                                dates.forEach(function (value) {
+                                                    console.log(""+value.date);
+                                                    var date = {
+                                                        date: format(value.date),
+                                                        leaveRequestId: tempData.id,
+                                                        canceled: 0,
+                                                        paid: 1
+                                                    }
+                                                    connection.sendAjax("POST", "hub/leave_request_date/",
+                                                        function (text, data, xhr) {
+                                                            if (text) {
+                                                                calendarView.getVacationDays();
+                                                                scheduler.setCurrentView();
+                                                            } else
+                                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                                        }, function (text, data, xhr) {
+                                                            util.messages.showErrorMessage(text);
+                                                        }, date);
+                                                });
+                                                util.messages.showMessage("Zahtjev uspjesno poslan");
+                                                calendarView.deleteCurrentRequest();
+                                            } else
+                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                            $$("sendRequestButton").enable();
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                            $$("sendRequestButton").enable();
+                                        }, leaveRequest);
+
+                                    m=i+1;
+                                    j=daysDifference;
+                                }
+
+
+                            }
+
+                        }
+                    }
+
+                    datesForWrite=[];
+                    for(var k=m; k<dates.length;k++){
+                        datesForWrite.push(temp[k]);
+                    }
                     connection.sendAjax("POST", "hub/leave_request/",
                         function (text, data, xhr) {
                             if (text) {
                                 var tempData = JSON.parse(text);
-                                var dates = $$("periodsDT").serialize();
+                                var dates = datesForWrite;
+                                console.log("drugi zahtjev");
                                 dates.forEach(function (value) {
+                                    console.log(""+value.date);
                                     var date = {
                                         date: format(value.date),
                                         leaveRequestId: tempData.id,
