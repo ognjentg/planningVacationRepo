@@ -115,7 +115,7 @@ var menuAdmin = [
     }, {
         id: "sector_statistics",
         value: "Statistika sektora",
-        icon: "fas fa-pie-chart"
+        icon: "fas fa-bar-chart"
     }
 
     /*    {
@@ -166,7 +166,7 @@ var menuDirector = [
     }, {
         id: "sector_statistics",
         value: "Statistika sektora",
-        icon: "fas fa-pie-chart"
+        icon: "fas fa-bar-chart"
     }
     /*    {
               id: "collectiveVacation",
@@ -229,7 +229,7 @@ var menuSecretary = [
     {
         id: "sector_statistics",
         value: "Statistika sektora",
-        icon: "fas fa-pie-chart"
+        icon: "fas fa-bar-chart"
     }
 ];
 

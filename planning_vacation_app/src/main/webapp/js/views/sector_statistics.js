@@ -542,7 +542,7 @@ sectorStatisticsView = {
                 cols: [{
                     view: "datatable",
                     id: "sector_statisticsDT",
-                    width: 180,
+                    width: 200,
                     navigation: true,
                     select: "row",
                     multiselect: false,
@@ -554,27 +554,43 @@ sectorStatisticsView = {
                         hidden: true
                     }, {
                         id: "sectorName",
-                        header: "Sektori",
-                        width: 180,
+                        header: [
+                            "Sektori", {
+                                content: "textFilter", value: "", icon: "wxi-search"
+                            }
+                        ],
+                        width: 300,
+                        fillspace: true,
                         sort: "string",
+                        width: 200,
                         template: function (obj) {
                             var sectorName = obj.name;
                             return sectorName;
                         }
+                    }, {
+
+                        id: "view",
+                        header: "&nbsp;",
+                        tooltip: "Pregled",
+                        width: 35,
+                        template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
+
                     }],
 
                     on: {
-                        onBeforeLoad:function(){
+                        onBeforeLoad: function () {
                             this.showOverlay("Učitavanje...");
                         },
-                        onAfterLoad:function(){
+                        onAfterLoad: function () {
                             this.hideOverlay();
                             if (!this.count())
                                 this.showOverlay("Izvinite, nema podataka.");
+                            var id = this.getFirstId();
+                            this.select(id);
                         },
                         onSelectChange: function () {
                             var pom = $$("sector_statisticsDT").getSelectedId();
-                           // console.log(pom.id);
+                            // console.log(pom.id);
                             connection.sendAjax("GET",
                                 "/hub/sector/statistics/sector/" + pom.id,
                                 function (text, data, xhr) {
@@ -673,7 +689,19 @@ sectorStatisticsView = {
                                 });
 
                         }
-                    },
+                    }
+                    /*,
+                    onClick: {
+                        webix_icon: function (e, id) {
+                            $$("sector_statisticsDT").select(id);
+                            console.log(id["column"]);
+                            var action = id["column"];
+                            if (action === "view") {
+                                userStatisticsView.URL = "/hub/user/getAllUsersFromSectorByUserGroupId/"+id;
+                                userStatisticsView.selectPanel();
+                            }
+                        }
+                    }*/,
                     url: "/hub/sector"
                 }, {
                     rows: [

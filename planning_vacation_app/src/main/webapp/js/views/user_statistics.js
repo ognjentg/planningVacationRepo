@@ -1,4 +1,5 @@
 var userStatisticsView;
+var URL = "/hub/user";
 
 var first = {
     cols: [{
@@ -525,7 +526,6 @@ userStatisticsView = {
     getPanel: function () {
         return {
             id: "userStatisticsPanel",
-
             rows: [{
                 padding: 8,
                 view: "toolbar",
@@ -542,7 +542,8 @@ userStatisticsView = {
                 cols: [{
                     view: "datatable",
                     id: "user_statisticsDT",
-                    width: 180,
+                    width: 300,
+                    scrollAlignY: true,
                     navigation: true,
                     select: "row",
                     multiselect: false,
@@ -556,24 +557,36 @@ userStatisticsView = {
                         id: "lastName",
                         hidden: true
                     }, {
+                        id: "email",
+                        hidden: true
+                    }, {
                         id: "lfName",
-                        header: "Zaposleni",
-                        width: 180,
+                        header: [
+                            "Zaposleni", {
+                                content: "textFilter", value: "", icon: "wxi-search"
+                            }
+                        ],
+                        width: 300,
+                        fillspace: true,
                         sort: "string",
                         template: function (obj) {
-                            var pom = obj.firstName + " " + obj.lastName;
+                            var pom = obj.firstName + " " + obj.lastName + " (" + obj.email + ")";
                             return pom;
                         }
                     }],
 
                     on: {
-                        onBeforeLoad:function(){
+                        onBeforeLoad: function () {
                             this.showOverlay("Učitavanje...");
                         },
-                        onAfterLoad:function(){
+                        onAfterLoad: function () {
                             this.hideOverlay();
                             if (!this.count())
                                 this.showOverlay("Izvinite, nema podataka.");
+                            var id = this.getFirstId();
+                            $$("user_statisticsDT").select(id);
+
+
                         },
                         onSelectChange: function () {
                             var pom = $$("user_statisticsDT").getSelectedId();
@@ -677,7 +690,7 @@ userStatisticsView = {
 
                         }
                     },
-                    url: "/hub/user"
+                    url: URL
                 }, {
                     rows: [
                         {
