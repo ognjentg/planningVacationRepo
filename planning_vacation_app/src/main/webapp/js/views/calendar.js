@@ -292,8 +292,8 @@ var calendarView = {
                                     webix_icon: function (e, id) {
                                         var eventId = $$("periodsDT").getItem(id).eventId;
                                         var value = $$("periodsDT").getItem(id).date;
-                                        var date = format(new Date(value + "T22:00:00.000Z"));
-                                        var index = selectedDays.indexOf(date.getTime());
+                                       // var date = format(new Date(value + "T22:00:00.000Z"));
+                                        var index = selectedDays.indexOf(value);
                                         selectedDays.splice(index, 1);
                                         scheduler.setCurrentView();
                                         $$("periodsDT").remove(id);
