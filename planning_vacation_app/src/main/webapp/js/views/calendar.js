@@ -823,6 +823,7 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Godišnji"
         }
+        var leaveRequestsExtended=[];
         var temp = $$("periodsDT").serialize();
         for(var i=0;i<temp.length;i++){
             console.log("temp "+temp[i].date);
@@ -840,6 +841,7 @@ var calendarView = {
                 if (xhr.status === 200) {
 
                     var datesForWrite=[];
+                    var datesForWriteCopy=[];
                     var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
                     var day = 1000 * 60 * 60 * 24;
 
@@ -857,48 +859,26 @@ var calendarView = {
                                 if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
 
                                      datesForWrite=[];
-                                    //console.log("m= "+m);
+                                     datesForWriteCopy=[];
                                     for(var k=m; k<(i+1);k++){
-                                        //console.log("k= "+k);
-                                       // console.log("temp[k]= "+ temp[k].date);
                                         datesForWrite.push(temp[k]);
                                         console.log("datesForWrite[k]= "+datesForWrite[k].date);
                                     }
-                                    connection.sendAjax("POST", "hub/leave_request/",
-                                        function (text, data, xhr) {
-                                            if (text) {
-                                                var tempData = JSON.parse(text);
-                                                var dates = datesForWrite;
-                                                console.log("prvi zahtjev");
-                                                datesForWrite.forEach(function (value) {
-                                                    var date = {
-                                                        date: format(value.date),
-                                                        leaveRequestId: tempData.id,
-                                                        canceled: 0,
-                                                        paid: 1
-                                                    }
-                                                    console.log("date "+ date.date);
 
-                                                    connection.sendAjax("POST", "hub/leave_request_date/",
-                                                        function (text, data, xhr) {
-                                                            if (text) {
-                                                                calendarView.getVacationDays();
-                                                                scheduler.setCurrentView();
-                                                            } else
-                                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                                        }, function (text, data, xhr) {
-                                                            util.messages.showErrorMessage(text);
-                                                        }, date);
-                                                });
-                                                util.messages.showMessage("Zahtjev uspjesno poslan");
-                                                calendarView.deleteCurrentRequest();
-                                            } else
-                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                            $$("sendRequestButton").enable();
-                                        }, function (text, data, xhr) {
-                                            util.messages.showErrorMessage(text);
-                                            $$("sendRequestButton").enable();
-                                        }, leaveRequest);
+                                    datesForWrite.forEach(function (value) {
+                                        var date = {
+                                            date: format(value.date),
+                                            canceled: 0,
+                                            paid: 1
+                                        }
+                                        datesForWriteCopy.push(date);
+                                    });
+                                    var leaveRequestExtended={
+                                        leaveRequest: leaveRequest,
+                                        dates: datesForWriteCopy
+                                    }
+
+                                    leaveRequestsExtended.push(leaveRequestExtended);
 
                                     m=i+1;
                                     j=daysDifference;
@@ -912,48 +892,50 @@ var calendarView = {
                     if(i == (datesGetTimeCopy.length-1)){
 
                         datesForWrite=[];
+                        datesForWriteCopy=[];
                         for(var k=m; k<datesGetTimeCopy.length;k++){
                             datesForWrite.push(temp[k]);
                         }
-                        connection.sendAjax("POST", "hub/leave_request/",
-                            function (text, data, xhr) {
-                                if (text) {
-                                    var tempData = JSON.parse(text);
-                                    var dates = datesForWrite;
-                                    console.log("drugi zahtjev");
-                                    datesForWrite.forEach(function (value) {
-                                        var date = {
-                                            date: format(value.date),
-                                            leaveRequestId: tempData.id,
-                                            canceled: 0,
-                                            paid: 1
-                                        }
-                                        connection.sendAjax("POST", "hub/leave_request_date/",
-                                            function (text, data, xhr) {
-                                                if (text) {
-                                                    calendarView.getVacationDays();
-                                                    scheduler.setCurrentView();
-                                                } else
-                                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                            }, function (text, data, xhr) {
-                                                util.messages.showErrorMessage(text);
-                                            }, date);
-                                    });
-                                    util.messages.showMessage("Zahtjev uspjesno poslan");
-                                    calendarView.deleteCurrentRequest();
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                $$("sendRequestButton").enable();
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                                $$("sendRequestButton").enable();
-                            }, leaveRequest);
+
+                        datesForWrite.forEach(function (value) {
+                            var date = {
+                                date: format(value.date),
+                                canceled: 0,
+                                paid: 1
+                            }
+                            datesForWriteCopy.push(date);
+                        });
+
+                        var leaveRequestExtended={
+                            leaveRequest: leaveRequest,
+                            dates: datesForWriteCopy,
+                        }
+
+                        leaveRequestsExtended.push(leaveRequestExtended);
+
                     }
+
+
+                    connection.sendAjax("POST", "hub/leave_request/insertExtended",
+                        function (text, data, xhr) {
+                            if (text) {
+                                util.messages.showMessage("Zahtjev uspjesno poslan");
+                                calendarView.getVacationDays();
+                                scheduler.setCurrentView();
+                                calendarView.deleteCurrentRequest();
+                            } else
+                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                            $$("sendRequestButton").enable();
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                            console.log(text);
+                            $$("sendRequestButton").enable();
+                        }, leaveRequestsExtended);
 
 
                 }
                 else{
-                    util.messages.showErrorMessage("Dani odabrani u godišnjem su prezauzeti.")
+                    util.messages.showErrorMessage("Dani odabrani u godišnjem su prezauzeti.");
                     $$("sendRequestButton").enable();
                 }
             }
@@ -971,38 +953,109 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Praznik"
         }
-        connection.sendAjax("POST", "hub/leave_request/",
+        var leaveRequestsExtended=[];
+        var temp = $$("periodsDT").serialize();
+        for(var i=0;i<temp.length;i++){
+            console.log("temp "+temp[i].date);
+        }
+        var dates = [];
+        var datesGetTime=[];
+        temp.forEach(function (value) { dates.push(format(value.date));});
+        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
+
+
+        var datesForWrite=[];
+        var datesForWriteCopy=[];
+        var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
+        var day = 1000 * 60 * 60 * 24;
+
+        var m=0;
+        var br=0;
+        var i=0;
+
+        for (; i < datesGetTimeCopy.length - 1; i++) {
+            console.log("i= "+i);
+            if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
+                var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
+                for (var j = 1; j < daysDifference; j++) {
+                    var nextDay = datesGetTimeCopy[i] + day * j;
+                    var nextDayInWeek = (new Date(nextDay).getDay());
+                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+
+                        datesForWrite=[];
+                        datesForWriteCopy=[];
+                        for(var k=m; k<(i+1);k++){
+                            datesForWrite.push(temp[k]);
+                            console.log("datesForWrite[k]= "+datesForWrite[k].date);
+                        }
+
+                        datesForWrite.forEach(function (value) {
+                            var date = {
+                                date: format(value.date),
+                                canceled: 0,
+                                paid: 1
+                            }
+                            datesForWriteCopy.push(date);
+                        });
+                        var leaveRequestExtended={
+                            leaveRequest: leaveRequest,
+                            dates: datesForWriteCopy
+                        }
+
+                        leaveRequestsExtended.push(leaveRequestExtended);
+
+                        m=i+1;
+                        j=daysDifference;
+                    }
+
+                }
+
+            }
+        }
+
+        if(i == (datesGetTimeCopy.length-1)){
+
+            datesForWrite=[];
+            datesForWriteCopy=[];
+            for(var k=m; k<datesGetTimeCopy.length;k++){
+                datesForWrite.push(temp[k]);
+            }
+
+            datesForWrite.forEach(function (value) {
+                var date = {
+                    date: format(value.date),
+                    canceled: 0,
+                    paid: 1
+                }
+                datesForWriteCopy.push(date);
+            });
+
+            var leaveRequestExtended={
+                leaveRequest: leaveRequest,
+                dates: datesForWriteCopy,
+            }
+
+            leaveRequestsExtended.push(leaveRequestExtended);
+
+        }
+
+
+        connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    var tempData = JSON.parse(text);
-                    var dates = $$("periodsDT").serialize();
-                    dates.forEach(function (value) {
-                        var date = {
-                            date: format(value.date),
-                            leaveRequestId: tempData.id,
-                            canceled: 0,
-                            paid: 1
-                        }
-                        connection.sendAjax("POST", "hub/leave_request_date/",
-                            function (text, data, xhr) {
-                                if (text) {
-                                    calendarView.getVacationDays();
-                                    scheduler.setCurrentView();
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                            }, date);
-                    })
                     util.messages.showMessage("Zahtjev uspjesno poslan");
+                    calendarView.getVacationDays();
+                    scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
                 } else
                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
                 $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                console.log(text);
                 $$("sendRequestButton").enable();
-            }, leaveRequest);
+            }, leaveRequestsExtended);
+
     },
     sendPaidLeaveRequest: function () {
         var form = $$("createRequestForm");
@@ -1015,38 +1068,109 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Odsustvo"
         }
-        connection.sendAjax("POST", "hub/leave_request/",
+        var leaveRequestsExtended=[];
+        var temp = $$("periodsDT").serialize();
+        for(var i=0;i<temp.length;i++){
+            console.log("temp "+temp[i].date);
+        }
+        var dates = [];
+        var datesGetTime=[];
+        temp.forEach(function (value) { dates.push(format(value.date));});
+        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
+
+
+        var datesForWrite=[];
+        var datesForWriteCopy=[];
+        var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
+        var day = 1000 * 60 * 60 * 24;
+
+        var m=0;
+        var br=0;
+        var i=0;
+
+        for (; i < datesGetTimeCopy.length - 1; i++) {
+            console.log("i= "+i);
+            if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
+                var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
+                for (var j = 1; j < daysDifference; j++) {
+                    var nextDay = datesGetTimeCopy[i] + day * j;
+                    var nextDayInWeek = (new Date(nextDay).getDay());
+                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+
+                        datesForWrite=[];
+                        datesForWriteCopy=[];
+                        for(var k=m; k<(i+1);k++){
+                            datesForWrite.push(temp[k]);
+                            console.log("datesForWrite[k]= "+datesForWrite[k].date);
+                        }
+
+                        datesForWrite.forEach(function (value) {
+                            var date = {
+                                date: format(value.date),
+                                canceled: 0,
+                                paid: 1
+                            }
+                            datesForWriteCopy.push(date);
+                        });
+                        var leaveRequestExtended={
+                            leaveRequest: leaveRequest,
+                            dates: datesForWriteCopy
+                        }
+
+                        leaveRequestsExtended.push(leaveRequestExtended);
+
+                        m=i+1;
+                        j=daysDifference;
+                    }
+
+                }
+
+            }
+        }
+
+        if(i == (datesGetTimeCopy.length-1)){
+
+            datesForWrite=[];
+            datesForWriteCopy=[];
+            for(var k=m; k<datesGetTimeCopy.length;k++){
+                datesForWrite.push(temp[k]);
+            }
+
+            datesForWrite.forEach(function (value) {
+                var date = {
+                    date: format(value.date),
+                    canceled: 0,
+                    paid: 1
+                }
+                datesForWriteCopy.push(date);
+            });
+
+            var leaveRequestExtended={
+                leaveRequest: leaveRequest,
+                dates: datesForWriteCopy,
+            }
+
+            leaveRequestsExtended.push(leaveRequestExtended);
+
+        }
+
+
+        connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    var tempData = JSON.parse(text);
-                    var dates = $$("periodsDT").serialize();
-                    dates.forEach(function (value) {
-                        var date = {
-                            date: format(value.date),
-                            leaveRequestId: tempData.id,
-                            canceled: 0,
-                            paid: 1
-                        }
-                        connection.sendAjax("POST", "hub/leave_request_date/",
-                            function (text, data, xhr) {
-                                if (text) {
-                                    calendarView.getVacationDays();
-                                    scheduler.setCurrentView();
-                                } else
-                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                            }, function (text, data, xhr) {
-                                util.messages.showErrorMessage(text);
-                            }, date);
-                    })
                     util.messages.showMessage("Zahtjev uspjesno poslan");
+                    calendarView.getVacationDays();
+                    scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
                 } else
                     util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
                 $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
+                console.log(text);
                 $$("sendRequestButton").enable();
-            }, leaveRequest);
+            }, leaveRequestsExtended);
+        
     },
 
     sendSickLeaveRequest: function () {

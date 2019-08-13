@@ -121,6 +121,83 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         return leaveRequest;
     }
 
+
+
+
+    @RequestMapping(value = "/insertExtended", method = RequestMethod.POST)
+    public @ResponseBody
+    Boolean insertExtended(@RequestBody List<LeaveRequestExtended> leaveRequests) throws BadRequestException {
+        //Check if category length is equal or greater than 45
+        for(LeaveRequestExtended leaveReq: leaveRequests){
+            LeaveRequest leaveRequest=leaveReq.getLeaveRequest();
+            System.out.println("Kreiranje zahtjeva");
+            Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
+            System.out.println("Sector id = " + sectorId);
+            if("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())){
+                leaveRequest.setLeaveRequestStatusId(2);
+                if ((leaveRequest = repo.saveAndFlush(leaveRequest)) == null)
+                    throw new BadRequestException(badRequestInsert);
+            }else{
+                if (leaveRequest.getCategory().length() >= 45)
+                    throw new BadRequestException(badRequestInsert);
+                if (repo.saveAndFlush(leaveRequest) == null)
+                    throw new BadRequestException(badRequestInsert);
+
+                logCreateAction(leaveRequest);
+                String notificationTitle = "";
+                Byte leaveType = 0;
+                User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+                String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je poslao zahtjev za ";
+                if ("Godišnji".equals(leaveRequest.getCategory())) {
+                    notificationTitle = "Zahtjev za godišnji odmor";
+                    notificationText += "godišnji odmor.";
+                    leaveType = 1;
+                } else if ("Odsustvo".equals(leaveRequest.getCategory())) {
+                    notificationTitle = "Zahtjev za odsustvo";
+                    leaveType = 2;
+                    notificationText += "odsustvo.";
+                } else if ("Praznik".equals(leaveRequest.getCategory())) {
+                    notificationTitle = "Zahtjev za praznik";
+                    leaveType = 3;
+                    notificationText += "praznik.";
+                }
+                notificationText += " " + leaveRequest.getSenderComment();
+                if (sectorId != null && userTemp.getUserGroupId() == 6) {
+                    Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
+                    User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte)1);
+                    emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
+                } else {
+                    List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
+                            2, (byte) 1);
+                    List<User> directors = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
+                            3, (byte) 1);
+                    for (User user1 : directors) {
+                        emailNotification.createNotification(user1, notificationTitle, notificationText, leaveType);
+                    }
+                    for (User user : admins) {
+                        emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
+                    }
+
+                }
+            }
+
+            List<LeaveRequestDate> dates= leaveReq.getDates();
+            for(LeaveRequestDate date: dates){
+                date.setLeaveRequestId(leaveRequest.getId());
+                if(leaveRequestDateRepository.saveAndFlush(date) == null)
+                    throw new BadRequestException(badRequestInsert);
+            }
+
+        }
+
+        return true;
+    }
+
+
+
+
+
+
     @Transactional
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @Override
