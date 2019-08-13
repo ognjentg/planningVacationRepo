@@ -40,6 +40,9 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
     private String typeName;
     private String approverUserFirstName;
     private String approverUserLastName;
+    private Integer numberOfDays=0;
+
+
 
     public LeaveRequestUserLeaveRequestStatus(Integer id, String category, String senderComment, String approverComment, Integer senderUserId, String firstName, String lastName, String statusName, Date dateFrom, Date dateTo, String typeName, String approverUserFirstName, String approverUserLastName) {
         this.setId(id);
@@ -111,5 +114,13 @@ public class LeaveRequestUserLeaveRequestStatus extends LeaveRequest{
 
     public void setTypeName(String typeName) {
         this.typeName = typeName;
+    }
+
+    public Integer getNumberOfDays() {
+        return numberOfDays;
+    }
+
+    public void setNumberOfDays(Integer numberOfDays) {
+        this.numberOfDays = numberOfDays;
     }
 }

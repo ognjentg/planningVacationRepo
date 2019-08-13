@@ -171,6 +171,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         }else{
             list = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
         }
+
+        for(LeaveRequestUserLeaveRequestStatus s:list){
+            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+            s.setNumberOfDays(dates.size());
+        }
+
         return list;
 
     }
@@ -179,6 +185,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id) {
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
+         List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(lrs.getId(), (byte)1);
+         lrs.setNumberOfDays(dates.size());
         return lrs;
     }
 
@@ -213,7 +221,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable String key) {
-        return leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
+        List<LeaveRequestUserLeaveRequestStatus> list= leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
+        for(LeaveRequestUserLeaveRequestStatus s:list){
+            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+            s.setNumberOfDays(dates.size());
+        }
+        return list;
     }
 
     ///////////////////////////////////////////////////////////////////////updateLeaveRequestStatusCancellation
@@ -533,6 +546,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             User user=users.get(i);
             List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(),key);
             list.addAll(pom);
+        }
+        for(LeaveRequestUserLeaveRequestStatus s:list){
+            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+            s.setNumberOfDays(dates.size());
         }
         return list;
     }

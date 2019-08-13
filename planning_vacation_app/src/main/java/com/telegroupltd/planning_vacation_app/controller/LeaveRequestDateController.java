@@ -46,4 +46,10 @@ public class LeaveRequestDateController extends GenericHasActiveController<Leave
     List<LeaveRequestDate> getAll(){
         return leaveRequestDateRepository.getAllByActiveIs((byte)1);
     }
+
+    @RequestMapping(value = "/getAllByLeaveRequestIdAndActive/{leaveRequestId}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<LeaveRequestDate> getAllByLeaveRequestIdAndActive(@PathVariable Integer leaveRequestId ) {
+        return leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequestId, (byte) 1);
+    }
 }

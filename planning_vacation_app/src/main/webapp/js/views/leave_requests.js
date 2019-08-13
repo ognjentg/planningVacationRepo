@@ -259,6 +259,11 @@ leaveRequestsView = {
                         format: webix.Date.dateToStr("%d.%m.%Y.")
 
                     }, {
+                        id: "numberOfDays",
+                        header: "Broj dana",
+                        sort: "int",
+                        width: 50,
+                    },{
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,

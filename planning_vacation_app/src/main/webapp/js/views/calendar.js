@@ -837,12 +837,16 @@ var calendarView = {
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
 
+                    var datesForWrite=[];
                     var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
                     var day = 1000 * 60 * 60 * 24;
 
                     var m=0;
+                    var br=0;
                     var i=0;
+
                     for (; i < datesGetTimeCopy.length - 1; i++) {
+                        console.log("i= "+i);
                         if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
                             var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
                             for (var j = 1; j < daysDifference; j++) {
@@ -850,7 +854,7 @@ var calendarView = {
                                 var nextDayInWeek = (new Date(nextDay).getDay());
                                 if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
 
-                                    var datesForWrite=[];
+                                     datesForWrite=[];
                                     //console.log("m= "+m);
                                     for(var k=m; k<(i+1);k++){
                                         //console.log("k= "+k);
@@ -898,13 +902,13 @@ var calendarView = {
                                     j=daysDifference;
                                 }
 
-
                             }
 
                         }
                     }
 
-                    if(i == datesGetTimeCopy.length){
+                    if(i == (datesGetTimeCopy.length-1)){
+
                         datesForWrite=[];
                         for(var k=m; k<datesGetTimeCopy.length;k++){
                             datesForWrite.push(temp[k]);
@@ -943,6 +947,8 @@ var calendarView = {
                                 $$("sendRequestButton").enable();
                             }, leaveRequest);
                     }
+
+
                 }
                 else{
                     util.messages.showErrorMessage("Dani odabrani u godišnjem su prezauzeti.")
