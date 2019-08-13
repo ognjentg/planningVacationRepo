@@ -826,6 +826,18 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                                 return false;
                                             }
                                         }
+                                    },
+                                    {
+                                        view: "button",
+                                        id: "saveCompanyBtn",
+                                        name: "saveCompanyBtn",
+                                        label: "Sačuvaj",
+                                        width: 150,
+                                        type: "iconButton",
+                                        icon: "save",
+                                        click: "firstLoginLayout.saveCompany",
+                                        align: "center",
+                                        hotkey: "enter"
                                     }
                                 ]
                                 // list config
@@ -935,6 +947,28 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showErrorMessage(text);
                     $$("changePasswordBtn").enable();
                 }, passwordInformation);
+        }
+    },
+    saveCompany: function() {
+        var logo = $$("companyLogoList");
+        var companyId = userData.companyId;
+        var companyName = $$("companyName").getValue();
+        var companyPin = $$("companyPin").getValue();
+        var validation = $$("formCompanyInformation").validate();
+        if (validation) {
+            var company = {
+                id: companyId,
+                name: companyName,
+                pin: companyPin,
+                active: 1,
+                logo: logo.getItem(logo.getLastId()).content
+            };
+            connection.sendAjax("PUT", "hub/company/" + companyId,
+                function (text, data, xhr) {
+                }, function (text, data, xhr) {
+                    //alert(text);
+                    util.messages.showErrorMessage(text);
+                }, company);
         }
     }
 }
