@@ -1,13 +1,10 @@
-
-var my_format = webix.Date.strToDate("%Y-%m-%d");
-
 var URLAllSickLeave = "/hub/sickLeave/sickLeaveInfo";
-var URLBySickLeaveStatus =  "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/";
+var URLBySickLeaveStatus = "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/";
 var sickRequestsView = {
 
     selectPanel: function () {
-        $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
-        rightPanel = "requestPanel"; // novi rightPanel će biti facultyPanel
+        $$("main").removeView(rightPanel);
+        rightPanel = "requestPanel";
 
         var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
         $$("main").addView(panelCopy);
@@ -16,7 +13,7 @@ var sickRequestsView = {
         return {
             id: "requestPanel",
 
-            rows : [
+            rows: [
                 {
                     padding: 8,
                     view: "toolbar",
@@ -34,32 +31,31 @@ var sickRequestsView = {
                             label: "Vrsta zahtjeva",
                             labelWidth: 100,
                             value: "1",
-                            editable:false,
+                            editable: false,
                             on: {
                                 onChange(name) {
                                     $$("secretary_requestDT").clearAll();
 
 
-                                    if(name === 4){
+                                    if (name === 4) {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo");
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                    }else if(name === 3){
+                                    } else if (name === 3) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                    }else if(name === 2){
+                                    } else if (name === 2) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
-                                    }
-                                    else {
+                                    } else {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
                                         connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
@@ -68,8 +64,8 @@ var sickRequestsView = {
                                     }
                                 }
                             },
-                            options:{
-                                body:{
+                            options: {
+                                body: {
                                     template: '#name#',
                                     url: "hub/sick_leave_status",
                                 }
@@ -82,14 +78,12 @@ var sickRequestsView = {
                     css: "secretary_requestDatatable",
                     margin: 10,
                     tooltip: {
-                        dx:-35, //20 by default
-                        dy:20
+                        dx: -35,
+                        dy: 20
                     },
                     multiselect: false,
-                    navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
+                    navigation: true,
                     select: "row", // cell
-                    resizeColumn: true, // omogucen resize kolona korisniku
-                    resizeRow: true, // omogucen resize redova korisniku
                     onContext: {},
                     pager: "pagerA",
                     scheme: {
@@ -111,13 +105,12 @@ var sickRequestsView = {
                         header: "#",
                         width: 50,
                         hidden: "true",
-                    },{
-                        //id: "status_name",
+                    }, {
                         id: "statusName",
                         sort: "string",
                         header: "Status",
                         sort: "string"
-                    },{
+                    }, {
                         id: "firstName",
                         fillspace: true,
                         editor: "text",
@@ -127,7 +120,7 @@ var sickRequestsView = {
                                 content: "textFilter", value: ""
                             }
                         ]
-                    },{
+                    }, {
                         id: "lastName",
                         fillspace: true,
                         editor: "text",
@@ -137,7 +130,7 @@ var sickRequestsView = {
                                 content: "textFilter", value: ""
                             }
                         ]
-                    },{
+                    }, {
                         id: "dateFrom",
                         fillspace: true,
                         sort: "date",
@@ -147,7 +140,7 @@ var sickRequestsView = {
                             }
                         ],
                         format: webix.Date.dateToStr("%d.%m.%Y.")
-                    },{
+                    }, {
                         id: "dateTo",
                         fillspace: true,
                         sort: "date",
@@ -157,19 +150,16 @@ var sickRequestsView = {
                             }
                         ],
                         format: webix.Date.dateToStr("%d.%m.%Y.")
-                        //format: webix.Date.dateToStr("%d.%m.%Y. %H:%i") -- for time if someone needs it
-                    },{
+                    }, {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
                         tooltip: "Prihvati zahtjev",
-                        //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>",
-                        template: function(obj) {
-                            var pom=obj.statusName;
-                            if((pom != "Opravdano")&&(pom!="Neopravdano")) {
+                        template: function (obj) {
+                            var pom = obj.statusName;
+                            if ((pom != "Opravdano") && (pom != "Neopravdano")) {
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
-                            }
-                            else return "";
+                            } else return "";
                         },
 
                     }, {
@@ -177,10 +167,9 @@ var sickRequestsView = {
                         header: "&nbsp;",
                         tooltip: "Odbij zahtjev",
                         width: 35,
-                        //template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>",
-                        template: function(obj) {
-                            var pom=obj.statusName;
-                            if((pom != "Opravdano")&&(pom!="Neopravdano"))
+                        template: function (obj) {
+                            var pom = obj.statusName;
+                            if ((pom != "Opravdano") && (pom != "Neopravdano"))
                                 return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                             else return "";
                         }
@@ -189,7 +178,6 @@ var sickRequestsView = {
                     ],
                     select: "row",
                     navigation: true,
-                    //url: "/hub/sickLeave/sickLeaveInfo",
                     url: "/hub/sickLeave/sickLeaveInfoWait",
                     on: {
 
@@ -211,7 +199,6 @@ var sickRequestsView = {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusUnjustified/" + id, function (text, data, xhr) {
-                                           // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
                                             util.messages.showMessage("Zahtjev neopravdan");
                                             refreshOnThisData();
                                         }, function (text, data, xhr) {
@@ -228,8 +215,7 @@ var sickRequestsView = {
                                         var item = $$("secretary_requestDT").getItem(id);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                         connection.sendAjax("PUT", "/hub/sickLeave/updateSickLeaveStatusJustified/" + id, function (text, data, xhr) {
-                                               // $$("secretary_requestDT").remove($$("secretary_requestDT").getSelectedItem().id);
-                                                util.messages.showMessage("Zahtjev opravdan");
+                                            util.messages.showMessage("Zahtjev opravdan");
                                             refreshOnThisData();
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
@@ -303,19 +289,18 @@ function refreshOnThisData() {
     var URLCurrentUrl = null;
 
 
-    if(comboItemId == 4){
+    if (comboItemId == 4) {
         URLCurrentUrl = URLAllSickLeave;
     } else {
         URLCurrentUrl = URLBySickLeaveStatus;
     }
 
-    if(comboItemId == 4) {
+    if (comboItemId == 4) {
         webix.ajax(URLCurrentUrl, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
                     util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                   // alert("No data to load! Check your internet connection and try again.");
                     table.hideProgress();
                 }
             },
@@ -332,12 +317,11 @@ function refreshOnThisData() {
             }
         });
     } else {
-        webix.ajax(URLCurrentUrl+comboItemId, {
+        webix.ajax(URLCurrentUrl + comboItemId, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
                     util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    //alert("No data to load! Check your internet connection and try again.");
                     table.hideProgress();
                 }
             },
@@ -347,7 +331,7 @@ function refreshOnThisData() {
                         console.log("loaded data with success");
 
                         table.clearAll();
-                        table.load(URLCurrentUrl+comboItemId);
+                        table.load(URLCurrentUrl + comboItemId);
                         table.refresh();
                     }
                 }

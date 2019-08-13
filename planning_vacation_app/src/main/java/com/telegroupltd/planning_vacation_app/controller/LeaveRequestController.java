@@ -253,26 +253,11 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     }
     ///////////////////////////////////////////////////////////////////////////
 
-    @RequestMapping(value = "/updateLeaveRequestStatusToApproved/{leaveRequestId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/updateLeaveRequestStatusToApproved/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId){
-        leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId);
-        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(lrs.getSenderUserId());
-        notification.setTitle("Bolovanje");
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
-        String dateFrom = format.format(lrs.getDateFrom());
-        String dateTo = format.format(lrs.getDateTo());
-        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setLeaveType((byte) 4);
-        notification.setActive((byte) 1);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
+    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId, @PathVariable String approverComment){
+        leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId,approverComment);
+
     }
 
     /////////////////////////////////////////////////////////////////////////////

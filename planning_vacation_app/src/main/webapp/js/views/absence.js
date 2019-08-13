@@ -1,12 +1,11 @@
-var  absenceHistoryView;
+var absenceHistoryView;
 absenceHistoryView = {
 
     selectPanel: function () {
-        $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
+        $$("main").removeView(rightPanel);
         rightPanel = "absenceHistoryPanel";
 
-
-        var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
+        var panelCopy = webix.copy(this.getPanel());
         $$("main").addView(panelCopy);
         webix.protoUI({
             name: "fadeInWindow",
@@ -22,7 +21,7 @@ absenceHistoryView = {
                 });
             }
         }, webix.ui.window);
-       if (userData.userGroupKey == "sekretar") {
+        if (userData.userGroupKey == "sekretar") {
             $$("leave_requestDT").hideColumn("accept");
             $$("leave_requestDT").hideColumn("reject");
         }
@@ -37,12 +36,12 @@ absenceHistoryView = {
                     padding: 8,
                     view: "toolbar",
                     css: {"background": "#ffffff !important"},
-                    cols:[{
+                    cols: [{
                         template: "<span class='webix_icon fas fa-history'><\/span> Istorija odsustva",
                         view: "label",
                         css: {"color": "black !important"},
                         width: 400
-                    },{}
+                    }, {}
                     ]
                 },
                 {
@@ -51,8 +50,8 @@ absenceHistoryView = {
                     margin: 10,
                     multiselect: false,
                     tooltip: {
-                        dx:-35, //20 by default
-                        dy:20
+                        dx: -35,
+                        dy: 20
                     },
                     navigation: true,
                     select: "row",
@@ -118,13 +117,12 @@ absenceHistoryView = {
                             header: "&nbsp;",
                             tooltip: "Otkazi odsustvo",
                             width: 35,
-                            template: function(obj) {
-                                var pom=obj.dateFrom;
+                            template: function (obj) {
+                                var pom = obj.dateFrom;
                                 var secondPom = obj.statusName;
-                                if((pom > new Date()) && (secondPom == "Odobreno" || secondPom == "Na čekanju")) {
+                                if ((pom > new Date()) && (secondPom == "Odobreno" || secondPom == "Na čekanju")) {
                                     return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
-                                }
-                                else return "";
+                                } else return "";
                             }
                         },
                         {
@@ -134,7 +132,7 @@ absenceHistoryView = {
                             width: 35,
                             template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-eye'></span>"
                         }
-                        ],
+                    ],
                     url: "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString(),
                     on: {
 
@@ -151,8 +149,6 @@ absenceHistoryView = {
                             var action = id["column"];
 
                             if (action === "reject" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
-
-
                                 webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
 
                                 connection.sendAjax("GET",
@@ -160,7 +156,7 @@ absenceHistoryView = {
                                     function (text, data, xhr) {
                                         user = data.json();
                                         statusNameTMP = user.statusName;
-                                        if(statusNameTMP == "Odobreno"){
+                                        if (statusNameTMP == "Odobreno") {
                                             var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveApprovedConfirm(" odsustva")));
                                         } else {
                                             var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveRequestConfirm(" odsustva")));
@@ -178,7 +174,7 @@ absenceHistoryView = {
                                                     category: $$("absence_historyDT").getSelectedItem().category,
                                                 }
 
-                                                if (statusNameTMP == "Odobreno"){
+                                                if (statusNameTMP == "Odobreno") {
                                                     connection.sendAjax("POST", "hub/leave_request/",
                                                         function (text, data, xhr) {
                                                             if (text) {
@@ -244,7 +240,7 @@ absenceHistoryView = {
 
             ]
         }
-        },
+    },
 
     paidLeaveApprovedConfirm: function (titleEntity, textEntity) {
         var text = titleEntity;
@@ -326,7 +322,6 @@ absenceHistoryView = {
                         view: "label",
                         label: "Komentar pošiljaoca:"
                     }, {}, {
-                        //view: "label",
                         view: "textarea",
                         id: "comment",
                         height: 100,
@@ -417,8 +412,6 @@ absenceHistoryView = {
 };
 
 
-
-
 function refreshOnAbsenceData() {
     console.log("refresh data");
 
@@ -428,24 +421,24 @@ function refreshOnAbsenceData() {
     var table = webix.$$("absence_historyDT");
     var URLCurrentUrl = "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString();
 
-        webix.ajax(URLCurrentUrl, {
+    webix.ajax(URLCurrentUrl, {
 
-            error: function (text, data, xhr) {
-                if (xhr.status != 200) {
-                    util.messages.showMessage("No data to load! Check your internet connection and try again.");
-                    table.hideProgress();
-                }
-            },
-            success: function (text, data, xhr) {
-                if (xhr.status === 200) {
-                    if (data.json() != null) {
-                        console.log("loaded data with success");
+        error: function (text, data, xhr) {
+            if (xhr.status != 200) {
+                util.messages.showMessage("No data to load! Check your internet connection and try again.");
+                table.hideProgress();
+            }
+        },
+        success: function (text, data, xhr) {
+            if (xhr.status === 200) {
+                if (data.json() != null) {
+                    console.log("loaded data with success");
 
-                        table.clearAll();
-                        table.load(URLCurrentUrl);
-                        table.refresh();
-                    }
+                    table.clearAll();
+                    table.load(URLCurrentUrl);
+                    table.refresh();
                 }
             }
-        });
+        }
+    });
 }

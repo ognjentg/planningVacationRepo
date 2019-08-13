@@ -262,7 +262,7 @@ leaveRequestsView = {
                         id: "numberOfDays",
                         header: "Broj dana",
                         sort: "int",
-                        width: 50,
+                        //width: 50,
                     },{
                         id: "accept",
                         header: "&nbsp;",
@@ -717,15 +717,22 @@ leaveRequestsView = {
         var requestStatusName = $$("leave_requestDT").getSelectedItem().statusName;
         if (requestStatusName == "Otkazivanje") {
             var item = $$("leave_requestDT").getItem(id);
-            $$("leave_requestDT").detachEvent("onBeforeDelete");
-            connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id, function (text, data, xhr) {
-                refreshOnThisData();
-            }, function (text, data, xhr) {
-                util.messages.showErrorMessage(text);
-            }, item);
-            util.dismissDialog("rejectRequestInfoId");
 
-            refreshOnData();
+            var komentar = $$("rejectComment").getValue();
+
+            if (komentar == "") {
+                util.messages.showErrorMessage("Komentar je obavezan");
+            } else {
+                comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
+                $$("leave_requestDT").detachEvent("onBeforeDelete");
+                connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id+ "/comment/" + comment, function (text, data, xhr) {
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                }, item);
+                util.dismissDialog("rejectRequestInfoId");
+
+                refreshOnData();
+            }
         } else {
 
             var komentar = $$("rejectComment").getValue();
@@ -747,8 +754,8 @@ leaveRequestsView = {
                         util.messages.showErrorMessage(text);
                     });
                 util.dismissDialog("rejectRequestInfoId");
+                refreshOnData();
             }
-            refreshOnData();
         }
     },
     acceptDialog: {

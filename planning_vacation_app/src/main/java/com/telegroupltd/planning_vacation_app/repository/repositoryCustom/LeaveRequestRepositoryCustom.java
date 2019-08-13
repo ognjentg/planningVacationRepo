@@ -22,7 +22,7 @@ public interface LeaveRequestRepositoryCustom {
 
     void updateLeaveRequestStatusToCancellation(Integer leaveRequestId);
 
-    void updateLeaveRequestStatusToApproved(Integer leaveRequestId);
+    void updateLeaveRequestStatusToApproved(Integer leaveRequestId,String approverComment);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(Integer id, String key);
     List<String> getLeaveRequestsCategoryBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequestStatusId);
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestsBySectorIdAndCompanyIdAndLeaveRequestsStatusId(Integer sectorId, Integer companyId, Integer leaveRequstStatusId);
