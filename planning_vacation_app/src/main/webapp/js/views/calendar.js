@@ -562,7 +562,9 @@ var calendarView = {
             }else if ([buttons.VACATION].includes(selectedButton) &&
                 !calendarView.canGoOnVacation) { // Apply not in past rule to vacation and paid leave
                 util.messages.showErrorMessage("Nemate još pravo na godišnji!")
-            } else if (selectedButton === buttons.SICK &&
+            } else if(([buttons.VACATION].includes(selectedButton) || [buttons.PAID].includes(selectedButton) || [buttons.RELIGIOUS].includes(selectedButton)) && !calendarView.ruleset.isNextYear(selectedDate)){
+                util.messages.showErrorMessage("Možete tražiti odsustvo samo za ovu godinu!");
+            }else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
                 if (selectedDays.length === 0) {
@@ -1110,6 +1112,11 @@ var calendarView = {
                     return calendarView.ruleset.isNotInPast(date);
                 var format = webix.Date.strToDate("%d.%m.%Y");
                 if (format(temp.date).getTime() < getToday().getTime())
+                    return false;
+                return true;
+            },
+            isNextYear:function (date) {
+                if(date.getFullYear()> getToday().getFullYear())
                     return false;
                 return true;
             }
