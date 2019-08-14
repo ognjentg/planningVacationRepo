@@ -17,7 +17,7 @@ var first = {
         },
         xAxis: {
             template: "'#month#'",
-            title: "Broj odsutnih dana zaposlenih u sektoru po mjesecu",
+            title: "Broj odsutnih zaposlenih po mjesecu u izabranom sektoru",
             lines: false
         },
         padding: {
@@ -45,7 +45,7 @@ var second = {
     },
     xAxis: {
         template: "'#month#",
-        title: "Broj odsutnih dana zaposlenih u sektoru po mjesecu"
+        title: "Broj odsutnih zaposlenih po mjesecu u izabranom sektoru"
     },
     offset: 0,
     yAxis: {
@@ -195,7 +195,7 @@ var cChart = {
     },
     xAxis: {
         template: "'#category#",
-        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
+        title: "Procentualna reprezentacija tipa odsustva zaposlenih u sektoru"
     },
     yAxis: {
         title: "Procenat",
@@ -221,7 +221,7 @@ var dChart = {
     },
     xAxis: {
         template: "'#category#",
-        title: "Procentualna reprezentacija tipa odsustva zaposlenog"
+        title: "Procentualna reprezentacija tipa odsustva zaposlenih u sektoru"
     },
     yAxis: {
         title: "Procenat",
@@ -527,17 +527,109 @@ sectorStatisticsView = {
             id: "sectorStatisticsPanel",
 
             rows: [{
-                padding: 8,
-                view: "toolbar",
-                css: {"background": "#ffffff !important"},
-                cols: [
+                cols: [{
+                    padding: 8,
+                    height: 70,
+                    view: "toolbar",
+                    css: {"background": "#ffffff !important"},
+                    cols: [
+                        {
+                            template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji na nivou sektora",
+                            view: "label",
+                            css: {"color": "black !important"},
+                            width: 400
+                        }
+                    ]
+                }, {},
                     {
-                        template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji na nivou sektora",
-                        view: "label",
-                        css: {"color": "black !important"},
-                        width: 400
+                        view: "button",
+                        id: "archiveBtn",
+                        name: "archiveBtn",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u tabele",
+                        width: 100,
+                        height: 70,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn").disable();
+                                webix.toPDF("chartDonutId", {
+                                        docHeader: {
+                                            text: "Statistika sektora - " + $$("sector_statisticsDT").getSelectedItem().name,
+                                            textAlign: "center"
+
+                                        },
+                                        columns: {
+                                            // "sectorName" : {header: "Ime setora"},
+                                           // "number": {header: "Broj odsutnih"},
+                                           // "month": {header: "Mjesec"},
+                                            //  "vacation": {header: "Kategorija - godišnji odmor"},
+                                            // "leave": {header: "Kategorija - odsustvo"},
+                                            // "religion": {header: "Kategorija - praznik"}
+                                            "procentage": {header: "Procenat"},
+                                            "category": {header: "Kategorija"}
+
+                                        },
+                                        autowidth: true
+                                    }
+                                );
+                                webix.toPDF("firstID", {
+                                        docHeader: {
+                                            text: "Statistika sektora - " + $$("sector_statisticsDT").getSelectedItem().name,
+                                            textAlign: "center"
+
+                                        },
+                                        columns: {
+                                             "number": {header: "Broj odsutnih"},
+                                             "month": {header: "Mjesec"},
+                                             "vacation": {header: "Kategorija - godišnji odmor"},
+                                             "leave": {header: "Kategorija - odsustvo"},
+                                             "religion": {header: "Kategorija - praznik"}
+
+
+                                        },
+                                        autowidth: true
+                                    }
+                                );
+
+                                $$("archiveBtn").enable();
+
+                            }
+                        }
+                    },
+                    {
+                        view: "button",
+                        id: "archiveBtn2",
+                        name: "archiveBtn2",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u slike",
+                        width: 100,
+                        height: 70,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn2").disable();
+                                webix.toPNG("firstID");
+                                webix.toPNG("chartDonutID");
+                                webix.toPNG("chart1");
+                                $$("archiveBtn2").enable();
+
+                            }
+                        }
                     }
+
                 ]
+
             }, {
                 cols: [{
                     view: "datatable",
@@ -580,8 +672,12 @@ sectorStatisticsView = {
                     on: {
                         onBeforeLoad: function () {
                             this.showOverlay("Učitavanje...");
+                            $$("archiveBtn").disable();
+                            $$("archiveBtn2").disable();
                         },
                         onAfterLoad: function () {
+                            $$("archiveBtn").enable();
+                            $$("archiveBtn2").enable();
                             this.hideOverlay();
                             if (!this.count())
                                 this.showOverlay("Izvinite, nema podataka.");
@@ -690,18 +786,17 @@ sectorStatisticsView = {
 
                         }
                     }
-                    /*,
+                    ,
                     onClick: {
                         webix_icon: function (e, id) {
                             $$("sector_statisticsDT").select(id);
                             console.log(id["column"]);
                             var action = id["column"];
                             if (action === "view") {
-                                userStatisticsView.URL = "/hub/user/getAllUsersFromSectorByUserGroupId/"+id;
-                                userStatisticsView.selectPanel();
+                                userStatisticsView.selectPanelWithSector($$("sector_statisticsDT").getItem(id.row));
                             }
                         }
-                    }*/,
+                    },
                     url: "/hub/sector"
                 }, {
                     rows: [

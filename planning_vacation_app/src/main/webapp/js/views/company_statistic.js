@@ -233,7 +233,7 @@ companyStatisticView = {
                         icon: "external-link",
                         label: "Export podataka u tabele",
                         width: 100,
-                        height: 50,
+                        height: 70,
                         padding: {
                             right: 15,
                             bottom: 5,
@@ -272,7 +272,7 @@ companyStatisticView = {
                         icon: "external-link",
                         label: "Export podataka u slike",
                         width: 100,
-                        height: 50,
+                        height: 70,
                         padding: {
                             right: 15,
                             bottom: 5,
@@ -281,9 +281,11 @@ companyStatisticView = {
                         on: {
                             onItemClick: function () {
                                 $$("archiveBtn2").disable();
-                                webix.toPNG("chartPIE");
+
                                 webix.toPNG("aChart");
                                 webix.toPNG("cChart");
+                                webix.toPNG("chartPIE");
+
                                 $$("archiveBtn2").enable();
 
                             }

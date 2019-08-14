@@ -1,5 +1,6 @@
 var userStatisticsView;
 var URL = "/hub/user";
+var sectors;
 
 var first = {
     cols: [{
@@ -523,21 +524,115 @@ userStatisticsView = {
             }
         }, webix.ui.window);
     },
+    selectPanelWithSector: function (id) {
+        $$("main").removeView(rightPanel);
+        rightPanel = "userStatisticsPanel";
+
+        var panelCopy = webix.copy(this.getPanel());
+        $$("main").addView(panelCopy);
+        webix.protoUI({
+            name: "fadeInWindow",
+            $init: function () {
+                this.$ready.push(function () {
+                    this.attachEvent("onShow", function () {
+                        this.$view.className = this.$view.className.split("animated")[0] + " animated fadeInDownBig";
+                    })
+                    this.attachEvent("onHide", function () {
+                        this.$view.style.display = "block";
+                        this.$view.className += " animated fadeOutUpBig";
+                    })
+                });
+            }
+        }, webix.ui.window);
+
+        $$("user_statisticsDT").clearAll();
+        $$("user_statisticsDT").define("url", "/hub/user/getUsers/sector/" + id);
+        $$("user_statisticsDT").detachEvent("onBeforeDelete");
+    },
     getPanel: function () {
         return {
             id: "userStatisticsPanel",
             rows: [{
-                padding: 8,
-                view: "toolbar",
-                css: {"background": "#ffffff !important"},
-                cols: [
+                cols: [{
+                    padding: 8,
+                    height: 70,
+                    view: "toolbar",
+                    css: {"background": "#ffffff !important"},
+                    cols: [
+                        {
+                            template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji",
+                            view: "label",
+                            css: {"color": "black !important"},
+                            width: 400
+                        }
+                    ]
+                }, {},
                     {
-                        template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji",
-                        view: "label",
-                        css: {"color": "black !important"},
-                        width: 400
-                    }
-                ]
+                        view: "button",
+                        id: "archiveBtn",
+                        name: "archiveBtn",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u tabele",
+                        width: 100,
+                        height: 70,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn").disable();
+                                webix.toPDF("firstID", {
+                                        docHeader: {
+                                            text: "Statistika korisnika" + " - " + $$("user_statisticsDT").getSelectedItem().firstName + " " + $$("user_statisticsDT").getSelectedItem().lastName,
+                                            textAlign: "center"
+
+                                        },
+                                        columns: {
+                                            "number": {header: "Broj odsutnih"},
+                                            "month": {header: "Mjesec"},
+                                            "vacation": {header: "Kategorija - godišnji odmor"},
+                                            "leave": {header: "Kategorija - odsustvo"},
+                                            "religion": {header: "Kategorija - praznik"}
+
+                                        },
+                                        autowidth: true
+                                    }
+                                );
+                                $$("archiveBtn").enable();
+
+                            }
+                        }
+                    },
+                    {
+                        view: "button",
+                        id: "archiveBtn2",
+                        name: "archiveBtn2",
+                        type: "iconButton",
+                        icon: "external-link",
+                        label: "Export podataka u slike",
+                        width: 100,
+                        height: 70,
+                        padding: {
+                            right: 15,
+                            bottom: 5,
+                            top: 5
+                        },
+                        on: {
+                            onItemClick: function () {
+                                $$("archiveBtn2").disable();
+
+                                webix.toPNG("firstID");
+                                webix.toPNG("chartDonutId");
+
+                                $$("archiveBtn2").enable();
+
+                            }
+                        }
+                    }]
+
             }, {
                 cols: [{
                     view: "datatable",
@@ -578,8 +673,12 @@ userStatisticsView = {
                     on: {
                         onBeforeLoad: function () {
                             this.showOverlay("Učitavanje...");
+                            $$("archiveBtn").disable();
+                            $$("archiveBtn2").disable();
                         },
                         onAfterLoad: function () {
+                            $$("archiveBtn").enable();
+                            $$("archiveBtn2").enable();
                             this.hideOverlay();
                             if (!this.count())
                                 this.showOverlay("Izvinite, nema podataka.");
