@@ -491,14 +491,22 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     type: "clear",
                     tabbar:{
                         on:{
-                           /* onChange: function(){
+                            onChange: function(){
+                               // if(this.getValue()=="formProfileInformation") {
+
+                             //   }else if
                                 util.messages.showMessage("you have clicked on an item with id="+this.getValue());
-                            },*/
+                            },
                             onBeforeTabClick:function(id){
                                 // if(id=="formChangePassword"   /*&& tabCompleted[0])  ||*/    )
                                 //    return false;
                                 // else return true;
                                 //todo: ovo zavrsiti, kad se napravi za progressBar
+                                var tabbar = $$("firstLoginTabs").getTabbar();
+                                firstLoginLayout.progressBar.setIndex(tabbar.optionIndex(id), "is-active");
+                                var oldInd = tabbar.optionIndex(this.getValue());
+
+                                firstLoginLayout.progressBar.setIndex(oldInd, tabCompleted[oldInd]?"is-complete":"");
                             }
                         }
                     },
@@ -953,6 +961,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
     },
     
     savePassword: function () {
+
         var changePasswordForm = $$("formChangePassword");
         if (changePasswordForm.validate()) {
             console.log("AAAAAAAAAAAAa");
@@ -968,6 +977,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 function (text, data, xhr) {
                     if (text) {
                         util.messages.showMessage("Uspješna izmjena lozinke.");
+                        firstLoginLayout.progressBar.setIndex(1, "is-complete");
                         $$("changePasswordBtn").enable();
                         // Prebacivanje na sljedeci panel
                     } else {
