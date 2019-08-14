@@ -487,7 +487,16 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
 ///////////////////////////////////////////////////////////////////////////
             },
                 {
+                    id:"firstLoginTabs",
                     view: "tabview",
+                    tabbar:{
+                        on:{
+                            onChange: function(){
+                                //util.messages.showMessage("you have clicked on an item with id="+this.getValue());
+                            }
+                        }
+                    },
+
                     cells:[
                         {
                             header: "Profil",
@@ -862,7 +871,8 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                 }]
                             }
                         }
-                    ]
+                    ],
+
                 },
                 { height:0 },
               /*  {
