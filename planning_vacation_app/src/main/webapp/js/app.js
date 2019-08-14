@@ -480,11 +480,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
 ///////////////////////////////////////////////////////////////////////////
                 template: '<br><section>\n' +
                     '\n' +
-                    '  <ol class="progress-bar">\n' +
-                    '    <li class="is-complete"><span></span></li>  \n' +
-                    '    <li class="is-complete"><span></span></li>  \n' +
-                    '    <li class="is-active"><span></span></li>\n' +
-                    '    <li><span></span></li>' +
+                    '  <ol id="progressBar" class="progress-bar">\n' +
                     '  </ol>' +
                     '</section>'
 ///////////////////////////////////////////////////////////////////////////
@@ -775,8 +771,8 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                         {
                             header: "Kompanija",
                             body: {
-                                id: "formCompanyInformation",
                                 view: "form",
+                                id: "formCompanyInformation",
                                 name:"formCompanyInformation",
                                 width:650,
                                 elementsConfig: {
@@ -905,13 +901,6 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     ],
 
                 },
-                { height:0 },
-              /*  {
-                    cols:[
-                        { view:"button", value:"Reload with Progress Bar", click:function(){ firstLoginLayout.show_progress_bar(2000); }}
-                    ]
-                },*/
-                {height:20}
 
             ]
         }
@@ -1011,6 +1000,29 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     //alert(text);
                     util.messages.showErrorMessage(text);
                 }, company);
+        }
+    },
+    progressBar:{
+        active: " is-active",
+        complete: " is-complete",
+        setIndex: function(index, style){
+            var progNode = document.getElementById("progNode"+(index+1).toString());
+            if(progNode==null) {
+                console.log(`progNode${index} doesn't exist`);
+                return;
+            }
+            progNode.className=style;
+        },
+        init: function(){
+            var progress = document.getElementById("progressBar");
+            var tabbar = $$("firstLoginTabs").getTabbar();
+            for(var i = 0; i < tabbar.config.options.length; i++)
+            {
+                var item = document.createElement("li");
+                item.id = "progNode" + (i+1).toString();
+                progress.appendChild(item);
+            }
+            this.setIndex(0,this.active);
         }
     }
 }
@@ -1270,7 +1282,7 @@ console.log("Usao u if showFirstLogin");
                 $$("companyLogoList").clearAll();
                 $$("companyLogoList").add(newDocument);
             });
-
+        firstLoginLayout.progressBar.init();
 //adding ProgressBar functionality to layout
         webix.extend($$("firstLoginWizard"), webix.ProgressBar);
 
