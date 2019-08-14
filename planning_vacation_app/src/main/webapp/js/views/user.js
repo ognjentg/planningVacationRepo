@@ -163,6 +163,7 @@ var profileView = {
     save: function () {
         var profileForm = $$("profileForm");
         if (profileForm.validate()) {
+
             $$("saveProfileButton").disable();
             var dataToSend = $$("profileForm").getValues();
             var objectToSend = {
@@ -172,6 +173,27 @@ var profileView = {
                 photo: dataToSend.base64ImageUser,
                 companyId: userData.companyId
             };
+            switch (userData.userGroupKey) {
+                case "superadmin":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
+                    break;
+                case "admin":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
+                    break;
+                case "direktor":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
+                    break;
+                case "sekretar":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
+                    break;
+                case "menadzer":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
+                    break;
+                case "zaposleni":
+                    $$("usernameHolder").define("template", '<span class="usernameHolderName">' + objectToSend.firstName + ' ' + objectToSend.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
+                    break;
+            }
+            $$("usernameHolder").refresh();
             webix.ajax().headers({
                 "Content-type": "application/json"
             }).put("hub/user/" + userData.id, JSON.stringify(objectToSend), {
