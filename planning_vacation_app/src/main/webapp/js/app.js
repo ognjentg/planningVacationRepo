@@ -434,6 +434,8 @@ var step=0.3333333333333;  //KORAK UVECAVANJA
 var value=0;   //POCETNA VRIJEDNOST
 ///<div id="myDiv">Default Template with some text inside</div>
 
+var tabCompleted=[false, false, false, false];
+
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
     width: "auto",
@@ -465,6 +467,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         },{height:20},
         {
             id:"firstLoginWizard",
+
             margin:5,
             //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
             rows:[
@@ -487,16 +490,22 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
 ///////////////////////////////////////////////////////////////////////////
             },
                 {
-                    id:"firstLoginTabs",
+                    id:"firstLoginTabs",   //  firstLoginLayout  //.firstLoginWizard.firstLoginTabs
                     view: "tabview",
+                    type: "clear",
                     tabbar:{
                         on:{
-                            onChange: function(){
-                                //util.messages.showMessage("you have clicked on an item with id="+this.getValue());
+                           /* onChange: function(){
+                                util.messages.showMessage("you have clicked on an item with id="+this.getValue());
+                            },*/
+                            onBeforeTabClick:function(id){
+                                // if(id=="formChangePassword"   /*&& tabCompleted[0])  ||*/    )
+                                //    return false;
+                                // else return true;
+                                //todo: ovo zavrsiti, kad se napravi za progressBar
                             }
                         }
                     },
-
                     cells:[
                         {
                             header: "Profil",
@@ -564,35 +573,54 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                         ]
                                     },
                                     {
+                                        cols: [
+                                            {},
+                                            {
                                         view: "text",
                                         required: true,
                                         id: "firstName",
                                         name: "firstName",
                                         label: "Ime",
                                         invalidMessage: "Niste unijeli ime.",
-                                        labelWidth: 100,
+                                        labelWidth: 90,
                                         height: 35
+                                            },
+    {}
+    ]
                                     },
                                     {
-                                        view: "text",
-                                        required: true,
-                                        id: "lastName",
-                                        name: "lastName",
-                                        label: "Prezime",
-                                        invalidMessage: "Niste unijeli prezime.",
-                                        labelWidth: 100,
-                                        height: 35
+                                        cols: [
+                                            {},
+                                            {
+                                                view: "text",
+                                                required: true,
+                                                id: "lastName",
+                                                name: "lastName",
+                                                label: "Prezime",
+                                                invalidMessage: "Niste unijeli prezime.",
+                                                labelWidth: 90,
+                                                height: 35
+                                            },
+                                            {}
+                                            ]
                                     },
                                     {
+                                        cols: [
+                                            {},
+                                            {
                                         view: "checkbox",
                                         id: "receiveMail",
                                         name: "receiveMail",
                                         label: "Želim da primam obavještenja na e-mail.",
                                         labelWidth: 320,
                                         height: 35
+                                            },
+                                            {}
+                                        ]
                                     },
                                     {
                                         cols: [
+                                            {},
                                             {
                                                 view: "button",
                                                 id: "saveProfileButton",
@@ -601,8 +629,11 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                                 label: "Sačuvaj",
                                                 type: "iconButton",
                                                 icon: "save",
+                                                width: 150,
+                                                align: "center",
                                                 click: "firstLoginLayout.save"
-                                            }
+                                            },
+                                            {}
                                         ]
                                     }
                                 ]
@@ -920,6 +951,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {
+                    tabCompleted[0]=true;
                     userData.firstName = dataToSend.firstName;
                     userData.lastName = dataToSend.lastName;
                     userData.receiveMail = dataToSend.receiveMail;
