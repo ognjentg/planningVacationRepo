@@ -333,7 +333,7 @@ var companyView = {
                 {
                     id: "edit",
                     header: "&nbsp;",
-                    tooltip: "Azuriranje",
+                    tooltip: "Ažuriranje",
                     width: 35,
                     cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
@@ -347,24 +347,6 @@ var companyView = {
                     cssFormat: "checkBoxStatus",
                     template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon  fa-user'></span>",
                 }
-                // {
-                //     id: "status",
-                //     header: "",
-                //     checkValue: 'on',
-                //     uncheckValue: 'off',
-                //     template: "{common.checkbox()}",
-                //     width: 35,
-                //     cssFormat: checkBoxStatus
-                //
-                //
-                // },
-
-                // {
-                //     id: "delete-selected",
-                //     header: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-trash delete-selected'></span>",
-                //     width: 35,
-                //
-                // }
 
             ],
             select: "row",

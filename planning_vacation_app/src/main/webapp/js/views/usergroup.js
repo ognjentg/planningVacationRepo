@@ -300,23 +300,18 @@ usergroupView = {
                             tooltip: "Pregled",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
-                        }, /*{
-                            id: "pencil", //mijenjanje korisnicke grupe, od strane direktora i admina
-                            header: "&nbsp;",
-                            tooltip: "Mijenjanje radne pozicije zaposlenog",
-                            width: 35,
-                            template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"
-                        },*/ {
+                        }, {
                             id: "sector", //mijenjanje sektora, od strane direktora i admina
                             header: "&nbsp;",
-                            tooltip: "Azuriranje",
+                            tooltip: "Ažuriranje",
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-users'></span>"
                         }, {
                             id: "calendar",
                             header: "&nbsp;",
                             width: 35,
-                            template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-calendar'></span>"
+                            template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-calendar'></span>",
+                            tooltip: "Kalendar"
                         }
                     ],
                     select: "row",

@@ -21,10 +21,6 @@ absenceHistoryView = {
                 });
             }
         }, webix.ui.window);
-        if (userData.userGroupKey == "sekretar") {
-            $$("leave_requestDT").hideColumn("accept");
-            $$("leave_requestDT").hideColumn("reject");
-        }
     },
 
     getPanel: function () {
@@ -115,7 +111,7 @@ absenceHistoryView = {
                         {
                             id: "reject",
                             header: "&nbsp;",
-                            tooltip: "Otkazi odsustvo",
+                            tooltip: "Otkaži",
                             width: 35,
                             template: function (obj) {
                                 var pom = obj.dateFrom;

@@ -194,7 +194,7 @@ var sectorView = {
                     {
                         id: "edit",
                         header: "&nbsp;",
-                        tooltip: "Azuriranje",
+                        tooltip: "Ažuriranje",
                         width: 35,
                         cssFormat: "checkBoxStatus",
                         template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-pencil'></span>"

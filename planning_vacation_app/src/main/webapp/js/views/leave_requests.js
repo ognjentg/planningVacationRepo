@@ -170,14 +170,15 @@ leaveRequestsView = {
                     margin: 10,
                     multiselect: false,
                     tooltip: {
-                        dx: -35, //20 by default
+                        dx: -35,
                         dy: 20
                     },
-                    navigation: true, // omoguceno selektovanje redova navigacijskim tasterima na tastaturi
-                    select: "row", // cell
-                    resizeColumn: true, // omogucen resize kolona korisniku
-                    resizeRow: true, // omogucen resize redova korisniku
+                    navigation: true,
+                    select: "row",
+                    resizeColumn: true,
+                    resizeRow: true,
                     onContext: {},
+                    pager: "pagerA",
                     scheme: {
                         $init: function (obj) {
                             if (obj.dateFrom)
@@ -191,12 +192,6 @@ leaveRequestsView = {
                             if (obj.dateTo)
                                 obj.dateTo = new Date(obj.dateTo);
                         },
-
-                        $sort: {
-                            by: "id",
-                            dir: "asc"
-                        }
-
                     },
                     columns: [{
                         id: "id",
@@ -267,7 +262,7 @@ leaveRequestsView = {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
-                        tooltip: "Prihvati zahtjev",
+                        tooltip: "Prihvati",
                         template: function (obj) {
                             var pom = obj.statusName;
                             if ((pom != "Odobreno") && (pom != "Odbijeno") && (pom != "Otkazano")) {
@@ -277,7 +272,7 @@ leaveRequestsView = {
                     }, {
                         id: "reject",
                         header: "&nbsp;",
-                        tooltip: "Odbij zahtjev",
+                        tooltip: "Odbij",
                         width: 35,
                         template: function (obj) {
                             var pom = obj.statusName;
@@ -340,6 +335,24 @@ leaveRequestsView = {
                             }
                         }
                     }
+                },
+                {
+                    view: "toolbar",
+                    css: "highlighted_header header6",
+                    paddingX: 5,
+                    paddingY: 5,
+                    height: 40,
+                    cols: [{
+                        view: "pager", id: "pagerA",
+                        template: "{common.first()}{common.prev()}&nbsp; {common.pages()}&nbsp; {common.next()}{common.last()}",
+                        size: 20,
+                        height: 35,
+                        group: 5,
+                        animate: {
+                            direction: "top"
+                        },
+                    }
+                    ]
                 }
             ]
         }

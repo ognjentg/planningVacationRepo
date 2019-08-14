@@ -154,7 +154,7 @@ var sickRequestsView = {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
-                        tooltip: "Prihvati zahtjev",
+                        tooltip: "Prihvati",
                         template: function (obj) {
                             var pom = obj.statusName;
                             if ((pom != "Opravdano") && (pom != "Neopravdano")) {
@@ -165,7 +165,7 @@ var sickRequestsView = {
                     }, {
                         id: "reject",
                         header: "&nbsp;",
-                        tooltip: "Odbij zahtjev",
+                        tooltip: "Odbij",
                         width: 35,
                         template: function (obj) {
                             var pom = obj.statusName;

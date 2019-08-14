@@ -1,9 +1,5 @@
-var options = [
- //  pokupiti rukovodioce sektora, pa ih ispisati u combo box, koji se treba dodati
-    //NISAM STIGLA ZAVRSITI SADA, SAMO SAM KOSTUR NEKI KUCALA, NISAM NI PROVJERILA GDJE MI JE STA
-];
+var options = [];
 
-//Teodora: dodala sam ti fju za prikazivanje ove forme, samo da vidim i ja a ti ti sta si napravila; i dodala sam to u meni
 
 var sector = null;
 
