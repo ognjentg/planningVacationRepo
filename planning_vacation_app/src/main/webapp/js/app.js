@@ -1005,10 +1005,64 @@ var constraintsTab = {
 };
 
 var sectorTab = {
+    header:"Sektor",
+    body:{
+        view: "form",
+        id: "sectorInfoForm",
+        width: 500,
+        elementsConfig: {
+            labelWidth: 140,
+            bottomPadding: 18
+        },
+        elements: [
+            {
+                view: "text",
+                required: true,
+                id: "name",
+                name: "name",
+                label: "Ime sektora",
+                invalidMessage: "Niste unijeli ime sektora.",
+                labelWidth: 150,
+                height: 35
+            },
+            {
+                view: "text",
+                required: true,
+                id: "max_absent_people",
+                name: "max_absent_people",
+                label: "Maksimalan broj istovremeno odsutnih zaposlenih",
+                invalidMessage: "Niste unijeli maksimalan broj istovremeno odsutnih zaposlenih.",
+                labelWidth: 330,
+                height: 35
+            },
+            {
+                view: "text",
+                required: true,
+                id: "max_percentage_absent_people",
+                name: "max_percentage_absent_people",
+                label: "Maksimalan procenat istovremeno odsutnih zaposlenih",
+                invalidMessage: "Niste unijeli maksimalan procenat istovremeno odsutnih zaposlenih.",
+                labelWidth: 330,
+                height: 35
+            },
 
+            {
+                cols: [
+                    {
+                        view: "button",
+                        id: "saveSectorInfoButton",
+                        name: "saveSectorInfoButton",
+                        hotkey: "enter",
+                        label: "Sačuvaj",
+                        type: "iconButton",
+                        icon: "save",
+                        click: "firstLoginLayout.saveSector"
+                    }
+                ]
+            }]
+    },
 };
-firstLoginTabs.push(profileTab);
-firstLoginTabs.push(passwordTab);
+firstLoginTabs.push(profileTab, passwordTab);
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
     width: "auto",
@@ -1059,7 +1113,6 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 {
                     id:"firstLoginTabs",
                     view: "tabview",
-                    type: "clear",
                     tabbar:{
                         on:{
                             onChange: function(){
@@ -1186,6 +1239,17 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showErrorMessage(text);
                 }, company);
         }
+    },
+    saveSector: function () {
+        sector.name = $$("name").getValue();
+        sector.maxAbsentPeople = $$("max_absent_people").getValue();
+        sector.maxPercentageAbsentPeople = $$("max_percentage_absent_people").getValue();
+        connection.sendAjax("PUT", "hub/sector/" + sector.id,
+            function (text, data, xhr) {
+                util.messages.showMessage("Izmjene uspješno sačuvane.");
+            }, function (text, data, xhr) {
+                util.messages.showErrorMessage(text);
+            }, sector);
     },
     progressBar:{
         active: " is-active",
@@ -1461,20 +1525,21 @@ var showFirstLogin = function () {
          firstLogin = webix.ui(main, panel);
          panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
         var companyId = userData.companyId;
+        if(firstLoginTabs.includes(companyTab)) {
+            connection.sendAjax("GET",
+                "hub/company/" + companyId, function (text, data, xhr) {
+                    var company = data.json();
+                    $$("companyName").setValue(company.name);
+                    $$("companyPin").setValue(company.pin);
+                    var newDocument = {
+                        name: '',
+                        content: company.logo,
+                    };
 
-        connection.sendAjax("GET",
-            "hub/company/" + companyId, function (text, data, xhr) {
-                var company = data.json();
-                $$("companyName").setValue(company.name);
-                $$("companyPin").setValue(company.pin);
-                var newDocument = {
-                    name: '',
-                    content: company.logo,
-                };
-
-                $$("companyLogoList").clearAll();
-                $$("companyLogoList").add(newDocument);
-            });
+                    $$("companyLogoList").clearAll();
+                    $$("companyLogoList").add(newDocument);
+                });
+        }
         firstLoginLayout.progressBar.init();
 //adding ProgressBar functionality to layout
         webix.extend($$("firstLoginWizard"), webix.ProgressBar);
