@@ -639,13 +639,31 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/getAllUsersFromSectorByUserGroupId/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody List<User> getAllUsersFromSectorByUserGroupId(@PathVariable Integer sectorId){
-        return userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUserUserGroupKey().getCompanyId(),sectorId);
+        List<User> users =userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUserUserGroupKey().getCompanyId(),sectorId);
+        for(User u:users){
+            if(u.getEmail()==null)
+                u.setEmail("-");
+            if(u.getFirstName()==null)
+                u.setFirstName("-");
+            if(u.getLastName()==null)
+                u.setLastName("-");
+        }
+        return users;
     }
 
     @RequestMapping(value = "/getAllUsersWithoutSector", method = RequestMethod.GET)
     public @ResponseBody List<User> getAllUsersWithoutSector(){
         Integer companyId=userBean.getUserUserGroupKey().getCompanyId();
-        return userRepository.getAllUsersWithoutSector(companyId);
+        List<User> users = userRepository.getAllUsersWithoutSector(companyId);
+        for(User u: users){
+            if(u.getEmail()==null)
+                u.setEmail("-");
+            if(u.getFirstName()==null)
+                u.setFirstName("-");
+            if(u.getLastName()==null)
+                u.setLastName("-");
+        }
+        return users;
     }
 
     @RequestMapping(value = "/firstLogin", method = RequestMethod.POST)

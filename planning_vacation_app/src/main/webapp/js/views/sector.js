@@ -772,7 +772,7 @@ var sectorView = {
                                 label:"Rukovodilac",
                                 options:{
                                     body: {
-                                        template: "#firstName# #lastName#",
+                                        template: "#firstName# #lastName# (#email#)",
                                         url: "/hub/user/getAllUsersFromSectorByUserGroupId/"+sector.id,
                                     }
                                 },
