@@ -709,7 +709,7 @@ var companyTab ={
     // list config
 }
 };
-var limitsTab = {
+var constraintsTab = {
     header: "Ogranicenja",
         body: {
     id: "formConstrainsInformation",
@@ -727,7 +727,10 @@ var limitsTab = {
         height: 40
     }]
 }
-}
+};
+var sectorTab = {
+
+};
 firstLoginTabs.push(profileTab);
 firstLoginTabs.push(passwordTab);
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
@@ -1167,10 +1170,17 @@ var showFirstLogin = function () {
 
     console.log("Usao u showFirstLogin");
     //Ako je admin i ako je ulogovan 1. put na sistem:
-    if(userData != null && userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null ){
+    if(userData != null && userData.firstName==null && userData.lastName==null ){
+        switch(userData.userGroupKey)
+        {
+            case "admin":
+                firstLoginTabs.push(companyTab,constraintsTab);
+                break;
+            case "menadzer":
+                break;
+        }
         //todo: switch
-//console.log("Usao u if showFirstLogin");
-
+        console.log("Usao u if showFirstLogin");
          var main = webix.copy(firstLoginLayout);
          firstLogin = webix.ui(main, panel);
          panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
