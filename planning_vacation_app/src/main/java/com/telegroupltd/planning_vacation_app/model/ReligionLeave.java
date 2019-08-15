@@ -10,7 +10,7 @@ import java.util.Objects;
 public class ReligionLeave implements HasActive {
     private Integer id;
     private Integer year;
-    private Integer numberOfDaysUsed;
+    private Integer numberOfDaysUsed=0;
     private Integer userId;
     private Byte active;
 

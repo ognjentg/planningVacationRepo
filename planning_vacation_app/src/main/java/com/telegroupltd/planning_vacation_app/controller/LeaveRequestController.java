@@ -410,6 +410,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
         else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
             ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+            if(religionLeave == null){
+                religionLeave=new ReligionLeave();
+                religionLeave.setActive((byte)1);
+                religionLeave.setUserId(leaveRequest.getSenderUserId());
+                religionLeave.setYear(new Date().getYear());
+            }
             religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
             religionLeaveRepository.saveAndFlush(religionLeave);
         }

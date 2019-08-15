@@ -1732,8 +1732,11 @@ var subMenuItems = [
     }
 //templateView.selectPanel();
 
-    getNotifications();
-    window.setInterval(getNotifications, 15000);
+    if(userData.userGroupKey!="superadmin"){
+        getNotifications();
+        window.setInterval(getNotifications, 15000);
+    }
+
 };
 
 //login and logout
@@ -2275,28 +2278,10 @@ updateNotifications = function () {
                 notifications = [];
                 var userNotifications = data.json();
                 var notification;
-                for (var i = 0; i < userNotifications.length; i++) {
-                    if (userNotifications[i].seen == 0){
-                        numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
-                        notification = {
-                            id: userNotifications[i].id,
-                            title: userNotifications[i].title,
-                            text: userNotifications[i].text,
-                            active: userNotifications[i].active,
-                            seen: userNotifications[i].seen,
-                            receiverUserId: userNotifications[i].receiverUserId,
-                            companyId: userNotifications[i].companyId,
-                            leaveType: userNotifications[i].leaveType,
-                            created: userNotifications[i].created,
-                        };
-                        notifications.push(notification);
-                    }
-                }
-                if(notifications.length<10){
-                    var leng=10-notifications.length;
-                    var j=0;
-                    for (var i = 0; i < leng; i++){
-                        if (userNotifications[j].seen == 1) {
+                if(userNotifications != null){
+                    for (var i = 0; i < userNotifications.length; i++) {
+                        if (userNotifications[i].seen == 0){
+                            numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
                             notification = {
                                 id: userNotifications[i].id,
                                 title: userNotifications[i].title,
@@ -2309,13 +2294,33 @@ updateNotifications = function () {
                                 created: userNotifications[i].created,
                             };
                             notifications.push(notification);
-                        }else{
-                            i--;
                         }
-                        if(j< userNotifications.length - 1){
-                            j++;
-                        }else{
-                            break;
+                    }
+                    if(notifications.length<10){
+                        var leng=10-notifications.length;
+                        var j=0;
+                        for (var i = 0; i < leng; i++){
+                            if (userNotifications[j].seen == 1) {
+                                notification = {
+                                    id: userNotifications[i].id,
+                                    title: userNotifications[i].title,
+                                    text: userNotifications[i].text,
+                                    active: userNotifications[i].active,
+                                    seen: userNotifications[i].seen,
+                                    receiverUserId: userNotifications[i].receiverUserId,
+                                    companyId: userNotifications[i].companyId,
+                                    leaveType: userNotifications[i].leaveType,
+                                    created: userNotifications[i].created,
+                                };
+                                notifications.push(notification);
+                            }else{
+                                i--;
+                            }
+                            if(j< userNotifications.length - 1){
+                                j++;
+                            }else{
+                                break;
+                            }
                         }
                     }
                 }

@@ -315,7 +315,7 @@ leaveRequestsView = {
                                 } else {
                                     webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
                                 }
-                                if ("Godišnji" == kategorija || "Godisnji" == kategorija) {
+                                if ("Godišnji" == kategorija || "Godisnji" == kategorija || "Praznik" == kategorija) {
                                     $$("radioId").hide();
                                 }
 
@@ -399,7 +399,6 @@ leaveRequestsView = {
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
-            //util.dismissDialog('acceptDialogId');
             util.dismissDialog('cancellationDialogId');
         } else {
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {

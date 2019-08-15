@@ -734,9 +734,9 @@ var calendarView = {
                         religionLeave = data.json();
                         calendarView.leftReligionLeaveDays = 2 - religionLeave.numberOfDaysUsed;
                     } else
-                        religionLeave.numberOfDaysUsed = 0;
-                    if (2 - religionLeave.numberOfDaysUsed > 0) {
-                        animateValue($$("t3"), 0, 2 - religionLeave.numberOfDaysUsed, 200);
+                        calendarView.leftReligionLeaveDays = 2;
+                    if (calendarView.leftReligionLeaveDays > 0) {
+                        animateValue($$("t3"), 0, calendarView.leftReligionLeaveDays, 200);
                     } else {
                         animateValue($$("t3"), 0, 0, 200);
                     }
@@ -1321,7 +1321,7 @@ var calendarView = {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         religionLeaveDaysApproved.push(day.getTime());
                                     })
-                                } else if (leaves[i].category == "Praznik" && leaves[i].statusName != "Odobreno") {
+                                } else if (leaves[i].category == "Praznik" && leaves[i].statusName == "Na čekanju") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         religionLeaveDaysWaiting.push(day.getTime());
                                     })
