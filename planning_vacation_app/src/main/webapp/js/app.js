@@ -435,7 +435,404 @@ var value=0;   //POCETNA VRIJEDNOST
 ///<div id="myDiv">Default Template with some text inside</div>
 
 var tabCompleted=[false, false, false, false];
+var firstLoginTabs = []
+var profileTab = {
+    header: "Profil",
+        body: {
+    id: "formProfileInformation",
+        view: "form",
+        width: 500,
+        elementsConfig: {
+        labelWidth: 140,
+            bottomPadding: 18
+    },
+    elements: [
+        {
+            view: "text",
+            id: "base64ImageUser",
+            name: "base64ImageUser",
+            hidden: true
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "template",
+                    id: "preview",
+                    name: "preview",
+                    template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                    data: {src: null},
+                    height: 200,
+                    width: 200,
+                },
+                {}
+            ]
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "uploader",
+                    id: "photoUploader",
+                    name: "photoUploader",
+                    value: "Odaberi sliku",
+                    link: "photo",
+                    multiple: false,
+                    autosend: false,
+                    accept: "image/*",
+                    width: 150,
+                    on: {
+                        onBeforeFileAdd: function (upload) {
+                            var file = upload.file;
+                            if(file.size > 1048576){
+                                util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                return false;
+                            }
+                            var reader = new FileReader();
+                            reader.onload = function (ev) {
+                                $$("preview").setValues({src: ev.target.result});
+                                $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
+                            }
+                            reader.readAsDataURL(file)
+                            return false;
+                        }
+                    }
+                },
+                {}
+            ]
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "text",
+                    required: true,
+                    id: "firstName",
+                    name: "firstName",
+                    label: "Ime",
+                    invalidMessage: "Niste unijeli ime.",
+                    labelWidth: 90,
+                    height: 35
+                },
+                {}
+            ]
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "text",
+                    required: true,
+                    id: "lastName",
+                    name: "lastName",
+                    label: "Prezime",
+                    invalidMessage: "Niste unijeli prezime.",
+                    labelWidth: 90,
+                    height: 35
+                },
+                {}
+            ]
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "checkbox",
+                    id: "receiveMail",
+                    name: "receiveMail",
+                    label: "Želim da primam obavještenja na e-mail.",
+                    labelWidth: 320,
+                    height: 35
+                },
+                {}
+            ]
+        },
+        {
+            cols: [
+                {},
+                {
+                    view: "button",
+                    id: "saveProfileButton",
+                    name: "saveProfileButton",
+                    hotkey: "enter",
+                    label: "Sačuvaj",
+                    type: "iconButton",
+                    icon: "save",
+                    width: 150,
+                    align: "center",
+                    click: "firstLoginLayout.save"
+                },
+                {}
+            ]
+        }
+    ]
+}
+};
+var passwordTab ={
+    header: "Lozinka",
+        body: {
+    id: "formChangePassword",
+        view: "form",
+        width: 500,
+        elementsConfig: {
+        labelWidth: 140,
+            bottomPadding: 18
+    },
+    elements: [
+        {
+            view: "text",
+            id: "oldPassword",
+            type: "password",
+            name:"oldPassword",
+            label: "Trenutna lozinka:",
+            invalidMessage:"Unesite lozinku!",
+            required: true
 
+        },
+        {
+            view: "text",
+            label: "Nova lozinka:",
+            id: "newPassword",
+            name:"newPassword",
+            type: "password",
+            invalidMessage:"Unesite lozinku!",
+            required: true,
+            bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
+            keyPressTimeout:1000,
+            on: {
+                'onTimedKeyPress': function () {
+                    var typed = $$("newPassword").getValue();
+                    var strength=0;
+                    var re1=/[0-9]/;
+                    var re2=/[A-Z]/;
+                    var re3=/[@#$%^&+=]/;
+                    if(re1.test(typed))
+                        strength++;
+                    if (re2.test(typed))
+                        strength++;
+                    if (re3.test(typed))
+                        strength++;
+                    if(typed.length>=8)
+                        strength++;
+                    switch(strength){
+                        case 0:
+                        case 1:
+                        case 2:
+                            $$("strength").setValue("Jačina lozinke: slabo");
+                            $$("strength").show();
+                            break;
+                        case 3:
+                            $$("strength").setValue("Jačina lozinke: srednje");
+                            $$("strength").show();
+                            break;
+                        case 4:
+                            $$("strength").setValue("Jačina lozinke: jako");
+                            $$("strength").show();
+                            break;
+                    }
+
+                }
+
+            }
+
+        },
+        {
+            view: "label",
+            id:"strength",
+            name:"strength",
+            hidden:true,
+            height:15,
+            align:"right"
+        },
+        {
+            view: "text",
+            label: "Potvrda nove lozinke:",
+            id: "newPasswordConfirmation",
+            name:"newPasswordConfirmation",
+            invalidMessage:"Unesite lozinku!",
+            type: "password",
+            required: true,
+
+        },
+
+        {
+            view: "button",
+            id: "changePasswordBtn",
+            name: "changePasswordBtn",
+            label: "Sačuvaj",
+            width: 150,
+            click: "firstLoginLayout.savePassword",
+            align: "right",
+            hotkey: "enter"
+        }
+    ],
+        rules: {
+        "oldPassword":function (value) {
+            if (!value)
+                return false;
+            return true;
+        },
+        "newPassword": function (value) {
+            if(value.length<8){
+                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
+                return false;}
+            if (value == $$("oldPassword").getValue()){
+                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
+                return false;
+            }
+            var re = /[0-9A-Z@#$%^&+=]/;
+            if (!re.test(value)) {
+                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
+                return false;
+            }
+            return true;
+        },
+        "newPasswordConfirmation":function (value) {
+            if (!value)
+                return false;
+            if(value!=$$("formChangePassword").getValues().newPassword)
+            {
+                $$('formChangePassword').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
+                return false;}
+
+            return true;
+
+        },
+    }
+}
+};
+var companyTab ={
+    header: "Kompanija",
+        body: {
+    view: "form",
+        id: "formCompanyInformation",
+        name:"formCompanyInformation",
+        width:650,
+        elementsConfig: {
+        labelWidth: 190,
+            bottomPadding: 18
+    },
+    elements:[
+        {
+            view:"text",
+            id:"companyName",
+            name:"companyName",
+            label:"Naziv kompanije:",
+            required:true,
+            invalidMessage: "Niste unijeli naziv kompanije",
+        },
+        {
+            view:"text",
+            label:"PIN:",
+            id:"companyPin",
+            disabled:true,
+            hidden:true
+        },
+        {
+            view: "uploader",
+            id: "photoUploader",
+            required:true,
+            invalidMessage: "Niste odabrali logo.",
+            width: 400,
+            height: 50,
+            value: "Dodajte logo",
+            on: {
+                onBeforeFileAdd: function (upload) {
+                    var type = upload.type.toLowerCase();
+                    console.log(type);
+                    if (type === "jpg" || type === "png" || type === "jpeg") {
+                        var file = upload.file;
+                        if(file.size > 1048576){
+                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                            return false;
+                        }
+                        var reader = new FileReader();
+                        reader.onload = function (event) {
+                            var img = new Image();
+                            img.onload = function (ev) {
+                                if (img.width > 220 || img.height > 50) {
+                                    util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                } else {
+                                    var newDocument = {
+                                        name: file['name'],
+                                        content: event.target.result.split("base64,")[1],
+                                    };
+                                    $$("companyLogoList").clearAll();
+                                    $$("companyLogoList").add(newDocument);
+
+                                }
+                            };
+                            img.src = event.target.result;
+                        };
+                        reader.readAsDataURL(file);
+                        return false;
+                    } else {
+                        util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+
+                        return false;
+                    }
+
+                }
+            }
+        },
+        {
+            view: "list",
+            name: "companyLogoList",
+            rules: {
+                content: webix.rules.isNotEmpty
+            },
+            scroll: false,
+            id: "companyLogoList",
+            width: 372,
+            type: {
+                height: "auto"
+            },
+            css: "relative image-upload",
+            template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+            onClick: {
+                'delete-file': function (e, id) {
+                    this.remove(id);
+                    return false;
+                }
+            }
+        },
+        {
+            view: "button",
+            id: "saveCompanyBtn",
+            name: "saveCompanyBtn",
+            label: "Sačuvaj",
+            width: 150,
+            type: "iconButton",
+            icon: "save",
+            click: "firstLoginLayout.saveCompany",
+            align: "center",
+            hotkey: "enter"
+        }
+    ]
+    // list config
+}
+};
+var limitsTab = {
+    header: "Ogranicenja",
+        body: {
+    id: "formConstrainsInformation",
+        view: "form",
+        elements: [{
+        id: "saveInformation",
+        view: "button",
+        label: "Sacuvajte i predjite na aplikaciju",
+        type: "iconButton",
+        //icon: "sign-in",
+        click: "showApp",
+        align: "left",
+        hotkey: "enter",
+        width: 580,
+        height: 40
+    }]
+}
+}
+firstLoginTabs.push(profileTab);
+firstLoginTabs.push(passwordTab);
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
     width: "auto",
@@ -510,403 +907,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                             }
                         }
                     },
-                    cells:[
-                        {
-                            header: "Profil",
-                            body: {
-                                id: "formProfileInformation",
-                                view: "form",
-                                width: 500,
-                                elementsConfig: {
-                                    labelWidth: 140,
-                                    bottomPadding: 18
-                                },
-                                elements: [
-                                    {
-                                        view: "text",
-                                        id: "base64ImageUser",
-                                        name: "base64ImageUser",
-                                        hidden: true
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                                view: "template",
-                                                id: "preview",
-                                                name: "preview",
-                                                template: "<img style='height: 100%; width: 100%;' src='#src#'>",
-                                                data: {src: null},
-                                                height: 200,
-                                                width: 200,
-                                            },
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                                view: "uploader",
-                                                id: "photoUploader",
-                                                name: "photoUploader",
-                                                value: "Odaberi sliku",
-                                                link: "photo",
-                                                multiple: false,
-                                                autosend: false,
-                                                accept: "image/*",
-                                                width: 150,
-                                                on: {
-                                                    onBeforeFileAdd: function (upload) {
-                                                        var file = upload.file;
-                                                        if(file.size > 1048576){
-                                                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
-                                                            return false;
-                                                        }
-                                                        var reader = new FileReader();
-                                                        reader.onload = function (ev) {
-                                                            $$("preview").setValues({src: ev.target.result});
-                                                            $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
-                                                        }
-                                                        reader.readAsDataURL(file)
-                                                        return false;
-                                                    }
-                                                }
-                                            },
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                        view: "text",
-                                        required: true,
-                                        id: "firstName",
-                                        name: "firstName",
-                                        label: "Ime",
-                                        invalidMessage: "Niste unijeli ime.",
-                                        labelWidth: 90,
-                                        height: 35
-                                            },
-    {}
-    ]
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                                view: "text",
-                                                required: true,
-                                                id: "lastName",
-                                                name: "lastName",
-                                                label: "Prezime",
-                                                invalidMessage: "Niste unijeli prezime.",
-                                                labelWidth: 90,
-                                                height: 35
-                                            },
-                                            {}
-                                            ]
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                        view: "checkbox",
-                                        id: "receiveMail",
-                                        name: "receiveMail",
-                                        label: "Želim da primam obavještenja na e-mail.",
-                                        labelWidth: 320,
-                                        height: 35
-                                            },
-                                            {}
-                                        ]
-                                    },
-                                    {
-                                        cols: [
-                                            {},
-                                            {
-                                                view: "button",
-                                                id: "saveProfileButton",
-                                                name: "saveProfileButton",
-                                                hotkey: "enter",
-                                                label: "Sačuvaj",
-                                                type: "iconButton",
-                                                icon: "save",
-                                                width: 150,
-                                                align: "center",
-                                                click: "firstLoginLayout.save"
-                                            },
-                                            {}
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            header: "Lozinka",
-                            body: {
-                                id: "formChangePassword",
-                                view: "form",
-                                width: 500,
-                                elementsConfig: {
-                                    labelWidth: 140,
-                                    bottomPadding: 18
-                                },
-                                elements: [
-                                    {
-                                        view: "text",
-                                        id: "oldPassword",
-                                        type: "password",
-                                        name:"oldPassword",
-                                        label: "Trenutna lozinka:",
-                                        invalidMessage:"Unesite lozinku!",
-                                        required: true
-
-                                    },
-                                    {
-                                        view: "text",
-                                        label: "Nova lozinka:",
-                                        id: "newPassword",
-                                        name:"newPassword",
-                                        type: "password",
-                                        invalidMessage:"Unesite lozinku!",
-                                        required: true,
-                                        bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
-                                        keyPressTimeout:1000,
-                                        on: {
-                                            'onTimedKeyPress': function () {
-                                                var typed = $$("newPassword").getValue();
-                                                var strength=0;
-                                                var re1=/[0-9]/;
-                                                var re2=/[A-Z]/;
-                                                var re3=/[@#$%^&+=]/;
-                                                if(re1.test(typed))
-                                                    strength++;
-                                                if (re2.test(typed))
-                                                    strength++;
-                                                if (re3.test(typed))
-                                                    strength++;
-                                                if(typed.length>=8)
-                                                    strength++;
-                                                switch(strength){
-                                                    case 0:
-                                                    case 1:
-                                                    case 2:
-                                                        $$("strength").setValue("Jačina lozinke: slabo");
-                                                        $$("strength").show();
-                                                        break;
-                                                    case 3:
-                                                        $$("strength").setValue("Jačina lozinke: srednje");
-                                                        $$("strength").show();
-                                                        break;
-                                                    case 4:
-                                                        $$("strength").setValue("Jačina lozinke: jako");
-                                                        $$("strength").show();
-                                                        break;
-                                                }
-
-                                            }
-
-                                        }
-
-                                    },
-                                    {
-                                        view: "label",
-                                        id:"strength",
-                                        name:"strength",
-                                        hidden:true,
-                                        height:15,
-                                        align:"right"
-                                    },
-                                    {
-                                        view: "text",
-                                        label: "Potvrda nove lozinke:",
-                                        id: "newPasswordConfirmation",
-                                        name:"newPasswordConfirmation",
-                                        invalidMessage:"Unesite lozinku!",
-                                        type: "password",
-                                        required: true,
-
-                                    },
-
-                                    {
-                                        view: "button",
-                                        id: "changePasswordBtn",
-                                        name: "changePasswordBtn",
-                                        label: "Sačuvaj",
-                                        width: 150,
-                                        click: "firstLoginLayout.savePassword",
-                                        align: "right",
-                                        hotkey: "enter"
-                                    }
-                                ],
-                                rules: {
-                                    "oldPassword":function (value) {
-                                        if (!value)
-                                            return false;
-                                        return true;
-                                    },
-                                    "newPassword": function (value) {
-                                        if(value.length<8){
-                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
-                                            return false;}
-                                        if (value == $$("oldPassword").getValue()){
-                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
-                                            return false;
-                                        }
-                                        var re = /[0-9A-Z@#$%^&+=]/;
-                                        if (!re.test(value)) {
-                                            $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
-                                            return false;
-                                        }
-                                        return true;
-                                    },
-                                    "newPasswordConfirmation":function (value) {
-                                        if (!value)
-                                            return false;
-                                        if(value!=$$("formChangePassword").getValues().newPassword)
-                                        {
-                                            $$('formChangePassword').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
-                                            return false;}
-
-                                        return true;
-
-                                    },
-                                }
-                            }
-                        },
-                        {
-                            header: "Kompanija",
-                            body: {
-                                view: "form",
-                                id: "formCompanyInformation",
-                                name:"formCompanyInformation",
-                                width:650,
-                                elementsConfig: {
-                                    labelWidth: 190,
-                                    bottomPadding: 18
-                                },
-                                elements:[
-                                    {
-                                        view:"text",
-                                        id:"companyName",
-                                        name:"companyName",
-                                        label:"Naziv kompanije:",
-                                        required:true,
-                                        invalidMessage: "Niste unijeli naziv kompanije",
-                                    },
-                                    {
-                                        view:"text",
-                                        label:"PIN:",
-                                        id:"companyPin",
-                                        disabled:true,
-                                        hidden:true
-                                    },
-                                    {
-                                        view: "uploader",
-                                        id: "photoUploader",
-                                        required:true,
-                                        invalidMessage: "Niste odabrali logo.",
-                                        width: 400,
-                                        height: 50,
-                                        value: "Dodajte logo",
-                                        on: {
-                                            onBeforeFileAdd: function (upload) {
-                                                var type = upload.type.toLowerCase();
-                                                console.log(type);
-                                                if (type === "jpg" || type === "png" || type === "jpeg") {
-                                                    var file = upload.file;
-                                                    if(file.size > 1048576){
-                                                        util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
-                                                        return false;
-                                                    }
-                                                    var reader = new FileReader();
-                                                    reader.onload = function (event) {
-                                                        var img = new Image();
-                                                        img.onload = function (ev) {
-                                                            if (img.width > 220 || img.height > 50) {
-                                                                util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
-                                                            } else {
-                                                                var newDocument = {
-                                                                    name: file['name'],
-                                                                    content: event.target.result.split("base64,")[1],
-                                                                };
-                                                                $$("companyLogoList").clearAll();
-                                                                $$("companyLogoList").add(newDocument);
-
-                                                            }
-                                                        };
-                                                        img.src = event.target.result;
-                                                    };
-                                                    reader.readAsDataURL(file);
-                                                    return false;
-                                                } else {
-                                                    util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
-
-                                                    return false;
-                                                }
-
-                                            }
-                                        }
-                                    },
-                                    {
-                                        view: "list",
-                                        name: "companyLogoList",
-                                        rules: {
-                                            content: webix.rules.isNotEmpty
-                                        },
-                                        scroll: false,
-                                        id: "companyLogoList",
-                                        width: 372,
-                                        type: {
-                                            height: "auto"
-                                        },
-                                        css: "relative image-upload",
-                                        template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
-                                        onClick: {
-                                            'delete-file': function (e, id) {
-                                                this.remove(id);
-                                                return false;
-                                            }
-                                        }
-                                    },
-                                    {
-                                        view: "button",
-                                        id: "saveCompanyBtn",
-                                        name: "saveCompanyBtn",
-                                        label: "Sačuvaj",
-                                        width: 150,
-                                        type: "iconButton",
-                                        icon: "save",
-                                        click: "firstLoginLayout.saveCompany",
-                                        align: "center",
-                                        hotkey: "enter"
-                                    }
-                                ]
-                                // list config
-                            }
-                        },
-                        {
-                            header: "Ogranicenja",
-                            body: {
-                                id: "formConstrainsInformation",
-                                view: "form",
-                                elements: [{
-                                    id: "saveInformation",
-                                    view: "button",
-                                    label: "Sacuvajte i predjite na aplikaciju",
-                                    type: "iconButton",
-                                    //icon: "sign-in",
-                                    click: "showApp",
-                                    align: "left",
-                                    hotkey: "enter",
-                                    width: 580,
-                                    height: 40
-                                }]
-                            }
-                        }
-                    ],
+                    cells:firstLoginTabs,
 
                 },
 
