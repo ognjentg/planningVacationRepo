@@ -117,12 +117,6 @@ var menuAdmin = [
         value: "Statistika sektora",
         icon: "fas fa-bar-chart"
     }
-
-    /*    {
-              id: "collectiveVacation",
-              value: "Kolektivni godišnji odmor",
-              icon: "briefcase"
-         }*/
 ];
 
 var menuDirector = [
@@ -131,16 +125,6 @@ var menuDirector = [
         value: "Kalendar",
         icon: "fa fa-calendar"
     },
-    /*   {
-              id: "requests",
-              value: "Zahtjevi",
-              icon: "briefcase"
-        },
-       {
-             id: "statistics",
-             value: "Statistika",
-             icon: "fas fa-line-chart"
-        }*/
     {
         id: "usergroup",
         value: "Zaposleni",
@@ -168,12 +152,6 @@ var menuDirector = [
         value: "Statistika sektora",
         icon: "fas fa-bar-chart"
     }
-    /*    {
-              id: "collectiveVacation",
-              value: "Kolektivni godišnji odmor",
-              icon: "briefcase"
-         }*/
-
 ];
 
 var menuSecretary = [
@@ -187,12 +165,7 @@ var menuSecretary = [
         id: "secretary_sick_request",
         value: "Zahtjevi za bolovanje",
         icon: "far fa-envelope"
-    }, /*
-     {
-           id: "statistics",
-           value: "Statistika",
-           icon: "briefcase"
-      },*/
+    },
     {
         id: "usergroup",
         value: "Zaposleni",
@@ -208,11 +181,6 @@ var menuSecretary = [
         value: "Zahtjevi za odmor",
         icon: "list"
     },
-    /*    {
-              id: "collectiveVacation",
-              value: "Kolektivni godišnji odmor",
-              icon: "briefcase"
-         }*/
     {
         id: "absence_history",
         value: "Istorija odsustva",
@@ -300,7 +268,6 @@ var settingsMenuActions = function (id) {
 var panel = {id: "empty"};
 var rightPanel = null;
 
-
 var userData = null;
 var companyData = null;
 
@@ -363,76 +330,6 @@ var init = function () {
         }
     });
 }
-/*
-var step=0.3333333333333;  //KORAK UVECAVANJA
-var value=0;   //POCETNA VRIJEDNOST
-
-webix.ui({
- id:"app",
- margin:5,
- //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
- rows:[
-   { type:"header", template:"Unesite Vase podatke" },
-  {
-     view: "tabview",
-     cells:[
-         {
-     header: "Profil",
-     body: {
-       id: "formView1",
-       //view: "form"
-       // form config
-     }
-   },
-         {
-     header: "Kompanija",
-     body: {
-       id: "formView2",
-       //view: "list"
-       // list config
-     }
-   },
-   {
-     header: "Ogranicenja",
-     body: {
-       id: "formView3",
-       //view: "form"
-       // form config
-     }
-   }
-     ]
-   },
-//   { view:"segmented", options:["Profil", "Kompanija", "Ogranicenja"]
-//  },
-   { height:0 },
-   {
-     cols:[
-     { view:"button", value:"Reload with Progress Bar", click:function(){ show_progress_bar(2000); }}
-   ]
-   }
- ]
-});
-
-//adding ProgressBar functionality to layout
-webix.extend($$("app"), webix.ProgressBar);
-
-function show_progress_bar(delay){
- value=value+step;  // OVDJE KORAK UVECAM
- $$("app").disable();
- $$("app").showProgress({
-   type:"top",
-   delay:delay,
-   hide:false,
-   position:value  // OVDJE POZICIJU SETUJEM
- });
- setTimeout(function(){
-   $$("app").enable();
- }, delay);
-};
- */
-var step=0.3333333333333;  //KORAK UVECAVANJA
-var value=0;   //POCETNA VRIJEDNOST
-///<div id="myDiv">Default Template with some text inside</div>
 
 var tabCompleted=[false, false, false, false];
 var firstLoginTabs = []
@@ -874,16 +771,14 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     width: 400,
                     height:70,
                    // css: "progressNodes",
-///////////////////////////////////////////////////////////////////////////
                 template: '<br><section>\n' +
                     '\n' +
                     '  <ol id="progressBar" class="progress-bar">\n' +
                     '  </ol>' +
                     '</section>'
-///////////////////////////////////////////////////////////////////////////
             },
                 {
-                    id:"firstLoginTabs",   //  firstLoginLayout  //.firstLoginWizard.firstLoginTabs
+                    id:"firstLoginTabs",
                     view: "tabview",
                     type: "clear",
                     tabbar:{
@@ -1274,7 +1169,8 @@ var showFirstLogin = function () {
     //Ako je admin i ako je ulogovan 1. put na sistem:
     if(userData != null && userData.userGroupKey == "admin" && userData.firstName==null && userData.lastName==null ){
         //todo: switch
-console.log("Usao u if showFirstLogin");
+//console.log("Usao u if showFirstLogin");
+
          var main = webix.copy(firstLoginLayout);
          firstLogin = webix.ui(main, panel);
          panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
@@ -2081,7 +1977,6 @@ updateNotifications = function () {
             }
         });
     };
-
 
 //main call
 window.onload = function () {
