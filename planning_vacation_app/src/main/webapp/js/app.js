@@ -341,7 +341,7 @@ var profileTab = {
         width: 500,
         elementsConfig: {
         labelWidth: 140,
-            bottomPadding: 18
+            bottomPadding: 5  //TODO: change other forms
     },
     elements: [
         {
@@ -709,25 +709,301 @@ var companyTab ={
     // list config
 }
 };
+
+var days =[
+    {"id":8,"value":"Ponedjeljak"},
+    {"id":9,"value": "Utorak"},
+    {"id":10,"value":"Srijeda"},
+    {"id":11,"value":"Četvrtak"},
+    {"id":12,"value":"Petak"},
+    {"id":13,"value":"Subota"},
+    {"id":14,"value":"Nedjelja"}];
+var updatedDays = [];
+var updatedCollectiveVacations = [];
+var startedSelectedValues = [];
+
 var constraintsTab = {
     header: "Ogranicenja",
         body: {
-    id: "formConstrainsInformation",
-        view: "form",
-        elements: [{
-        id: "saveInformation",
-        view: "button",
-        label: "Sacuvajte i predjite na aplikaciju",
-        type: "iconButton",
-        //icon: "sign-in",
-        click: "showApp",
-        align: "left",
-        hotkey: "enter",
-        width: 580,
-        height: 40
-    }]
-}
+                view:"scrollview",
+                id:"verses",
+                scroll:"y", // vertical scrolling
+                height: 600,//"auto",
+                width: 150,
+                body: {
+
+             ///////////////////////////////////
+               cols:[
+                        {gravity:0.1},
+                        {
+                    id: "formConstrainsInformation",
+                    view: "form",
+                    width: 800,
+                    elementsConfig: {
+                        labelWidth: 90,
+                        bottomPadding: 5
+                    },
+                    elements: [{
+                        rows: [{
+                            // {///
+                           // width: 300,
+                            rows: [
+                                {
+                                    view: "form",
+                                    id: "companyInfoForm",
+                                    name: "companyInfoForm",
+                                    width: 140,
+                                    elementsConfig: {
+                                        labelWidth: 200,
+                                        bottomPadding: 18
+                                    },
+                                    elements: [
+                                        {
+                                            view: "text",
+                                            label: "Broj dana godišnjeg:",
+                                            id: "vacationDays",
+                                        },
+                                        {
+                                            view: "text",
+                                            label: "Maksimalni period godišnjeg:",
+                                            id: "maxVacDaysPeriod",
+                                        },
+                                        {
+                                            view: "text",
+                                            label: "Period starog godišnjeg:",
+                                            id: "maxOldVacationPeriod",
+                                        },
+                                        {
+                                            view: "text",
+                                            label: "Period opravdanja bolovanja:",
+                                            id: "sickDays",
+                                        },
+                                        {
+                                            view: "multicombo",
+                                            id: "nonWorkingDaysInWeek",
+                                            name: "nonWorkingDaysInWeek",
+                                            value: "",
+                                            label: "Sedmični neradni dani:",
+                                            placeholder: "Neradni dani u sedmici",
+                                            newValues: true,
+                                            suggest: days,
+                                            on: {}
+                                        }]
+                                },
+
+                            ]
+                        },
+                            {
+                                width: 350,
+                                rows: [
+                                    {
+                                        view: "toolbar",
+                                        type: "MainBar",
+                                        elements: [
+                                            {
+                                                view: "datepicker",
+                                                id: "nonWorkingDaysDTP",
+                                                name: "nonWorkingDaysDTP",
+                                                stringResult: true,
+                                                format: "%d.%m.%Y.",
+                                                label: 'Odaberite neradni dan',
+                                                labelWidth: 140
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        view: "datatable",
+                                        id: "nonWorkingDaysDT",
+                                        adjust: true,
+                                        select: "row",
+                                        navigation: true,
+                                        tooltip: {
+                                            dx: -35, //20 by default
+                                            dy: 20
+                                        },
+                                        columns: [
+                                            {
+                                                id: "#",
+                                                hidden: true,
+                                                header: "",
+                                            },
+                                            {
+                                                id: "day",
+                                                header: "Neradni dani",
+                                                width: 310
+                                            },
+                                            {
+                                                id: "delete",
+                                                header: "&nbsp;",
+                                                tooltip: "Brisanje",
+                                                fillspace: true,
+                                                width: 35,
+                                                cssFormat: "checkBoxStatus",
+                                                template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                            },
+                                        ],
+
+                                        onClick: {
+                                            webix_icon: function (e, id) {
+
+                                                var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+                                                var day = dataTableValue.day;
+                                                var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
+                                                delBox.callback = function (result) {
+                                                    if (result == 1) {
+                                                        var format = webix.Date.strToDate("%d.%m.%Y.");
+                                                        var string = format(day);
+                                                        var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                                        var newDate = newFormat(string); //datum u formatu kakav je potreban za backend stranu
+                                                        dataTableValue.day = newDate;
+                                                        if (updatedDays.includes(dataTableValue))
+                                                            updatedDays = updatedDays.filter(function (element) {
+                                                                return element.day !== dataTableValue.day
+                                                            });
+                                                        else {
+                                                            updatedDays.push(dataTableValue);
+                                                        }
+                                                        $$("nonWorkingDaysDT").remove(id);
+                                                    }
+                                                };
+                                                webix.confirm(delBox);
+                                            }
+                                        }
+                                    },
+                                    {
+                                        view: "label",
+                                        label: "Kolektivni godišnji odmori:",
+                                        align: "left"
+                                    },
+                                    {
+                                        cols: [
+                                            {
+
+                                                view: "datepicker",
+                                                id: "collectiveVacationFromDTP",
+                                                name: "collectiveVacationFromDTP",
+                                                stringResult: true,
+                                                format: "%d.%m.%Y.",
+                                                label: 'Od:',
+                                                labelWidth: 30
+                                            },
+                                            {
+                                                view: "datepicker",
+                                                id: "collectiveVacationToDTP",
+                                                name: "collectiveVacationToDTP",
+                                                stringResult: true,
+                                                format: "%d.%m.%Y.",
+                                                label: 'Do:',
+                                                labelWidth: 30
+                                            },
+                                            {
+                                                id: "addCollectiveVacationBtn",
+                                                view: "button",
+                                                type: "iconButton",
+                                                icon: "plus-circle",
+                                                css: "companyButton",
+                                                view: "button",
+                                                click: "companyInfoView.addCollectiveVacation",
+                                                width: 40,
+                                                align: "center",
+                                                hotkey: "enter"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        view: "datatable",
+                                        id: "collectiveVacationDT",
+                                        label: "Kolektivni godišnji odmor:",
+                                        adjust: true,
+                                        select: "row",
+                                        tooltip: {
+                                            dx: -35, //20 by default
+                                            dy: 20
+                                        },
+                                        navigation: true,
+                                        columns: [
+                                            {
+                                                id: "#",
+                                                hidden: true,
+                                                header: "",
+                                            },
+                                            {
+                                                id: "dateFrom",
+                                                header: "Od",
+                                                width: 156
+                                            },
+                                            {
+                                                id: "dateTo",
+                                                header: "Do",
+                                                width: 156
+                                            },
+                                            {
+                                                id: "delete",
+                                                header: "&nbsp;",
+                                                tooltip: "Brisanje",
+                                                fillspace: true,
+                                                cssFormat: "checkBoxStatus",
+                                                template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                            },
+                                        ],
+
+                                        onClick: {
+                                            webix_icon: function (e, id) {
+                                                var dataTableValue = $$("collectiveVacationDT").getItem(id);
+                                                var dateFrom = dataTableValue.dateFrom;
+                                                var dateTo = dataTableValue.dateTo;
+                                                var delBox = (webix.copy(commonViews.deleteConfirm("kolektivnog godišnjeg odmora", "period " + dateFrom + " - " + dateTo + " iz liste kolektivnih godišnjih odmora")));
+                                                delBox.callback = function (result) {
+                                                    if (result == 1) {
+                                                        var format = webix.Date.strToDate("%d.%m.%Y.");
+                                                        var stringDateFrom = format(dateFrom);
+                                                        var stringDateTo = format(dateTo);
+                                                        var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                                        var newDateFrom = newFormat(stringDateFrom); //datum u formatu kakav je potreban za backend stranu
+                                                        var newDateTo = newFormat(stringDateTo);
+                                                        dataTableValue.dateFrom = newDateFrom;
+                                                        dataTableValue.dateTo = newDateTo;
+
+                                                        if (updatedDays.includes(dataTableValue)) {
+                                                            updatedCollectiveVacations = updatedCollectiveVacations.filter(function (element) {
+                                                                return element.dateFrom !== dateFrom && element.dateTo !== dateTo;
+                                                            });
+                                                        } else {
+                                                            updatedCollectiveVacations.push(dataTableValue);
+                                                        }
+                                                        $$("collectiveVacationDT").remove(id);
+                                                    }
+                                                };
+                                                webix.confirm(delBox);
+                                            }
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                id: "saveInformation",
+                                view: "button",
+                                label: "Sacuvajte i predjite na aplikaciju",
+                                type: "iconButton",
+                                //icon: "sign-in",
+                                click: "showApp",
+                                align: "center",
+                                hotkey: "enter",
+                                width: 580,
+                                height: 40
+                            }
+                        ]
+                    }]
+
+                },
+{gravity:0.1}]
+/////////////////////////////////////////
+                }
+            }
 };
+
 var sectorTab = {
 
 };
