@@ -728,8 +728,8 @@ var constraintsTab = {
                 view:"scrollview",
                 id:"verses",
                 scroll:"y", // vertical scrolling
-                height: 600,//"auto",
-                width: 150,
+                //height: 600,//"auto",
+                //width: 150,
                 body: {
 
              ///////////////////////////////////
@@ -998,7 +998,7 @@ var constraintsTab = {
                     }]
 
                 },
-{gravity:0.1}]
+{gravity:0.1, height:200}]
 /////////////////////////////////////////
                 }
             }
@@ -1062,6 +1062,37 @@ var sectorTab = {
             }]
     },
 };
+var scrollTab = {
+    header: "Scroll Test",
+    body: {
+        view: "scrollview",
+        id: "scrolltest",
+        scroll: "y",
+        body:{
+            rows:[
+                {
+                    view:"template",
+                    height:200,
+                    template:"<p>test</p><p>Test</p>"
+                },
+                {
+                    height:200,
+                },
+                {
+                    view:"template",
+                    height:200,
+                    template:"<p>test</p><p>Test</p>"
+                },
+                {height:200,},
+                {
+                    view:"template",
+                    height:200,
+                    template:"<p>test</p><p>Test</p>"
+                }
+            ]
+        }
+    }
+}
 firstLoginTabs.push(profileTab, passwordTab);
 var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
