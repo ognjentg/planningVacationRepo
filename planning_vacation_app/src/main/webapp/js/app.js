@@ -726,7 +726,7 @@ var constraintsTab = {
     header: "Ogranicenja",
         body: {
                 view:"scrollview",
-                id:"verses",
+                id:"scrollConstraintsInformation",
                 scroll:"y", // vertical scrolling
                 //height: 600,//"auto",
                 //width: 150,
@@ -736,7 +736,7 @@ var constraintsTab = {
                cols:[
                         {gravity:0.1},
                         {
-                    id: "formConstrainsInformation",
+                    id: "formConstraintsInformation",
                     view: "form",
                     width: 800,
                     elementsConfig: {
@@ -1158,10 +1158,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                 // else return true;
                                 //todo: ovo zavrsiti, kad se napravi za progressBar
                                 var tabbar = $$("firstLoginTabs").getTabbar();
-                                firstLoginLayout.progressBar.setIndex(tabbar.optionIndex(id), "is-active");
-                                var oldInd = tabbar.optionIndex(this.getValue());
-
-                                firstLoginLayout.progressBar.setIndex(oldInd, tabCompleted[oldInd]?"is-complete":"");
+                                var oldIndex = tabbar.optionIndex(this.getValue());
+                                var newIndex = tabbar.optionIndex(id);
+                                if(oldIndex != newIndex) {
+                                    firstLoginLayout.progressBar.setIndex(newIndex, "is-active");
+                                    firstLoginLayout.progressBar.setIndex(oldIndex, tabCompleted[oldIndex] ? "is-complete" : "");
+                                }
                             }
                         }
                     },
@@ -1301,6 +1303,9 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 var item = document.createElement("li");
                 item.id = "progNode" + (i+1).toString();
                 progress.appendChild(item);
+                if(tabCompleted[i]) {
+                    this.setIndex(i, this.complete);
+                }
             }
             this.setIndex(0,this.active);
         }
