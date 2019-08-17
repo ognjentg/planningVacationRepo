@@ -1266,10 +1266,15 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                 var tabbar = $$("firstLoginTabs").getTabbar();
                                 var oldIndex = tabbar.optionIndex(this.getValue());
                                 var newIndex = tabbar.optionIndex(id);
+
+                                if(newIndex > oldIndex && !tabCompleted[oldIndex]){
+                                    return false;
+                                }
                                 if(oldIndex != newIndex) {
                                     firstLoginLayout.progressBar.setIndex(newIndex, "is-active");
-                                    firstLoginLayout.progressBar.setIndex(oldIndex, tabCompleted[oldIndex] ? "is-complete" : "");
+                                    firstLoginLayout.progressBar.unsetIndex(oldIndex, "is-active");
                                 }
+                                return true;
                             }
                         }
                     },
@@ -1301,20 +1306,19 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showErrorMessage(text);
                 },
                 success: function (text, data, xhr) {
-                    tabCompleted[0]=true;
                     userData.firstName = dataToSend.firstName;
                     userData.lastName = dataToSend.lastName;
                     userData.receiveMail = dataToSend.receiveMail;
                     userData.photo = objectToSend.photo;
                     util.dismissDialog("profileDialog");
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
+                    let ownTabId = profileTab.body.id;
+                    this.progressBar.updateNode(ownTabId,"is-complete");
                 }
             })
         }
     },
-    
     savePassword: function () {
-
         var changePasswordForm = $$("formChangePassword");
         if (changePasswordForm.validate()) {
             console.log("AAAAAAAAAAAAa");
@@ -1332,6 +1336,8 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                         util.messages.showMessage("Uspješna izmjena lozinke.");
                         firstLoginLayout.progressBar.setIndex(1, "is-complete");
                         $$("changePasswordBtn").enable();
+                        let ownTabId = passwordTab.body.id;
+                        this.progressBar.updateNode(ownTabId,"is-complete");
                         // Prebacivanje na sljedeci panel
                     } else {
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
@@ -1359,6 +1365,9 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             };
             connection.sendAjax("PUT", "hub/company/" + companyId,
                 function (text, data, xhr) {
+                    util.messages.showMessage("Izmjene uspješno sačuvane.");
+                    let ownTabId = companyTab.body.id;
+                    this.progressBar.updateNode(ownTabId,"is-complete");
                 }, function (text, data, xhr) {
                     //alert(text);
                     util.messages.showErrorMessage(text);
@@ -1372,6 +1381,8 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         connection.sendAjax("PUT", "hub/sector/" + sector.id,
             function (text, data, xhr) {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
+                let ownTabId = sectorTab.body.id;
+                this.progressBar.updateNode(ownTabId,"is-complete");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, sector);
@@ -1521,15 +1532,24 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         }
     },
     progressBar:{
-        active: " is-active",
-        complete: " is-complete",
+        active: "is-active",
+        complete: "is-complete",
         setIndex: function(index, style){
             var progNode = document.getElementById("progNode"+(index+1).toString());
             if(progNode==null) {
                 console.log(`progNode${index} doesn't exist`);
                 return;
             }
-            progNode.className=style;
+            if(!progNode.className.includes(style.trim()))
+                progNode.className+=" "+style;
+        },
+        unsetIndex: function(index,style){
+            var progNode = document.getElementById("progNode"+(index+1).toString());
+            if(progNode==null) {
+                console.log(`progNode${index} doesn't exist`);
+                return;
+            }
+            progNode.className = progNode.className.replace(style.trim(),'').trim();
         },
         init: function(){
             var progress = document.getElementById("progressBar");
@@ -1544,6 +1564,17 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 }
             }
             this.setIndex(0,this.active);
+        },
+        updateNode: function(ownTabId,style){
+            var tabIndex = this.getTabIndex(ownTabId);
+            if(style.includes(this.complete))
+                tabCompleted[tabIndex] = true;
+            this.setIndex(tabIndex,style);
+        },
+        getTabIndex: function(id){
+            var tabbar = $$("firstLoginTabs").getTabbar();
+            var tabIndex = tabbar.optionIndex(id);
+            return tabIndex;
         }
     }
 }
