@@ -144,7 +144,7 @@ absenceHistoryView = {
                             console.log(id["column"]);
                             var action = id["column"];
 
-                            if (action === "reject" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
+                            if (action === "reject" ) {
                                 webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
 
                                 connection.sendAjax("GET",
@@ -171,24 +171,34 @@ absenceHistoryView = {
                                                 }
 
                                                 if (statusNameTMP == "Odobreno") {
-                                                    connection.sendAjax("POST", "hub/leave_request/",
-                                                        function (text, data, xhr) {
-                                                            if (text) {
-
-                                                                var item = $$("absence_historyDT").getItem(id);
-                                                                $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                                                connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
-                                                                    util.messages.showMessage("Zahtjev postavljen na otkazivanje");
-                                                                    refreshOnAbsenceData();
-                                                                }, function (text, data, xhr) {
-                                                                    util.messages.showErrorMessage(text);
-                                                                }, item);
-                                                                refreshOnAbsenceData();
-                                                            } else
-                                                                util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                                    if(userData.userGroupKey == "direktor"){
+                                                        var item = $$("absence_historyDT").getItem(id);
+                                                        $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                        connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
+                                                            refreshOnAbsenceData();
                                                         }, function (text, data, xhr) {
                                                             util.messages.showErrorMessage(text);
-                                                        }, leaveRequest);
+                                                        }, item);
+                                                    }else {
+                                                        connection.sendAjax("POST", "hub/leave_request/",
+                                                            function (text, data, xhr) {
+                                                                if (text) {
+
+                                                                    var item = $$("absence_historyDT").getItem(id);
+                                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
+                                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                                                                        refreshOnAbsenceData();
+                                                                    }, function (text, data, xhr) {
+                                                                        util.messages.showErrorMessage(text);
+                                                                    }, item);
+                                                                    refreshOnAbsenceData();
+                                                                } else
+                                                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                                            }, function (text, data, xhr) {
+                                                                util.messages.showErrorMessage(text);
+                                                            }, leaveRequest);
+                                                    }
                                                 } else {
                                                     var item = $$("absence_historyDT").getItem(id);
                                                     $$("absence_historyDT").detachEvent("onBeforeDelete");
@@ -207,7 +217,7 @@ absenceHistoryView = {
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
                                     });
-                            } else if (action === "view" && (userData.userGroupKey == "sekretar" || userData.userGroupKey == "zaposleni")) {
+                            } else if (action === "view" ) {
                                 var viewAbsenceCommentInfoBox = (webix.copy(absenceHistoryView.showApproverSenderCommentInfo(id)));
 
                             }

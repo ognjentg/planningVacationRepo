@@ -60,9 +60,11 @@ public class NotificationController extends GenericHasActiveController<Notificat
     public @ResponseBody
     List<Notification> getAllNotificationByUser(@PathVariable Integer id) {
         List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActive(id, (byte) 1);
-        if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
-            notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+       if(userBean.getUserUserGroupKey().getUserGroupKey() != null){
+           if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
+               notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
 
+       }
        notifications=notifications.stream().sorted((n1,n2)-> n2.getCreated().compareTo(n1.getCreated())).collect(Collectors.toList());
         return notifications;
     }

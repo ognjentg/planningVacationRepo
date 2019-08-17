@@ -91,14 +91,19 @@ var menuAdmin = [
         icon: "fa fa-calendar"
     },
     {
-        id: "usergroup",
-        value: "Zaposleni",
-        icon: "users"
+        id: "absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
     },
     {
         id: "sector",
         value: "Sektori",
         icon: "briefcase"
+    },
+    {
+        id: "usergroup",
+        value: "Zaposleni",
+        icon: "users"
     },
     {
         id: "leave_requests",
@@ -126,14 +131,19 @@ var menuDirector = [
         icon: "fa fa-calendar"
     },
     {
-        id: "usergroup",
-        value: "Zaposleni",
-        icon: "users"
+        id: "absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
     },
     {
         id: "sector",
         value: "Sektori",
         icon: "briefcase"
+    },
+    {
+        id: "usergroup",
+        value: "Zaposleni",
+        icon: "users"
     },
     {
         id: "leave_requests",
@@ -160,16 +170,10 @@ var menuSecretary = [
         value: "Kalendar",
         icon: "fa fa-calendar"
     },
-
     {
-        id: "secretary_sick_request",
-        value: "Zahtjevi za bolovanje",
-        icon: "far fa-envelope"
-    },
-    {
-        id: "usergroup",
-        value: "Zaposleni",
-        icon: "users"
+        id: "absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
     },
     {
         id: "sector",
@@ -177,15 +181,21 @@ var menuSecretary = [
         icon: "briefcase"
     },
     {
+        id: "usergroup",
+        value: "Zaposleni",
+        icon: "users"
+    },
+    {
+        id: "secretary_sick_request",
+        value: "Zahtjevi za bolovanje",
+        icon: "far fa-envelope"
+    },
+    {
         id: "leave_requests",
         value: "Zahtjevi za odmor",
         icon: "list"
     },
     {
-        id: "absence_history",
-        value: "Istorija odsustva",
-        icon: "fas fa-history"
-    }, {
         id: "company_statistic",
         value: "Statistika kompanije",
         icon: "fas fa-line-chart"
@@ -208,6 +218,11 @@ var menuSectorManager = [
         icon: "fa fa-calendar"
     },
     {
+        id: "absence_history",
+        value: "Isotrija odsustava",
+        icon: "fas fa-history"
+    },
+    {
         id: "usergroup",
         value: "Zaposleni",
         icon: "users"
@@ -218,10 +233,6 @@ var menuSectorManager = [
         icon: "list"
     },
     {
-        id: "absence_history",
-        value: "Isotrija odsustava",
-        icon: "fas fa-history"
-    }, {
         id: "company_statistic",
         value: "Statistika kompanije",
         icon: "fas fa-line-chart"
@@ -2419,14 +2430,16 @@ showNotifications = function () {
                     layout: "y",
                     borderless: true,
                     template: function (obj) {
+                        //obj.created.
                         if (obj.seen)
+                            var format=webix.Date.dateToStr("%d.%m.%Y. %H:%i");
                             return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>"  +
                                 "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>" +
-                                "<time style='color:lightgrey' datetime='DD.MM.YYY hh:mm:ss'>" + (obj.created) + "</time>"
+                                "<time style='color:lightgrey' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>"
                                 ;
                         return "<span style='color:darkgrey;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
                             "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
-                            "<time style='color:darkgrey;font-weight:bold' datetime='DD.MM.YYY hh:mm:ss'>" + (obj.created) + "</time>";
+                            "<time style='color:darkgrey;font-weight:bold' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>";
                     },
                     css: "notifications",
                     width: 300,
@@ -2492,7 +2505,6 @@ showNotifications = function () {
 };
 updateNotifications = function () {
 
-    console.log("USLOOOOOOOO");
 
     /*for(var i=0;i<notifications.length;i++){
         var notification = notifications.filter(

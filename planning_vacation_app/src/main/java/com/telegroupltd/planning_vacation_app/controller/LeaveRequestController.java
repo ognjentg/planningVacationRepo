@@ -51,6 +51,9 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Value("Korisnik nema dovoljno godišnjeg")
     private String notEnoughDays;
 
+    @Value("Korisnik nema dovoljno dana za religijske praznike")
+    private String notEnoughReligionDays;
+
     @Value("Dani odabrani u godišnjem su prezauzeti.")
     private String tooMuchAbsent;
 
@@ -410,14 +413,20 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
         else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
             ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-            if(religionLeave == null){
-                religionLeave=new ReligionLeave();
-                religionLeave.setActive((byte)1);
-                religionLeave.setUserId(leaveRequest.getSenderUserId());
-                religionLeave.setYear(new Date().getYear());
-            }
-            religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
-            religionLeaveRepository.saveAndFlush(religionLeave);
+            Integer numOfDays=leaveRequestDates.size();
+                if(2-religionLeave.getNumberOfDaysUsed() < numOfDays){
+                    throw new BadRequestException(notEnoughReligionDays);
+                }else{
+                    if(religionLeave == null){
+                        religionLeave=new ReligionLeave();
+                        religionLeave.setActive((byte)1);
+                        religionLeave.setUserId(leaveRequest.getSenderUserId());
+                        religionLeave.setYear(new Date().getYear());
+                    }
+                    religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
+                    religionLeaveRepository.saveAndFlush(religionLeave);
+                }
+
         }
         leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
@@ -529,6 +538,77 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId){
         leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
+        LeaveRequest leaveRequest=leaveRequestRepository.getByIdAndActive(leaveRequestId,(byte)1);
+        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
+        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
+            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+            Integer numOfDays=leaveRequestDates.size();
+            if(religionLeave == null){
+                religionLeave=new ReligionLeave();
+                religionLeave.setActive((byte)1);
+                religionLeave.setUserId(leaveRequest.getSenderUserId());
+                religionLeave.setYear(Calendar.getInstance().get(Calendar.YEAR));
+            }
+            religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() - numOfDays);
+            religionLeaveRepository.saveAndFlush(religionLeave);
+        }
+
+        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
+            Integer numOfVacationDays = leaveRequestDates.size();
+            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
+            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+            Integer oldVacationDaysToAdd=0;
+            Integer vacationDaysToAdd=0;
+
+
+            if(vacationDays.getUsedDays() == 0){
+                if(numOfVacationDays > vacationDays.getUsedDays()){
+                    vacationDaysToAdd=vacationDays.getUsedDays();
+                    if(oldVacationDays!=null) {
+                        oldVacationDaysToAdd = numOfVacationDays - (vacationDays.getUsedDays());
+                    }
+                }else{
+                    vacationDaysToAdd=numOfVacationDays;
+                }
+            }else{
+                if(oldVacationDays!=null) {
+                    oldVacationDaysToAdd = numOfVacationDays;
+                }
+            }
+            if(oldVacationDays!=null) {
+                oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() - oldVacationDaysToAdd);
+                vacationDaysRepository.saveAndFlush(oldVacationDays);
+            }
+            vacationDays.setUsedDays(vacationDays.getUsedDays()-vacationDaysToAdd);
+            vacationDaysRepository.saveAndFlush(vacationDays);
+
+            /*if(oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0){
+                if(vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays){
+                    throw new BadRequestException(notEnoughDays);
+                }
+                else {
+                    vacationDays.setUsedDays(vacationDays.getUsedDays() + numOfVacationDays);
+                    vacationDaysRepository.saveAndFlush(vacationDays);
+                }
+            }
+            else{
+                Integer maxOldDays = oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays();
+                Integer maxDays = maxOldDays + vacationDays.getTotalDays() - vacationDays.getUsedDays();
+                if(maxDays <= numOfVacationDays)
+                    throw new BadRequestException(notEnoughDays);
+                Integer leftDays = numOfVacationDays - maxOldDays;
+                if(leftDays > 0){
+                    oldVacationDays.setUsedDays(oldVacationDays.getTotalDays());
+                    vacationDaysRepository.saveAndFlush(oldVacationDays);
+                    vacationDays.setUsedDays(vacationDays.getUsedDays() + leftDays);
+                    vacationDaysRepository.saveAndFlush(vacationDays);
+                }
+                else{
+                    oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() + numOfVacationDays);
+                    vacationDaysRepository.saveAndFlush(oldVacationDays);
+                }
+            }*/
+        }
         /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
         User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
         Notification notification = new Notification();
