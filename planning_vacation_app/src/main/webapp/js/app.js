@@ -841,21 +841,29 @@ var constraintsTab = {
                                             view: "text",
                                             label: "Broj dana godišnjeg:",
                                             id: "vacationDays",
+                                            required: true,
+                                            invalidMessage: "Niste unijeli broj"
                                         },
                                         {
                                             view: "text",
                                             label: "Maksimalni period godišnjeg:",
                                             id: "maxVacDaysPeriod",
+                                            required: true,
+                                            invalidMessage: "Niste unijeli period"
                                         },
                                         {
                                             view: "text",
                                             label: "Period starog godišnjeg:",
                                             id: "maxOldVacationPeriod",
+                                            required: true,
+                                            invalidMessage: "Niste unijeli period",
                                         },
                                         {
                                             view: "text",
                                             label: "Period opravdanja bolovanja:",
                                             id: "sickDays",
+                                            required: true,
+                                            invalidMessage: "Niste unijeli period",
                                         },
                                         {
                                             view: "multicombo",
@@ -864,6 +872,8 @@ var constraintsTab = {
                                             value: "",
                                             label: "Sedmični neradni dani:",
                                             placeholder: "Neradni dani u sedmici",
+                                            required: true,
+                                            invalidMessage: "Niste unijeli neradne dane u sedmici",
                                             newValues: true,
                                             suggest: days,
                                             on: {}
@@ -886,7 +896,9 @@ var constraintsTab = {
                                                 stringResult: true,
                                                 format: "%d.%m.%Y.",
                                                 label: 'Odaberite neradni dan',
-                                                labelWidth: 140
+                                                labelWidth: 200,
+                                                required: true,
+                                                invalidMessage: "Niste unijeli neradne dane"
                                             }
                                         ]
                                     },
@@ -965,7 +977,10 @@ var constraintsTab = {
                                                 stringResult: true,
                                                 format: "%d.%m.%Y.",
                                                 label: 'Od:',
-                                                labelWidth: 30
+                                                labelWidth: 40,
+                                                required: true,
+                                                invalidMessage: "Niste unijeli datum pocetka kolektivnog godisnjeg odmora"
+
                                             },
                                             {
                                                 view: "datepicker",
@@ -974,7 +989,9 @@ var constraintsTab = {
                                                 stringResult: true,
                                                 format: "%d.%m.%Y.",
                                                 label: 'Do:',
-                                                labelWidth: 30
+                                                labelWidth: 40,
+                                                required: true,
+                                                invalidMessage: "Niste unijeli datum kraja kolektivnog godisnjeg odmora"
                                             },
                                             {
                                                 id: "addCollectiveVacationBtn",
@@ -1076,7 +1093,14 @@ var constraintsTab = {
                                 height: 40
                             }
                         ]
-                    }]
+                    }],
+                            rules: {
+                                "maxOldVacationPeriod": function (value) {
+                                    if (!value)
+                                        return false;
+                                    return true;
+                                }
+                            }
 
                 },
 {gravity:0.1, height:200}]
