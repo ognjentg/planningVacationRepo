@@ -352,7 +352,7 @@ var profileTab = {
         width: 500,
         elementsConfig: {
         labelWidth: 140,
-            bottomPadding: 5  //TODO: change other forms
+            bottomPadding: 16 //TODO: change other forms
     },
     elements: [
         {
@@ -484,7 +484,7 @@ var passwordTab ={
         width: 500,
             elementsConfig: {
                 labelWidth: 140,
-                bottomPadding: 5  //TODO: change other forms
+                bottomPadding: 16  //TODO: change other forms
             },
     elements: [
         {
@@ -820,7 +820,7 @@ var constraintsTab = {
                     width: 800,
                     elementsConfig: {
                         labelWidth: 90,
-                        bottomPadding: 5
+                        bottomPadding: 16
                     },
                     elements: [{
                         rows: [{
