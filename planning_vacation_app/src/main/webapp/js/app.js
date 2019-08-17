@@ -587,6 +587,8 @@ var passwordTab ={
             name: "changePasswordBtn",
             label: "Sačuvajte i pređite na aplikaciju",
             width: 150,
+                    type: "iconButton",
+                    icon: "save",
             click: "firstLoginLayout.savePassword",
             align: "center",
             hotkey: "enter"
@@ -760,7 +762,7 @@ var companyTab ={
             view: "button",
             id: "saveCompanyBtn",
             name: "saveCompanyBtn",
-            label: "Sačuvaj",
+            label: "Sačuvajte",
             width: 150,
             type: "iconButton",
             icon: "save",
@@ -1052,6 +1054,8 @@ var constraintsTab = {
                                 id: "saveInformation",
                                 view: "button",
                                 label: "Sacuvajte i predjite na aplikaciju",
+                                type: "iconButton",
+                                icon: "save",
                                 type: "iconButton",
                                 //icon: "sign-in",   //firstLoginLayout.saveCompany
                                 click: "firstLoginLayout.saveConstrains",  //dodati poziv showApp
