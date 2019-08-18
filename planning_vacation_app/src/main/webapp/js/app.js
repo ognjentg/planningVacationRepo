@@ -1400,24 +1400,24 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         var numberOfSickDays = $$("sickDays").getValue();
         var companyPin = $$("companyPin").getValue();
         var maxOldVacationPeriod = $$("maxOldVacationPeriod").getValue();
-        webix.message(maxOldVacationPeriod.toString());
+        //webix.message(maxOldVacationPeriod.toString());
 
         var validation = $$("companyInfoForm").validate();
         if(validation){
-            var  company= {
-                id: companyId,
-                name: companyName,
-                pin: companyPin,
-                active: 1,
-                logo: logo.getItem(logo.getLastId()).content
-            };
-
-            connection.sendAjax("PUT", "hub/company/" + companyId,
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                    //alert(text);
-                    util.messages.showErrorMessage(text);
-                }, company);
+            // var  company= {
+            //     id: companyId,
+            //     name: companyName,
+            //     pin: companyPin,
+            //     active: 1,
+            //     logo: logo.getItem(logo.getLastId()).content
+            // };
+            //
+            // connection.sendAjax("PUT", "hub/company/" + companyId,
+            //     function (text, data, xhr) {
+            //     }, function (text, data, xhr) {
+            //         //alert(text);
+            //         util.messages.showErrorMessage(text);
+            //     }, company);
 
             var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
             //svi dani u sedmici koji su selektovani u multicombo-u
@@ -1451,12 +1451,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 nonWorkingDaysInWeek.push(nonWorkingDayInWeek);
             }
 
-            connection.sendAjax("POST", "/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                    //alert(text);
-                    util.messages.showErrorMessage(text);
-                }, nonWorkingDaysInWeek);
+            // connection.sendAjax("POST", "/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",
+            //     function (text, data, xhr) {
+            //     }, function (text, data, xhr) {
+            //         //alert(text);
+            //         util.messages.showErrorMessage(text);
+            //     }, nonWorkingDaysInWeek);
 
             var nonWorkingDaysInYear = []; //saljem samo dane koji nisu bili cekirani ili dane koji su otcekirani pri pokretanju aplikacije
 
@@ -1469,12 +1469,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 nonWorkingDaysInYear.push(nonWorkingDayInYear);
             }
             updatedDays = [];
-            connection.sendAjax("POST", "/hub/nonWorkingDay/addNonWorkingDays/",
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    //alert(text);
-                }, nonWorkingDaysInYear);
+            // connection.sendAjax("POST", "/hub/nonWorkingDay/addNonWorkingDays/",
+            //     function (text, data, xhr) {
+            //     }, function (text, data, xhr) {
+            //         util.messages.showErrorMessage(text);
+            //         //alert(text);
+            //     }, nonWorkingDaysInYear);
 
             var constraints = {
                 companyId:companyId,
@@ -1484,17 +1484,17 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 maxOldVacationPeriodLength:maxOldVacationPeriod,
             }
 
-            connection.sendAjax("POST", "/hub/constraints",
-                function (text, data, xhr) {
-                    if (text) {
-                    } else {
-                        util.messages.showErrorMessage("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
-                        //alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
-                    }
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    //alert(text);
-                }, constraints);
+            // connection.sendAjax("POST", "/hub/constraints",
+            //     function (text, data, xhr) {
+            //         if (text) {
+            //         } else {
+            //             util.messages.showErrorMessage("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
+            //             //alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
+            //         }
+            //     }, function (text, data, xhr) {
+            //         util.messages.showErrorMessage(text);
+            //         //alert(text);
+            //     }, constraints);
 
             var collectiveVacations = [];
 
@@ -1522,17 +1522,45 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 collectiveVacations.push(collectiveVacation);
             }
             updatedCollectiveVacations = [];
-            connection.sendAjax("POST", " /hub/colectiveVacation/addColectiveVacations",
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                    util.messages.showErrorMessage(text);
-                    // alert(text);
-                }, collectiveVacations);
-
-            util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
+            // connection.sendAjax("POST", " /hub/colectiveVacation/addColectiveVacations",
+            //     function (text, data, xhr) {
+            //     }, function (text, data, xhr) {
+            //         util.messages.showErrorMessage(text);
+            //         // alert(text);
+            //     }, collectiveVacations);
+            let requests =[
+                {method:"POST", url:"/hub/colectiveVacation/addColectiveVacations",item:collectiveVacations},
+                {method:"POST", url:"/hub/constraints",item:constraints},
+                {method:"POST", url:"/hub/nonWorkingDay/addNonWorkingDays/",item:nonWorkingDaysInYear},
+                {method:"POST", url:"/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",item:nonWorkingDaysInWeek},
+            ];
+            let promises = [];
+            for(let req of requests)
+            {
+                let reqPromise = webix.ajax().headers({
+                    "Content-type": "application/json"
+                }).post(req.url,JSON.stringify(req.item));
+                promises.push(reqPromise);
+            }
+            webix.promise.all(promises).then(function(results)
+            {
+                let allOk = true;
+                for(let res of results)
+                {
+                    if(!res.text) {
+                        allOk = false;
+                        util.messages.showErrorMessage(JSON.parse(res.response).error);
+                    }
+                }
+                if(allOk) {
+                    util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
+                    showApp();
+                }
+            });
+           //util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
             // alert("Uspješno izvršena izmjena podataka o kompaniji");
-            util.dismissDialog('companyInfoDialog');
-            showApp();
+            //util.dismissDialog('companyInfoDialog');
+            //showApp();
         }
     },
     progressBar:{
@@ -1824,6 +1852,7 @@ var showFirstLogin = function () {
                 firstLoginTabs.push(companyTab,constraintsTab);
                 break;
             case "menadzer":
+                firstLoginTabs.push(sectorTab);
                 break;
         }
         //todo: switch
