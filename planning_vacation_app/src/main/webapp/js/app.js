@@ -1886,7 +1886,49 @@ var showFirstLogin = function () {
         }
         firstLoginLayout.progressBar.init();
 //adding ProgressBar functionality to layout
-        webix.extend($$("firstLoginWizard"), webix.ProgressBar);
+        //webix.extend($$("firstLoginWizard"), webix.ProgressBar);
+        $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
+
+            var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
+            var dateInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+            var isDaySelected = 0;
+            $$("nonWorkingDaysDT").eachRow(function(row){
+                var record = $$("nonWorkingDaysDT").getItem(row);
+                if( dateInDTFormat == record.day) //provjeravamo da li se dan vec nalazi u tabeli
+                    isDaySelected = 1;
+            });
+
+            if(isDaySelected == 1)
+            //alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+                util.messages.showMessage("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+            else{
+                var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
+                var dataTableValue;
+                var updatedValue;
+
+                if("" != date){
+                    editBox.callback = function (result) {
+                        if (result == 1) {
+                            dataTableValue = {
+                                day: dateInDTFormat
+                            };
+                            $$("nonWorkingDaysDT").add(dataTableValue);
+
+                            updatedValue = {
+                                day: date
+                            }
+
+                            if(updatedDays.includes(dateInDTFormat))
+                                updatedDays = updatedDays.filter(function(element){return element.day !== dateInDTFormat;});
+                            else {
+                                updatedDays.push(updatedValue);
+                            }
+                        }
+                    };
+                    webix.confirm(editBox);
+                }}
+            $$("nonWorkingDaysDTP").setValue("");
+        });
 
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
 
