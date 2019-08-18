@@ -1343,6 +1343,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                         let ownTabId = passwordTab.body.id;
                         this.progressBar.updateNode(ownTabId,"is-complete");
                         // Prebacivanje na sljedeci panel
+                        var tabbar = $$("firstLoginTabs").getTabbar();
+                        var tlength = tabbar.config.options.length;
+                        var pindex = this.progressBar.getTabIndex("formChangePassword");
+                        if(tlength==pindex+1){
+                            showApp();
+                        }
                     } else {
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
                         $$("changePasswordBtn").enable();
@@ -1852,7 +1858,7 @@ var showFirstLogin = function () {
                 firstLoginTabs.push(companyTab,constraintsTab);
                 break;
             case "menadzer":
-                firstLoginTabs.push(sectorTab);
+                firstLoginTabs.unshift(sectorTab);
                 break;
         }
         //todo: switch
