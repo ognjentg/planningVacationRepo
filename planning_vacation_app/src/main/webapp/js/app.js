@@ -2486,12 +2486,12 @@ showNotifications = function () {
                     borderless: true,
                     template: function (obj) {
                         //obj.created.
-                        if (obj.seen)
-                            var format=webix.Date.dateToStr("%d.%m.%Y. %H:%i");
-                            return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>"  +
+                        if (obj.seen) {
+                            var format = webix.Date.dateToStr("%d.%m.%Y. %H:%i");
+                            return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>" +
                                 "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>" +
-                                "<time style='color:lightgrey' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>"
-                                ;
+                                "<time style='color:lightgrey' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>";
+                        }
                         return "<span style='color:darkgrey;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
                             "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
                             "<time style='color:darkgrey;font-weight:bold' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>";
