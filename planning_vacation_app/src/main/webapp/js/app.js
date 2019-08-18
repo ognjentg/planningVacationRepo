@@ -839,6 +839,7 @@ var constraintsTab = {
                                     elements: [
                                         {
                                             view: "text",
+                                            name:"vacationDays",
                                             label: "Broj dana godišnjeg:",
                                             id: "vacationDays",
                                             required: true,
@@ -846,6 +847,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
+                                            name:"maxVacDaysPeriod",
                                             label: "Maksimalni period godišnjeg:",
                                             id: "maxVacDaysPeriod",
                                             required: true,
@@ -853,6 +855,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
+                                            name:"maxOldVacationPeriod",
                                             label: "Period starog godišnjeg:",
                                             id: "maxOldVacationPeriod",
                                             required: true,
@@ -860,6 +863,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
+                                            name:"sickDays",
                                             label: "Period opravdanja bolovanja:",
                                             id: "sickDays",
                                             required: true,
