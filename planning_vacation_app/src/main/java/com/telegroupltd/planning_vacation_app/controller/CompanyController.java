@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Month;
 import java.util.*;
 
@@ -201,9 +203,10 @@ public class CompanyController extends GenericController<Company, Integer> {
             return monthUserNoList;
         }
 
-        MonthUserNo monthUserNo1 = new MonthUserNo(vacation / sum * 100, "Godišnji", "#e6194B");
-        MonthUserNo monthUserNo2 = new MonthUserNo(religion / sum * 100, "Praznik", "#42d4f4");
-        MonthUserNo monthUserNo3 = new MonthUserNo(leave / sum * 100, "Odsustvo", "#bfef45");
+        NumberFormat formatter = new DecimalFormat("#0.00");
+        MonthUserNo monthUserNo1 = new MonthUserNo(Double.parseDouble(formatter.format(vacation / sum * 100)), "Godišnji", "#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(Double.parseDouble(formatter.format(religion / sum * 100)), "Praznik", "#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(Double.parseDouble(formatter.format(leave / sum * 100)), "Odsustvo", "#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);

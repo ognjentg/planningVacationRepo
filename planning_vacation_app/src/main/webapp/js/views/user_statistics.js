@@ -1,5 +1,5 @@
 var userStatisticsView;
-var URL = "/hub/user";
+var URL = "/hub/user/allUsersName";
 var sectors;
 
 var first = {
@@ -69,7 +69,6 @@ var pieChart = {
     id: "chartDonutId",
     value: "#procentage#",
     color: "#color#",
-
 
     legend: {
         align: "right",
@@ -644,19 +643,7 @@ userStatisticsView = {
                     select: "row",
                     multiselect: false,
                     columns: [{
-                        id: "id",
-                        hidden: true
-                    }, {
-                        id: "firstName",
-                        hidden: true
-                    }, {
-                        id: "lastName",
-                        hidden: true
-                    }, {
-                        id: "email",
-                        hidden: true
-                    }, {
-                        id: "lfName",
+                        id: "value",
                         header: [
                             "Zaposleni", {
                                 content: "textFilter", value: "", icon: "wxi-search"
@@ -664,11 +651,7 @@ userStatisticsView = {
                         ],
                         width: 300,
                         fillspace: true,
-                        sort: "string",
-                        template: function (obj) {
-                            var pom = obj.firstName + " " + obj.lastName + " (" + obj.email + ")";
-                            return pom;
-                        }
+                        sort: "string"
                     }],
 
                     on: {
@@ -806,7 +789,6 @@ userStatisticsView = {
                                 view: "carousel",
                                 css: "webix_dark",
                                 id: "parts",
-                                width: 800,
                                 cols: [
                                     first, second
                                 ]

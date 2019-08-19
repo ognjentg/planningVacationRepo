@@ -8,12 +8,12 @@ import com.telegroupltd.planning_vacation_app.repository.*;
 import com.telegroupltd.planning_vacation_app.util.*;
 import com.telegroupltd.planning_vacation_app.util.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -143,7 +143,7 @@ public class UserController extends GenericController<User, Integer> {
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).collect(Collectors.toList());
         } else if(sectorManager== userBean.getUserUserGroupKey().getUserGroupId()) {
-            users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte)1)));
+            users = userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte)1));
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u-> worker == u.getUserGroupId()).collect(Collectors.toList());
         }
@@ -315,7 +315,7 @@ public class UserController extends GenericController<User, Integer> {
         if(Util.validateEmail(user.getEmail())){
             User newUser = new User();
             String salt=Util.randomSalt();
-            String newPassword=Util.randomPassword();
+            String newPassword= Util.randomPassword();
             String username=Util.generateUsername(user.getEmail());
 
             newUser.setFirstName(null);
@@ -680,8 +680,14 @@ public class UserController extends GenericController<User, Integer> {
         throw new BadRequestException(badRequestNoUser);
     }
 
-
-
-
+    @GetMapping(value = "/allUsersName")
+    public @ResponseBody List<ValueCustom> getAllUsersName() throws ForbiddenException{
+        List<ValueCustom> retValList = new ArrayList<>();
+        List<User> userList = getAll();
+        for (User user : userList) {
+            retValList.add(new ValueCustom(user.getId(), user.getFirstName() + " " + user.getLastName() + " (" + user.getEmail() + ")"));
+        }
+        return retValList;
+    }
 }
 
