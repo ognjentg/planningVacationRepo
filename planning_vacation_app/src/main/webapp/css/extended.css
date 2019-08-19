@@ -326,6 +326,12 @@ element.style {
 	line-height:20px;
 	padding:10px;
 }
+.notifications .webix_list_item.webix_selected{
+	line-height:20px;
+	padding:10px;
+	background-color: #7f8c8d;
+}
+
 .notifications .webix_list_item .m_title{
 	font-weight:bold;
 	color:#313131;

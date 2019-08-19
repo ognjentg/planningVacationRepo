@@ -502,7 +502,7 @@ var sectorView = {
                             webix.confirm(delBox);
                             break;
                         case "3":
-                            usergroupView.selectPanel();
+                            usergroupView.selectPanelWithSector($$("sectorDT").getItem(context.id.row));
                             break;
                     }
                 }

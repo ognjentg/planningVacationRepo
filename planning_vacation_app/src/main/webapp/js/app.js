@@ -77,12 +77,13 @@ var menuActions = function (id) {
 };
 
 var menuSuperAdmin = [
-    /*{
+   /* {
         id: "company",
         value: "Kompanije",
         icon: "briefcase"
     }*/
 ];
+
 
 var menuAdmin = [
     {
@@ -2122,8 +2123,7 @@ var subMenuItems = [
     rightPanel = "emptyRightPanel";
     switch (userData.userGroupKey) {
         case "superadmin":
-            //$$("menu-collapse").hide();
-            //$$("mainMenu").select("company");
+            $$("menu-collapse").hide();
             companyView.selectPanel();
             break;
         case "admin":
@@ -2591,16 +2591,19 @@ showNotifications = function () {
                     layout: "y",
                     borderless: true,
                     template: function (obj) {
-                        //obj.created.
+                        var format = webix.Date.dateToStr("%d.%m.%Y. %H:%i");
+                        var date=""+obj.created;
+                        //var pom=""+format(new Date(obj.created));
+                        var pom=""+date.slice(8,10)+"."+date.slice(6,7)+"."+date.slice(0,4)+". "+date.slice(11,19);
+
                         if (obj.seen) {
-                            var format = webix.Date.dateToStr("%d.%m.%Y. %H:%i");
                             return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>" +
                                 "<span style='color:lightgrey' class='message'>" + (obj.text) + "</span>" +
-                                "<time style='color:lightgrey' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>";
+                                "<span style='color:lightgrey' class='message'>" + (pom) + "</span>";
                         }
-                        return "<span style='color:darkgrey;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
-                            "<span style='color:darkgrey;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
-                            "<time style='color:darkgrey;font-weight:bold' datetime='DD.MM.YYYY hh:mm:ss'>" + (obj.created) + "</time>";
+                        return "<span style='color:darkslategray;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
+                            "<span style='color:darkslategray;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
+                            "<span style='color:darkslategray;font-weight:bold' class='message'>" + (pom) + "</span>" ;
                     },
                     css: "notifications",
                     width: 300,
