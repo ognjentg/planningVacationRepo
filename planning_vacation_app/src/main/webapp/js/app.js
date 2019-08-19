@@ -2058,13 +2058,13 @@ var subMenuItems = [
             case "menadzer":
                 localMenuData = webix.copy(menuSectorManager);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                } else if(userData.firstLogin === 2) {
-                    showChangePasswordDialog();
-                } else if(userData.firstLogin === 3) {
-                    // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
-                }
+                // if (userData.firstLogin === 1) {
+                //     showAddFirstAndLastNameDialog();
+                // } else if(userData.firstLogin === 2) {
+                //     showChangePasswordDialog();
+                // } else if(userData.firstLogin === 3) {
+                //     // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
+                // }
                 break;
             case "zaposleni":
                 localMenuData = webix.copy(menuWorker);
