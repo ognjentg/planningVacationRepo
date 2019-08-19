@@ -348,7 +348,11 @@ var calendarView = {
         rightPanel = "calendarPanel";
         var panelCopy = webix.copy(this.panel);
         $$("main").addView(webix.copy(panelCopy));
-
+        scheduler.clearAll();
+        selectedDays = [];
+        schedulerEvents.forEach(function (value) {
+            scheduler.detachEvent(value);
+        });
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
 
@@ -509,15 +513,15 @@ var calendarView = {
             return "";
         }
         //skrivanje lightboxa
-        scheduler.attachEvent("onBeforeLightbox", function (id) {
+        schedulerEvents.push(scheduler.attachEvent("onBeforeLightbox", function (id) {
             return false;
-        });
-        scheduler.attachEvent("onDoubleClick", function (id, e) {
+        }));
+        schedulerEvents.push(scheduler.attachEvent("onDoubleClick", function (id, e) {
             return false;
-        });
+        }));
         scheduler.config.dblclick_create = false;
         scheduler.config.drag_create = false;
-        scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
+        schedulerEvents.push(scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
             if (
                 // leaveRequestWaiting.includes(selectedDate.getTime()) ||
             // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
@@ -554,11 +558,7 @@ var calendarView = {
             } else if ([buttons.SICK].includes(selectedButton) &&
                 calendarView.ruleset.doesNotStartInFuture(selectedDate)) {
                 util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
-            } else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
-                days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
-            ) {
-                util.messages.showErrorMessage("Istekao je period za validaciju");
-            } else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
+            }  else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
                 !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
                 util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
             }else if ([buttons.VACATION].includes(selectedButton) &&
@@ -566,6 +566,10 @@ var calendarView = {
                 util.messages.showErrorMessage("Nemate još pravo na godišnji!")
             } else if(([buttons.VACATION].includes(selectedButton) || [buttons.PAID].includes(selectedButton) || [buttons.RELIGIOUS].includes(selectedButton)) && !calendarView.ruleset.isNextYear(selectedDate)){
                 util.messages.showErrorMessage("Možete tražiti odsustvo samo za ovu godinu!");
+            }else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
+                days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
+            ) {
+                util.messages.showErrorMessage("Istekao je period za validaciju");
             }else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
@@ -618,7 +622,7 @@ var calendarView = {
                 tableData.push({eventId: e.id, date: format(new Date(value))})
             });
             $$("periodsDT").parse(tableData);
-        });
+        }));
         // 1. custom
         /* scheduler.config.lightbox.sections=[
              {name:"time", height:50, type:"time", map_to:"auto", time_format:[ "%d", "%m", "%Y"]}
@@ -647,9 +651,10 @@ var calendarView = {
         //Inicijalizacija i postavljanje na trenutni datum
         var date = new Date();
         scheduler.locale = locale_sr_latin; // Change the locale to Serbian Latin.
+
         scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
-        scheduler.attachEvent("onBeforeEventChanged", function (ev, e, is_new, original) {
+        schedulerEvents.push(scheduler.attachEvent("onBeforeEventChanged", function (ev, e, is_new, original) {
             if ($$("periodsDT").count() >= calendarView.freeDays) {
                 util.messages.showErrorMessage("Nemate pravo na više dana");
                 return false;
@@ -661,10 +666,10 @@ var calendarView = {
             });
             $$("periodsDT").parse(tableData);
             return true;
-        });
-        scheduler.attachEvent("onLimitViolation", function (id, obj) {
+        }));
+        schedulerEvents.push(scheduler.attachEvent("onLimitViolation", function (id, obj) {
             dhtmlx.message('Neradni dan ili praznik.');
-        });
+        }));
         scheduler.templates.event_bar_text = function (start, end, event) {
             return "";
         }
@@ -1237,7 +1242,7 @@ var calendarView = {
                 if (temp == null)
                     return calendarView.ruleset.isNotInPast(date);
                 var format = webix.Date.strToDate("%d.%m.%Y");
-                if (format(temp.date).getTime() < getToday().getTime())
+                if (format(temp.date).getTime() <= getToday().getTime())
                     return false;
                 return true;
             },
