@@ -624,10 +624,11 @@ userStatisticsView = {
                             onItemClick: function () {
                                 $$("archiveBtn2").disable();
 
-                                webix.toPNG("firstID");
-                                webix.toPNG("chartDonutId");
+                                webix.toPNG("firstID").then(function (value) {
+                                    webix.toPNG("chartDonutId");
+                                    $$("archiveBtn2").enable();
+                                });
 
-                                $$("archiveBtn2").enable();
 
                             }
                         }

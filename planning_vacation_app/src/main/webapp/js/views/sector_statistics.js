@@ -251,6 +251,7 @@ var dChart = {
 
 var chart1 = {
     view: "chart",
+    id:"chart1",
     type: "radar",
     preset: "area",
     xAxis: {
@@ -619,10 +620,15 @@ sectorStatisticsView = {
                         on: {
                             onItemClick: function () {
                                 $$("archiveBtn2").disable();
-                                webix.toPNG("firstID");
-                                webix.toPNG("chartDonutID");
-                                webix.toPNG("chart1");
-                                $$("archiveBtn2").enable();
+                                webix.toPNG("firstID").then(function (value) {
+                                    return webix.toPNG("chartDonutId");
+
+                                }).then(function (value) {
+                                    webix.toPNG("chart1");
+                                    $$("archiveBtn2").enable();
+
+                                });
+
 
                             }
                         }
@@ -645,7 +651,7 @@ sectorStatisticsView = {
                         id: "name",
                         hidden: true
                     }, {
-                        id: "sectorName",
+                        id: "name",
                         header: [
                             "Sektori", {
                                 content: "textFilter", value: "", icon: "wxi-search"
@@ -655,10 +661,7 @@ sectorStatisticsView = {
                         fillspace: true,
                         sort: "string",
                         width: 200,
-                        template: function (obj) {
-                            var sectorName = obj.name;
-                            return sectorName;
-                        }
+                        name:"name",
                     }, {
 
                         id: "view",
