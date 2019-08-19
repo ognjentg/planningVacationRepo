@@ -1304,8 +1304,7 @@ usergroupView = {
                 $$("choseUserGroupCombo").define("options", usergroupView.userGroups);
 
                 if (sectorID == -1 || sectorID == -2) {
-                    $$("choseUserGroupCombo").getList().getItem(5).disabled = true;
-                    $$("choseUserGroupCombo").getList().addCss(5, "disabled");
+                    $$("choseUserGroupCombo").getList().remove(5) //disabling and hiding doesn't work, have to remove.
                 }
 
                 $$("choseUserGroupCombo").refresh();
