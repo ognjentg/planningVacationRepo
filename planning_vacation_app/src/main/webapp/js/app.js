@@ -320,7 +320,7 @@ var init = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if( userData.firstName==null && userData.lastName==null /*userData.firstLogin === 1*/) {
+                                    if( userData.firstLogin !== 0) {
                                         showFirstLogin(); //uspjesan login, prikaz layout-a za to...
                                     }else {
                                         showApp();
@@ -1260,7 +1260,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                // if(this.getValue()=="formProfileInformation") {
 
                              //   }else if
-                                util.messages.showMessage("you have clicked on an item with id="+this.getValue());
+                                //util.messages.showMessage("you have clicked on an item with id="+this.getValue());
                             },
                             onBeforeTabClick:function(id){
                                 // if(id=="formChangePassword"   /*&& tabCompleted[0])  ||*/    )
@@ -1272,6 +1272,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                 var newIndex = tabbar.optionIndex(id);
 
                                 if(newIndex > oldIndex && !tabCompleted[oldIndex]){
+                                    util.messages.showErrorMessage("Popunite formu prije nastavljanja");
                                     return false;
                                 }
                                 if(oldIndex != newIndex) {
@@ -1314,10 +1315,10 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     userData.lastName = dataToSend.lastName;
                     userData.receiveMail = dataToSend.receiveMail;
                     userData.photo = objectToSend.photo;
-                    util.dismissDialog("profileDialog");
+                    //util.dismissDialog("profileDialog");
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = profileTab.body.id;
-                    this.progressBar.updateNode(ownTabId,"is-complete");
+                    firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
                 }
             })
         }
@@ -1341,12 +1342,18 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                         firstLoginLayout.progressBar.setIndex(1, "is-complete");
                         $$("changePasswordBtn").enable();
                         let ownTabId = passwordTab.body.id;
-                        this.progressBar.updateNode(ownTabId,"is-complete");
+                        firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
                         // Prebacivanje na sljedeci panel
                         var tabbar = $$("firstLoginTabs").getTabbar();
                         var tlength = tabbar.config.options.length;
-                        var pindex = this.progressBar.getTabIndex("formChangePassword");
+                        var pindex = firstLoginLayout.progressBar.getTabIndex("formChangePassword");
                         if(tlength==pindex+1){
+                            connection.sendAjax("POST", "hub/user/firstLogin",
+                                function (text, data, xhr) {
+                                    userData.firstLogin = 0;
+                                }, function (text, data, xhr) {
+                                    util.messages.showErrorMessage(text);
+                                }, 0);
                             showApp();
                         }
                     } else {
@@ -1377,7 +1384,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 function (text, data, xhr) {
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = companyTab.body.id;
-                    this.progressBar.updateNode(ownTabId,"is-complete");
+                    firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
                 }, function (text, data, xhr) {
                     //alert(text);
                     util.messages.showErrorMessage(text);
@@ -1392,7 +1399,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             function (text, data, xhr) {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
                 let ownTabId = sectorTab.body.id;
-                this.progressBar.updateNode(ownTabId,"is-complete");
+                firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, sector);
@@ -1559,6 +1566,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     }
                 }
                 if(allOk) {
+                    connection.sendAjax("POST", "hub/user/firstLogin",
+                        function (text, data, xhr) {
+                            userData.firstLogin = 0;
+                        }, function (text, data, xhr) {
+                            util.messages.showErrorMessage(text);
+                        }, 0);
                     util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
                     showApp();
                 }
@@ -1851,7 +1864,7 @@ var showFirstLogin = function () {
 
     console.log("Usao u showFirstLogin");
     //Ako je admin i ako je ulogovan 1. put na sistem:
-    if(userData != null && userData.firstName==null && userData.lastName==null ){
+    if(userData != null && userData.firstLogin!=0){
         switch(userData.userGroupKey)
         {
             case "admin":
@@ -1893,7 +1906,8 @@ var showFirstLogin = function () {
         firstLoginLayout.progressBar.init();
 //adding ProgressBar functionality to layout
         //webix.extend($$("firstLoginWizard"), webix.ProgressBar);
-        $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
+        if($$("nonWorkingDaysDTP"))
+            $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
 
             var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
             var dateInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
@@ -1935,7 +1949,18 @@ var showFirstLogin = function () {
                 }}
             $$("nonWorkingDaysDTP").setValue("");
         });
-
+        if(firstLoginTabs.includes(sectorTab)) {
+            connection.sendAjax("GET",
+                "hub/sector/" + userData.companyId + "/" + userData.id,
+                function (text, data, xhr) {
+                    sector = data.json();
+                    $$("name").setValue(sector.name);
+                    $$("max_absent_people").setValue(sector.maxAbsentPeople);
+                    $$("max_percentage_absent_people").setValue(sector.maxPercentageAbsentPeople);
+                }, function (text, data, xhr) {
+                    util.messages.showErrorMessage(text);
+                });
+        }
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
 
 
@@ -1991,9 +2016,9 @@ var subMenuItems = [
             case "superadmin":
                 localMenuData = webix.copy(menuSuperAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                }
+                // if (userData.firstLogin === 1) {
+                //     showAddFirstAndLastNameDialog();
+                // }
                 break;
             case "admin":
                 localMenuData = webix.copy(menuAdmin);
@@ -2015,20 +2040,20 @@ var subMenuItems = [
             case "direktor":
                 localMenuData = webix.copy(menuDirector);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                } else if(userData.firstLogin === 2) {
-                    showChangePasswordDialog();
-                }
+                // if (userData.firstLogin === 1) {
+                //     showAddFirstAndLastNameDialog();
+                // } else if(userData.firstLogin === 2) {
+                //     showChangePasswordDialog();
+                // }
                 break;
             case "sekretar":
                 localMenuData = webix.copy(menuSecretary);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                } else if(userData.firstLogin === 2) {
-                    showChangePasswordDialog();
-                }
+                // if (userData.firstLogin === 1) {
+                //     showAddFirstAndLastNameDialog();
+                // } else if(userData.firstLogin === 2) {
+                //     showChangePasswordDialog();
+                // }
                 break;
             case "menadzer":
                 localMenuData = webix.copy(menuSectorManager);
@@ -2045,11 +2070,11 @@ var subMenuItems = [
                 localMenuData = webix.copy(menuWorker);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
                 console.log("AAAA: " + userData.firstLogin);
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                } else if(userData.firstLogin === 2) {
-                    showChangePasswordDialog();
-                }
+                // if (userData.firstLogin === 1) {
+                //     showAddFirstAndLastNameDialog();
+                // } else if(userData.firstLogin === 2) {
+                //     showChangePasswordDialog();
+                // }
                 break;
         }
     }
@@ -2444,7 +2469,7 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if(userData.firstName==null && userData.lastName==null /*userData.firstLogin === 1*/) {
+                                    if(userData.firstLogin!=0 /*userData.firstLogin === 1*/) {
                                         showFirstLogin(); //uspjesan login, prikaz layout-a za to...
                                     }else {
                                         showApp();
