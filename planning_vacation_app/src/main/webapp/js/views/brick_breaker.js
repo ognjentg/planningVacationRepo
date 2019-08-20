@@ -61,8 +61,8 @@ showGameDialog: function() {
     document.addEventListener("keyup", keyUpHandler, false);
     document.addEventListener("mousemove", mouseMoveHandler, false);
     sheet = document.getElementById("imgSheet");
-    dx=3;
-    dy=-3;
+    dx=4;
+    dy=-4;
     lives=3;
     score=0;
     bricks = [];
@@ -72,7 +72,7 @@ showGameDialog: function() {
             bricks[c][r] = { x: 0, y: 0, status: 1 };
         }
     }
-
+    gameover=false;
     draw();
 },
 }
@@ -86,8 +86,8 @@ var imageCount=15;
 var ballRadius = 6;
 var x = null;
 var y = null
-var dx = 3;
-var dy = -3;
+var dx = 4;
+var dy = -4;
 var dspeed = Math.sqrt(dx*dx+dy*dy);
 var paddleHeight = 10;
 var paddleWidth = 75;
@@ -103,6 +103,7 @@ var brickOffsetTop = 30;
 var brickOffsetLeft = 30;
 var score = 0;
 var lives = 3;
+var gameover = false;
 var bricks = [];
 for (var c = 0; c < brickColumnCount; c++) {
     bricks[c] = [];
@@ -187,6 +188,7 @@ function betterCollisionDet()
                     score++;
                     if (score == brickRowCount * brickColumnCount) {
                         alert("POBJEDILI STE, ČESTITAMO!");
+                        gameover=true;
                        // document.location.reload();
                         util.dismissDialog("gameDialog");
                     }
@@ -277,6 +279,7 @@ function draw() {
             lives--;
             if (!lives) {
                 alert("KRAJ IGRE");
+                gameover=true;
                 util.dismissDialog("gameDialog");
             } else {
                 x = canvas.width / 2;
@@ -297,6 +300,7 @@ function draw() {
         x += dx;
         y += dy;
     }
+    if(!gameover)
     requestAnimationFrame(draw);
 }
 //draw();
