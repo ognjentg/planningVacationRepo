@@ -77,11 +77,11 @@ var menuActions = function (id) {
 };
 
 var menuSuperAdmin = [
-   /* {
-        id: "company",
-        value: "Kompanije",
-        icon: "briefcase"
-    }*/
+    /* {
+         id: "company",
+         value: "Kompanije",
+         icon: "briefcase"
+     }*/
 ];
 
 
@@ -321,9 +321,9 @@ var init = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if( userData.firstLogin !== 0) {
+                                    if (userData.firstLogin !== 0) {
                                         showFirstLogin(); //uspjesan login, prikaz layout-a za to...
-                                    }else {
+                                    } else {
                                         showApp();
                                     }
                                 } else {
@@ -343,480 +343,528 @@ var init = function () {
     });
 }
 
-var tabCompleted=[false, false, false, false];
+var tabCompleted = [false, false, false, false];
 var firstLoginTabs = [];
 var profileTab = {
     header: "Profil",
-        body: {
-    id: "formProfileInformation",
+    body: {
+        id: "formProfileInformation",
         view: "form",
         width: 500,
         elementsConfig: {
-        labelWidth: 140,
+            labelWidth: 140,
             bottomPadding: 16 //TODO: change other forms
-    },
-    elements: [
-        {
-            view: "text",
-            id: "base64ImageUser",
-            name: "base64ImageUser",
-            hidden: true
         },
-        {
-            cols: [
-                {},
-                {
-                    view: "template",
-                    id: "preview",
-                    name: "preview",
-                    template: "<img style='height: 100%; width: 100%;' src='#src#'>",
-                    data: {src: "img/profilePicture.png"},
-                    height: 200,
-                    width: 200,
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-                    view: "uploader",
-                    id: "photoUploader",
-                    name: "photoUploader",
-                    value: "Odaberite sliku",
-                    link: "photo",
-                    multiple: false,
-                    autosend: false,
-                    accept: "image/*",
-                    width: 150,
-                    on: {
-                        onBeforeFileAdd: function (upload) {
-                            var file = upload.file;
-                            if(file.size > 1048576){
-                                util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+        elements: [
+            {
+                view: "text",
+                id: "base64ImageUser",
+                name: "base64ImageUser",
+                hidden: true
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "template",
+                        id: "preview",
+                        name: "preview",
+                        template: "<img style='height: 100%; width: 100%;' src='#src#'>",
+                        data: {src: "img/profilePicture.png"},
+                        height: 200,
+                        width: 200,
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "uploader",
+                        id: "photoUploader",
+                        name: "photoUploader",
+                        value: "Odaberite sliku",
+                        link: "photo",
+                        multiple: false,
+                        autosend: false,
+                        accept: "image/*",
+                        width: 150,
+                        on: {
+                            onBeforeFileAdd: function (upload) {
+                                var file = upload.file;
+                                if (file.size > 1048576) {
+                                    util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                    return false;
+                                }
+                                var reader = new FileReader();
+                                reader.onload = function (ev) {
+                                    $$("preview").setValues({src: ev.target.result});
+                                    $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
+                                }
+                                reader.readAsDataURL(file)
                                 return false;
                             }
-                            var reader = new FileReader();
-                            reader.onload = function (ev) {
-                                $$("preview").setValues({src: ev.target.result});
-                                $$("base64ImageUser").setValue(ev.target.result.split("base64,")[1]);
-                            }
-                            reader.readAsDataURL(file)
-                            return false;
                         }
-                    }
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-                    view: "text",
-                    required: true,
-                    id: "firstName",
-                    name: "firstName",
-                    label: "Ime",
-                    invalidMessage: "Niste unijeli ime.",
-                    labelWidth: 90,
-                    height: 35
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-                    view: "text",
-                    required: true,
-                    id: "lastName",
-                    name: "lastName",
-                    label: "Prezime",
-                    invalidMessage: "Niste unijeli prezime.",
-                    labelWidth: 90,
-                    height: 35
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-                    view: "checkbox",
-                    id: "receiveMail",
-                    name: "receiveMail",
-                    label: "Želim da primam obavještenja na e-mail.",
-                    labelWidth: 320,
-                    height: 35
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-                    view: "button",
-                    id: "saveProfileButton",
-                    name: "saveProfileButton",
-                    hotkey: "enter",
-                    label: "Sačuvajte",
-                    type: "iconButton",
-                    icon: "save",
-                    width: 150,
-                    align: "center",
-                    click: "firstLoginLayout.save"
-                },
-                {}
-            ]
-        }, {}
-    ]
-}
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "text",
+                        required: true,
+                        id: "firstName",
+                        name: "firstName",
+                        label: "Ime",
+                        invalidMessage: "Niste unijeli ime.",
+                        labelWidth: 90,
+                        height: 35
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "text",
+                        required: true,
+                        id: "lastName",
+                        name: "lastName",
+                        label: "Prezime",
+                        invalidMessage: "Niste unijeli prezime.",
+                        labelWidth: 90,
+                        height: 35
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "checkbox",
+                        id: "receiveMail",
+                        name: "receiveMail",
+                        label: "Želim da primam obavještenja na e-mail.",
+                        labelWidth: 320,
+                        height: 35
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "button",
+                        id: "saveProfileButton",
+                        name: "saveProfileButton",
+                        hotkey: "enter",
+                        label: "Sačuvajte",
+                        type: "iconButton",
+                        icon: "save",
+                        width: 150,
+                        align: "center",
+                        click: "firstLoginLayout.save"
+                    },
+                    {}
+                ]
+            }, {}
+        ]
+    }
 };
-var passwordTab ={
+var percentageSecurePassword = 0;
+var passwordTab = {
     header: "Lozinka",
-    id:"passwordTab",
-        body: {
-    id: "formChangePassword",
+    id: "passwordTab",
+    body: {
+        id: "formChangePassword",
         view: "form",
         width: 500,
-            elementsConfig: {
-                labelWidth: 140,
-                bottomPadding: 16  //TODO: change other forms
-            },
-    elements: [
-        {
-            cols: [
-                {},
-                {
-                view: "text",
-                id: "oldPassword",
-                type: "password",
-                name:"oldPassword",
-                label: "Trenutna lozinka:",
-                invalidMessage:"Unesite lozinku!",
-                required: true,
-                labelWidth: 200,
-                height: 35
-                },
-                 {}
-                 ]
-        },
-        {
-            cols: [
-                {},
-                {
-            view: "text",
-            label: "Nova lozinka:",
-            id: "newPassword",
-            name:"newPassword",
-            type: "password",
-            invalidMessage:"Unesite lozinku!",
-            required: true,
-            bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
-            keyPressTimeout:1000,
-            labelWidth: 200,
-            height: 35,
-            on: {
-                'onTimedKeyPress': function () {
-                    var typed = $$("newPassword").getValue();
-                    var strength=0;
-                    var re1=/[0-9]/;
-                    var re2=/[A-Z]/;
-                    var re3=/[@#$%^&+=]/;
-                    if(re1.test(typed))
-                        strength++;
-                    if (re2.test(typed))
-                        strength++;
-                    if (re3.test(typed))
-                        strength++;
-                    if(typed.length>=8)
-                        strength++;
-                    switch(strength){
-                        case 0:
-                        case 1:
-                        case 2:
-                            $$("strength").setValue("Jačina lozinke: slabo");
-                            $$("strength").show();
-                            break;
-                        case 3:
-                            $$("strength").setValue("Jačina lozinke: srednje");
-                            $$("strength").show();
-                            break;
-                        case 4:
-                            $$("strength").setValue("Jačina lozinke: jako");
-                            $$("strength").show();
-                            break;
-                    }
-                }
-            }
-                },
-                {}
-            ]
-        },
-       // {width: 50},
-        {
-        //    cols: [
-        //        {},
-        //        {
-            view: "label",
-            id:"strength",
-            name:"strength",
-            hidden:true,
-            align:"right",
-            labelWidth: 200,
-            height: 35,
-         //        },
-         //       {}
-         //    ]
-        },
-        {
-           cols: [
-                {},
-                {
-            view: "text",
-            label: "Potvrda nove lozinke:",
-            id: "newPasswordConfirmation",
-            name:"newPasswordConfirmation",
-            invalidMessage:"Unesite lozinku!",
-            type: "password",
-            required: true,
-            labelWidth: 200,
-            height: 35
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-            view: "button",
-            id: "changePasswordBtn",
-            name: "changePasswordBtn",
-            label: "Sačuvajte i pređite na aplikaciju",
-            width: 150,
-                    type: "iconButton",
-                    icon: "save",
-            click: "firstLoginLayout.savePassword",
-            align: "center",
-            hotkey: "enter"
-            },
-            {}
-            ]
-        }, {}
-    ],
-        rules: {
-        "oldPassword":function (value) {
-            if (!value)
-                return false;
-            return true;
-        },
-        "newPassword": function (value) {
-            if(value.length<8){
-                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
-                return false;}
-            if (value == $$("oldPassword").getValue()){
-                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
-                return false;
-            }
-            var re = /[0-9A-Z@#$%^&+=]/;
-            if (!re.test(value)) {
-                $$('formChangePassword').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
-                return false;
-            }
-            return true;
-        },
-        "newPasswordConfirmation":function (value) {
-            if (!value)
-                return false;
-            if(value!=$$("formChangePassword").getValues().newPassword)
-            {
-                $$('formChangePassword').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
-                return false;}
-
-            return true;
-
-        },
-    }
-}
-};
-var companyTab ={
-    header: "Kompanija",
-        body: {
-    view: "form",
-        id: "formCompanyInformation",
-        name:"formCompanyInformation",
-        width:650,
         elementsConfig: {
-        labelWidth: 190,
-            bottomPadding: 18
-    },
-    elements:[
-        {
-            cols: [
-                {},
-                {
-            view:"text",
-            id:"companyName",
-            name:"companyName",
-            label:"Naziv kompanije:",
-            required:true,
-            invalidMessage: "Niste unijeli naziv kompanije",
-            labelWidth: 200,
-            height: 35
-                        },
-                        {}
-                    ]
+            labelWidth: 140,
+            bottomPadding: 16  //TODO: change other forms
         },
-        {
-         //   cols: [
-          //      {},
-          //      {
-            view:"text",
-            label:"PIN:",
-            id:"companyPin",
-            disabled:true,
-            hidden:true,
-            labelWidth: 200,
-            height: 35
-            //    },
-            //    {}
-           // ]
-        },
-        {
-            cols: [
-                {},
-                {
-            view: "uploader",
-            id: "photoUploader",
-            required:true,
-            invalidMessage: "Niste odabrali logo.",
-            width: 560,
-            height: 50,
-            value: "Dodajte logo",
-            on: {
-                onBeforeFileAdd: function (upload) {
-                    var type = upload.type.toLowerCase();
-                    console.log(type);
-                    if (type === "jpg" || type === "png" || type === "jpeg") {
-                        var file = upload.file;
-                        if(file.size > 1048576){
-                            util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
-                            return false;
-                        }
-                        var reader = new FileReader();
-                        reader.onload = function (event) {
-                            var img = new Image();
-                            img.onload = function (ev) {
-                                if (img.width > 220 || img.height > 50) {
-                                    util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
-                                } else {
-                                    var newDocument = {
-                                        name: file['name'],
-                                        content: event.target.result.split("base64,")[1],
-                                    };
-                                    $$("companyLogoList").clearAll();
-                                    $$("companyLogoList").add(newDocument);
-
+        elements: [
+            {
+                cols: [
+                    {},
+                    {
+                        view: "text",
+                        id: "oldPassword",
+                        type: "password",
+                        name: "oldPassword",
+                        label: "Trenutna lozinka:",
+                        invalidMessage: "Unesite lozinku!",
+                        required: true,
+                        labelWidth: 200,
+                        height: 35
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        rows: [
+                            {
+                                view: "text",
+                                label: "Nova lozinka:",
+                                id: "newPassword",
+                                name: "newPassword",
+                                type: "password",
+                                invalidMessage: "Unesite lozinku!",
+                                required: true,
+                                bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
+                                keyPressTimeout: 1000,
+                                labelWidth: 200,
+                                height: 35,
+                                on: {
+                                    'onTimedKeyPress': function () {
+                                        var typed = $$("newPassword").getValue();
+                                        console.log("A" + typed);
+                                        console.log(typed == "");
+                                        if (typed == "") {
+                                            $$("securePasswordBar").hide();
+                                            $$("securePasswordBar").refresh();
+                                            $$("securePasswordLabel").setValue("");
+                                            return;
+                                        }
+                                        var strength = 0;
+                                        var re1 = /[0-9]/;
+                                        var re2 = /[A-Z]/;
+                                        var re3 = /[@#$%^&+=]/;
+                                        if (re1.test(typed))
+                                            strength++;
+                                        if (re2.test(typed))
+                                            strength++;
+                                        if (re3.test(typed))
+                                            strength++;
+                                        if (typed.length >= 8)
+                                            strength++;
+                                        switch (strength) {
+                                            case 0:
+                                            case 1:
+                                            case 2:
+                                                percentageSecurePassword = 10;
+                                                $$("securePasswordBar").show();
+                                                $$("securePasswordBar").refresh();
+                                                $$("securePasswordLabel").setValue("Jačina lozinke: slabo");
+                                                //$$("strength").setValue("Jačina lozinke: slabo");
+                                                //$$("strength").show();
+                                                break;
+                                            case 3:
+                                                percentageSecurePassword = 50;
+                                                $$("securePasswordBar").show();
+                                                $$("securePasswordBar").refresh();
+                                                $$("securePasswordLabel").setValue("Jačina lozinke: srednje");
+                                                //$$("strength").setValue("Jačina lozinke: srednje");
+                                                //$$("strength").show();
+                                                break;
+                                            case 4:
+                                                percentageSecurePassword = 100;
+                                                $$("securePasswordBar").show();
+                                                $$("securePasswordBar").refresh();
+                                                $$("securePasswordLabel").setValue("Jačina lozinke: jako");
+                                                //$$("strength").setValue("Jačina lozinke: jako");
+                                                //$$("strength").show();
+                                                break;
+                                        }
+                                    }
                                 }
-                            };
-                            img.src = event.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                        return false;
-                    } else {
-                        util.messages.showErrorMessage("Dozvoljene ekstenzije su jpg, jpeg i png!");
-
-                        return false;
-                    }
-
-                }
-            }
-                },
-                {}
-            ]
-        },
-        {
-            cols: [
-                {},
-                {
-            view: "list",
-            name: "companyLogoList",
-            rules: {
-                content: webix.rules.isNotEmpty
+                            },
+                            // {
+                            //     //    cols: [
+                            //     //        {},
+                            //     //        {
+                            //     view: "label",
+                            //     id:"strength",
+                            //     name:"strength",
+                            //     hidden:true,
+                            //     align:"right",
+                            //     labelWidth: 200,
+                            //     height: 35,
+                            //     //        },
+                            //     //       {}
+                            //     //    ]
+                            // },
+                            {
+                                cols: [
+                                    {},
+                                    {
+                                        id: "securePasswordLabel",
+                                        view: "label",
+                                        align: "right",
+                                    },
+                                    {
+                                        id: "securePasswordBar",
+                                        view: "label",
+                                        align: "right",
+                                        hidden: true,
+                                        template: function () {
+                                            var html = "<div class='progress_bar_element'>";
+                                            html += ("<div class='progress_result ' style='width:" + ((percentageSecurePassword).toFixed(2) + "%") + "'></div>");
+                                            html += "</div>";
+                                            return html;
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {}
+                ]
             },
-            scroll: false,
-            id: "companyLogoList",
-            width: 560,
-            type: {
-                height: "auto"
+            // {width: 50},
+            {
+                cols: [
+                    {},
+                    {
+                        view: "text",
+                        label: "Potvrda nove lozinke:",
+                        id: "newPasswordConfirmation",
+                        name: "newPasswordConfirmation",
+                        invalidMessage: "Unesite lozinku!",
+                        type: "password",
+                        required: true,
+                        labelWidth: 200,
+                        height: 35
+                    },
+                    {}
+                ]
             },
-            css: "relative image-upload",
-            template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
-            onClick: {
-                'delete-file': function (e, id) {
-                    this.remove(id);
+            {
+                cols: [
+                    {},
+                    {
+                        view: "button",
+                        id: "changePasswordBtn",
+                        name: "changePasswordBtn",
+                        label: "Sačuvajte i pređite na aplikaciju",
+                        width: 150,
+                        type: "iconButton",
+                        icon: "save",
+                        click: "firstLoginLayout.savePassword",
+                        align: "center",
+                        hotkey: "enter"
+                    },
+                    {}
+                ]
+            }, {}
+        ],
+        rules: {
+            "oldPassword": function (value) {
+                if (!value)
+                    return false;
+                return true;
+            },
+            "newPassword": function (value) {
+                if (value.length < 8) {
+                    $$('formChangePassword').elements.newPassword.config.invalidMessage = "Lozinka mora imati minimum 8 karaktera!";
                     return false;
                 }
-            }
+                if (value == $$("oldPassword").getValue()) {
+                    $$('formChangePassword').elements.newPassword.config.invalidMessage = "Lozinka ne smije biti jednaka staroj lozinki!";
+                    return false;
+                }
+                var re = /[0-9A-Z@#$%^&+=]/;
+                if (!re.test(value)) {
+                    $$('formChangePassword').elements.newPassword.config.invalidMessage = "Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
+                    return false;
+                }
+                return true;
+            },
+            "newPasswordConfirmation": function (value) {
+                if (!value)
+                    return false;
+                if (value != $$("formChangePassword").getValues().newPassword) {
+                    $$('formChangePassword').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
+                    return false;
+                }
+
+                return true;
+
+            },
+        }
+    }
+};
+var companyTab = {
+    header: "Kompanija",
+    body: {
+        view: "form",
+        id: "formCompanyInformation",
+        name: "formCompanyInformation",
+        width: 650,
+        elementsConfig: {
+            labelWidth: 190,
+            bottomPadding: 18
         },
-        {}
-    ]
-        },
-        {
-            cols: [
-                {},
-                {
-            view: "button",
-            id: "saveCompanyBtn",
-            name: "saveCompanyBtn",
-            label: "Sačuvajte",
-            width: 150,
-            type: "iconButton",
-            icon: "save",
-            click: "firstLoginLayout.saveCompany",
-            align: "center",
-            hotkey: "enter"
-                },
-                {}
-            ]
-        },{}
-    ]
-    // list config
-}
+        elements: [
+            {
+                cols: [
+                    {},
+                    {
+                        view: "text",
+                        id: "companyName",
+                        name: "companyName",
+                        label: "Naziv kompanije:",
+                        required: true,
+                        invalidMessage: "Niste unijeli naziv kompanije",
+                        labelWidth: 200,
+                        height: 35
+                    },
+                    {}
+                ]
+            },
+            {
+                //   cols: [
+                //      {},
+                //      {
+                view: "text",
+                label: "PIN:",
+                id: "companyPin",
+                disabled: true,
+                hidden: true,
+                labelWidth: 200,
+                height: 35
+                //    },
+                //    {}
+                // ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "uploader",
+                        id: "photoUploader",
+                        required: true,
+                        invalidMessage: "Niste odabrali logo.",
+                        width: 560,
+                        height: 50,
+                        value: "Dodajte logo",
+                        on: {
+                            onBeforeFileAdd: function (upload) {
+                                var type = upload.type.toLowerCase();
+                                console.log(type);
+                                if (type === "jpg" || type === "png" || type === "jpeg") {
+                                    var file = upload.file;
+                                    if (file.size > 1048576) {
+                                        util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
+                                        return false;
+                                    }
+                                    var reader = new FileReader();
+                                    reader.onload = function (event) {
+                                        var img = new Image();
+                                        img.onload = function (ev) {
+                                            if (img.width > 220 || img.height > 50) {
+                                                util.messages.showErrorMessage("Dimenzije logo-a moraju biti 220x50 px!");
+                                            } else {
+                                                var newDocument = {
+                                                    name: file['name'],
+                                                    content: event.target.result.split("base64,")[1],
+                                                };
+                                                $$("companyLogoList").clearAll();
+                                                $$("companyLogoList").add(newDocument);
+
+                                            }
+                                        };
+                                        img.src = event.target.result;
+                                    };
+                                    reader.readAsDataURL(file);
+                                    return false;
+                                } else {
+                                    util.messages.showErrorMessage("Dozvoljene ekstenzije su jpg, jpeg i png!");
+
+                                    return false;
+                                }
+
+                            }
+                        }
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "list",
+                        name: "companyLogoList",
+                        rules: {
+                            content: webix.rules.isNotEmpty
+                        },
+                        scroll: false,
+                        id: "companyLogoList",
+                        width: 560,
+                        type: {
+                            height: "auto"
+                        },
+                        css: "relative image-upload",
+                        template: "<img src='data:image/jpg;base64,#content#'/> <span class='delete-file'><span class='webix fa fa-close'/></span>",
+                        onClick: {
+                            'delete-file': function (e, id) {
+                                this.remove(id);
+                                return false;
+                            }
+                        }
+                    },
+                    {}
+                ]
+            },
+            {
+                cols: [
+                    {},
+                    {
+                        view: "button",
+                        id: "saveCompanyBtn",
+                        name: "saveCompanyBtn",
+                        label: "Sačuvajte",
+                        width: 150,
+                        type: "iconButton",
+                        icon: "save",
+                        click: "firstLoginLayout.saveCompany",
+                        align: "center",
+                        hotkey: "enter"
+                    },
+                    {}
+                ]
+            }, {}
+        ]
+        // list config
+    }
 };
 
-var days =[
-    {"id":8,"value":"Ponedjeljak"},
-    {"id":9,"value": "Utorak"},
-    {"id":10,"value":"Srijeda"},
-    {"id":11,"value":"Četvrtak"},
-    {"id":12,"value":"Petak"},
-    {"id":13,"value":"Subota"},
-    {"id":14,"value":"Nedjelja"}];
+var days = [
+    {"id": 8, "value": "Ponedjeljak"},
+    {"id": 9, "value": "Utorak"},
+    {"id": 10, "value": "Srijeda"},
+    {"id": 11, "value": "Četvrtak"},
+    {"id": 12, "value": "Petak"},
+    {"id": 13, "value": "Subota"},
+    {"id": 14, "value": "Nedjelja"}];
 var updatedDays = [];
 var updatedCollectiveVacations = [];
 var startedSelectedValues = [];
 
 var constraintsTab = {
     header: "Ogranicenja",
+    body: {
+        view: "scrollview",
+        id: "scrollConstraintsInformation",
+        scroll: "y", // vertical scrolling
+        //height: 600,//"auto",
+        //width: 150,
         body: {
-                view:"scrollview",
-                id:"scrollConstraintsInformation",
-                scroll:"y", // vertical scrolling
-                //height: 600,//"auto",
-                //width: 150,
-                body: {
 
-             ///////////////////////////////////
-               cols:[
-                        {gravity:0.1, height:800},
-                        {
+            ///////////////////////////////////
+            cols: [
+                {gravity: 0.1, height: 800},
+                {
                     id: "formConstraintsInformation",
                     view: "form",
                     width: 800,
@@ -827,7 +875,7 @@ var constraintsTab = {
                     elements: [{
                         rows: [{
                             // {///
-                           // width: 300,
+                            // width: 300,
                             rows: [
                                 {
                                     view: "form",
@@ -841,7 +889,7 @@ var constraintsTab = {
                                     elements: [
                                         {
                                             view: "text",
-                                            name:"vacationDays",
+                                            name: "vacationDays",
                                             label: "Broj dana godišnjeg:",
                                             id: "vacationDays",
                                             required: true,
@@ -849,7 +897,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
-                                            name:"maxVacDaysPeriod",
+                                            name: "maxVacDaysPeriod",
                                             label: "Maksimalni period godišnjeg:",
                                             id: "maxVacDaysPeriod",
                                             required: true,
@@ -857,7 +905,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
-                                            name:"maxOldVacationPeriod",
+                                            name: "maxOldVacationPeriod",
                                             label: "Period starog godišnjeg:",
                                             id: "maxOldVacationPeriod",
                                             required: true,
@@ -865,7 +913,7 @@ var constraintsTab = {
                                         },
                                         {
                                             view: "text",
-                                            name:"sickDays",
+                                            name: "sickDays",
                                             label: "Period opravdanja bolovanja:",
                                             id: "sickDays",
                                             required: true,
@@ -1100,25 +1148,25 @@ var constraintsTab = {
                             }
                         ]
                     }],
-                            rules: {
-                                "maxOldVacationPeriod": function (value) {
-                                    if (!value)
-                                        return false;
-                                    return true;
-                                }
-                            }
+                    rules: {
+                        "maxOldVacationPeriod": function (value) {
+                            if (!value)
+                                return false;
+                            return true;
+                        }
+                    }
 
                 },
-{gravity:0.1, height:200}]
+                {gravity: 0.1, height: 200}]
 /////////////////////////////////////////
-                }
-            }
-            //,
+        }
+    }
+    //,
 };
 
 var sectorTab = {
-    header:"Sektor",
-    body:{
+    header: "Sektor",
+    body: {
         view: "form",
         id: "sectorInfoForm",
         width: 500,
@@ -1180,33 +1228,33 @@ var scrollTab = {
         view: "scrollview",
         id: "scrolltest",
         scroll: "y",
-        body:{
-            rows:[
+        body: {
+            rows: [
                 {
-                    view:"template",
-                    height:200,
-                    template:"<p>test</p><p>Test</p>"
+                    view: "template",
+                    height: 200,
+                    template: "<p>test</p><p>Test</p>"
                 },
                 {
-                    height:200,
+                    height: 200,
                 },
                 {
-                    view:"template",
-                    height:200,
-                    template:"<p>test</p><p>Test</p>"
+                    view: "template",
+                    height: 200,
+                    template: "<p>test</p><p>Test</p>"
                 },
-                {height:200,},
+                {height: 200,},
                 {
-                    view:"template",
-                    height:200,
-                    template:"<p>test</p><p>Test</p>"
+                    view: "template",
+                    height: 200,
+                    template: "<p>test</p><p>Test</p>"
                 }
             ]
         }
     }
 }
 firstLoginTabs.push(profileTab, passwordTab);
-var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za admina
+var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo za admina
     id: "firstLoginPanel",
     width: "auto",
     height: "auto",
@@ -1234,37 +1282,37 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     }
                 ]
             }]
-        },{height:20},
+        }, {height: 20},
         {
-            id:"firstLoginWizard",
+            id: "firstLoginWizard",
 
-            margin:5,
+            margin: 5,
             //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
-            rows:[
-                { type:"header", template:"Unesite Vaše podatke" }, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
+            rows: [
+                {type: "header", template: "Unesite Vaše podatke"}, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
                 {
-                view: "template",
+                    view: "template",
                     width: 400,
-                    height:70,
-                   // css: "progressNodes",
-                template: '<br><section>\n' +
-                    '\n' +
-                    '  <ol id="progressBar" class="progress-bar">\n' +
-                    '  </ol>' +
-                    '</section>'
-            },
+                    height: 70,
+                    // css: "progressNodes",
+                    template: '<br><section>\n' +
+                        '\n' +
+                        '  <ol id="progressBar" class="progress-bar">\n' +
+                        '  </ol>' +
+                        '</section>'
+                },
                 {
-                    id:"firstLoginTabs",
+                    id: "firstLoginTabs",
                     view: "tabview",
-                    tabbar:{
-                        on:{
-                            onChange: function(){
-                               // if(this.getValue()=="formProfileInformation") {
+                    tabbar: {
+                        on: {
+                            onChange: function () {
+                                // if(this.getValue()=="formProfileInformation") {
 
-                             //   }else if
+                                //   }else if
                                 //util.messages.showMessage("you have clicked on an item with id="+this.getValue());
                             },
-                            onBeforeTabClick:function(id){
+                            onBeforeTabClick: function (id) {
                                 // if(id=="formChangePassword"   /*&& tabCompleted[0])  ||*/    )
                                 //    return false;
                                 // else return true;
@@ -1273,11 +1321,11 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                 var oldIndex = tabbar.optionIndex(this.getValue());
                                 var newIndex = tabbar.optionIndex(id);
 
-                                if(newIndex > oldIndex && !tabCompleted[oldIndex]){
+                                if (newIndex > oldIndex && !tabCompleted[oldIndex]) {
                                     util.messages.showErrorMessage("Popunite formu prije nastavljanja");
                                     return false;
                                 }
-                                if(oldIndex != newIndex) {
+                                if (oldIndex != newIndex) {
                                     firstLoginLayout.progressBar.setIndex(newIndex, "is-active");
                                     firstLoginLayout.progressBar.unsetIndex(oldIndex, "is-active");
                                 }
@@ -1285,7 +1333,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                             }
                         }
                     },
-                    cells:firstLoginTabs,
+                    cells: firstLoginTabs,
 
                 },
 
@@ -1320,7 +1368,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     //util.dismissDialog("profileDialog");
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = profileTab.body.id;
-                    firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                    firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                     $$("firstLoginTabs").getTabbar().setValue(passwordTab.body.id);
                 }
             })
@@ -1345,12 +1393,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                         firstLoginLayout.progressBar.setIndex(1, "is-complete");
                         $$("changePasswordBtn").enable();
                         let ownTabId = passwordTab.body.id;
-                        firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                        firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                         // Prebacivanje na sljedeci panel
                         var tabbar = $$("firstLoginTabs").getTabbar();
                         var tlength = tabbar.config.options.length;
                         var pindex = firstLoginLayout.progressBar.getTabIndex("formChangePassword");
-                        if(tlength==pindex+1){
+                        if (tlength == pindex + 1) {
                             connection.sendAjax("POST", "hub/user/firstLogin",
                                 function (text, data, xhr) {
                                     userData.firstLogin = 0;
@@ -1358,8 +1406,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                     util.messages.showErrorMessage(text);
                                 }, 0);
                             showApp();
-                        }
-                        else {
+                        } else {
                             $$("firstLoginTabs").getTabbar().setValue(companyTab.body.id);
                         }
                     } else {
@@ -1372,7 +1419,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 }, passwordInformation);
         }
     },
-    saveCompany: function() {
+    saveCompany: function () {
         var logo = $$("companyLogoList");
         var companyId = userData.companyId;
         var companyName = $$("companyName").getValue();
@@ -1390,7 +1437,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                 function (text, data, xhr) {
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = companyTab.body.id;
-                    firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                    firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                     $$("firstLoginTabs").getTabbar().setValue(constraintsTab.body.id);
                 }, function (text, data, xhr) {
                     //alert(text);
@@ -1406,12 +1453,12 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             function (text, data, xhr) {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
                 let ownTabId = sectorTab.body.id;
-                firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, sector);
     },
-    saveConstrains: function(){  //poziv showApp
+    saveConstrains: function () {  //poziv showApp
         var logo = $$("companyLogoList");
         var companyId = userData.companyId;
         var companyName = $$("companyName").getValue();
@@ -1423,7 +1470,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         //webix.message(maxOldVacationPeriod.toString());
 
         var validation = $$("companyInfoForm").validate();
-        if(validation){
+        if (validation) {
             // var  company= {
             //     id: companyId,
             //     name: companyName,
@@ -1439,19 +1486,23 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             //         util.messages.showErrorMessage(text);
             //     }, company);
 
-            var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function(s){return s;}).map(function(s){return parseInt(s)})
+            var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function (s) {
+                return s;
+            }).map(function (s) {
+                return parseInt(s)
+            })
             //svi dani u sedmici koji su selektovani u multicombo-u
 
             var daysId = [];
 
 
-            for(var i = 0; i < selectedDays.length; i++){
-                if(!startedSelectedValues.includes(selectedDays[i]))
+            for (var i = 0; i < selectedDays.length; i++) {
+                if (!startedSelectedValues.includes(selectedDays[i]))
                     daysId.push(selectedDays[i]); //svi dani koji su sada selektovani
             }
 
-            for(var i = 0; i < startedSelectedValues.length; i++){
-                if(!selectedDays.includes(startedSelectedValues[i]))
+            for (var i = 0; i < startedSelectedValues.length; i++) {
+                if (!selectedDays.includes(startedSelectedValues[i]))
                     daysId.push(startedSelectedValues[i]); //svi dani koji su bili selektovani, a sada nisu
             }
 
@@ -1459,7 +1510,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             var dayId;
             var nonWorkingDayInWeek;
 
-            for(var i = 0; i < daysId.length; i++) {
+            for (var i = 0; i < daysId.length; i++) {
                 dayId = daysId[i];
                 nonWorkingDayInWeek = {
                     dayInWeekId: dayId,
@@ -1480,7 +1531,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
 
             var nonWorkingDaysInYear = []; //saljem samo dane koji nisu bili cekirani ili dane koji su otcekirani pri pokretanju aplikacije
 
-            for(var i = 0; i < updatedDays.length; i++) {
+            for (var i = 0; i < updatedDays.length; i++) {
                 var nonWorkingDayInYear = {
                     day: updatedDays[i].day,
                     companyId: companyId,
@@ -1497,11 +1548,11 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             //     }, nonWorkingDaysInYear);
 
             var constraints = {
-                companyId:companyId,
-                maxVacationDays:numberOfVacationDays,
-                vacationPeriodLength:maxVacDaysPeriod,
-                sickLeaveJustificationPeriodLength:numberOfSickDays,
-                maxOldVacationPeriodLength:maxOldVacationPeriod,
+                companyId: companyId,
+                maxVacationDays: numberOfVacationDays,
+                vacationPeriodLength: maxVacDaysPeriod,
+                sickLeaveJustificationPeriodLength: numberOfSickDays,
+                maxOldVacationPeriodLength: maxOldVacationPeriod,
             }
 
             // connection.sendAjax("POST", "/hub/constraints",
@@ -1532,7 +1583,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
              var dateFrom = webix.Date.dateToStr("%Y-%m-%d")(dateFromValue);
              var dateTo = webix.Date.dateToStr("%Y-%m-%d")(dateToValue);*/
 
-            for (var i = 0; i < updatedCollectiveVacations.length; i++){
+            for (var i = 0; i < updatedCollectiveVacations.length; i++) {
 
                 var collectiveVacation = {
                     dateFrom: updatedCollectiveVacations[i].dateFrom,
@@ -1548,31 +1599,28 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             //         util.messages.showErrorMessage(text);
             //         // alert(text);
             //     }, collectiveVacations);
-            let requests =[
-                {method:"POST", url:"/hub/colectiveVacation/addColectiveVacations",item:collectiveVacations},
-                {method:"POST", url:"/hub/constraints",item:constraints},
-                {method:"POST", url:"/hub/nonWorkingDay/addNonWorkingDays/",item:nonWorkingDaysInYear},
-                {method:"POST", url:"/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",item:nonWorkingDaysInWeek},
+            let requests = [
+                {method: "POST", url: "/hub/colectiveVacation/addColectiveVacations", item: collectiveVacations},
+                {method: "POST", url: "/hub/constraints", item: constraints},
+                {method: "POST", url: "/hub/nonWorkingDay/addNonWorkingDays/", item: nonWorkingDaysInYear},
+                {method: "POST", url: "/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/", item: nonWorkingDaysInWeek},
             ];
             let promises = [];
-            for(let req of requests)
-            {
+            for (let req of requests) {
                 let reqPromise = webix.ajax().headers({
                     "Content-type": "application/json"
-                }).post(req.url,JSON.stringify(req.item));
+                }).post(req.url, JSON.stringify(req.item));
                 promises.push(reqPromise);
             }
-            webix.promise.all(promises).then(function(results)
-            {
+            webix.promise.all(promises).then(function (results) {
                 let allOk = true;
-                for(let res of results)
-                {
-                    if(!res.text) {
+                for (let res of results) {
+                    if (!res.text) {
                         allOk = false;
                         util.messages.showErrorMessage(JSON.parse(res.response).error);
                     }
                 }
-                if(allOk) {
+                if (allOk) {
                     connection.sendAjax("POST", "hub/user/firstLogin",
                         function (text, data, xhr) {
                             userData.firstLogin = 0;
@@ -1583,60 +1631,58 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     showApp();
                 }
             });
-           //util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
+            //util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
             // alert("Uspješno izvršena izmjena podataka o kompaniji");
             //util.dismissDialog('companyInfoDialog');
             //showApp();
         }
     },
-    progressBar:{
+    progressBar: {
         active: "is-active",
         complete: "is-complete",
-        setIndex: function(index, style){
-            var progNode = document.getElementById("progNode"+(index+1).toString());
-            if(progNode==null) {
+        setIndex: function (index, style) {
+            var progNode = document.getElementById("progNode" + (index + 1).toString());
+            if (progNode == null) {
                 console.log(`progNode${index} doesn't exist`);
                 return;
             }
-            if(!progNode.className.includes(style.trim()))
-                progNode.className+=" "+style;
+            if (!progNode.className.includes(style.trim()))
+                progNode.className += " " + style;
         },
-        unsetIndex: function(index,style){
-            var progNode = document.getElementById("progNode"+(index+1).toString());
-            if(progNode==null) {
+        unsetIndex: function (index, style) {
+            var progNode = document.getElementById("progNode" + (index + 1).toString());
+            if (progNode == null) {
                 console.log(`progNode${index} doesn't exist`);
                 return;
             }
-            progNode.className = progNode.className.replace(style.trim(),'').trim();
+            progNode.className = progNode.className.replace(style.trim(), '').trim();
         },
-        init: function(){
+        init: function () {
             var progress = document.getElementById("progressBar");
             var tabbar = $$("firstLoginTabs").getTabbar();
-            for(var i = 0; i < tabbar.config.options.length; i++)
-            {
+            for (var i = 0; i < tabbar.config.options.length; i++) {
                 var item = document.createElement("li");
-                item.id = "progNode" + (i+1).toString();
+                item.id = "progNode" + (i + 1).toString();
                 progress.appendChild(item);
-                if(tabCompleted[i]) {
+                if (tabCompleted[i]) {
                     this.setIndex(i, this.complete);
                 }
             }
-            this.setIndex(0,this.active);
+            this.setIndex(0, this.active);
         },
-        updateNode: function(ownTabId,style){
+        updateNode: function (ownTabId, style) {
             var tabIndex = this.getTabIndex(ownTabId);
-            if(style.includes(this.complete))
+            if (style.includes(this.complete))
                 tabCompleted[tabIndex] = true;
-            this.setIndex(tabIndex,style);
+            this.setIndex(tabIndex, style);
         },
-        getTabIndex: function(id){
+        getTabIndex: function (id) {
             var tabbar = $$("firstLoginTabs").getTabbar();
             var tabIndex = tabbar.optionIndex(id);
             return tabIndex;
         }
     }
 }
-
 
 
 var mainLayout = {
@@ -1849,8 +1895,7 @@ var mainLayout = {
                         util.messages.showErrorMessage(text);
                         $$("saveUserFirstAndLastName").enable();
                     }, newUser);
-            }
-            else{
+            } else {
                 $$("saveUserFirstAndLastName").enable();
             }
         }
@@ -1871,11 +1916,10 @@ var showFirstLogin = function () {
 
     console.log("Usao u showFirstLogin");
     //Ako je admin i ako je ulogovan 1. put na sistem:
-    if(userData != null && userData.firstLogin!=0){
-        switch(userData.userGroupKey)
-        {
+    if (userData != null && userData.firstLogin != 0) {
+        switch (userData.userGroupKey) {
             case "admin":
-                firstLoginTabs.push(companyTab,constraintsTab);
+                firstLoginTabs.push(companyTab, constraintsTab);
                 break;
             case "menadzer":
                 firstLoginTabs.unshift(sectorTab);
@@ -1884,18 +1928,18 @@ var showFirstLogin = function () {
         //todo: switch
         console.log("Usao u if showFirstLogin");
 
-         var main = webix.copy(firstLoginLayout);
-         firstLogin = webix.ui(main, panel);
-         panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
+        var main = webix.copy(firstLoginLayout);
+        firstLogin = webix.ui(main, panel);
+        panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
 
-        if(userData.userGroupKey=="admin"){
+        if (userData.userGroupKey == "admin") {
             $$("changePasswordBtn").data.label = "Sačuvajte";
             $$("changePasswordBtn").refresh();
         }
-           // $$("changePasswordBtn").setValue("Sacuvajte");
+        // $$("changePasswordBtn").setValue("Sacuvajte");
 
         var companyId = userData.companyId;
-        if(firstLoginTabs.includes(companyTab)) {
+        if (firstLoginTabs.includes(companyTab)) {
             connection.sendAjax("GET",
                 "hub/company/" + companyId, function (text, data, xhr) {
                     var company = data.json();
@@ -1913,50 +1957,53 @@ var showFirstLogin = function () {
         firstLoginLayout.progressBar.init();
 //adding ProgressBar functionality to layout
         //webix.extend($$("firstLoginWizard"), webix.ProgressBar);
-        if($$("nonWorkingDaysDTP"))
-            $$("nonWorkingDaysDTP").attachEvent("onChange", function(newValue) {
+        if ($$("nonWorkingDaysDTP"))
+            $$("nonWorkingDaysDTP").attachEvent("onChange", function (newValue) {
 
-            var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
-            var dateInDTFormat =  webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
-            var isDaySelected = 0;
-            $$("nonWorkingDaysDT").eachRow(function(row){
-                var record = $$("nonWorkingDaysDT").getItem(row);
-                if( dateInDTFormat == record.day) //provjeravamo da li se dan vec nalazi u tabeli
-                    isDaySelected = 1;
+                var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
+                var dateInDTFormat = webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+                var isDaySelected = 0;
+                $$("nonWorkingDaysDT").eachRow(function (row) {
+                    var record = $$("nonWorkingDaysDT").getItem(row);
+                    if (dateInDTFormat == record.day) //provjeravamo da li se dan vec nalazi u tabeli
+                        isDaySelected = 1;
+                });
+
+                if (isDaySelected == 1)
+                //alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+                    util.messages.showMessage("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
+                else {
+                    var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
+                    var dataTableValue;
+                    var updatedValue;
+
+                    if ("" != date) {
+                        editBox.callback = function (result) {
+                            if (result == 1) {
+                                dataTableValue = {
+                                    day: dateInDTFormat
+                                };
+                                $$("nonWorkingDaysDT").add(dataTableValue);
+
+                                updatedValue = {
+                                    day: date
+                                }
+
+                                if (updatedDays.includes(dateInDTFormat))
+                                    updatedDays = updatedDays.filter(function (element) {
+                                        return element.day !== dateInDTFormat;
+                                    });
+                                else {
+                                    updatedDays.push(updatedValue);
+                                }
+                            }
+                        };
+                        webix.confirm(editBox);
+                    }
+                }
+                $$("nonWorkingDaysDTP").setValue("");
             });
-
-            if(isDaySelected == 1)
-            //alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
-                util.messages.showMessage("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
-            else{
-                var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
-                var dataTableValue;
-                var updatedValue;
-
-                if("" != date){
-                    editBox.callback = function (result) {
-                        if (result == 1) {
-                            dataTableValue = {
-                                day: dateInDTFormat
-                            };
-                            $$("nonWorkingDaysDT").add(dataTableValue);
-
-                            updatedValue = {
-                                day: date
-                            }
-
-                            if(updatedDays.includes(dateInDTFormat))
-                                updatedDays = updatedDays.filter(function(element){return element.day !== dateInDTFormat;});
-                            else {
-                                updatedDays.push(updatedValue);
-                            }
-                        }
-                    };
-                    webix.confirm(editBox);
-                }}
-            $$("nonWorkingDaysDTP").setValue("");
-        });
-        if(firstLoginTabs.includes(sectorTab)) {
+        if (firstLoginTabs.includes(sectorTab)) {
             connection.sendAjax("GET",
                 "hub/sector/" + userData.companyId + "/" + userData.id,
                 function (text, data, xhr) {
@@ -1971,8 +2018,7 @@ var showFirstLogin = function () {
         $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
 
 
-
-    }else{
+    } else {
         showApp();
     }
 };
@@ -1981,19 +2027,19 @@ var mainApp;
 
 var showApp = function () {
 
-var companyInfoItems = [
-    {id: "0", value: "O kompaniji", icon: "info-circle"},
-    {id:"sep1", $template: "Separator"}];
+    var companyInfoItems = [
+        {id: "0", value: "O kompaniji", icon: "info-circle"},
+        {id: "sep1", $template: "Separator"}];
 
-var subMenuItems = [
-    {id: "1", value: "O programu", icon: "info-circle"},
-    {id:"sep2", $template: "Separator"},
-    {id: "2", value: "Promjena lozinke", icon: "lock"},
-    {id:"sep3", $template: "Separator"},
-    {id: "3", value: "Profil", icon: "user"},
-    {id:"sep4", $template: "Separator"},
-    {id: "4", value: "Odjava", icon: "sign-out"}
-]
+    var subMenuItems = [
+        {id: "1", value: "O programu", icon: "info-circle"},
+        {id: "sep2", $template: "Separator"},
+        {id: "2", value: "Promjena lozinke", icon: "lock"},
+        {id: "sep3", $template: "Separator"},
+        {id: "3", value: "Profil", icon: "user"},
+        {id: "sep4", $template: "Separator"},
+        {id: "4", value: "Odjava", icon: "sign-out"}
+    ]
 
     if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
     {
@@ -2033,18 +2079,18 @@ var subMenuItems = [
             case "admin":
                 localMenuData = webix.copy(menuAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
-/*<<<<<<< HEAD
-                if (userData.firstLogin === 1) {
-                    showAddFirstAndLastNameDialog();
-                } else if(userData.firstLogin === 2) {
-                    showChangePasswordDialog();
-                } else if(userData.firstLogin === 3) {
-                    // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
-                }
-=======*/
-               /* if (userData.firstName == null || userData.lastName == null) {
-                    showAddFirstAndLastNameDialog();
-                }*/
+                /*<<<<<<< HEAD
+                                if (userData.firstLogin === 1) {
+                                    showAddFirstAndLastNameDialog();
+                                } else if(userData.firstLogin === 2) {
+                                    showChangePasswordDialog();
+                                } else if(userData.firstLogin === 3) {
+                                    // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
+                                }
+                =======*/
+                /* if (userData.firstName == null || userData.lastName == null) {
+                     showAddFirstAndLastNameDialog();
+                 }*/
 //>>>>>>> Wizard for first admin's login
                 break;
             case "direktor":
@@ -2159,7 +2205,7 @@ var subMenuItems = [
     }
 //templateView.selectPanel();
 
-    if(userData.userGroupKey!="superadmin"){
+    if (userData.userGroupKey != "superadmin") {
         getNotifications();
         window.setInterval(getNotifications, 15000);
     }
@@ -2468,8 +2514,7 @@ var login = function () {
                         if (objectToSend.companyPin.length == 0) {
                             companyData = null;
                             showApp();
-                        }
-                        else {
+                        } else {
                             util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
                         }
                     } else {
@@ -2478,9 +2523,9 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if(userData.firstLogin!=0 /*userData.firstLogin === 1*/) {
+                                    if (userData.firstLogin != 0 /*userData.firstLogin === 1*/) {
                                         showFirstLogin(); //uspjesan login, prikaz layout-a za to...
-                                    }else {
+                                    } else {
                                         showApp();
                                     }
                                 } else {
@@ -2601,9 +2646,9 @@ showNotifications = function () {
                     borderless: true,
                     template: function (obj) {
                         var format = webix.Date.dateToStr("%d.%m.%Y. %H:%i");
-                        var date=""+obj.created;
+                        var date = "" + obj.created;
                         //var pom=""+format(new Date(obj.created));
-                        var pom=""+date.slice(8,10)+"."+date.slice(6,7)+"."+date.slice(0,4)+". "+date.slice(11,19);
+                        var pom = "" + date.slice(8, 10) + "." + date.slice(6, 7) + "." + date.slice(0, 4) + ". " + date.slice(11, 19);
 
                         if (obj.seen) {
                             return "<span style='color: lightgrey' class='m_title' >" + (obj.title) + "</span>" +
@@ -2612,7 +2657,7 @@ showNotifications = function () {
                         }
                         return "<span style='color:darkslategray;font-weight:bold' class='m_title'>" + (obj.title) + "</span>" +
                             "<span style='color:darkslategray;font-weight:bold' class='message'>" + (obj.text) + "</span>" +
-                            "<span style='color:darkslategray;font-weight:bold' class='message'>" + (pom) + "</span>" ;
+                            "<span style='color:darkslategray;font-weight:bold' class='message'>" + (pom) + "</span>";
                     },
                     css: "notifications",
                     width: 300,
@@ -2623,34 +2668,31 @@ showNotifications = function () {
                     on: {
                         "onItemClick": function (id, e, node) {
                             //if (e.target.type != "checkbox") {
-                                var item = this.getItem(id);
-                                if ("Bolovanje" == item.title) {
-                                    if (userData.userGroupKey == "zaposleni") {
-                                        calendarView.selectPanel();
-                                        $$("mainMenu").select("calendar");
-                                    }
-                                    else if (userData.userGroupKey == "sekretar") {
-                                        $$("mainMenu").select("secretary_sick_request");
-                                        sickRequestsView.selectPanel();
-                                    }
+                            var item = this.getItem(id);
+                            if ("Bolovanje" == item.title) {
+                                if (userData.userGroupKey == "zaposleni") {
+                                    calendarView.selectPanel();
+                                    $$("mainMenu").select("calendar");
+                                } else if (userData.userGroupKey == "sekretar") {
+                                    $$("mainMenu").select("secretary_sick_request");
+                                    sickRequestsView.selectPanel();
                                 }
-                                else if("Kolektivni godišnji odmor" != item.title) {
-                                    if (userData.userGroupKey == "zaposleni") {
-                                        $$("mainMenu").select("absence_history");
-                                        absenceHistoryView.selectPanel();
-                                    }
-                                    else {
-                                        $$("mainMenu").select("leave_requests");
-                                        leaveRequestsView.selectPanel();
-                                    }
+                            } else if ("Kolektivni godišnji odmor" != item.title) {
+                                if (userData.userGroupKey == "zaposleni") {
+                                    $$("mainMenu").select("absence_history");
+                                    absenceHistoryView.selectPanel();
+                                } else {
+                                    $$("mainMenu").select("leave_requests");
+                                    leaveRequestsView.selectPanel();
                                 }
+                            }
 
                             //}
 
 
-                            if(item.seen==0){
+                            if (item.seen == 0) {
                                 numberOfUnreadNotifications--;
-                                item.seen=1;
+                                item.seen = 1;
                                 var updatedNotifications = [];
                                 var updatedNotification = notifications.filter(
                                     function (element) {
@@ -2674,7 +2716,7 @@ showNotifications = function () {
     });
     var list = $$("notificationList");
     list.parse(notifications);
-   // window.setTimeout(updateNotifications, 15000);
+    // window.setTimeout(updateNotifications, 15000);
 };
 updateNotifications = function () {
 
@@ -2700,19 +2742,38 @@ updateNotifications = function () {
         $$("notificationBtn").refresh();
     }*/
 };
-    getNotifications = function () {
-        console.log("USLO U GET");
-        notifications=[];
-        webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
-            success: function (text, data, xhr) {
-                numberOfUnreadNotifications = 0;
-                notifications = [];
-                var userNotifications = data.json();
-                var notification;
-                if(userNotifications != null){
-                    for (var i = 0; i < userNotifications.length; i++) {
-                        if (userNotifications[i].seen == 0){
-                            numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
+getNotifications = function () {
+    console.log("USLO U GET");
+    notifications = [];
+    webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
+        success: function (text, data, xhr) {
+            numberOfUnreadNotifications = 0;
+            notifications = [];
+            var userNotifications = data.json();
+            var notification;
+            if (userNotifications != null) {
+                for (var i = 0; i < userNotifications.length; i++) {
+                    if (userNotifications[i].seen == 0) {
+                        numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
+                        notification = {
+                            id: userNotifications[i].id,
+                            title: userNotifications[i].title,
+                            text: userNotifications[i].text,
+                            active: userNotifications[i].active,
+                            seen: userNotifications[i].seen,
+                            receiverUserId: userNotifications[i].receiverUserId,
+                            companyId: userNotifications[i].companyId,
+                            leaveType: userNotifications[i].leaveType,
+                            created: userNotifications[i].created,
+                        };
+                        notifications.push(notification);
+                    }
+                }
+                if (notifications.length < 10) {
+                    var leng = 10 - notifications.length;
+                    var j = 0;
+                    for (var i = 0; i < leng; i++) {
+                        if (userNotifications[j].seen == 1) {
                             notification = {
                                 id: userNotifications[i].id,
                                 title: userNotifications[i].title,
@@ -2725,45 +2786,26 @@ updateNotifications = function () {
                                 created: userNotifications[i].created,
                             };
                             notifications.push(notification);
+                        } else {
+                            i--;
                         }
-                    }
-                    if(notifications.length<10){
-                        var leng=10-notifications.length;
-                        var j=0;
-                        for (var i = 0; i < leng; i++){
-                            if (userNotifications[j].seen == 1) {
-                                notification = {
-                                    id: userNotifications[i].id,
-                                    title: userNotifications[i].title,
-                                    text: userNotifications[i].text,
-                                    active: userNotifications[i].active,
-                                    seen: userNotifications[i].seen,
-                                    receiverUserId: userNotifications[i].receiverUserId,
-                                    companyId: userNotifications[i].companyId,
-                                    leaveType: userNotifications[i].leaveType,
-                                    created: userNotifications[i].created,
-                                };
-                                notifications.push(notification);
-                            }else{
-                                i--;
-                            }
-                            if(j< userNotifications.length - 1){
-                                j++;
-                            }else{
-                                break;
-                            }
+                        if (j < userNotifications.length - 1) {
+                            j++;
+                        } else {
+                            break;
                         }
                     }
                 }
-                $$("notificationBtn").config.badge = numberOfUnreadNotifications;
-                $$("notificationBtn").refresh();
-
-            },
-            error: function (text, data, xhr) {
-                alert(text)
             }
-        });
-    };
+            $$("notificationBtn").config.badge = numberOfUnreadNotifications;
+            $$("notificationBtn").refresh();
+
+        },
+        error: function (text, data, xhr) {
+            alert(text)
+        }
+    });
+};
 
 //main call
 window.onload = function () {
