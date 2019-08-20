@@ -143,7 +143,8 @@ public class UserController extends GenericController<User, Integer> {
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u -> sectorManager == u.getUserGroupId() || worker == u.getUserGroupId()).collect(Collectors.toList());
         } else if(sectorManager== userBean.getUserUserGroupKey().getUserGroupId()) {
-            users = userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte)1));
+            users = cloner.deepClone(userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), ((byte)1)))
+            ;
             for(User u:users){ u.setPassword(""); u.setSalt(""); }
             return users.stream().filter(u-> worker == u.getUserGroupId()).collect(Collectors.toList());
         }
@@ -156,6 +157,7 @@ public class UserController extends GenericController<User, Integer> {
     User findById(@PathVariable("id") Integer id) throws BadRequestException {
         User user = userRepository.findById(id).orElse(null);
         if (user != null && Objects.equals(user.getCompanyId(), userBean.getUserUserGroupKey().getCompanyId())) {
+            user=cloner.deepClone(user);
             user.setPassword("");
             user.setSalt("");
             return user;
@@ -406,7 +408,7 @@ public class UserController extends GenericController<User, Integer> {
     @RequestMapping(value = "/admins", method = RequestMethod.GET)
     public @ResponseBody
     List<User> getAdminsOfCompany(){
-        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), admin, (byte)1);
+        List<User> resoult = cloner.deepClone(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), admin, (byte)1));
         resoult.forEach(user -> user.setPassword(null));
         return resoult;
     }
@@ -419,13 +421,14 @@ public class UserController extends GenericController<User, Integer> {
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 4, (byte)1));
         //resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 5, (byte)1));
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 6, (byte)1));
+        resoult=cloner.deepClone(resoult);
         resoult.forEach(user -> user.setPassword(null));
         return resoult;
     }
     @RequestMapping(value = "/admins/{companyId}", method = RequestMethod.GET)
     public @ResponseBody
     List<User> getAdminsOfCompany(@PathVariable("companyId") Integer companyId){
-        List<User> resoult = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, admin, (byte)1);
+        List<User> resoult = cloner.deepClone(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, admin, (byte)1));
         resoult.forEach(user -> user.setPassword(null));
         return resoult;
     }
@@ -436,6 +439,8 @@ public class UserController extends GenericController<User, Integer> {
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 4, (byte)1));
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 5, (byte)1));
         resoult.addAll(userRepository.getAllByCompanyIdAndUserGroupIdAndActive(companyId, 6, (byte)1));
+        resoult=cloner.deepClone(resoult);
+
         resoult.forEach(user -> user.setPassword(null));
         return resoult;
     }
