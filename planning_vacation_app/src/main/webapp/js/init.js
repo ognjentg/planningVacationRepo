@@ -17,7 +17,7 @@ var scriptsToLoad = [
     {
         "section": "views",
         "path": "js/views/",
-        "files": ["template", "sector", "user", "usergroup", "company", "calendar", "sectorInfo", "admins","secretary_sick_request", "companyInfo", "leave_requests", "absence","company_statistic", "user_statistics", "sector_statistics"] // ADD VIEWS HERE
+        "files": ["template", "sector", "user", "usergroup", "company", "calendar", "sectorInfo", "admins","secretary_sick_request", "companyInfo", "leave_requests", "absence","company_statistic", "user_statistics", "sector_statistics", "brick_breaker"] // ADD VIEWS HERE
     },
     {
         "section": "core",
@@ -30,7 +30,7 @@ var cssToLoad = [
     "https://fonts.googleapis.com/css?family=Roboto:400,500",
     "https://cdn.jsdelivr.net/npm/animate.css@3.5.2/animate.min.css",
     "webix/codebase/skins/compact.css",
-    "css/extended.css", "css/company.css", "css/calendar.css", "css/progressNodes.css", // CUSTOM CSS FILE
+    "css/extended.css", "css/company.css", "css/calendar.css", "css/progressNodes.css", "css/brick_breaker.css",// CUSTOM CSS FILE
     "webix/extensions/sidebar/sidebar.css",
     "webix/codebase/dhtmlxscheduler_flat.css"
 ];

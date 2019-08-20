@@ -2301,13 +2301,26 @@ var getAboutDialog = function () {
                     height: 140,
                     css: "aboutLogo",
                     type: "clean",
-                    template: '<img style="margin-top: 29px; margin-bottom: 29px;" src="img/telegroup-logo.png"/><div id="aboutRibbon"></div>'
+                    template: '<img style="margin-top: 29px; margin-bottom: 29px;" src="img/telegroup-logo.png" onclick="gameView.showGameDialog()" /><div id="aboutRibbon"></div>',
+                    onEnter: "gameView.gameDialog",
+                    on:{
+                        'onItemClick':function(id){
+                            gameView.showGameDialog();
+                        } // the default click behavior
+                    },
+
                 },
                 {
                     view: "template",
                     height: 28,
                     css: "aboutLine",
-                    template: '<b>Verzija:</b> ' + appVersion
+                    template: '<b>Verzija:</b> ' + appVersion,
+
+                    on:{
+                        "onItemClick":function(){
+                            gameView.gameDialog();
+                        } // the default click behavior
+                    },
                 },
                 {
                     view: "template",
