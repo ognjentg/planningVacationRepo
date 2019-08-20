@@ -2017,6 +2017,9 @@ var subMenuItems = [
             case "superadmin":
                 localMenuData = webix.copy(menuSuperAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
+                $$("mainMenu").define("width", 1);
+                $$("sidebarBelow").define("width", 1);
+                //$$("sidebarBelow").disable();
                 // if (userData.firstLogin === 1) {
                 //     showAddFirstAndLastNameDialog();
                 // }
