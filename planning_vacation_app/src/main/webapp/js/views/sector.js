@@ -257,7 +257,7 @@ var sectorView = {
                                     connection.sendAjax("DELETE", "hub/sector/" + id, function (text, data, xhr) {
                                         if (text) {
                                             $$("sectorDT").remove(id);
-                                            util.messages.showMessage("Uspješno uklanjanje");
+                                            util.messages.showMessage("Uspjesno uklanjanje");
                                             sectorsNumber=sectorsNumber-1;
                                             if(sectorsNumber >0 ){
                                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
@@ -485,7 +485,7 @@ var sectorView = {
                                     connection.sendAjax("DELETE", "hub/sector/" + item.id, function (text, data, xhr) {
                                         if (text) {
                                             $$("sectorDT").remove(context.id.row);
-                                            util.messages.showMessage("Uspješno uklanjanje");
+                                            util.messages.showMessage("Uspjesno uklanjanje");
                                             sectorsNumber=sectorsNumber-1;
                                             if(sectorsNumber>0){
                                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
@@ -682,7 +682,7 @@ var sectorView = {
                             }*/
                             $$("sectorDT").add(sector);
                             util.dismissDialog('addSectorDialog');
-                            util.messages.showMessage("Sektor uspješno dodan.");
+                            util.messages.showMessage("Sektor uspješno dodat.");
                             $$("addSectorBtn").enable();
                             //alert("Sektor uspješno dodat.");
                             refreshSectorData();
@@ -870,7 +870,7 @@ var sectorView = {
                         $$("sectorDT").updateItem(newSector.id,newSector);
                         refreshSectorData();
                         util.dismissDialog('editSectorDialog');
-                        util.messages.showMessage("Sektor uspješno izmijenjen.");
+                        util.messages.showMessage("Sektor uspješno izmjenjen.");
                        // alert("Sektor uspješno izmjenjen.");
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");

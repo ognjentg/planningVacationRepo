@@ -261,7 +261,7 @@ usergroupView = {
                             editable: false,
                             sort: "text",
                             //width:220,
-                            header: ["E-mail", //<span class='webix_icon fa fa-user'/>
+                            header: ["Email", //<span class='webix_icon fa fa-user'/>
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -482,7 +482,7 @@ usergroupView = {
                                                     function (text, data, xhr) {
                                                         if (text === "true")
                                                             util.messages.showMessage("Maksimalni procenat odsutnih u sektoru je uspješno promijenjen.");
-                                                        else util.messages.showMessage("Greška! Pokušajte ponovo!");
+                                                        else util.messages.showMessage("Greška! Pokušsjte ponovo!");
 
                                                     },
                                                     function (text, data, xhr) {
@@ -511,7 +511,7 @@ usergroupView = {
                 $$("percentText").refresh();
             }
         },function (text,data,xhr) {
-            util.messages.showErrorMessage("Greška.");
+            util.messages.showErrorMessage("Greska.");
         });
     },
 
@@ -627,7 +627,7 @@ usergroupView = {
                                 return false;
                             }
                             if (value.length > 100) {
-                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100.';
+                                $$('addUserForm').elements.email.config.invalidMessage = 'Maksimalan broj karaktera je 100';
                                 return false;
                             }
                             if (!webix.rules.isEmail(value)) {
@@ -1044,7 +1044,7 @@ usergroupView = {
 
     changeManager:function(){
     if($$("changeManagerTable").getSelectedItem().id==="undefined"){
-        util.messages.showErrorMessage("Moguće je odabrati samo jednog menadžera.");
+        util.messages.showErrorMessage("Moguce je odabrati samo jednog menadzera.");
     } else {
         var employe;
         $$("changeManagerTable").eachRow(
