@@ -48,7 +48,7 @@ var adminsView = {
                         },
                         {
                             id: "email",
-                            header: "Email",
+                            header: "E-mail",
                             width: 200,
                         },
                         {
@@ -208,7 +208,7 @@ var adminsView = {
                         },
                         {
                             id: "email",
-                            header: "Email",
+                            header: "E-mail",
                             width: 200,
                         },
                         {
@@ -316,8 +316,8 @@ var adminsView = {
                         view: "text",
                         id: "email",
                         name: "email",
-                        label: "Email:",
-                        invalidMessage: "Email je obavezno unijeti.",
+                        label: "E-mail:",
+                        invalidMessage: "E-mail je obavezno unijeti.",
                         required: true
                     },
                         {
@@ -335,7 +335,7 @@ var adminsView = {
                     rules: {
                         "email": function (value) {
                             if (!value) {
-                                $$("addNewAdminForm").elements.email.config.invalidMessage = 'Email je obavezno unijeti.';
+                                $$("addNewAdminForm").elements.email.config.invalidMessage = 'E-mail je obavezno unijeti.';
                                 return false;
                             } else {
                                 return true;

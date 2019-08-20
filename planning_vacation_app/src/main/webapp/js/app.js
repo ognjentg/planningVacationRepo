@@ -20,7 +20,7 @@ var localMenuData = [
     {id: "admins", value: "Admini kompanija", icon: "list"},
     {id: "secretary_sick_request", value: "Pregled zahtjeva", icon: "far fa-envelope"},
     {id: "leave_requests", value: "Pregled zahtjeva za odmor", icon: "list"},
-    {id: "absence_history", value: "Isotrija odsustava", icon: "fas fa-history"},
+    {id: "absence_history", value: "Istorija odsustava", icon: "fas fa-history"},
     {id: "company_statistic", value: "Statistika kompanije", icon: "fas fa-line-chart"},
     {id: "user_statistics", value: "Statistika korisnika", icon: "fas fa-pie-chart"}
 ];
@@ -93,7 +93,7 @@ var menuAdmin = [
     },
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     },
     {
@@ -133,7 +133,7 @@ var menuDirector = [
     },
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     },
     {
@@ -173,7 +173,7 @@ var menuSecretary = [
     },
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     },
     {
@@ -220,7 +220,7 @@ var menuSectorManager = [
     },
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     },
     {
@@ -252,7 +252,7 @@ var menuWorker = [
     },
     {
         id: "absence_history",
-        value: "Isotrija odsustava",
+        value: "Istorija odsustava",
         icon: "fas fa-history"
     }
 ];
@@ -384,7 +384,7 @@ var profileTab = {
                     view: "uploader",
                     id: "photoUploader",
                     name: "photoUploader",
-                    value: "Odaberi sliku",
+                    value: "Odaberite sliku",
                     link: "photo",
                     multiple: false,
                     autosend: false,
@@ -729,7 +729,7 @@ var companyTab ={
                         reader.readAsDataURL(file);
                         return false;
                     } else {
-                        util.messages.showErrorMessage("Dozvoljene ekstenzije  su jpg, jpeg i png!");
+                        util.messages.showErrorMessage("Dozvoljene ekstenzije su jpg, jpeg i png!");
 
                         return false;
                     }
@@ -984,7 +984,7 @@ var constraintsTab = {
                                                 label: 'Od:',
                                                 labelWidth: 40,
                                                 required: true,
-                                                invalidMessage: "Niste unijeli datum pocetka kolektivnog godisnjeg odmora"
+                                                invalidMessage: "Niste unijeli datum početka kolektivnog godišnjeg odmora"
 
                                             },
                                             {
@@ -996,7 +996,7 @@ var constraintsTab = {
                                                 label: 'Do:',
                                                 labelWidth: 40,
                                                 required: true,
-                                                invalidMessage: "Niste unijeli datum kraja kolektivnog godisnjeg odmora"
+                                                invalidMessage: "Niste unijeli datum kraja kolektivnog godišnjeg odmora"
                                             },
                                             {
                                                 id: "addCollectiveVacationBtn",
@@ -1086,7 +1086,7 @@ var constraintsTab = {
                             {
                                 id: "saveInformation",
                                 view: "button",
-                                label: "Sacuvajte i predjite na aplikaciju",
+                                label: "Sačuvajte i pređite na aplikaciju",
                                 type: "iconButton",
                                 icon: "save",
                                 type: "iconButton",
@@ -1240,7 +1240,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
             margin:5,
             //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
             rows:[
-                { type:"header", template:"Unesite Vase podatke" }, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
+                { type:"header", template:"Unesite Vasš podatke" }, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
                 {
                 view: "template",
                     width: 400,
@@ -1779,7 +1779,7 @@ var mainLayout = {
                         if (text) {
 
                             util.dismissDialog('addFirstAndLastNameDialog');
-                            util.messages.showMessage("Ime i prezime  uspješno dodano.");
+                            util.messages.showMessage("Ime i prezime uspješno dodano.");
                             switch (userData.userGroupKey) {
                                 case "superadmin":
                                     connection.sendAjax("POST", "hub/user/firstLogin",
@@ -1883,7 +1883,7 @@ var showFirstLogin = function () {
          panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
 
         if(userData.userGroupKey=="admin"){
-            $$("changePasswordBtn").data.label = "Sacuvajte";
+            $$("changePasswordBtn").data.label = "Sačuvajte";
             $$("changePasswordBtn").refresh();
         }
            // $$("changePasswordBtn").setValue("Sacuvajte");
@@ -2182,7 +2182,7 @@ var localize = function () {
         fileSize: ["b", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb"],
 
         calendar: {
-            monthFull: ["Januar", "Ferbruar", "Mart", "April", "Maj", "Jun",
+            monthFull: ["Januar", "Februar", "Mart", "April", "Maj", "Jun",
                 "Jul", "Avgust", "Septembar", "Oktobar", "Novembar", "Decembar"
             ],
             monthShort: ["Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg",

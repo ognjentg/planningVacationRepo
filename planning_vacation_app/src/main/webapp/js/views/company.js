@@ -404,7 +404,7 @@ var companyView = {
                                     connection.sendAjax("DELETE", "hub/company/" + id, function (text, data, xhr) {
                                         if (text) {
                                             $$("companyDT").remove(id);
-                                            util.messages.showMessage("Uspjesno uklanjanje");
+                                            util.messages.showMessage("Uspješno uklanjanje");
                                             tmpCompaniesLength = tmpCompaniesLength - 1;
                                             if(numberOfCompanies>0){
                                                 animateValue($$("t1"), 0, tmpCompaniesLength, 100);
@@ -623,7 +623,7 @@ var companyView = {
                                         connection.sendAjax("DELETE", "hub/company/" + item.id, function (text, data, xhr) {
                                             if (text) {
                                                 $$("companyDT").remove(context.id.row);
-                                                util.messages.showMessage("Uspjesno uklanjanje");
+                                                util.messages.showMessage("Uspješno uklanjanje");
                                                 if(companies.length>0){
                                                     animateValue($$("t1"), 0, companies.length, 1000);
                                                 }else{
@@ -814,7 +814,7 @@ var companyView = {
                         util.dismissDialog('addCompanyDialog');
                         $$("addCompanyBtn").enable();
                         // alert("Kompanija uspješno dodata.");
-                        util.messages.showMessage("Kompanija uspješno dodata.");
+                        util.messages.showMessage("Kompanija uspješno dodana.");
                         // animateValue($$("t1"), 0, tmpCompaniesLength + 1, 1000);
                         refreshData();
                         tmpCompaniesLength = tmpCompaniesLength + 1;
@@ -1313,7 +1313,7 @@ var companyView = {
             connection.sendAjax("PUT", "hub/company/" + newCompany.id,
                 function (text, data, xhr) {
                     if (text) {
-                        util.messages.showMessage("Kompanija uspješno izmjenjena.");
+                        util.messages.showMessage("Kompanija uspješno izmijenjena.");
                         $$("companyDT").updateItem(newCompany.id, newCompany);
                         util.dismissDialog('changeCompanyDialog');
                     } else
@@ -1394,7 +1394,7 @@ function refreshData() {
     webix.ajax("hub/user/numberOfAdmins", {
         error: function (text, data, xhr) {
             if (xhr.status !== 200) {
-                util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekcijuuuuuuuuu.");
+                util.messages.showMessage("Nema dostupnih podataka! Provjerite internet konekciju.");
                 table.hideProgress();
             }
         },

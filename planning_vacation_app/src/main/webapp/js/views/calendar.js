@@ -563,13 +563,14 @@ var calendarView = {
                 util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
             }else if ([buttons.VACATION].includes(selectedButton) &&
                 !calendarView.canGoOnVacation) { // Apply not in past rule to vacation and paid leave
-                util.messages.showErrorMessage("Nemate još pravo na godišnji!")
+                util.messages.showErrorMessage("Nemate još pravo na godišnji")
             } else if(([buttons.VACATION].includes(selectedButton) || [buttons.PAID].includes(selectedButton) || [buttons.RELIGIOUS].includes(selectedButton)) && !calendarView.ruleset.isNextYear(selectedDate)){
                 util.messages.showErrorMessage("Možete tražiti odsustvo samo za ovu godinu!");
             }else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
                 days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
             ) {
                 util.messages.showErrorMessage("Istekao je period za validaciju");
+
             }else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
@@ -926,7 +927,7 @@ var calendarView = {
                     connection.sendAjax("POST", "hub/leave_request/insertExtended",
                         function (text, data, xhr) {
                             if (text) {
-                                util.messages.showMessage("Zahtjev uspjesno poslan");
+                                util.messages.showMessage("Zahtjev uspješno poslan.");
                                 calendarView.getVacationDays();
                                 scheduler.setCurrentView();
                                 calendarView.deleteCurrentRequest();
@@ -1050,7 +1051,7 @@ var calendarView = {
         connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    util.messages.showMessage("Zahtjev uspješno poslan.");
                     calendarView.getVacationDays();
                     scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
@@ -1165,7 +1166,7 @@ var calendarView = {
         connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    util.messages.showMessage("Zahtjev uspješno poslan.");
                     calendarView.getVacationDays();
                     scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
@@ -1193,7 +1194,7 @@ var calendarView = {
 
         connection.sendAjax("POST", "/hub/sickLeave/addSickLeaveRequest/",
             function (text, data, xhr) {
-                util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
+                util.messages.showMessage("Zahtjev za bolovanje uspješno poslan.")
                 calendarView.deleteCurrentRequest();
                 calendarView.getSickDays();
                 $$("sendRequestButton").enable();
@@ -1255,7 +1256,7 @@ var calendarView = {
     vacation: function () {
 
         selectedButton = buttons.VACATION;
-        $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
+        $$("leaveTypeLabel").setValue("Zahtjev za godišnji odmor");
         $$("comment").show();
         $$("commentLabel").show();
 

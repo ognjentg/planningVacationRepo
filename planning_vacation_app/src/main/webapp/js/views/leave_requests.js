@@ -3,7 +3,7 @@ var URLByLeaveRequestStatus = "/hub/leave_request/leaveRequestFilteredByLeaveReq
 var URLAllLeaveRequestsBySector = "/hub/leave_request/leaveRequestFilteredBySectorId/";
 var URLByLeaveRequestStatusBySector = "/hub/leave_request/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/";
 var leaveRequestsView;
-var tempComment,rejComment;
+var tempComment, rejComment;
 leaveRequestsView = {
     selectPanel: function () {
         $$("main").removeView(rightPanel); // brisanje trenutno prikazanog view-a na stranici kako bi se prikazao facultyView
@@ -191,14 +191,15 @@ leaveRequestsView = {
                                 obj.dateFrom = new Date(obj.dateFrom);
                             if (obj.dateTo)
                                 obj.dateTo = new Date(obj.dateTo);
-                        },
+                        }
+
                     },
                     columns: [{
                         id: "id",
                         header: "#",
                         sort: "int",
                         width: 50,
-                        hidden: "true",
+                        hidden: "true"
                     }, {
                         id: "statusName",
                         sort: "string",
@@ -258,7 +259,7 @@ leaveRequestsView = {
                         header: "Broj dana",
                         sort: "int",
                         //width: 50,
-                    },{
+                    }, {
                         id: "accept",
                         header: "&nbsp;",
                         width: 35,
@@ -292,6 +293,11 @@ leaveRequestsView = {
                     url: "/hub/leave_request/leaveRequestInfo",
                     on: {
 
+                        onAfterLoad:function(){
+                            this.sort("id", "desc");
+                            this.markSorting("id", "desc");
+                        },
+
                         onAfterContextMenu: function (item) {
                             this.select(item.row);
                         }
@@ -310,7 +316,7 @@ leaveRequestsView = {
                             } else if (action === "accept" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey == "menadzer")) {
                                 var kategorija = $$("leave_requestDT").getSelectedItem().category;
                                 var status = $$("leave_requestDT").getSelectedItem().statusName
-                                if(status == "Otkazivanje" ){
+                                if (status == "Otkazivanje") {
                                     webix.ui(webix.copy(leaveRequestsView.cancellationDialog)).show();
                                 } else {
                                     webix.ui(webix.copy(leaveRequestsView.acceptDialog)).show();
@@ -558,7 +564,7 @@ leaveRequestsView = {
                         template: "<span style = 'cursor:pointer;' class='webix_icon fa-eye'></span>",
                         id: "approverComment",
                         hidden: true,
-                        click:'leaveRequestsView.showRejectComment'
+                        click: 'leaveRequestsView.showRejectComment'
 
                     }]
 
@@ -624,12 +630,12 @@ leaveRequestsView = {
                     ]
                 },
                 {
-                    view:"form",
-                    height:200,
-                    elements:[
+                    view: "form",
+                    height: 200,
+                    elements: [
                         {
                             view: "textarea",
-                            id:"senderCommentLabel"
+                            id: "senderCommentLabel"
                         }
                     ]
                 }
@@ -663,12 +669,12 @@ leaveRequestsView = {
                     ]
                 },
                 {
-                    view:"form",
-                    height:200,
-                    elements:[
+                    view: "form",
+                    height: 200,
+                    elements: [
                         {
                             view: "textarea",
-                            id:"rejectCommentLabel"
+                            id: "rejectCommentLabel"
                         }
                     ]
                 }
@@ -737,7 +743,7 @@ leaveRequestsView = {
             } else {
                 comment = $$("rejectComment").getValue() ? $$("rejectComment").getValue() : "";
                 $$("leave_requestDT").detachEvent("onBeforeDelete");
-                connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id+ "/comment/" + comment, function (text, data, xhr) {
+                connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToApproved/" + id + "/comment/" + comment, function (text, data, xhr) {
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 }, item);
@@ -854,7 +860,7 @@ leaveRequestsView = {
                     view: "toolbar",
                     cols: [{
                         view: "label",
-                        label: "<span class='webix_icon fa-user'></span> Otkazivanje zahtjeva :",
+                        label: "<span class='webix_icon fa-user'></span> Otkazivanje zahtjeva:",
                         width: 400,
                     }, {}, {
                         hotkey: 'esc',

@@ -61,7 +61,7 @@ var profileView = {
                                     view: "uploader",
                                     id: "photoUploader",
                                     name: "photoUploader",
-                                    value: "Odaberi sliku",
+                                    value: "Odaberite sliku",
                                     link: "photo",
                                     multiple: false,
                                     autosend: false,
