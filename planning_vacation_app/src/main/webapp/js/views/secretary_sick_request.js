@@ -1,5 +1,5 @@
 var URLAllSickLeave = "/hub/sickLeave/sickLeaveInfo";
-var URLBySickLeaveStatus = "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/";
+var URLBySickLeaveStatus = "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/";
 var sickRequestsView = {
 
     selectPanel: function () {
@@ -40,26 +40,26 @@ var sickRequestsView = {
                                     if (name === 4) {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo");
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo");
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo/"+userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo/"+userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 3) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/"+userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+ "/"+userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 2) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + name);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     }
                                 }
@@ -105,7 +105,13 @@ var sickRequestsView = {
                         header: "#",
                         width: 50,
                         hidden: "true",
-                    }, {
+                    },{
+                        id: "companyId",
+                        header: "ID kompanije",
+                      //  width: 50,
+                       // hidden: "true",
+                    },
+                        {
                         id: "statusName",
                         sort: "string",
                         header: "Status",
@@ -178,7 +184,7 @@ var sickRequestsView = {
                     ],
                     select: "row",
                     navigation: true,
-                    url: "/hub/sickLeave/sickLeaveInfoWait",
+                    url: "/hub/sickLeave/sickLeaveInfoWait/"+userData.companyId,
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -193,7 +199,7 @@ var sickRequestsView = {
                             var action = id["column"];
 
                             if (action === "reject" && userData.userGroupKey == "sekretar") {
-                                var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovannje: ")));
+                                var rejectLeaveBox = (webix.copy(sickRequestsView.rejectLeaveConfirm("zahtjev za bolovanje: ")));
                                 rejectLeaveBox.callback = function (result) {
                                     if (result == 1) {
                                         var item = $$("secretary_requestDT").getItem(id);
@@ -209,7 +215,7 @@ var sickRequestsView = {
                                 };
                                 webix.confirm(rejectLeaveBox);
                             } else if (action === "accept" && userData.userGroupKey == "sekretar") {
-                                var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovannje: ")));
+                                var acceptLeaveBox = (webix.copy(sickRequestsView.acceptLeaveConfirm("zahtjev za bolovanje: ")));
                                 acceptLeaveBox.callback = function (result) {
                                     if (result == 1) {
                                         var item = $$("secretary_requestDT").getItem(id);
@@ -290,7 +296,8 @@ function refreshOnThisData() {
 
 
     if (comboItemId == 4) {
-        URLCurrentUrl = URLAllSickLeave;
+        //URLCurrentUrl = URLAllSickLeave;
+        URLCurrentUrl = "/hub/sickLeave/sickLeaveInfoWait/"+userData.companyId
     } else {
         URLCurrentUrl = URLBySickLeaveStatus;
     }
@@ -317,7 +324,7 @@ function refreshOnThisData() {
             }
         });
     } else {
-        webix.ajax(URLCurrentUrl + comboItemId, {
+        webix.ajax(URLCurrentUrl + comboItemId +"/"+ userData.companyId, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -331,7 +338,7 @@ function refreshOnThisData() {
                         console.log("loaded data with success");
 
                         table.clearAll();
-                        table.load(URLCurrentUrl + comboItemId);
+                        table.load(URLCurrentUrl + comboItemId +"/"+ userData.companyId);
                         table.refresh();
                     }
                 }

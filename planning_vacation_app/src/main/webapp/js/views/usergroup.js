@@ -1088,7 +1088,11 @@ usergroupView = {
 
     selectPanel: function () {
         util.selectPanel(this.getPanel());
-        usergroupView.createDatatableContextMenu();
+        if(user == "secretary" || user == "manager"){
+            usergroupView.createDatatableContextMenuSecretary();
+        } else {
+            usergroupView.createDatatableContextMenu();
+        }
         if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
             $$("addUserButton").hide();
             $$("deleteSelectedButton").hide();
@@ -1110,6 +1114,7 @@ usergroupView = {
             $$("izaberiLabel").hide();
         }
         //animateValue($$("t3"), 0, 25 * 150, 100);
+
         console.log("u selectPanel");
 
 
@@ -1518,9 +1523,10 @@ usergroupView = {
             width: 205,
             data: [
                 {
+
                     id: "1",
                     value: "Izbriši zaposlenog",
-                    icon: "trash"
+                    icon: "trash",
                 },
                 {
                     $template: "Separator"
@@ -1549,6 +1555,7 @@ usergroupView = {
             master: $$("usergroupDT"),
             on: {
                 onItemClick: function (id) {
+
                     var context = this.getContext();
                     switch (id) {
                         case "1": {
@@ -1581,8 +1588,63 @@ usergroupView = {
                 }
             }
         });
-    }
-    ,
+    },
+
+    createDatatableContextMenuSecretary: function () {
+        webix.ui({
+            view: "contextmenu",  //na desni klik opcije
+            id: "usergroupCntMenu",
+            width: 205,
+            data: [
+                {
+                    id: "2",
+                    value: "Informacije o zaposlenom",
+                    icon: "eye"
+                },
+                {
+                    id: "5",
+                    value: "Prikaži kalendar",
+                    icon: "calendar"
+                }
+            ],
+            master: $$("usergroupDT"),
+            on: {
+                onItemClick: function (id) {
+
+                    var context = this.getContext();
+                    switch (id) {
+                        case "1": {
+                            if ($$("usergroupDT").getSelectedItem().position != "menadzer")
+                                usergroupView.deleteEmployee();
+                            else
+                                util.messages.showErrorMessage("Nije moguće izbrisati menadžera");
+                            break;
+                        }
+                        case "2": {
+                            usergroupView.employeeInfo($$("usergroupDT").getSelectedId());
+                            break;
+                        }
+                        case "3": {
+                            usergroupView.showChangeUserGroupDialog();
+                            break;
+                        }
+                        case "4": {
+                            if ($$("usergroupDT").getSelectedItem().position === "zaposleni")
+                                usergroupView.showChangeSectorOfSelectedDialog();
+                            else
+                                util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom.");
+                            break;
+                        }
+                        case "5": {
+                            usergroupView.showEmployeeVacationInfoDialog(id);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    },
+
     /*
         filter:function(){
         //funkcija koja ce na osnovu selektovanog sektora izlistati zaposlene iz liste

@@ -56,22 +56,30 @@ public class SickLeaveController extends GenericHasActiveController<SickLeave,In
         return sickLeaveList;
     }
 
-    @RequestMapping(value = "/sickLeaveInfo", method = RequestMethod.GET)
+    @RequestMapping(value = "/sickLeaveInfo/{key}", method = RequestMethod.GET)
     public @ResponseBody
-    List<SickLeaveUserSickLeaveStatus> getSectorsInformation(){
-        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUserUserGroupKey().getId());
+    List<SickLeaveUserSickLeaveStatus> getSectorsInformation(@PathVariable Integer key){
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformation(userBean.getUserUserGroupKey().getId(), key);
     }
 
-    @RequestMapping(value = "/sickLeaveInfoWait", method = RequestMethod.GET)
+    ///////////////////////////////////////////////
+    @RequestMapping(value = "/sickLeaveInfoWait/{key}", method = RequestMethod.GET)
+    public @ResponseBody
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(@PathVariable Integer key ){
+        return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformationForWait(userBean.getUserUserGroupKey().getId(), key);
+    }
+    //////////////////////////////////////////////
+
+   /* @RequestMapping(value = "/sickLeaveInfoWait", method = RequestMethod.GET)
     public @ResponseBody
     List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(){
         return sickLeaveRepository.getSickLeaveUserSickLeaveStatusInformationForWait(userBean.getUserUserGroupKey().getId());
-    }
+    }*/
 
-    @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatus/{key}", method = RequestMethod.GET)
+    @RequestMapping(value = "/sickLeaveFilteredBySickLeaveStatusStatus/{key}/{companyId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key ){
-        return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUserUserGroupKey().getId(), key);
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(@PathVariable Integer key,@PathVariable Integer companyId ){
+        return sickLeaveRepository.getSickLeaveFilteredBySickLeaveStatus(userBean.getUserUserGroupKey().getId(), key, companyId);
     }
 
     @RequestMapping(value = "/getSickLeaveFilteredByUserId/{key}", method = RequestMethod.GET)

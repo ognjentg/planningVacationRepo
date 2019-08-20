@@ -17,6 +17,7 @@ import java.util.Date;
                         @ColumnResult(name = "date_to"),
                         @ColumnResult(name = "first_name", type = String.class),
                         @ColumnResult(name = "last_name",type = String.class),
+                        @ColumnResult(name = "company_id", type = Integer.class),
                         @ColumnResult(name = "status_name", type = String.class)
                 }
         )
@@ -27,16 +28,18 @@ public class SickLeaveUserSickLeaveStatus extends SickLeave {
     private String statusName;
     private String firstName;
     private String lastName;
+    private Integer companyId;
 
     public SickLeaveUserSickLeaveStatus(){}
 
-    public SickLeaveUserSickLeaveStatus(Integer id, Date dateFrom, Date dateTo,String firstName,String lastName, String statusName) {
+    public SickLeaveUserSickLeaveStatus(Integer id, Date dateFrom, Date dateTo,String firstName,String lastName,Integer companyId, String statusName) {
         this.setId(id);
         this.setDateFrom(dateFrom == null ? null : new Timestamp(dateFrom.getTime()));
         this.setDateTo(dateTo == null ? null : new Timestamp(dateTo.getTime()));
         this.statusName = statusName;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.companyId = companyId;
     }
 
     public String getStatusName() {
@@ -61,5 +64,13 @@ public class SickLeaveUserSickLeaveStatus extends SickLeave {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 }
