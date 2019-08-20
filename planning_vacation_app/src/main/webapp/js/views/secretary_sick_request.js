@@ -108,8 +108,7 @@ var sickRequestsView = {
                     },{
                         id: "companyId",
                         header: "ID kompanije",
-                      //  width: 50,
-                       // hidden: "true",
+                      //  hidden: "true",
                     },
                         {
                         id: "statusName",
