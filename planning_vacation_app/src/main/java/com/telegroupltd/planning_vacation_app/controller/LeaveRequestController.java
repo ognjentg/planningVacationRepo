@@ -245,8 +245,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),userBean.getUserUserGroupKey().getSectorId(), (byte)1);
             for(var i=0;i< users.size();i++){
                 User user=users.get(i);
-                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
-                list.addAll(pom);
+                if(user.getUserGroupId() != null && user.getUserGroupId() == 6){
+                    List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+                    list.addAll(pom);
+                }
             }
         }else{
             List<User> users= userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1);
@@ -697,8 +699,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
         for(var i=0;i< users.size();i++){
             User user=users.get(i);
-            List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(),key);
-            list.addAll(pom);
+            if(user.getUserGroupId() != null && user.getUserGroupId() == 6){
+                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(),key);
+                list.addAll(pom);
+            }
         }
         for(LeaveRequestUserLeaveRequestStatus s:list){
             List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);

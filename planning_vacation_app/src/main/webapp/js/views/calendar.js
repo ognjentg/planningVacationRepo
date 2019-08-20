@@ -23,7 +23,7 @@ var selectedButton = buttons.VACATION;
 
 var calendarView = {
     leftReligionLeaveDays: 0,
-    freeDays: 20,
+    freeDays: 0,
     nonWorkingDays: null,
     nonWorkingdDaysInWeek: null,
     collectiveVacationDays: [],
@@ -690,7 +690,8 @@ var calendarView = {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
                         var vacationDays = data.json();
-                        calendarView.freeDays = vacationDays.totalDays - vacationDays.usedDays;
+                        console.log("DANI " + vacationDays.totalDays );
+                        calendarView.freeDays += vacationDays.totalDays - vacationDays.usedDays;
                         if (vacationDays.totalDays - vacationDays.usedDays > 0) {
                             animateValue($$("t2"), 0, calendarView.freeDays, 700);
                         } else {
@@ -699,34 +700,34 @@ var calendarView = {
                     } else {
                         animateValue($$("t2"), 0, 0, 700);
                     }
-                    webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
-                        error: function (text, data, xhr) {
-                            if (xhr.status != 200) {
-                                util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
-                            }
-                        },
-                        success: function (text, data, xhr) {
-                            if (xhr.status === 200) {
-                                if (data.json() != null) {
-                                    var vacationDays = data.json();
-                                    calendarView.freeDays += vacationDays.totalDays - vacationDays.usedDays;
-                                    if (vacationDays.totalDays - vacationDays.usedDays > 0) {
-                                        animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
-                                    } else {
-                                        animateValue($$("t1"), 0, 0, 700);
-                                    }
 
-
-                                } else {
-                                    animateValue($$("t1"), 0, 0, 700);
-                                }
-                            }
-                        }
-                    });
                 }
             }
         });
+        webix.ajax("hub/vacation_days/byUserId/" + userData.id, {
+            error: function (text, data, xhr) {
+                if (xhr.status != 200) {
+                    util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
+                }
+            },
+            success: function (text, data, xhr) {
+                if (xhr.status === 200) {
+                    if (data.json() != null) {
+                        var vacationDays = data.json();
+                        calendarView.freeDays += vacationDays.totalDays - vacationDays.usedDays;
+                        if (vacationDays.totalDays - vacationDays.usedDays > 0) {
+                            animateValue($$("t1"), 0, vacationDays.totalDays - vacationDays.usedDays, 700);
+                        } else {
+                            animateValue($$("t1"), 0, 0, 700);
+                        }
 
+
+                    } else {
+                        animateValue($$("t1"), 0, 0, 700);
+                    }
+                }
+            }
+        });
         //Dohvatanje slobodnih dana za religijske praznike
         webix.ajax("hub/religion_leave/byUserId/" + userData.id, {
             error: function (text, data, xhr) {
