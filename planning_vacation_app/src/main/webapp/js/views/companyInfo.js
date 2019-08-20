@@ -511,7 +511,7 @@ var companyInfoView = {
         util.messages.showMessage("Niste izabrali jedan od datuma!");
         else if(dateFrom > dateTo)
            // alert("Datum od ne može biti prije datuma do!");
-            util.messages.showMessage("Datum od ne može biti prije datuma do!");
+            util.messages.showMessage("Datum od ne može biti poslije datuma do!");
         else{
         var collectiveVacation = {
             dateFrom: dateFromInDTFormat,

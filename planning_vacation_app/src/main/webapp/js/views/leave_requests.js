@@ -291,6 +291,10 @@ leaveRequestsView = {
                     ],
                     url: "/hub/leave_request/leaveRequestInfo",
                     on: {
+                        onAfterLoad: function(){
+                            this.sort("id","desc");
+                            this.markSorting("id","desc");
+                        },
 
                         onAfterContextMenu: function (item) {
                             this.select(item.row);

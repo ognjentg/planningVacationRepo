@@ -187,7 +187,7 @@ absenceHistoryView = {
                                                                     var item = $$("absence_historyDT").getItem(id);
                                                                     $$("absence_historyDT").detachEvent("onBeforeDelete");
                                                                     connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
-                                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje");
+                                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje.");
                                                                         refreshOnAbsenceData();
                                                                     }, function (text, data, xhr) {
                                                                         util.messages.showErrorMessage(text);
@@ -256,7 +256,7 @@ absenceHistoryView = {
             ok: "Da",
             cancel: "Ne",
             width: 500,
-            text: "Da li ste sigurni da želite otkazati odobreno odsustvo ?"
+            text: "Da li ste sigurni da želite otkazati odobreno odsustvo?"
         };
     },
 
@@ -268,7 +268,7 @@ absenceHistoryView = {
             ok: "Da",
             cancel: "Ne",
             width: 500,
-            text: "Da li ste sigurni da želite otkazati zahtjev za odsustvo ?"
+            text: "Da li ste sigurni da želite otkazati zahtjev za odsustvo?"
         };
     },
 

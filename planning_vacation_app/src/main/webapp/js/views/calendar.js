@@ -926,7 +926,7 @@ var calendarView = {
                     connection.sendAjax("POST", "hub/leave_request/insertExtended",
                         function (text, data, xhr) {
                             if (text) {
-                                util.messages.showMessage("Zahtjev uspjesno poslan");
+                                util.messages.showMessage("Zahtjev uspješno poslan.");
                                 calendarView.getVacationDays();
                                 scheduler.setCurrentView();
                                 calendarView.deleteCurrentRequest();
@@ -1050,7 +1050,7 @@ var calendarView = {
         connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    util.messages.showMessage("Zahtjev uspješno poslan.");
                     calendarView.getVacationDays();
                     scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
@@ -1165,7 +1165,7 @@ var calendarView = {
         connection.sendAjax("POST", "hub/leave_request/insertExtended",
             function (text, data, xhr) {
                 if (text) {
-                    util.messages.showMessage("Zahtjev uspjesno poslan");
+                    util.messages.showMessage("Zahtjev uspješno poslan.");
                     calendarView.getVacationDays();
                     scheduler.setCurrentView();
                     calendarView.deleteCurrentRequest();
@@ -1193,7 +1193,7 @@ var calendarView = {
 
         connection.sendAjax("POST", "/hub/sickLeave/addSickLeaveRequest/",
             function (text, data, xhr) {
-                util.messages.showMessage("Zahtjev za bolovanje uspješno polsan.")
+                util.messages.showMessage("Zahtjev za bolovanje uspješno poslan.")
                 calendarView.deleteCurrentRequest();
                 calendarView.getSickDays();
                 $$("sendRequestButton").enable();
@@ -1255,7 +1255,7 @@ var calendarView = {
     vacation: function () {
 
         selectedButton = buttons.VACATION;
-        $$("leaveTypeLabel").setValue("Zahtjev za godišnjim odmorom");
+        $$("leaveTypeLabel").setValue("Zahtjev za godišnji odmor");
         $$("comment").show();
         $$("commentLabel").show();
 
