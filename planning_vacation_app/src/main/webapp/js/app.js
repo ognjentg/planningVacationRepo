@@ -1368,8 +1368,10 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     //util.dismissDialog("profileDialog");
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = profileTab.body.id;
+                    firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
                     firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                     $$("firstLoginTabs").getTabbar().setValue(passwordTab.body.id);
+                    firstLoginLayout.progressBar.updateNode(passwordTab.body.id, "is-active");
                 }
             })
         }
@@ -1407,7 +1409,10 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                                 }, 0);
                             showApp();
                         } else {
+                            firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
                             $$("firstLoginTabs").getTabbar().setValue(companyTab.body.id);
+                           firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
+                            firstLoginLayout.progressBar.updateNode(companyTab.body.id, "is-active");
                         }
                     } else {
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
@@ -1437,8 +1442,10 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                 function (text, data, xhr) {
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = companyTab.body.id;
+                    firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
                     firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                     $$("firstLoginTabs").getTabbar().setValue(constraintsTab.body.id);
+                    firstLoginLayout.progressBar.updateNode(constraintsTab.body.id, "is-active");
                 }, function (text, data, xhr) {
                     //alert(text);
                     util.messages.showErrorMessage(text);
@@ -1453,7 +1460,11 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
             function (text, data, xhr) {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
                 let ownTabId = sectorTab.body.id;
+                //firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
+                firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
+                $$("firstLoginTabs").getTabbar().setValue(profileTab.body.id);
                 firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
+                firstLoginLayout.progressBar.updateNode(profileTab.body.id, "is-active");
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, sector);
