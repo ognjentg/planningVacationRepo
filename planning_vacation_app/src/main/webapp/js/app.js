@@ -344,7 +344,7 @@ var init = function () {
 }
 
 var tabCompleted=[false, false, false, false];
-var firstLoginTabs = []
+var firstLoginTabs = [];
 var profileTab = {
     header: "Profil",
         body: {
@@ -370,7 +370,7 @@ var profileTab = {
                     id: "preview",
                     name: "preview",
                     template: "<img style='height: 100%; width: 100%;' src='#src#'>",
-                    data: {src: null},
+                    data: {src: "img/profilePicture.png"},
                     height: 200,
                     width: 200,
                 },
@@ -473,12 +473,13 @@ var profileTab = {
                 },
                 {}
             ]
-        }
+        }, {}
     ]
 }
 };
 var passwordTab ={
     header: "Lozinka",
+    id:"passwordTab",
         body: {
     id: "formChangePassword",
         view: "form",
@@ -607,7 +608,7 @@ var passwordTab ={
             },
             {}
             ]
-        }
+        }, {}
     ],
         rules: {
         "oldPassword":function (value) {
@@ -784,7 +785,7 @@ var companyTab ={
                 },
                 {}
             ]
-        }
+        },{}
     ]
     // list config
 }
@@ -1295,7 +1296,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
     save: function () {
         var profileForm = $$("formProfileInformation");
         if (profileForm.validate()) {
-            $$("saveProfileButton").disable();
+            //$$("saveProfileButton").disable();
             var dataToSend = $$("formProfileInformation").getValues();
             var objectToSend = {
                 firstName: dataToSend.firstName,
@@ -1320,6 +1321,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = profileTab.body.id;
                     firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                    $$("firstLoginTabs").getTabbar().setValue(passwordTab.body.id);
                 }
             })
         }
@@ -1328,7 +1330,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
         var changePasswordForm = $$("formChangePassword");
         if (changePasswordForm.validate()) {
             console.log("AAAAAAAAAAAAa");
-            $$("changePasswordBtn").disable();
+            //$$("changePasswordBtn").disable();
             console.log("BBBBBBBBBBBB");
             var passwordInformation = {
                 oldPassword: $$("oldPassword").getValue(),
@@ -1356,6 +1358,9 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                                     util.messages.showErrorMessage(text);
                                 }, 0);
                             showApp();
+                        }
+                        else {
+                            $$("firstLoginTabs").getTabbar().setValue(companyTab.body.id);
                         }
                     } else {
                         util.messages.showErrorMessage("Neuspješna izmjena lozinke.");
@@ -1386,6 +1391,7 @@ var firstLoginLayout= {    //firstLoginPanel je id za firstLoginLayout //todo za
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = companyTab.body.id;
                     firstLoginLayout.progressBar.updateNode(ownTabId,"is-complete");
+                    $$("firstLoginTabs").getTabbar().setValue(constraintsTab.body.id);
                 }, function (text, data, xhr) {
                     //alert(text);
                     util.messages.showErrorMessage(text);
