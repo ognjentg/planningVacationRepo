@@ -1,7 +1,6 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
-import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.DayInWeek;
 import com.telegroupltd.planning_vacation_app.repository.DayInWeekRepository;
@@ -17,10 +16,10 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Objects;
 
-@RequestMapping(value="/hub/dayInWeek")
+@RequestMapping(value = "/hub/dayInWeek")
 @Controller
 @Scope("request")
-public class DayInWeekController extends GenericHasActiveController<DayInWeek,Integer> {
+public class DayInWeekController extends GenericHasActiveController<DayInWeek, Integer> {
     private final DayInWeekRepository dayInWeekRepository;
 
     @PersistenceContext
@@ -29,8 +28,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
     @Value("Dodavanje nije moguće.")
     private String badRequestInsert;
 
-    DayInWeekController(DayInWeekRepository dayInWeekRepository)
-    {
+    DayInWeekController(DayInWeekRepository dayInWeekRepository) {
         super(dayInWeekRepository);
         this.dayInWeekRepository = dayInWeekRepository;
     }
@@ -43,7 +41,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
 
     @Override
     public DayInWeek findById(Integer dayWeekId) {
-        return dayInWeekRepository.getByIdAndActive(dayWeekId,(byte) 1);
+        return dayInWeekRepository.getByIdAndActive(dayWeekId, (byte) 1);
     }
 
     @RequestMapping(value = "/getDayInWeek/{dayKey}", method = RequestMethod.GET)
@@ -62,7 +60,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
         DayInWeek newDayInWeek = new DayInWeek();
         newDayInWeek.setDayKey(dayInWeek.getDayKey());
         newDayInWeek.setJavaValue(dayInWeek.getJavaValue());
-        newDayInWeek.setActive((byte)1);
+        newDayInWeek.setActive((byte) 1);
 
         if (repo.saveAndFlush(newDayInWeek) != null) {
             entityManager.refresh(newDayInWeek);
@@ -78,7 +76,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
     String delete(@PathVariable Integer id) {
         DayInWeek dayInWeek = dayInWeekRepository.findById(id).orElse(null);
         cloner.deepClone(dayInWeek);
-        Objects.requireNonNull(dayInWeek).setActive((byte)0);
+        Objects.requireNonNull(dayInWeek).setActive((byte) 0);
         return "Uspjesno";
     }
 
@@ -87,7 +85,7 @@ public class DayInWeekController extends GenericHasActiveController<DayInWeek,In
     String deleteByKey(@PathVariable String dayKey) {
         DayInWeek dayInWeek = dayInWeekRepository.getByDayKey(dayKey);
         cloner.deepClone(dayInWeek);
-        Objects.requireNonNull(dayInWeek).setActive((byte)0);
+        Objects.requireNonNull(dayInWeek).setActive((byte) 0);
         return "Uspjesno";
     }
 }

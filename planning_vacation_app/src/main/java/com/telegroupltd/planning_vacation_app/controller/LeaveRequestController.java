@@ -5,7 +5,6 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenExcepti
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.*;
 import com.telegroupltd.planning_vacation_app.repository.*;
-import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.LeaveRequestCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -70,10 +68,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     LeaveRequest insert(@RequestBody LeaveRequest leaveRequest) throws BadRequestException {
         //Check if category length is equal or greater than 45
-        System.out.println("Kreiranje zahtjeva");
         Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
-        System.out.println("Sector id = " + sectorId);
-        if("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())){
+        if ("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())) {
             leaveRequest.setLeaveRequestStatusId(2);
             if ((leaveRequest = repo.saveAndFlush(leaveRequest)) == null)
                 throw new BadRequestException(badRequestInsert);
@@ -87,7 +83,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         logCreateAction(leaveRequest);
         String notificationTitle = "";
         Byte leaveType = 0;
-        User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+        User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
         String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je poslao zahtjev za ";
         if ("Godišnji".equals(leaveRequest.getCategory())) {
             notificationTitle = "Zahtjev za godišnji odmor";
@@ -104,8 +100,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         }
         notificationText += " " + leaveRequest.getSenderComment();
         if (sectorId != null && userTemp.getUserGroupId() == 6) {
-            Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
-            User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte)1);
+            Sector s = sectorRepository.getByIdAndActive(sectorId, (byte) 1);
+            User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte) 1);
             emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
         } else {
             List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
@@ -125,22 +121,18 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     }
 
 
-
-
     @RequestMapping(value = "/insertExtended", method = RequestMethod.POST)
     public @ResponseBody
     Boolean insertExtended(@RequestBody List<LeaveRequestExtended> leaveRequests) throws BadRequestException {
         //Check if category length is equal or greater than 45
-        for(LeaveRequestExtended leaveReq: leaveRequests){
-            LeaveRequest leaveRequest=leaveReq.getLeaveRequest();
-            System.out.println("Kreiranje zahtjeva");
+        for (LeaveRequestExtended leaveReq : leaveRequests) {
+            LeaveRequest leaveRequest = leaveReq.getLeaveRequest();
             Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
-            System.out.println("Sector id = " + sectorId);
-            if("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())){
+            if ("direktor".equals(userBean.getUserUserGroupKey().getUserGroupKey())) {
                 leaveRequest.setLeaveRequestStatusId(2);
                 if ((leaveRequest = repo.saveAndFlush(leaveRequest)) == null)
                     throw new BadRequestException(badRequestInsert);
-            }else{
+            } else {
                 if (leaveRequest.getCategory().length() >= 45)
                     throw new BadRequestException(badRequestInsert);
                 if (repo.saveAndFlush(leaveRequest) == null)
@@ -149,7 +141,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 logCreateAction(leaveRequest);
                 String notificationTitle = "";
                 Byte leaveType = 0;
-                User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
+                User userTemp = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
                 String notificationText = "Korisnik " + userTemp.getFirstName() + " " + userTemp.getLastName() + " je poslao zahtjev za ";
                 if ("Godišnji".equals(leaveRequest.getCategory())) {
                     notificationTitle = "Zahtjev za godišnji odmor";
@@ -166,8 +158,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 }
                 notificationText += " " + leaveRequest.getSenderComment();
                 if (sectorId != null && userTemp.getUserGroupId() == 6) {
-                    Sector s = sectorRepository.getByIdAndActive(sectorId, (byte)1);
-                    User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte)1);
+                    Sector s = sectorRepository.getByIdAndActive(sectorId, (byte) 1);
+                    User user = userRepository.getByIdAndActive(s.getSectorManagerId(), (byte) 1);
                     emailNotification.createNotification(user, notificationTitle, notificationText, leaveType);
                 } else {
                     List<User> admins = userRepository.getAllByCompanyIdAndUserGroupIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),
@@ -184,10 +176,10 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
                 }
             }
 
-            List<LeaveRequestDate> dates= leaveReq.getDates();
-            for(LeaveRequestDate date: dates){
+            List<LeaveRequestDate> dates = leaveReq.getDates();
+            for (LeaveRequestDate date : dates) {
                 date.setLeaveRequestId(leaveRequest.getId());
-                if(leaveRequestDateRepository.saveAndFlush(date) == null)
+                if (leaveRequestDateRepository.saveAndFlush(date) == null)
                     throw new BadRequestException(badRequestInsert);
             }
 
@@ -195,10 +187,6 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
         return true;
     }
-
-
-
-
 
 
     @Transactional
@@ -233,34 +221,34 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/leaveRequestByUserId/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformationByUserId(@PathVariable Integer id){
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformationByUserId(@PathVariable Integer id) {
         return leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(id);
     }
 
     @RequestMapping(value = "/leaveRequestInfo", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestInformation() {
-        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList();
-        if(userBean.getUserUserGroupKey().getUserGroupKey()=="menadzer"){
-            List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),userBean.getUserUserGroupKey().getSectorId(), (byte)1);
-            for(var i=0;i< users.size();i++){
-                User user=users.get(i);
-                if(user.getUserGroupId() != null && user.getUserGroupId() == 6){
-                    List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+        List<LeaveRequestUserLeaveRequestStatus> list = new ArrayList();
+        if (userBean.getUserUserGroupKey().getUserGroupKey() == "menadzer") {
+            List<User> users = userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), userBean.getUserUserGroupKey().getSectorId(), (byte) 1);
+            for (var i = 0; i < users.size(); i++) {
+                User user = users.get(i);
+                if (user.getUserGroupId() != null && user.getUserGroupId() == 6) {
+                    List<LeaveRequestUserLeaveRequestStatus> pom = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
                     list.addAll(pom);
                 }
             }
-        }else{
-            List<User> users= userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1);
-            for(var i=0;i< users.size();i++){
-                User user=users.get(i);
-                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
+        } else {
+            List<User> users = userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte) 1);
+            for (var i = 0; i < users.size(); i++) {
+                User user = users.get(i);
+                List<LeaveRequestUserLeaveRequestStatus> pom = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
                 list.addAll(pom);
             }
         }
 
-        for(LeaveRequestUserLeaveRequestStatus s:list){
-            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+        for (LeaveRequestUserLeaveRequestStatus s : list) {
+            List<LeaveRequestDate> dates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte) 1);
             s.setNumberOfDays(dates.size());
         }
 
@@ -272,22 +260,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     public @ResponseBody
     LeaveRequestUserLeaveRequestStatus getLeaveRequestInformationById(@PathVariable Integer id) {
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(id).get(0);
-         List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(lrs.getId(), (byte)1);
-         lrs.setNumberOfDays(dates.size());
+        List<LeaveRequestDate> dates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(lrs.getId(), (byte) 1);
+        lrs.setNumberOfDays(dates.size());
         return lrs;
     }
 
     @RequestMapping(value = "/canGoOnVacationByDates/{dates}", method = RequestMethod.GET)
     public @ResponseBody
-    void canGoOnVacationByDates(@PathVariable List<Date> dates) throws BadRequestException{
-        if(userBean.getUserUserGroupKey().getSectorId() != null){
+    void canGoOnVacationByDates(@PathVariable List<Date> dates) throws BadRequestException {
+        if (userBean.getUserUserGroupKey().getSectorId() != null) {
             Integer numOfUsersInSector = sectorRepository.getNumberOfUsersInSector(userBean.getUserUserGroupKey().getSectorId());
-            for(Date date : dates){
-                Double maxPercentageAbsentPeople = sectorRepository.getByIdAndActive(userBean.getUserUserGroupKey().getSectorId(), (byte)1).getMaxPercentageAbsentPeople();
-                if(maxPercentageAbsentPeople == null)
+            for (Date date : dates) {
+                Double maxPercentageAbsentPeople = sectorRepository.getByIdAndActive(userBean.getUserUserGroupKey().getSectorId(), (byte) 1).getMaxPercentageAbsentPeople();
+                if (maxPercentageAbsentPeople == null)
                     return;
-                Double percentage = ((double)leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) + 1) / (double)numOfUsersInSector * 100;
-                if(percentage > maxPercentageAbsentPeople)
+                Double percentage = ((double) leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(userBean.getUserUserGroupKey().getSectorId(), date) + 1) / (double) numOfUsersInSector * 100;
+                if (percentage > maxPercentageAbsentPeople)
                     throw new BadRequestException(tooMuchAbsent);
             }
         }
@@ -308,54 +296,34 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable String key) {
-        List<LeaveRequestUserLeaveRequestStatus> list= leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
-        for(LeaveRequestUserLeaveRequestStatus s:list){
-            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+        List<LeaveRequestUserLeaveRequestStatus> list = leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
+        for (LeaveRequestUserLeaveRequestStatus s : list) {
+            List<LeaveRequestDate> dates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte) 1);
             s.setNumberOfDays(dates.size());
         }
         return list;
     }
 
-    ///////////////////////////////////////////////////////////////////////updateLeaveRequestStatusCancellation
     @RequestMapping(value = "/updateLeaveRequestStatusToCancellation/{leaveRequestId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToCancellation(@PathVariable Integer leaveRequestId){
+    void updateLeaveRequestStatusToCancellation(@PathVariable Integer leaveRequestId) {
         leaveRequestRepository.updateLeaveRequestStatusToCancellation(leaveRequestId);
-        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(lrs.getSenderUserId());
-        notification.setTitle("Bolovanje");
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
-        String dateFrom = format.format(lrs.getDateFrom());
-        String dateTo = format.format(lrs.getDateTo());
-        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setLeaveType((byte) 4);
-        notification.setActive((byte) 1);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
     }
-    ///////////////////////////////////////////////////////////////////////////
 
     @RequestMapping(value = "/updateLeaveRequestStatusToApproved/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId, @PathVariable String approverComment){
-        leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId,approverComment);
+    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
+        leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId, approverComment);
 
     }
-
-    /////////////////////////////////////////////////////////////////////////////
 
     @RequestMapping(value = "/updateLeaveRequestStatusRejected/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.GET)
     public @ResponseBody
     void updateLeaveRequestStatusRejected(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) throws BadRequestException {
         leaveRequestRepository.updateLeaveRequestStatusRejected(leaveRequestId, approverComment);
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
-        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte) 1);
         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
         Date dateFrom = new Date(lrs.getDateFrom().getTime());
         Date dateTo = new Date(lrs.getDateTo().getTime());
@@ -366,76 +334,73 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         if ("Godišnji".equals(lrs.getCategory())) {
             notificationTitle = "Zahtjev za godišnji odmor";
             notificationText = "Godišnji odmor u periodu od " + date1 + " do "
-                        + date2 + " je odbijen.";
+                    + date2 + " je odbijen.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
             notificationTitle = "Zahtjev za odsustvo";
             notificationText = "Odsustvo u periodu od " + date1 + " do "
-                        + date2 + " je odbijeno.";
+                    + date2 + " je odbijeno.";
         } else if ("Praznik".equals(lrs.getCategory())) {
             notificationTitle = "Zahtjev za praznik";
             notificationText = "Praznik u periodu od " + date1 + " do "
-                        + date2 + " je odbijen.";
+                    + date2 + " je odbijen.";
         }
-        emailNotification.createNotification(user, notificationTitle, notificationText, (byte)(int)leaveRequest.getLeaveTypeId());
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
     public @ResponseBody
-    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException{
-        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
-        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
+    void updateLeaveRequestStatusApproved(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException {
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
+        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
         //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
-        User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
+        User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+        if (leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())) {
             Integer numOfVacationDays = leaveRequestDates.size();
-            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
-            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-            if(oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0){
-                if(vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays){
+            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte) 1);
+            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
+            if (oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0) {
+                if (vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays) {
                     throw new BadRequestException(notEnoughDays);
-                }
-                else {
+                } else {
                     vacationDays.setUsedDays(vacationDays.getUsedDays() + numOfVacationDays);
                     vacationDaysRepository.saveAndFlush(vacationDays);
                 }
-            }
-            else{
+            } else {
                 Integer maxOldDays = oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays();
                 Integer maxDays = maxOldDays + vacationDays.getTotalDays() - vacationDays.getUsedDays();
-                if(maxDays <= numOfVacationDays)
+                if (maxDays <= numOfVacationDays)
                     throw new BadRequestException(notEnoughDays);
                 Integer leftDays = numOfVacationDays - maxOldDays;
-                if(leftDays > 0){
+                if (leftDays > 0) {
                     oldVacationDays.setUsedDays(oldVacationDays.getTotalDays());
                     vacationDaysRepository.saveAndFlush(oldVacationDays);
                     vacationDays.setUsedDays(vacationDays.getUsedDays() + leftDays);
                     vacationDaysRepository.saveAndFlush(vacationDays);
-                }
-                else{
+                } else {
                     oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() + numOfVacationDays);
                     vacationDaysRepository.saveAndFlush(oldVacationDays);
                 }
             }
         }
         //Povećavanje broja iskorištenih praznika u tabeli religion_leave
-        else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
-            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-            Integer numOfDays=leaveRequestDates.size();
-                if(2-religionLeave.getNumberOfDaysUsed() < numOfDays){
-                    throw new BadRequestException(notEnoughReligionDays);
-                }else{
-                    if(religionLeave == null){
-                        religionLeave=new ReligionLeave();
-                        religionLeave.setActive((byte)1);
-                        religionLeave.setUserId(leaveRequest.getSenderUserId());
-                        religionLeave.setYear(new Date().getYear());
-                    }
-                    religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
-                    religionLeaveRepository.saveAndFlush(religionLeave);
+        else if (leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())) {
+            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+            Integer numOfDays = leaveRequestDates.size();
+            if (2 - religionLeave.getNumberOfDaysUsed() < numOfDays) {
+                throw new BadRequestException(notEnoughReligionDays);
+            } else {
+                if (religionLeave == null) {
+                    religionLeave = new ReligionLeave();
+                    religionLeave.setActive((byte) 1);
+                    religionLeave.setUserId(leaveRequest.getSenderUserId());
+                    religionLeave.setYear(new Date().getYear());
                 }
+                religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
+                religionLeaveRepository.saveAndFlush(religionLeave);
+            }
 
         }
-        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
+        leaveRequestRepository.updateLeaveRequestStatusApproved(leaveRequestId, leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
         LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
         lrs.setLeaveTypeId(leaveRequestTypeId);
 
@@ -459,100 +424,22 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             notificationText = "Praznik u periodu od " + date1 + " do "
                     + date2 + " je odobreno.";
         }
-        emailNotification.createNotification(user, notificationTitle, notificationText, (byte)(int)leaveRequest.getLeaveTypeId());
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
     }
 
-    /*@RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
-    public @ResponseBody
-   void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId, @PathVariable Integer leaveRequestTypeId, @PathVariable Byte paid) throws BadRequestException{
-        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte)1);
-        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
-        //Povećavanje broja iskorištenog godišnjeg u tabeli vacation_days
-        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
-            Integer numOfVacationDays = leaveRequestDates.size();
-            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
-            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-            if(oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0){
-                if(vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays){
-                    throw new BadRequestException(notEnoughDays);
-                }
-                else {
-                    //vacationDays.setUsedDays(vacationDays.getUsedDays() + numOfVacationDays);
-                    System.out.println("num of vocation days: "+numOfVacationDays);
-                    System.out.println("vacationDays.getUsedDays()"+vacationDays.getUsedDays());
-                    vacationDays.setUsedDays(numOfVacationDays - vacationDays.getUsedDays());
-                    vacationDaysRepository.saveAndFlush(vacationDays);
-                }
-            }
-            else{
-                Integer maxOldDays = oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays();
-                Integer maxDays = maxOldDays + vacationDays.getTotalDays() - vacationDays.getUsedDays();
-                if(maxDays <= numOfVacationDays)
-                    throw new BadRequestException(notEnoughDays);
-                Integer leftDays = numOfVacationDays - maxOldDays;
-                if(leftDays > 0){
-                    oldVacationDays.setUsedDays(oldVacationDays.getTotalDays());
-                    vacationDaysRepository.saveAndFlush(oldVacationDays);
-                    vacationDays.setUsedDays(vacationDays.getUsedDays() + leftDays);
-                    vacationDaysRepository.saveAndFlush(vacationDays);
-                }
-                else{
-                    oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() + numOfVacationDays);
-                    vacationDaysRepository.saveAndFlush(oldVacationDays);
-                }
-            }
-        }
-        //Povećavanje broja iskorištenih praznika u tabeli religion_leave
-        else if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
-            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-            //religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() + leaveRequestDates.size());
-            religionLeave.setNumberOfDaysUsed(leaveRequestDates.size() - religionLeave.getNumberOfDaysUsed());
-            religionLeaveRepository.saveAndFlush(religionLeave);
-        }
-        leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId,leaveRequestTypeId, paid, userBean.getUserUserGroupKey().getId());
-        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        lrs.setLeaveTypeId(leaveRequestTypeId);
-        Notification notification = new Notification();
-        System.out.println(lrs.getSenderUserId());
 
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setSeen((byte) 0);
-        notification.setActive((byte) 1);
-        notification.setReceiverUserId(lrs.getSenderUserId());
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
-        Date dateFrom = new Date(lrs.getDateFrom().getTime());
-        Date dateTo = new Date(lrs.getDateTo().getTime());
-        String date1 = formatter.format(dateFrom.getTime());
-        String date2 = formatter.format(dateTo.getTime());
-        if ("Godišnji".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za godišnji odmor");
-            notification.setText("Godišnji odmor u periodu od " + date1 + " do "
-                    + date2 + " je otkazan.");
-        } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za odsustvo");
-            notification.setText("Odsustvo u periodu od" + date1 + " do "
-                    + date2 + " je otkazan.");
-        } else if ("Praznik".equals(lrs.getCategory())) {
-            notification.setTitle("Zahtjev za praznik");
-            notification.setText("Praznik u periodu od" + date1 + " do "
-                    + date2 + " je otkazan.");
-        }
-        notificationRepository.saveAndFlush(notification);
-    }*/
-
-    ///////////////////////////////////////////////////////////////////////////////
     @RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId){
+    void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId) {
         leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
-        LeaveRequest leaveRequest=leaveRequestRepository.getByIdAndActive(leaveRequestId,(byte)1);
-        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte)1);
-        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())){
-            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte)1);
-            Integer numOfDays=leaveRequestDates.size();
-            if(religionLeave == null){
-                religionLeave=new ReligionLeave();
-                religionLeave.setActive((byte)1);
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
+        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
+        if (leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())) {
+            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+            Integer numOfDays = leaveRequestDates.size();
+            if (religionLeave == null) {
+                religionLeave = new ReligionLeave();
+                religionLeave.setActive((byte) 1);
                 religionLeave.setUserId(leaveRequest.getSenderUserId());
                 religionLeave.setYear(Calendar.getInstance().get(Calendar.YEAR));
             }
@@ -560,81 +447,39 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             religionLeaveRepository.saveAndFlush(religionLeave);
         }
 
-        if(leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())){
+        if (leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())) {
             Integer numOfVacationDays = leaveRequestDates.size();
-            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte)1);
-            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
-            Integer oldVacationDaysToAdd=0;
-            Integer vacationDaysToAdd=0;
+            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte) 1);
+            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
+            Integer oldVacationDaysToAdd = 0;
+            Integer vacationDaysToAdd = 0;
 
 
-            if(vacationDays.getUsedDays() == 0){
-                if(numOfVacationDays > vacationDays.getUsedDays()){
-                    vacationDaysToAdd=vacationDays.getUsedDays();
-                    if(oldVacationDays!=null) {
+            if (vacationDays.getUsedDays() == 0) {
+                if (numOfVacationDays > vacationDays.getUsedDays()) {
+                    vacationDaysToAdd = vacationDays.getUsedDays();
+                    if (oldVacationDays != null) {
                         oldVacationDaysToAdd = numOfVacationDays - (vacationDays.getUsedDays());
                     }
-                }else{
-                    vacationDaysToAdd=numOfVacationDays;
+                } else {
+                    vacationDaysToAdd = numOfVacationDays;
                 }
-            }else{
-                if(oldVacationDays!=null) {
+            } else {
+                if (oldVacationDays != null) {
                     oldVacationDaysToAdd = numOfVacationDays;
                 }
             }
-            if(oldVacationDays!=null) {
+            if (oldVacationDays != null) {
                 oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() - oldVacationDaysToAdd);
                 vacationDaysRepository.saveAndFlush(oldVacationDays);
             }
-            vacationDays.setUsedDays(vacationDays.getUsedDays()-vacationDaysToAdd);
+            vacationDays.setUsedDays(vacationDays.getUsedDays() - vacationDaysToAdd);
             vacationDaysRepository.saveAndFlush(vacationDays);
 
-            /*if(oldVacationDays == null || oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays() <= 0){
-                if(vacationDays.getTotalDays() - vacationDays.getUsedDays() < numOfVacationDays){
-                    throw new BadRequestException(notEnoughDays);
-                }
-                else {
-                    vacationDays.setUsedDays(vacationDays.getUsedDays() + numOfVacationDays);
-                    vacationDaysRepository.saveAndFlush(vacationDays);
-                }
-            }
-            else{
-                Integer maxOldDays = oldVacationDays.getTotalDays() - oldVacationDays.getUsedDays();
-                Integer maxDays = maxOldDays + vacationDays.getTotalDays() - vacationDays.getUsedDays();
-                if(maxDays <= numOfVacationDays)
-                    throw new BadRequestException(notEnoughDays);
-                Integer leftDays = numOfVacationDays - maxOldDays;
-                if(leftDays > 0){
-                    oldVacationDays.setUsedDays(oldVacationDays.getTotalDays());
-                    vacationDaysRepository.saveAndFlush(oldVacationDays);
-                    vacationDays.setUsedDays(vacationDays.getUsedDays() + leftDays);
-                    vacationDaysRepository.saveAndFlush(vacationDays);
-                }
-                else{
-                    oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() + numOfVacationDays);
-                    vacationDaysRepository.saveAndFlush(oldVacationDays);
-                }
-            }*/
-        }
-        /*LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte)1);
-        Notification notification = new Notification();
-        notification.setReceiverUserId(lrs.getSenderUserId());
-        notification.setTitle("Bolovanje");
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy.");
-        String dateFrom = format.format(lrs.getDateFrom());
-        String dateTo = format.format(lrs.getDateTo());
-        notification.setText("Bolovanje u periodu od " + dateFrom + " do " + dateTo + " je opravdano.");
-        notification.setSeen((byte) 0);
-        notification.setCompanyId(userBean.getUserUserGroupKey().getCompanyId());
-        notification.setLeaveType((byte) 4);
-        notification.setActive((byte) 1);
-        notificationRepository.saveAndFlush(notification);
-        if(user.getReceiveMail() == (byte)1)
-            emailNotification.sendNotification(user.getEmail(), notification.getTitle(), notification.getText());*/
-    }
 
-    ///////////////////////////////////////////////////////////////////////////////
+        }
+
+    }
 
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}/{userId}", method = RequestMethod.GET)
@@ -666,50 +511,30 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/numOfAbsentPeople/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
-    Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId){
+    Integer numOfAbsentPeopleInSector(@PathVariable Integer sectorId) {
         Integer tmp = leaveRequestRepository.getNumOfAbsentPeopleFilteredBySectorIdAndDate(sectorId, new Date());
         return tmp;
     }
 
 
-   /* @RequestMapping(value = "/leaveRequestFilteredBySectorId/{sectorId}", method = RequestMethod.GET)
-    public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorId( @PathVariable Integer sectorId) {
-         List<LeaveRequestUserLeaveRequestStatus> leaveRequestUserLeaveRequestStatuses = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
-        List<User> users =  userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
-        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList();
-        if(userBean.getUserUserGroupKey().getUserGroupKey()=="menadzer"){
-            List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
-            for(var i=0;i< users.size();i++){
-                User user=users.get(i);
-                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserId(user.getId());
-                list.addAll(pom);
-            }
-        }else{
-            list = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformation(userBean.getUserUserGroupKey().getId());
-        }
-        return list;
-    }*/
-
-
     @RequestMapping(value = "/leaveRequestFilteredBySectorIdAndLeaveRequestStatus/{key}/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorIdAndLeaveRequestStatus( @PathVariable String key, @PathVariable Integer sectorId) {
-        List<User> users= userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),sectorId, (byte)1);
-        List<LeaveRequestUserLeaveRequestStatus> list=new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
-        for(var i=0;i< users.size();i++){
-            User user=users.get(i);
-            if(user.getUserGroupId() != null && user.getUserGroupId() == 6){
-                List<LeaveRequestUserLeaveRequestStatus> pom=leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(),key);
+    List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredBySectorIdAndLeaveRequestStatus(@PathVariable String key, @PathVariable Integer sectorId) {
+        List<User> users = userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), sectorId, (byte) 1);
+        List<LeaveRequestUserLeaveRequestStatus> list = new ArrayList(); //=leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatusForUser(, key);
+        for (var i = 0; i < users.size(); i++) {
+            User user = users.get(i);
+            if (user.getUserGroupId() != null && user.getUserGroupId() == 6) {
+                List<LeaveRequestUserLeaveRequestStatus> pom = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationByUserIdByStatus(user.getId(), key);
                 list.addAll(pom);
             }
         }
-        for(LeaveRequestUserLeaveRequestStatus s:list){
-            List<LeaveRequestDate> dates= leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte)1);
+        for (LeaveRequestUserLeaveRequestStatus s : list) {
+            List<LeaveRequestDate> dates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte) 1);
             s.setNumberOfDays(dates.size());
         }
         return list;
     }
 
-    }
+}
 

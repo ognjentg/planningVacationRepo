@@ -3,19 +3,19 @@ package com.telegroupltd.planning_vacation_app.controller;
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
-import com.telegroupltd.planning_vacation_app.model.*;
+import com.telegroupltd.planning_vacation_app.model.ColectiveVacation;
+import com.telegroupltd.planning_vacation_app.model.LeaveRequestLeaveRequestDays;
+import com.telegroupltd.planning_vacation_app.model.VacationDays;
 import com.telegroupltd.planning_vacation_app.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -61,7 +61,6 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     @Override
     @Transactional
     public List<ColectiveVacation> getAll() {
-        System.out.println("tesst");
         return colectiveVacationRepository.getAllByActiveIs((byte) 1);
     }
 
@@ -88,7 +87,7 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     public @ResponseBody
     ColectiveVacation insert(@RequestBody ColectiveVacation colectiveVacation) throws BadRequestException {
         //Check if date_from is after or equal to date_to
-        if(colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
+        if (colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
             throw new BadRequestException(badRequestInsert);
         if (repo.saveAndFlush(colectiveVacation) == null)
             throw new BadRequestException(badRequestInsert);
@@ -134,25 +133,24 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
                         Date dateTo = new Date(colectiveVacation.getDateTo().getTime());
                         SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
                         long numOfDays = Math.abs(TimeUnit.DAYS.convert(dateFrom.getTime() - dateTo.getTime(), TimeUnit.MILLISECONDS)) + 1;
-                        userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte)1).forEach(element -> {
-                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                        userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte) 1).forEach(element -> {
+                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
                             try {
                                 emailNotification.createNotification(element, "Kolektivni godišnji odmor", "Kolektivni godišnji odmor će se održati od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + ".", null);
-                            }
-                            catch (BadRequestException e){
+                            } catch (BadRequestException e) {
 
                             }
-                            if(vacationDays != null){
-                                vacationDays.setUsedDays(vacationDays.getUsedDays() + (int)numOfDays);
+                            if (vacationDays != null) {
+                                vacationDays.setUsedDays(vacationDays.getUsedDays() + (int) numOfDays);
                                 vacationDaysRepository.saveAndFlush(vacationDays);
                             }
                         });
                         List<LeaveRequestLeaveRequestDays> leaveRequestLeaveRequestDays = leaveRequestRepository.getAllLeaveRequestDaysDaysFilteredByPeriodAndCompanyId(colectiveVacation.getDateFrom(), colectiveVacation.getDateTo(), userBean.getUserUserGroupKey().getCompanyId());
                         leaveRequestLeaveRequestDays.forEach(element -> {
                             leaveRequestDateRepository.deleteById(element.getLeaveRequestDateId());
-                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
                             Integer numOfUsedDays = vacationDays.getUsedDays() - 1;
-                            if(numOfUsedDays < 0)
+                            if (numOfUsedDays < 0)
                                 numOfUsedDays = 0;
                             vacationDays.setUsedDays(numOfUsedDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);
@@ -168,7 +166,7 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
     @Override
     public @ResponseBody
     String update(@PathVariable Integer id, @RequestBody ColectiveVacation colectiveVacation) throws BadRequestException, ForbiddenException {
-        if(colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
+        if (colectiveVacation.getDateFrom().compareTo(colectiveVacation.getDateTo()) >= 0)
             throw new BadRequestException(badRequestUpdate);
         return super.update(id, colectiveVacation);
     }
@@ -187,32 +185,29 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
 
 
             if (colectiveVacation1.getActive() == 1
-                    && dateFrom1.equals(dateFrom2) && dateTo1.equals(dateTo2) ) {
-                colectiveVacation1.setActive((byte)0);
-                if (repo.saveAndFlush(colectiveVacation1) != null){
+                    && dateFrom1.equals(dateFrom2) && dateTo1.equals(dateTo2)) {
+                colectiveVacation1.setActive((byte) 0);
+                if (repo.saveAndFlush(colectiveVacation1) != null) {
                     Date dateFrom = new Date(colectiveVacation.getDateFrom().getTime());
                     Date dateTo = new Date(colectiveVacation.getDateTo().getTime());
                     SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
 
                     long numOfDays = Math.abs(TimeUnit.DAYS.convert(dateFrom.getTime() - dateTo.getTime(), TimeUnit.MILLISECONDS));
-                    userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte)1).forEach(element -> {
-                        VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                    userRepository.getAllByCompanyIdAndActive(colectiveVacation.getCompanyId(), (byte) 1).forEach(element -> {
+                        VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(element.getId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
                         try {
                             emailNotification.createNotification(element, "Kolektivni godišnji odmor", "Kolektivni godišnji odmor od " + formatter.format(dateFrom) + " do " + formatter.format(dateTo) + " je otkazan.", null);
-                        }
-                        catch (BadRequestException e){
+                        } catch (BadRequestException e) {
 
                         }
-                        if(vacationDays != null){
-                            Integer numOfUsedDays = vacationDays.getUsedDays() - (int)numOfDays;
-                            if(numOfUsedDays < 0)
+                        if (vacationDays != null) {
+                            Integer numOfUsedDays = vacationDays.getUsedDays() - (int) numOfDays;
+                            if (numOfUsedDays < 0)
                                 numOfUsedDays = 0;
                             vacationDays.setUsedDays(numOfUsedDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);
                         }
                     });
-
-
 
 
                     return "Uspjesno";
@@ -224,7 +219,7 @@ public class ColectiveVacationController extends GenericHasActiveController<Cole
 
     @RequestMapping(value = "/getByCompanyId/{companyId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<ColectiveVacation> getByCompanyId(@PathVariable Integer companyId){
-        return colectiveVacationRepository.getAllByCompanyIdAndActive(companyId, (byte)1);
+    List<ColectiveVacation> getByCompanyId(@PathVariable Integer companyId) {
+        return colectiveVacationRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
     }
 }

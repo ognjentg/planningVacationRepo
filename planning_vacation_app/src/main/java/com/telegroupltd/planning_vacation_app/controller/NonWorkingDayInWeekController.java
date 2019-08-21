@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -43,7 +42,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
     @Override
     @Transactional
     public List<NonWorkingDayInWeek> getAll() {
-         return nonWorkingDayInWeekRepository.getAllByActiveIs((byte) 1);
+        return nonWorkingDayInWeekRepository.getAllByActiveIs((byte) 1);
     }
 
     @RequestMapping(value = "/getNonWorkingDayInWeekByCompany/{companyId}", method = RequestMethod.GET)
@@ -58,7 +57,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         for (NonWorkingDayInWeek nonWorkingDayInWeek : nonWorkingDayInWeekList) {
             nonWorkingDay.add(getDayInWeek(nonWorkingDayInWeek).getDayKey());
         }
-        return  nonWorkingDay;
+        return nonWorkingDay;
     }
 
 
@@ -69,7 +68,7 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
         for (NonWorkingDayInWeek nonWorkingDayInWeek : nonWorkingDayInWeekList) {
             nonWorkingDays.add(getDayInWeek(nonWorkingDayInWeek).getJavaValue());
         }
-        return  nonWorkingDays;
+        return nonWorkingDays;
     }
 
     @Transactional
@@ -93,7 +92,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
                     nonWorkingDayInWeek1.setActive((byte) 0);
                     if (repo.saveAndFlush(nonWorkingDayInWeek1) != null) {
                         flag = false;
-                        System.out.println("Update");
                     }
                 }
             }
@@ -106,7 +104,6 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
 
                 if (repo.saveAndFlush(newNonWorkingDayInWeek) != null) {
                     entityManager.refresh(newNonWorkingDayInWeek);
-                    System.out.println("post");
 
                 }
             }
@@ -119,38 +116,37 @@ public class NonWorkingDayInWeekController extends GenericHasActiveController<No
             dayInWeek.setId(8);
             dayInWeek.setDayKey("Ponedeljak");
             dayInWeek.setJavaValue(1);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         } else if (nonWorkingDayInWeek.getDayInWeekId() == 9) {
             dayInWeek.setId(9);
             dayInWeek.setDayKey("Utorak");
             dayInWeek.setJavaValue(2);
-            dayInWeek.setActive((byte)1);
-        }
-        else if (nonWorkingDayInWeek.getDayInWeekId() == 10) {
+            dayInWeek.setActive((byte) 1);
+        } else if (nonWorkingDayInWeek.getDayInWeekId() == 10) {
             dayInWeek.setId(10);
             dayInWeek.setDayKey("Srijeda");
             dayInWeek.setJavaValue(3);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         } else if (nonWorkingDayInWeek.getDayInWeekId() == 11) {
             dayInWeek.setId(11);
             dayInWeek.setDayKey("Cetvrtak");
             dayInWeek.setJavaValue(4);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         } else if (nonWorkingDayInWeek.getDayInWeekId() == 12) {
             dayInWeek.setId(12);
             dayInWeek.setDayKey("Petak");
             dayInWeek.setJavaValue(5);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         } else if (nonWorkingDayInWeek.getDayInWeekId() == 13) {
             dayInWeek.setId(13);
             dayInWeek.setDayKey("Subota");
             dayInWeek.setJavaValue(6);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         } else if (nonWorkingDayInWeek.getDayInWeekId() == 14) {
             dayInWeek.setId(14);
             dayInWeek.setDayKey("Nedelja");
             dayInWeek.setJavaValue(7);
-            dayInWeek.setActive((byte)1);
+            dayInWeek.setActive((byte) 1);
         }
         return dayInWeek;
     }

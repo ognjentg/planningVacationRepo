@@ -60,12 +60,12 @@ public class NotificationController extends GenericHasActiveController<Notificat
     public @ResponseBody
     List<Notification> getAllNotificationByUser(@PathVariable Integer id) {
         List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActive(id, (byte) 1);
-       if(userBean.getUserUserGroupKey().getUserGroupKey() != null){
-           if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
-               notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+        if (userBean.getUserUserGroupKey().getUserGroupKey() != null) {
+            if ("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
+                notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte) 1));
 
-       }
-       notifications=notifications.stream().sorted((n1,n2)-> n2.getCreated().compareTo(n1.getCreated())).collect(Collectors.toList());
+        }
+        notifications = notifications.stream().sorted((n1, n2) -> n2.getCreated().compareTo(n1.getCreated())).collect(Collectors.toList());
         return notifications;
     }
 
@@ -73,8 +73,8 @@ public class NotificationController extends GenericHasActiveController<Notificat
     public @ResponseBody
     List<Notification> getNotSeenNotificationByUser(@PathVariable Integer id) {
         List<Notification> notifications = notificationRepository.getAllByReceiverUserIdAndActiveAndSeen(id, (byte) 1, (byte) 0);
-        if("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
-            notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte)1));
+        if ("sekretar".equals(userBean.getUserUserGroupKey().getUserGroupKey()))
+            notifications.addAll(notificationRepository.getAllByReceiverUserIdAndLeaveTypeAndCompanyIdAndActive(null, (byte) 4, userBean.getUserUserGroupKey().getCompanyId(), (byte) 1));
         return notifications;
     }
 
@@ -106,7 +106,7 @@ public class NotificationController extends GenericHasActiveController<Notificat
                     notification.setSeen((byte) 1);
                 else
                     notification.setSeen((byte) 0);
-                if (repo.saveAndFlush(notification) != null);
+                if (repo.saveAndFlush(notification) != null) ;
             }
         }
     }
@@ -116,7 +116,7 @@ public class NotificationController extends GenericHasActiveController<Notificat
     String delete(@PathVariable Integer id) {
         Notification notification = notificationRepository.getById(id);
         cloner.deepClone(notification);
-        Objects.requireNonNull(notification).setActive((byte)0);
+        Objects.requireNonNull(notification).setActive((byte) 0);
         return "Uspjesno";
     }
 
@@ -137,7 +137,7 @@ public class NotificationController extends GenericHasActiveController<Notificat
             notification.setTitle("Zahtjev za godišnji odmor");
             if (reject == 0)
                 notification.setTitle("Godišnji odmor u periodu od " + dateFrom + " do "
-                + dateTo + " je odbijen.");
+                        + dateTo + " je odbijen.");
             else
                 notification.setText("Godišnji odmor u periodu od " + dateFrom + " do "
                         + dateTo + " je odobren.");

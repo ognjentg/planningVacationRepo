@@ -1,7 +1,6 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestException;
-import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestLeaveRequestDays;
 import com.telegroupltd.planning_vacation_app.model.NonWorkingDay;
@@ -11,25 +10,19 @@ import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
 import com.telegroupltd.planning_vacation_app.repository.NonWorkingDayRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
 import com.telegroupltd.planning_vacation_app.repository.VacationDaysRepository;
-import com.telegroupltd.planning_vacation_app.session.UserBean;
 import com.telegroupltd.planning_vacation_app.util.Notification;
-import com.telegroupltd.planning_vacation_app.util.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -70,13 +63,13 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
 
     public NonWorkingDayController(NonWorkingDayRepository nonWorkingDayRepository) {
         super(nonWorkingDayRepository);
-        this.nonWorkingDayRepository=nonWorkingDayRepository;
+        this.nonWorkingDayRepository = nonWorkingDayRepository;
     }
 
     @Override
     @Transactional
     public List<NonWorkingDay> getAll() {
-        return nonWorkingDayRepository.getAllByActiveIs((byte)1);
+        return nonWorkingDayRepository.getAllByActiveIs((byte) 1);
     }
 
     @RequestMapping(value = "/getNonWorkingDayByCompany/{companyId}", method = RequestMethod.GET)
@@ -92,7 +85,7 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
                 result.add(nonWorkingDay);
             }
         }
-        return  result;
+        return result;
     }
 
     @RequestMapping(value = "/getNonWorkingDayByCompanyString/{companyId}", method = RequestMethod.GET)
@@ -107,7 +100,6 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
             String patter = "dd.MM.yyyy";
             SimpleDateFormat simpleDateFormat1 = new SimpleDateFormat(patter);
             String dateString = simpleDateFormat1.format(date);
-            System.out.println(dateString);
             dates.add(dateString);
         }
         return dates;
@@ -144,9 +136,9 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
                     nonWorkingDays.forEach(element -> {
                         List<LeaveRequestLeaveRequestDays> leaveRequestLeaveRequestDays = leaveRequestRepository.getAllLeaveRequestDaysDaysFilteredByPeriodAndCompanyId(element.getDay(), element.getDay(), userBean.getUserUserGroupKey().getCompanyId());
                         leaveRequestLeaveRequestDays.forEach(elementTemp -> {
-                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(elementTemp.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+                            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(elementTemp.getUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
                             Integer numOfUsedDays = vacationDays.getUsedDays() - 1;
-                            if(numOfUsedDays < 0)
+                            if (numOfUsedDays < 0)
                                 numOfUsedDays = 0;
                             vacationDays.setUsedDays(numOfUsedDays);
                             vacationDaysRepository.saveAndFlush(vacationDays);
@@ -154,10 +146,10 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
                     });
                     SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
                     String dates = "";
-                    for(NonWorkingDay temp : nonWorkingDays){
+                    for (NonWorkingDay temp : nonWorkingDays) {
                         dates += formatter.format(temp.getDay()) + ", ";
                     }
-                    for(User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1)){
+                    for (User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte) 1)) {
                         emailNotification.createNotification(user, "Neradni dani", " Dani: " + dates + "će biti neradni.", null);
                     }
                 }
@@ -166,12 +158,12 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
     }
 
     @Override
-    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public @ResponseBody
-    String delete(@PathVariable Integer id) throws BadRequestException{
+    String delete(@PathVariable Integer id) throws BadRequestException {
         NonWorkingDay nonWorkingDay = nonWorkingDayRepository.findById(id).orElse(null);
         cloner.deepClone(nonWorkingDay);
-        Objects.requireNonNull(nonWorkingDay).setActive((byte)0);
+        Objects.requireNonNull(nonWorkingDay).setActive((byte) 0);
         return "Uspjesno";
     }
 
@@ -184,10 +176,10 @@ public class NonWorkingDayController extends GenericHasActiveController<NonWorki
             String date1 = nonWorkingDay1.getDay().toString();
             String date2 = nonWorkingDay.getDay().toString();
             if (nonWorkingDay.getActive() == 1 && date1.equals(date2)) {
-                nonWorkingDay.setActive((byte)0);
+                nonWorkingDay.setActive((byte) 0);
                 SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
-                if (repo.saveAndFlush(nonWorkingDay) != null){
-                    for(User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1)){
+                if (repo.saveAndFlush(nonWorkingDay) != null) {
+                    for (User user : userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte) 1)) {
                         emailNotification.createNotification(user, "Neradni dan", "Neadni dan " + formatter.format(nonWorkingDay1.getDay()) + " je promijenjen u radni.", null);
                     }
                     return "Uspjesno";

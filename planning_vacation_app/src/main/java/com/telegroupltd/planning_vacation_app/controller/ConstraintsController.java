@@ -8,7 +8,6 @@ import com.telegroupltd.planning_vacation_app.model.Constraints;
 import com.telegroupltd.planning_vacation_app.repository.ConstraintsRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -33,21 +32,16 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
     public ConstraintsController(ConstraintsRepository constraintsRepository) {
         super(constraintsRepository);
-        this.constraintsRepository=constraintsRepository;
+        this.constraintsRepository = constraintsRepository;
     }
 
 
     @Override
     @Transactional
     public List<Constraints> getAll() {
-        return  constraintsRepository.getAllByActiveIs((byte) 1);
+        return constraintsRepository.getAllByActiveIs((byte) 1);
     }
 
-//    @Override
-//    public Constraints findById(Integer companyId) throws ForbiddenException {
-//        return constraintsRepository.getByCompanyIdAndActive(companyId,(byte) 1);
-//    }
-//
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public @ResponseBody
     Constraints findById(@PathVariable Integer id) {
@@ -67,7 +61,7 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         newConstraints.setSickLeaveJustificationPeriodLength(constraints.getSickLeaveJustificationPeriodLength());
         newConstraints.setVacationPeriodLength(constraints.getVacationPeriodLength());
         newConstraints.setCompanyId(constraints.getCompanyId());
-        newConstraints.setActive((byte)1);
+        newConstraints.setActive((byte) 1);
         newConstraints.setMaxOldVacationPeriodLength(constraints.getMaxOldVacationPeriodLength());
 
         Constraints baseConstraints = findById(constraints.getCompanyId());
@@ -77,7 +71,7 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
             if (baseConstraints.getMaxVacationDays() == constraints.getMaxVacationDays() &&
                     baseConstraints.getSickLeaveJustificationPeriodLength() == constraints.getSickLeaveJustificationPeriodLength() &&
                     baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()
-            && baseConstraints.getMaxOldVacationPeriodLength() == constraints.getMaxOldVacationPeriodLength()) {
+                    && baseConstraints.getMaxOldVacationPeriodLength() == constraints.getMaxOldVacationPeriodLength()) {
                 return constraints;
             } else {
                 update(constraints.getCompanyId(), baseConstraints);

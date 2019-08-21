@@ -17,8 +17,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.sql.Date;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @SuppressWarnings("ALL")
 @RequestMapping(value = "/hub/sector")
@@ -45,15 +46,15 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     private EntityManager entityManager;
 
     @Autowired
-    public SectorController(SectorRepository sectorRepository, CompanyRepository companyRepository, LeaveRequestRepository leaveRequestRepository, LeaveRequestDateRepository leaveRequestDateRepository, UserRepository userRepository){
+    public SectorController(SectorRepository sectorRepository, CompanyRepository companyRepository, LeaveRequestRepository leaveRequestRepository, LeaveRequestDateRepository leaveRequestDateRepository, UserRepository userRepository) {
         super(sectorRepository);
-        this.sectorRepository=sectorRepository;
+        this.sectorRepository = sectorRepository;
     }
 
     @Override
     public @ResponseBody
     List<Sector> getAll() {
-        return sectorRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1);
+        return sectorRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte) 1);
         // return sectors = sectorRepository.getAllByActiveIs((byte)1);
 
     }
@@ -73,46 +74,45 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
 
     @RequestMapping(value = "/sectorInfo", method = RequestMethod.GET)
     public @ResponseBody
-    List<SectorUser> getSectorsInformation(){
+    List<SectorUser> getSectorsInformation() {
         return sectorRepository.getSectorsInformation(userBean.getUserUserGroupKey().getCompanyId());
     }
 
     @Override
     public Sector findById(Integer sectorId) {
-        return sectorRepository.getByIdAndActive(sectorId,(byte) 1);
+        return sectorRepository.getByIdAndActive(sectorId, (byte) 1);
     }
 
     @RequestMapping(value = "/getMaxAbscentBySector/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    Double getMaxAbscentBySector(@PathVariable Integer id){
+    Double getMaxAbscentBySector(@PathVariable Integer id) {
         Sector sec = sectorRepository.getByIdAndActive(id, (byte) 1);
-        if(sec!=null){
-        return sec.getMaxPercentageAbsentPeople();
-        }
-        else return 105.0;
+        if (sec != null) {
+            return sec.getMaxPercentageAbsentPeople();
+        } else return 105.0;
     }
 
     @RequestMapping(value = "/updateUsersFromSector/{sectorId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateSectorsUsers(@PathVariable Integer sectorId){
+    void updateSectorsUsers(@PathVariable Integer sectorId) {
         sectorRepository.updateUsersFromSector(sectorId);
     }
 
     @RequestMapping(value = "/{companyId}/{managerId}", method = RequestMethod.GET)
     public @ResponseBody
-    Sector getSectorByManagerIdAndCompanyId(@PathVariable Integer companyId, @PathVariable Integer managerId){
+    Sector getSectorByManagerIdAndCompanyId(@PathVariable Integer companyId, @PathVariable Integer managerId) {
         return sectorRepository.getBySectorManagerIdAndCompanyId(managerId, companyId);
     }
 
     @RequestMapping(value = "/setAbscentPercent", method = RequestMethod.POST)
     public @ResponseBody
-    boolean setAbscentPercent(@RequestBody SetAbscentPercent sap){
+    boolean setAbscentPercent(@RequestBody SetAbscentPercent sap) {
         Sector sector = sectorRepository.findById(sap.getId()).orElse(null);
-        if(sector!=null){
+        if (sector != null) {
             sector.setMaxPercentageAbsentPeople(sap.getPercent());
             repo.saveAndFlush(sector);
             return true;
-        }else return true;
+        } else return true;
     }
 
 
@@ -122,8 +122,8 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
     public @ResponseBody
     String update(@PathVariable Integer id, @RequestBody Sector newSector) throws BadRequestException {
         Sector sector = sectorRepository.findById(id).orElse(null);
-        if(sector != null) {
-            if(repo.saveAndFlush(newSector) != null) {
+        if (sector != null) {
+            if (repo.saveAndFlush(newSector) != null) {
                 return "Success";
             }
             throw new BadRequestException(badRequestUpdate);
@@ -144,11 +144,9 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
             switch (leaveRequest) {
                 case "Godišnji":
                     vacation += 1;
-                    System.out.println(vacation);
                     break;
                 case "Praznik":
                     religion += 1;
-                    System.out.println(religion);
                     break;
                 case "Odsustvo":
                     leave += 1;
@@ -164,9 +162,9 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
             return monthUserNoList;
         }
 
-        MonthUserNo monthUserNo1 = new MonthUserNo(CompanyController.round(vacation / sum * 100,2), "Godišnji", "#e6194B");
-        MonthUserNo monthUserNo2 = new MonthUserNo(CompanyController.round(religion / sum * 100,2), "Praznik", "#42d4f4");
-        MonthUserNo monthUserNo3 = new MonthUserNo(CompanyController.round(leave / sum * 100,2), "Odsustvo", "#bfef45");
+        MonthUserNo monthUserNo1 = new MonthUserNo(CompanyController.round(vacation / sum * 100, 2), "Godišnji", "#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(CompanyController.round(religion / sum * 100, 2), "Praznik", "#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(CompanyController.round(leave / sum * 100, 2), "Odsustvo", "#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);
@@ -175,7 +173,7 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
         return monthUserNoList;
     }
 
-    @RequestMapping(value = "/statistics/sector/new/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/sector/new/{id}", method = RequestMethod.GET)
     public @ResponseBody
     List<MonthUserNo> getStatisticUser(@PathVariable Integer id) throws BadRequestException {
         // Integer companyId = 1;
@@ -189,11 +187,9 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
         Integer religion1 = 0, religion2 = 0, religion3 = 0, religion4 = 0, religion5 = 0, religion6 = 0, religion7 = 0, religion8 = 0, religion9 = 0, religion10 = 0, religion11 = 0, religion12 = 0;
         Integer leave1 = 0, leave2 = 0, leave3 = 0, leave4 = 0, leave5 = 0, leave6 = 0, leave7 = 0, leave8 = 0, leave9 = 0, leave10 = 0, leave11 = 0, leave12 = 0;
 
-        System.out.println("Size = " + leaveRequests.size());
         for (LeaveRequest leaveRequest : leaveRequests) {
-            System.out.println(leaveRequest.getSenderUserId());
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
-            if(leaveRequestDates.size()<1)
+            if (leaveRequestDates.size() < 1)
                 break;
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             java.util.Date firstDay = leaveRequestDates.get(0).getDate();
@@ -727,18 +723,18 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
 
         verticalScale = usersInCompany.size();
 
-        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B",vacation1,leave1,religion1);
-        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231",vacation2,leave2,religion2);
-        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119",vacation3,leave3,religion3);
-        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45",vacation4,leave4,religion4);
-        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b",vacation5,leave5,religion5);
-        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4",vacation6,leave6,religion6);
-        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8",vacation7,leave7,religion7);
-        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4",vacation8,leave8,religion8);
-        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6",vacation9,leave9,religion9);
-        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990",vacation10,leave10,religion10);
-        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe",vacation11,leave11,religion11);
-        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3",vacation12,leave12,religion12);
+        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B", vacation1, leave1, religion1);
+        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231", vacation2, leave2, religion2);
+        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119", vacation3, leave3, religion3);
+        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45", vacation4, leave4, religion4);
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b", vacation5, leave5, religion5);
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4", vacation6, leave6, religion6);
+        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8", vacation7, leave7, religion7);
+        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4", vacation8, leave8, religion8);
+        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6", vacation9, leave9, religion9);
+        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990", vacation10, leave10, religion10);
+        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe", vacation11, leave11, religion11);
+        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3", vacation12, leave12, religion12);
 
         List<MonthUserNo> monthUserNos = new ArrayList<>();
         monthUserNos.add(monthUserNo1);

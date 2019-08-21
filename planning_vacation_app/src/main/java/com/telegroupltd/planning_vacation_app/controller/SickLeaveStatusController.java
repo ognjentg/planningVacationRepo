@@ -1,7 +1,6 @@
 package com.telegroupltd.planning_vacation_app.controller;
 
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
-import com.telegroupltd.planning_vacation_app.model.SickLeave;
 import com.telegroupltd.planning_vacation_app.model.SickLeaveStatus;
 import com.telegroupltd.planning_vacation_app.repository.SickLeaveStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +11,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@RequestMapping(value="/hub/sick_leave_status")
+@RequestMapping(value = "/hub/sick_leave_status")
 @Controller
 @Scope("request")
-public class SickLeaveStatusController extends GenericHasActiveController<SickLeaveStatus,Integer> {
+public class SickLeaveStatusController extends GenericHasActiveController<SickLeaveStatus, Integer> {
     private final SickLeaveStatusRepository sickLeaveStatusRepository;
+
     @Autowired
-    SickLeaveStatusController(SickLeaveStatusRepository sickLeaveStatusRepository)
-    {
+    SickLeaveStatusController(SickLeaveStatusRepository sickLeaveStatusRepository) {
         super(sickLeaveStatusRepository);
         this.sickLeaveStatusRepository = sickLeaveStatusRepository;
     }
@@ -27,7 +26,7 @@ public class SickLeaveStatusController extends GenericHasActiveController<SickLe
     @Override
     public @ResponseBody
     List<SickLeaveStatus> getAll() {
-        List<SickLeaveStatus> sickLeaveStatusList = cloner.deepClone(sickLeaveStatusRepository.getAllByActiveIs((byte)1));
+        List<SickLeaveStatus> sickLeaveStatusList = cloner.deepClone(sickLeaveStatusRepository.getAllByActiveIs((byte) 1));
         return sickLeaveStatusList;
     }
 }

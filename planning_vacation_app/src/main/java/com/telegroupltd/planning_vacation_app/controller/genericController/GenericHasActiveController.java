@@ -47,7 +47,7 @@ public class GenericHasActiveController<T extends HasActive, ID extends Serializ
         if (objectDb != null) {
             if (object.getActive() == null)
                 object.setActive(objectDb.getActive());
-            return super.update(id,object);
+            return super.update(id, object);
         }
         throw new BadRequestException("Bad Request");
     }

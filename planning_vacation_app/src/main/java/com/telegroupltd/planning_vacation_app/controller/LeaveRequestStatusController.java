@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@RequestMapping(value="/hub/leave_request_status")
+@RequestMapping(value = "/hub/leave_request_status")
 @Controller
 @Scope("request")
-public class LeaveRequestStatusController extends GenericHasActiveController<LeaveRequestStatus,Integer> {
+public class LeaveRequestStatusController extends GenericHasActiveController<LeaveRequestStatus, Integer> {
     private final LeaveRequestStatusRepository leaveRequestStatusRepository;
+
     @Autowired
-    LeaveRequestStatusController(LeaveRequestStatusRepository leaveRequestStatusRepository)
-    {
+    LeaveRequestStatusController(LeaveRequestStatusRepository leaveRequestStatusRepository) {
         super(leaveRequestStatusRepository);
         this.leaveRequestStatusRepository = leaveRequestStatusRepository;
     }
@@ -26,7 +26,7 @@ public class LeaveRequestStatusController extends GenericHasActiveController<Lea
     @Override
     public @ResponseBody
     List<LeaveRequestStatus> getAll() {
-        List<LeaveRequestStatus> leaveRequestStatuses = cloner.deepClone(leaveRequestStatusRepository.getAllByActiveIs((byte)1));
+        List<LeaveRequestStatus> leaveRequestStatuses = cloner.deepClone(leaveRequestStatusRepository.getAllByActiveIs((byte) 1));
         return leaveRequestStatuses;
     }
 }

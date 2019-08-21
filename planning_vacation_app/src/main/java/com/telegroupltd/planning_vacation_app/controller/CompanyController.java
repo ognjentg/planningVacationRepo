@@ -7,7 +7,6 @@ import com.telegroupltd.planning_vacation_app.model.LeaveRequest;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestDate;
 import com.telegroupltd.planning_vacation_app.model.User;
 import com.telegroupltd.planning_vacation_app.repository.CompanyRepository;
-
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestDateRepository;
 import com.telegroupltd.planning_vacation_app.repository.LeaveRequestRepository;
 import com.telegroupltd.planning_vacation_app.repository.UserRepository;
@@ -25,11 +24,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.time.Month;
 import java.util.*;
-
 
 
 @RequestMapping(value = "/hub/company")
@@ -84,18 +79,8 @@ public class CompanyController extends GenericController<Company, Integer> {
     public @ResponseBody
     Company findById(@PathVariable Integer id) {
         Company company = companyRepository.findById(id).orElse(null);
-        // if (company != null ) {
-
         return company;
-        //} else {
-        //    throw new BadRequestException();
-        // }
     }
-
-
-    /*
-     * TODO Needs to check if something is missing of these parameters, needs to check frontend part and than add some functionalities
-     * */
 
     @Override
     @Transactional
@@ -185,11 +170,9 @@ public class CompanyController extends GenericController<Company, Integer> {
             switch (leaveRequest.getCategory()) {
                 case "Godišnji":
                     vacation += 1;
-                    System.out.println(vacation);
                     break;
                 case "Praznik":
                     religion += 1;
-                    System.out.println(religion);
                     break;
                 case "Odsustvo":
                     leave += 1;
@@ -205,9 +188,9 @@ public class CompanyController extends GenericController<Company, Integer> {
             return monthUserNoList;
         }
 
-        MonthUserNo monthUserNo1 = new MonthUserNo(round(vacation / sum * 100,2), "Godišnji", "#e6194B");
-        MonthUserNo monthUserNo2 = new MonthUserNo(round(religion / sum * 100,2), "Praznik", "#42d4f4");
-        MonthUserNo monthUserNo3 = new MonthUserNo(round(leave / sum * 100,2), "Odsustvo", "#bfef45");
+        MonthUserNo monthUserNo1 = new MonthUserNo(round(vacation / sum * 100, 2), "Godišnji", "#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(round(religion / sum * 100, 2), "Praznik", "#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(round(leave / sum * 100, 2), "Odsustvo", "#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);
@@ -216,9 +199,9 @@ public class CompanyController extends GenericController<Company, Integer> {
         return monthUserNoList;
     }
 
-    @RequestMapping(value = "/statistics/user/new/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/statistics/user/new/{id}", method = RequestMethod.GET)
     public @ResponseBody
-    List<MonthUserNo> getStatisticUser(@PathVariable Integer id) throws BadRequestException{
+    List<MonthUserNo> getStatisticUser(@PathVariable Integer id) throws BadRequestException {
 
         Integer companyId = userBean.getUserUserGroupKey().getCompanyId();
         List<User> usersInCompany = new ArrayList<>();
@@ -227,15 +210,15 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         if (userBean.getUserUserGroupKey().getUserGroupKey() == "admin" || userBean.getUserUserGroupKey().getUserGroupKey() == "direktor" || userBean.getUserUserGroupKey().getUserGroupKey() == "sekretar") {
             usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
-            leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusIdAndSenderUserId(companyId, (byte) 1, 2,id);
-            if(leaveRequests.size()==0){
+            leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusIdAndSenderUserId(companyId, (byte) 1, 2, id);
+            if (leaveRequests.size() == 0) {
                 return null;
             }
         } else if (userBean.getUserUserGroupKey().getUserGroupKey() == "menadzer") {
             Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
             usersInCompany = userRepository.getAllByCompanyIdAndSectorIdAndActive(companyId, sectorId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusIdAndSenderUserId(companyId, (byte) 1, 2, id);
-            if(leaveRequests.size()==0){
+            if (leaveRequests.size() == 0) {
                 return null;
             }
             int i = 0;
@@ -256,7 +239,7 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         for (LeaveRequest leaveRequest : leaveRequests) {
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
-            if(leaveRequestDates.size()<1)
+            if (leaveRequestDates.size() < 1)
                 break;
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
             Date firstDay = leaveRequestDates.get(0).getDate();
@@ -790,18 +773,18 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         verticalScale = usersInCompany.size();
 
-        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B",vacation1,leave1,religion1);
-        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231",vacation2,leave2,religion2);
-        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119",vacation3,leave3,religion3);
-        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45",vacation4,leave4,religion4);
-        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b",vacation5,leave5,religion5);
-        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4",vacation6,leave6,religion6);
-        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8",vacation7,leave7,religion7);
-        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4",vacation8,leave8,religion8);
-        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6",vacation9,leave9,religion9);
-        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990",vacation10,leave10,religion10);
-        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe",vacation11,leave11,religion11);
-        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3",vacation12,leave12,religion12);
+        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B", vacation1, leave1, religion1);
+        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231", vacation2, leave2, religion2);
+        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119", vacation3, leave3, religion3);
+        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45", vacation4, leave4, religion4);
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b", vacation5, leave5, religion5);
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4", vacation6, leave6, religion6);
+        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8", vacation7, leave7, religion7);
+        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4", vacation8, leave8, religion8);
+        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6", vacation9, leave9, religion9);
+        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990", vacation10, leave10, religion10);
+        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe", vacation11, leave11, religion11);
+        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3", vacation12, leave12, religion12);
 
         List<MonthUserNo> monthUserNos = new ArrayList<>();
         monthUserNos.add(monthUserNo1);
@@ -829,20 +812,17 @@ public class CompanyController extends GenericController<Company, Integer> {
         List<LeaveRequest> leaveRequests = new ArrayList<>();
 
 
-
         if (userBean.getUserUserGroupKey().getUserGroupKey() == "admin" || userBean.getUserUserGroupKey().getUserGroupKey() == "direktor" || userBean.getUserUserGroupKey().getUserGroupKey() == "sekretar") {
             usersInCompany = userRepository.getAllByCompanyIdAndActive(companyId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte) 1, 2);
-            if(leaveRequests.size() < 1){
-                System.out.println("Ovdje me vratiiii");
+            if (leaveRequests.size() < 1) {
                 return null;
             }
         } else if (userBean.getUserUserGroupKey().getUserGroupKey() == "menadzer") {
             Integer sectorId = userBean.getUserUserGroupKey().getSectorId();
             usersInCompany = userRepository.getAllByCompanyIdAndSectorIdAndActive(companyId, sectorId, (byte) 1);
             leaveRequests = leaveRequestRepository.getAllByCompanyIdAndActiveAndLeaveRequestStatusId(companyId, (byte) 1, 2);
-            if(leaveRequests.size() < 1){
-                System.out.println("Ovdje me vratiiii");
+            if (leaveRequests.size() < 1) {
                 return null;
             }
             int i = 0;
@@ -863,9 +843,7 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         for (LeaveRequest leaveRequest : leaveRequests) {
             List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
-            System.out.println(leaveRequestDates.size());
-            if(leaveRequestDates.size()==0){
-                System.out.println("Ipak ovdjee");
+            if (leaveRequestDates.size() == 0) {
                 break;
             }
             leaveRequestDates.sort(Comparator.comparing(LeaveRequestDate::getDate));
@@ -1400,18 +1378,18 @@ public class CompanyController extends GenericController<Company, Integer> {
 
         verticalScale = usersInCompany.size();
 
-        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B",vacation1,leave1,religion1);
-        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231",vacation2,leave2,religion2);
-        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119",vacation3,leave3,religion3);
-        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45",vacation4,leave4,religion4);
-        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b",vacation5,leave5,religion5);
-        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4",vacation6,leave6,religion6);
-        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8",vacation7,leave7,religion7);
-        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4",vacation8,leave8,religion8);
-        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6",vacation9,leave9,religion9);
-        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990",vacation10,leave10,religion10);
-        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe",vacation11,leave11,religion11);
-        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3",vacation12,leave12,religion12);
+        MonthUserNo monthUserNo1 = new MonthUserNo("Januar", january, "#e6194B", vacation1, leave1, religion1);
+        MonthUserNo monthUserNo2 = new MonthUserNo("Februar", february, "#f58231", vacation2, leave2, religion2);
+        MonthUserNo monthUserNo3 = new MonthUserNo("Mart", march, "#ffe119", vacation3, leave3, religion3);
+        MonthUserNo monthUserNo4 = new MonthUserNo("April", april, "#bfef45", vacation4, leave4, religion4);
+        MonthUserNo monthUserNo5 = new MonthUserNo("Maj", may, "#3cb44b", vacation5, leave5, religion5);
+        MonthUserNo monthUserNo6 = new MonthUserNo("Jun", jun, "#42d4f4", vacation6, leave6, religion6);
+        MonthUserNo monthUserNo7 = new MonthUserNo("Jul", july, "#4363d8", vacation7, leave7, religion7);
+        MonthUserNo monthUserNo8 = new MonthUserNo("Avgust", august, "#911eb4", vacation8, leave8, religion8);
+        MonthUserNo monthUserNo9 = new MonthUserNo("Septembar", september, "#f032e6", vacation9, leave9, religion9);
+        MonthUserNo monthUserNo10 = new MonthUserNo("Oktobar", october, "#469990", vacation10, leave10, religion10);
+        MonthUserNo monthUserNo11 = new MonthUserNo("Novembar", november, "#fabebe", vacation11, leave11, religion11);
+        MonthUserNo monthUserNo12 = new MonthUserNo("Decembar", december, "#aaffc3", vacation12, leave12, religion12);
 
         List<MonthUserNo> monthUserNos = new ArrayList<>();
         monthUserNos.add(monthUserNo1);
