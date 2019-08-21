@@ -1,187 +1,112 @@
 var companyStatisticView;
-var achart = {
-    cols: [{
-        id:"aChart",
-        view: "chart",
-        type: "bar",
-        value: "#number#",
-        label: "#number#",
-        color: "#color#",
-        gradient: "rising",
-        radius: 0,
-        barWidth: 80,
-        yAxis: {
-            template: "",
-            start: 0, end: 10, step: 1
-        },
-        xAxis: {
-            template: "'#month#'",
-            title: "Broj odsutnih zaposlenih po mjesecu",
-            lines: false
-        },
-        padding: {
-            left: 10,
-            right: 10,
-            top: 50,
-            bottom: 70
-        },
-        url: "/hub/company/statistics/all"
-    }]
-
-
-};
-var bchart = {
-    view: "chart",
-    type: "spline",
-    value: "#number#",
-    item: {
-        borderColor: "#ffffff",
-        color: "#000000"
-    },
-    line: {
-        color: "#ff9900",
-        width: 3
-    },
-    xAxis: {
-        template: "'#month#",
-        title: "Broj odsutnih zaposlenih po mjesecu"
-    },
-    offset: 0,
-    yAxis: {
-        start: 0,
-        end: 10,
-        step: 1,
-        template: function (obj) {
-            return (obj % 20 ? "" : obj)
-        }
-    },
-    padding: {
-        bottom: 70
-    },
-    url: "/hub/company/statistics/all"
-};
-
-var cchart = {
-    id:"cChart",
-    view: "chart",
-    type: "bar",
-    barWidth: 20,
-    radius: 2,
-    width: 1000,
-    alpha: 0.7,
-    gradient: "rising",
-    xAxis: {
-        template: "'#month#",
-        title: "Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
-    },
-    yAxis: {
-        start: 0,
-        step: 1,
-        end: 10
-    },
-    legend: {
-        values: [{text: "Godišnji", color: "#4aa397"}, {
-            text: "Praznik",
-            color: "#69ba00"
-        }, {text: "Odsustvo", color: "#de619c", markerType: "item"}],
-        valign: "middle",
-        align: "right",
-        width: 90,
-        layout: "y"
-    },
-    series: [
+var byMonthCart = {
+    type:"clean",
+    rows:[
         {
-            value: "#vacation#",
-            color: "#4aa397",
-            tooltip: {
-                template: "#vacation#"
-            }
+            template: "<div style='width:100%;text-align:center'>Odsustva po mjesecu</div>",
+            height: 30
         },
         {
-            value: "#religion#",
-            color: "#69ba00",
-            tooltip: {
-                template: "#religion#"
-            }
-        },
-        {
-            type: "line",
-            value: "#leave#",
-            color: "#36abee",
-            item: {
-                borderColor: "#b7286c",
-                color: "#de619c",
-                type: "s"
+            id: "byMonthCart",
+            view: "chart",
+            type: "bar",
+            value: "#number#",
+            label: "#number#",
+            color: "#color#",
+            gradient: "rising",
+            radius: 0,
+            barWidth: 80,
+            yAxis: {
+                template: "",
+                start: 0, end: 10, step: 1
             },
-            line: {
-                color: "#de619c",
-                width: 2
+            xAxis: {
+                template: "#month#",
+                lines: false
             },
-            tooltip: {
-                template: "#leave#"
-            }
+            padding: {
+                left: 10,
+                right: 10,
+                bottom: 40
+            },
+            url: "/hub/company/statistics/all"
         }
-    ],
-    padding: {
-        bottom: 60
-    },
-    url: "/hub/company/statistics/all"
+    ]
 };
-
-var dchart = {
-    view: "chart",
-    width: 1000,
-    type: "area",
-    xAxis: {
-        template: "'#month#",
-        title: "Broj odsutnih zaposlenih po mjesecu i tipu odsustva"
-    },
-    yAxis: {
-        start: 0,
-        step: 1,
-        end: 10
-    },
-    legend: {
-        values: [{text: "Godišnji", color: "#58dccd"}, {text: "Praznik", color: "#914ad8"}, {
-            text: "Odsustvo",
-            color: "#36abee"
-        }],
-        valign: "middle",
-        align: "right",
-        width: 90,
-        layout: "y"
-    },
-    eventRadius: 5,
-    series: [
+var byMonthAndTypeChart = {
+    type:"clean",
+    rows:[
         {
+            template: "<div style='width:100%;text-align:center'>Odsustva po mjesecu i tipu</div>",
+            height: 30
+        },
+        {
+            id: "byMonthAndTypeChart",
+            view: "chart",
+            type: "bar",
+            barWidth: 20,
+            radius: 2,
             alpha: 0.7,
-            value: "#vacation#",
-            color: "#58dccd",
-            tooltip: {
-                template: "type: A<br/>value: #vacation#"
-            }
+            gradient: "rising",
+            xAxis: {
+                template: "#month#",
+            },
+            yAxis: {
+                start: 0,
+                step: 1,
+                end: 10
+            },
+            legend: {
+                values: [{text: "Godišnji", color: "#4aa397"}, {
+                    text: "Praznik",
+                    color: "#69ba00"
+                }, {text: "Odsustvo", color: "#de619c", markerType: "item"}],
+                valign: "middle",
+                align: "right",
+                width: 90,
+                layout: "y"
+            },
+            series: [
+                {
+                    value: "#vacation#",
+                    color: "#4aa397",
+                    tooltip: {
+                        template: "#vacation#"
+                    }
+                },
+                {
+                    value: "#religion#",
+                    color: "#69ba00",
+                    tooltip: {
+                        template: "#religion#"
+                    }
+                },
+                {
+                    type: "line",
+                    value: "#leave#",
+                    color: "#36abee",
+                    item: {
+                        borderColor: "#b7286c",
+                        color: "#de619c",
+                        type: "s"
+                    },
+                    line: {
+                        color: "#de619c",
+                        width: 2
+                    },
+                    tooltip: {
+                        template: "#leave#"
+                    }
+                }
+            ],
+            padding: {
+                bottom: 40
+            },
+            url: "/hub/company/statistics/all"
         },
-        {
-            alpha: 0.5,
-            value: "#religion#",
-            color: "#914ad8",
-            tooltip: {
-                template: "type: B<br/>value: #religion#"
-            }
-        },
-        {
-            alpha: 0.5,
-            value: "#leave#",
-            color: "#36abee",
-            tooltip: {
-                template: "type: C<br/>value: #leave#"
-            }
-        }
-    ], padding: {
-        bottom: 60
-    },
-    url: "/hub/company/statistics/all"
-}
+    ]
+};
+
 
 companyStatisticView = {
 
@@ -210,140 +135,81 @@ companyStatisticView = {
     getPanel: function () {
         return {
             id: "companyStatisticPanel",
-            rows: [{
-                cols: [
-                    {
-                        padding: 8,
-                        height: 70,
-                        view: "toolbar",
-                        css: {"background": "#ffffff !important"},
-                        cols: [
-                            {
-                                template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika kompanije",
-                                view: "label",
-                                css: {"color": "black !important"},
-                            }
-                        ]
-                    }, {},
-                    {
-                        view: "button",
-                        id: "archiveBtn",
-                        name: "archiveBtn",
-                        type: "iconButton",
-                        icon: "external-link",
-                        label: "Export podataka u tabele",
-                        width: 100,
-                        height: 70,
-                        padding: {
-                            right: 15,
-                            bottom: 5,
-                            top: 5
-                        },
-                        on: {
-                            onItemClick: function () {
-                                $$("archiveBtn").disable();
-                                webix.toPDF("chartPIE", {
-                                        docHeader: {
-                                            text: "Statistika kompanije",
-                                            textAlign: "center"
-
-                                        },
-                                        columns: {
-                                            "number": {header: "Broj odsutnih"},
-                                            "month": {header: "Mjesec"},
-                                            "vacation": {header: "Kategorija - godišnji odmor"},
-                                            "leave": {header: "Kategorija - odsustvo"},
-                                            "religion": {header: "Kategorija - praznik"}
-
-                                        },
-                                        autowidth: true
-                                    }
-                                );
-                                $$("archiveBtn").enable();
-
-                            }
-                        }
-                    },
-                    {
-                        view: "button",
-                        id: "archiveBtn2",
-                        name: "archiveBtn2",
-                        type: "iconButton",
-                        icon: "external-link",
-                        label: "Export podataka u slike",
-                        width: 100,
-                        height: 70,
-                        padding: {
-                            right: 15,
-                            bottom: 5,
-                            top: 5
-                        },
-                        on: {
-                            onItemClick: function () {
-                                $$("archiveBtn2").disable();
-
-                                webix.toPNG("aChart");
-                                webix.toPNG("cChart");
-                                webix.toPNG("chartPIE");
-
-                                $$("archiveBtn2").enable();
-
-                            }
-                        }
-                    }
-                ]
-
-            }, {
-                view: "carousel",
-                css: "webix_dark",
-                id: "parts",
-                cols: [
-                    achart, bchart
-                ]
-
-
-            },
+            rows: [
                 {
-                    cols: [{
-                        view: "carousel",
-                        css: "webix_dark",
-                        width: 1000,
-                        id: "parts",
-                        cols: [
-                            cchart, dchart
-                        ]
-                    }, {
-                        id: "chartPIE",
-                        view: "chart",
-                        type: "pie",
-                        value: "#number#",
-                        color: "#color#",
-                        legend: {
-                            align: "right",
-                            valign: "middle",
-                            template: "#month#"
+                    padding: 8,
+                    view: "toolbar",
+                    css: {"background": "#fff !important"},
+                    cols: [
+                        {
+                            template: "<span class='webix_icon fas fa-line-chart'></span> Statistika kompanije",
+                            view: "label",
+                            css: {"color": "#000 !important"},
+
                         },
-                        shadow: 0,
-                        gradient: true,
-                        pieInnerText: "#number#",
+                        {},
+                        {
+                            view: "button",
+                            id: "archiveBtn",
+                            name: "archiveBtn",
+                            type: "iconButton",
+                            icon: "external-link",
+                            label: "Export podataka u tabele",
+                            css: {"background": "#268fd5 !important"},
+                            width:200,
 
-                        url: "/hub/company/statistics/all",
-                        on:{
-                            onBeforeLoad:function(){
-                                $$("archiveBtn").disable();
-                                $$("archiveBtn2").disable();
+                            on: {
+                                onItemClick: function () {
+                                    $$("archiveBtn").disable();
+                                    // webix.toPDF("chartPIE", {
+                                    //         docHeader: {
+                                    //             text: "Statistika kompanije",
+                                    //             textAlign: "center"
+                                    //
+                                    //         },
+                                    //         columns: {
+                                    //             "number": {header: "Broj odsutnih"},
+                                    //             "month": {header: "Mjesec"},
+                                    //             "vacation": {header: "Kategorija - godišnji odmor"},
+                                    //             "leave": {header: "Kategorija - odsustvo"},
+                                    //             "religion": {header: "Kategorija - praznik"}
+                                    //
+                                    //         },
+                                    //         autowidth: true
+                                    //     }
+                                    // );
 
-                            },
-                            onAfterLoad:function(){
-                                $$("archiveBtn").enable();
-                                $$("archiveBtn2").enable();
+                                    $$("archiveBtn").enable();
+                                    alert("TODO");
+                                }
+                            }
+                        },
+                        {
+                            view: "button",
+                            id: "archiveBtn2",
+                            name: "archiveBtn2",
+                            type: "iconButton",
+                            icon: "external-link",
+                            label: "Export podataka u slike",
+                            css: {"background": "#268fd5 !important"},
+                            width:200,
 
+                            on: {
+                                onItemClick: function () {
+                                    $$("archiveBtn2").disable();
+                                    webix.toPNG("byMonthCart").then(function (value) {
+                                        webix.toPNG("byMonthAndTypeChart");
+                                        $$("archiveBtn2").enable();
+
+                                    });
+                                }
                             }
                         }
-                    }]
-                }, {
-                    height: 10
-                }]
+                    ]
+                },
+                byMonthCart,
+                byMonthAndTypeChart
+            ]
         }
     }
 

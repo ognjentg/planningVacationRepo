@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Month;
@@ -203,10 +205,9 @@ public class CompanyController extends GenericController<Company, Integer> {
             return monthUserNoList;
         }
 
-        NumberFormat formatter = new DecimalFormat("#0.00");
-        MonthUserNo monthUserNo1 = new MonthUserNo(Double.parseDouble(formatter.format(vacation / sum * 100)), "Godišnji", "#e6194B");
-        MonthUserNo monthUserNo2 = new MonthUserNo(Double.parseDouble(formatter.format(religion / sum * 100)), "Praznik", "#42d4f4");
-        MonthUserNo monthUserNo3 = new MonthUserNo(Double.parseDouble(formatter.format(leave / sum * 100)), "Odsustvo", "#bfef45");
+        MonthUserNo monthUserNo1 = new MonthUserNo(round(vacation / sum * 100,2), "Godišnji", "#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(round(religion / sum * 100,2), "Praznik", "#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(round(leave / sum * 100,2), "Odsustvo", "#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);
@@ -1427,6 +1428,14 @@ public class CompanyController extends GenericController<Company, Integer> {
         monthUserNos.add(monthUserNo12);
 
         return monthUserNos;
+    }
+
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 
 }

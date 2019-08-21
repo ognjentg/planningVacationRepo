@@ -164,9 +164,9 @@ public class SectorController extends GenericHasActiveController<Sector, Integer
             return monthUserNoList;
         }
 
-        MonthUserNo monthUserNo1 = new MonthUserNo(vacation / sum * 100, "Godišnji", "#e6194B");
-        MonthUserNo monthUserNo2 = new MonthUserNo(religion / sum * 100, "Praznik", "#42d4f4");
-        MonthUserNo monthUserNo3 = new MonthUserNo(leave / sum * 100, "Odsustvo", "#bfef45");
+        MonthUserNo monthUserNo1 = new MonthUserNo(CompanyController.round(vacation / sum * 100,2), "Godišnji", "#e6194B");
+        MonthUserNo monthUserNo2 = new MonthUserNo(CompanyController.round(religion / sum * 100,2), "Praznik", "#42d4f4");
+        MonthUserNo monthUserNo3 = new MonthUserNo(CompanyController.round(leave / sum * 100,2), "Odsustvo", "#bfef45");
 
         monthUserNoList.add(monthUserNo1);
         monthUserNoList.add(monthUserNo2);
