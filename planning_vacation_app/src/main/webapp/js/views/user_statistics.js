@@ -1,10 +1,7 @@
 var userStatisticsView;
 var URL = "/hub/user/allUsersName";
 var sectors;
-
-
 userStatisticsView = {
-
     selectPanel: function () {
         $$("main").removeView(rightPanel);
         rightPanel = "userStatisticsPanel";
@@ -57,10 +54,10 @@ userStatisticsView = {
             id: "userStatisticsPanel",
             rows: [
                 {
-                    view:"toolbar",
-                    padding:8,
+                    view: "toolbar",
+                    padding: 8,
                     css: {"background": "#ffffff !important"},
-                    cols:[
+                    cols: [
                         {
                             template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji",
                             view: "label",
@@ -131,109 +128,108 @@ userStatisticsView = {
 
                 },
                 {
-                cols: [{
-                    view: "datatable",
-                    id: "user_statisticsDT",
-                    width: 300,
-                    scrollAlignY: true,
-                    navigation: true,
-                    select: "row",
-                    multiselect: false,
-                    columns: [{
-                        id: "value",
-                        header: [
-                            "Zaposleni", {
-                                content: "textFilter", value: "", icon: "wxi-search"
-                            }
-                        ],
+                    cols: [{
+                        view: "datatable",
+                        id: "user_statisticsDT",
                         width: 300,
-                        fillspace: true,
-                        sort: "string"
-                    }],
+                        scrollAlignY: true,
+                        navigation: true,
+                        select: "row",
+                        multiselect: false,
+                        columns: [{
+                            id: "value",
+                            header: [
+                                "Zaposleni", {
+                                    content: "textFilter", value: "", icon: "wxi-search"
+                                }
+                            ],
+                            width: 300,
+                            fillspace: true,
+                            sort: "string"
+                        }],
 
-                    on: {
-                        onBeforeLoad: function () {
-                            this.showOverlay("Učitavanje...");
-                            $$("archiveBtn").disable();
-                            $$("archiveBtn2").disable();
+                        on: {
+                            onBeforeLoad: function () {
+                                this.showOverlay("Učitavanje...");
+                                $$("archiveBtn").disable();
+                                $$("archiveBtn2").disable();
+                            },
+                            onAfterLoad: function () {
+                                $$("archiveBtn").enable();
+                                $$("archiveBtn2").enable();
+                                this.hideOverlay();
+                                if (!this.count())
+                                    this.showOverlay("Izvinite, nema podataka.");
+                                var id = this.getbyMonthChartId();
+                                $$("user_statisticsDT").select(id);
+
+
+                            },
+                            onSelectChange: function () {
+                                var pom = $$("user_statisticsDT").getSelectedId();
+                                connection.sendAjax("GET",
+                                    "/hub/company/statistics/user/" + pom.id,
+                                    function (text, data, xhr) {
+                                        pie = data.json();
+
+                                        $$("chartDonutId").clearAll();
+                                        $$("chartDonutId").parse(pie);
+
+                                        if (!$$("chartDonutId").count()) { //if no data is available
+                                            webix.extend($$("chartDonutId"), webix.OverlayBox);
+                                            $$("chartDonutId").showOverlay("<div><img src='https://loading.io/spinners/coffee/index.coffee-cup-drink-loader.svg'></img></div><div style='margin:75px; font-size:20px;'>Nema podataka</div>");
+
+                                        } else {
+                                            $$("chartDonutId").hideOverlay();
+                                        }
+
+
+                                        $$("radarChart").clearAll();
+                                        $$("radarChart").parse(pie);
+
+                                        if (!$$("radarChart").count()) { //if no data is available
+                                            webix.extend($$("radarChart"), webix.OverlayBox);
+                                            $$("radarChart").showOverlay("</div><div style='...'>Nema podataka</div>");
+                                        } else {
+                                            $$("radarChart").hideOverlay();
+                                        }
+
+
+                                    }, function (text, data, xhr) {
+                                        util.messages.showErrorMessage(text);
+                                    });
+                                connection.sendAjax("GET",
+                                    "/hub/company/statistics/user/new/" + pom.id,
+                                    function (text, data, xhr) {
+                                        var temp = data.json();
+
+                                        $$("byMonthChartID").clearAll();
+                                        $$("byMonthChartID").parse(temp);
+
+                                        if (!$$("byMonthChartID").count()) { //if no data is available
+                                            webix.extend($$("byMonthChartID"), webix.OverlayBox);
+                                            $$("byMonthChartID").showOverlay("<div style='...'>Nema podataka</div>");
+                                        } else {
+                                            $$("byMonthChartID").hideOverlay();
+                                        }
+                                    });
+
+                            }
                         },
-                        onAfterLoad: function () {
-                            $$("archiveBtn").enable();
-                            $$("archiveBtn2").enable();
-                            this.hideOverlay();
-                            if (!this.count())
-                                this.showOverlay("Izvinite, nema podataka.");
-                            var id = this.getbyMonthChartId();
-                            $$("user_statisticsDT").select(id);
+                        url: URL
+                    }, {
+                        rows: [
+                            byMonthChart,
+                            {
+                                cols: [
+                                    pieChart,
+                                    radarChart
+                                ]
+                            }
+                        ]
+                    }]
 
-
-                        },
-                        onSelectChange: function () {
-                            var pom = $$("user_statisticsDT").getSelectedId();
-                            console.log(pom.id);
-                            connection.sendAjax("GET",
-                                "/hub/company/statistics/user/" + pom.id,
-                                function (text, data, xhr) {
-                                    pie = data.json();
-
-                                    $$("chartDonutId").clearAll();
-                                    $$("chartDonutId").parse(pie);
-
-                                    if (!$$("chartDonutId").count()) { //if no data is available
-                                        webix.extend($$("chartDonutId"), webix.OverlayBox);
-                                        $$("chartDonutId").showOverlay("<div><img src='https://loading.io/spinners/coffee/index.coffee-cup-drink-loader.svg'></img></div><div style='margin:75px; font-size:20px;'>Nema podataka</div>");
-
-                                    } else {
-                                        $$("chartDonutId").hideOverlay();
-                                    }
-
-
-                                    $$("radarChart").clearAll();
-                                    $$("radarChart").parse(pie);
-
-                                    if (!$$("radarChart").count()) { //if no data is available
-                                        webix.extend($$("radarChart"), webix.OverlayBox);
-                                        $$("radarChart").showOverlay("</div><div style='...'>Nema podataka</div>");
-                                    } else {
-                                        $$("radarChart").hideOverlay();
-                                    }
-
-
-                                }, function (text, data, xhr) {
-                                    util.messages.showErrorMessage(text);
-                                });
-                            connection.sendAjax("GET",
-                                "/hub/company/statistics/user/new/" + pom.id,
-                                function (text, data, xhr) {
-                                    var temp = data.json();
-
-                                    $$("byMonthChartID").clearAll();
-                                    $$("byMonthChartID").parse(temp);
-
-                                    if (!$$("byMonthChartID").count()) { //if no data is available
-                                        webix.extend($$("byMonthChartID"), webix.OverlayBox);
-                                        $$("byMonthChartID").showOverlay("<div style='...'>Nema podataka</div>");
-                                    } else {
-                                        $$("byMonthChartID").hideOverlay();
-                                    }
-                                });
-
-                        }
-                    },
-                    url: URL
-                }, {
-                    rows: [
-                        byMonthChart,
-                        {
-                            cols:[
-                                pieChart,
-                                radarChart
-                            ]
-                        }
-                      ]
-                }]
-
-            }
+                }
             ]
         }
 

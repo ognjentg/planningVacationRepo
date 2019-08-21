@@ -70,7 +70,7 @@ var profileView = {
                                     on: {
                                         onBeforeFileAdd: function (upload) {
                                             var file = upload.file;
-                                            if(file.size > 1048576){
+                                            if (file.size > 1048576) {
                                                 util.messages.showErrorMessage("Maksimalna veličina slike je 1MB.");
                                                 return false;
                                             }
@@ -256,9 +256,9 @@ var changePasswordView = {
                             view: "text",
                             id: "oldPassword",
                             type: "password",
-                            name:"oldPassword",
+                            name: "oldPassword",
                             label: "Trenutna lozinka:",
-                            invalidMessage:"Unesite lozinku!",
+                            invalidMessage: "Unesite lozinku!",
                             required: true
 
                         },
@@ -266,28 +266,28 @@ var changePasswordView = {
                             view: "text",
                             label: "Nova lozinka:",
                             id: "newPassword",
-                            name:"newPassword",
+                            name: "newPassword",
                             type: "password",
-                            invalidMessage:"Unesite lozinku!",
+                            invalidMessage: "Unesite lozinku!",
                             required: true,
                             bottomLabel: "*Min. 8 karaktera. Barem 1 veliko slovo, broj ili specijalni karakter.",
-                            keyPressTimeout:1000,
+                            keyPressTimeout: 1000,
                             on: {
                                 'onTimedKeyPress': function () {
                                     var typed = $$("newPassword").getValue();
-                                    var strength=0;
-                                    var re1=/[0-9]/;
-                                    var re2=/[A-Z]/;
-                                    var re3=/[@#$%^&+=]/;
-                                    if(re1.test(typed))
+                                    var strength = 0;
+                                    var re1 = /[0-9]/;
+                                    var re2 = /[A-Z]/;
+                                    var re3 = /[@#$%^&+=]/;
+                                    if (re1.test(typed))
                                         strength++;
                                     if (re2.test(typed))
                                         strength++;
                                     if (re3.test(typed))
                                         strength++;
-                                    if(typed.length>=8)
+                                    if (typed.length >= 8)
                                         strength++;
-                                    switch(strength){
+                                    switch (strength) {
                                         case 0:
                                         case 1:
                                         case 2:
@@ -311,18 +311,18 @@ var changePasswordView = {
                         },
                         {
                             view: "label",
-                            id:"strength",
-                            name:"strength",
-                            hidden:true,
-                            height:15,
-                            align:"right"
+                            id: "strength",
+                            name: "strength",
+                            hidden: true,
+                            height: 15,
+                            align: "right"
                         },
                         {
                             view: "text",
                             label: "Potvrda nove lozinke:",
                             id: "newPasswordConfirmation",
-                            name:"newPasswordConfirmation",
-                            invalidMessage:"Unesite lozinku!",
+                            name: "newPasswordConfirmation",
+                            invalidMessage: "Unesite lozinku!",
                             type: "password",
                             required: true,
 
@@ -338,33 +338,34 @@ var changePasswordView = {
                         }
                     ],
                     rules: {
-                        "oldPassword":function (value) {
+                        "oldPassword": function (value) {
                             if (!value)
                                 return false;
                             return true;
                         },
                         "newPassword": function (value) {
-                            if(value.length<8){
-                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka mora imati minimum 8 karaktera!";
-                                return false;}
-                            if (value == $$("oldPassword").getValue()){
-                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka ne smije biti jednaka staroj lozinki!";
+                            if (value.length < 8) {
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage = "Lozinka mora imati minimum 8 karaktera!";
+                                return false;
+                            }
+                            if (value == $$("oldPassword").getValue()) {
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage = "Lozinka ne smije biti jednaka staroj lozinki!";
                                 return false;
                             }
                             var re = /[0-9A-Z@#$%^&+=]/;
                             if (!re.test(value)) {
-                                $$('changePasswordForm').elements.newPassword.config.invalidMessage="Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
+                                $$('changePasswordForm').elements.newPassword.config.invalidMessage = "Lozinka mora sadržati barem jedan broj, veliko slovo ili specijalan karakter!";
                                 return false;
                             }
                             return true;
                         },
-                        "newPasswordConfirmation":function (value) {
+                        "newPasswordConfirmation": function (value) {
                             if (!value)
                                 return false;
-                            if(value!=$$("changePasswordForm").getValues().newPassword)
-                            {
+                            if (value != $$("changePasswordForm").getValues().newPassword) {
                                 $$('changePasswordForm').elements.newPasswordConfirmation.config.invalidMessage = 'Unešene lozinke nisu iste!';
-                                return false;}
+                                return false;
+                            }
 
                             return true;
 

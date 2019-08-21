@@ -1,8 +1,5 @@
-var chosenCategory = null; //here will be setted chosen category  - but there must be value from database...
 var schedulerEvents = [];
 var selectedDays = [];
-var updatedDays = [];
-
 var vacationRequestApproved = [];
 var vacationRequestWaiting = [];
 
@@ -259,7 +256,6 @@ var calendarView = {
                             view: "form",
                             id: "createRequestForm",
                             elements: [{
-                                //Tabela
                                 view: "datatable",
                                 id: "periodsDT",
                                 invalidMessage: "Niste odabrali period.",
@@ -268,18 +264,12 @@ var calendarView = {
                                 tooltip: true,
                                 columns: [{
                                     id: "eventId",
-                                    hidden: true,
-                                    //fillspace: true
-                                    //editable: false,
-                                    //sort: "date",
-                                    //width:210,
-                                    // header: ["<span class='webix_icon fa fa-calendar'/>Od"]
+                                    hidden: true
                                 }, {
                                     id: "date",
                                     fillspace: true,
                                     editable: false,
                                     sort: "date",
-                                    //width:"100%",
                                     header: ["<span class='webix_icon fa fa-calendar'/>&nbsp;Datum"]
                                 },
                                     {
@@ -292,7 +282,6 @@ var calendarView = {
                                     webix_icon: function (e, id) {
                                         var eventId = $$("periodsDT").getItem(id).eventId;
                                         var value = $$("periodsDT").getItem(id).date;
-                                       // var date = format(new Date(value + "T22:00:00.000Z"));
                                         var index = selectedDays.indexOf(value);
                                         selectedDays.splice(index, 1);
                                         scheduler.setCurrentView();
@@ -312,11 +301,9 @@ var calendarView = {
                                 label: "Komentar:"
                             },
                                 {
-                                    //2.element-comment section
                                     view: "textarea",
                                     id: "comment",
                                     labelAlign: "left",
-                                    // height:200,  //without setted height, we can do resizeing
                                     autoWidth: true,
                                     tooltip: "U komentaru možete objasniti detalje Vašeg zahtjeva.",
                                     placeholder: "Unesite komentar "
@@ -327,19 +314,18 @@ var calendarView = {
                                     view: "button",
                                     type: "iconButton",
                                     hotkey: "enter",
-                                    //icon: "", //todo
                                     label: "Pošalji zahtjev",
                                     height: 40,
                                     css: "companyButton",
                                     click: 'calendarView.showSendDialog'
                                 }]
                         }, {
-                            view: "label", //this is making a line from bottom
+                            view: "label",
                             width: 5,
                             height: 10
                         }]
                     }, {
-                        width: 10 //this is making right line
+                        width: 10
                     }]
             }]
     },
@@ -356,12 +342,8 @@ var calendarView = {
         var nonWorkingDays = [];
         var nonWorkingDaysInWeek = [];
 
-
-        //var sickLeaveDaysApproved = [];
-        //var sickLeaveDaysWaiting = [];
         calendarView.getVacationDays();
         calendarView.getSickDays();
-        //Dohvatanje neradnih dana
         webix.ajax("hub/nonWorkingDay/getNonWorkingDayByCompany/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -374,8 +356,7 @@ var calendarView = {
                         var dates = data.json();
                         for (var i = 0; i < dates.length; i++) {
                             var tempDate = new Date(dates[i].day);
-                            //tempDate.setHours(00, 00, 00);
-                            tempDate.setHours(0,0,0,0);
+                            tempDate.setHours(0, 0, 0, 0);
                             nonWorkingDays[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
@@ -385,7 +366,6 @@ var calendarView = {
                 }
             }
         });
-        //Dohvatanje neradnih dana u sedmici
         webix.ajax("hub/nonWorkingDayInWeek/getNonWorkingDayInWeekByCompanyJavaValue/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -411,8 +391,7 @@ var calendarView = {
             }
         });
 
-        //Dohvatanje dana kolektivnog godisnjeg odmora
-        collectiveVacationDays=[];
+        collectiveVacationDays = [];
         webix.ajax("/hub/colectiveVacation/getColectiveVacationByCompany/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -425,8 +404,7 @@ var calendarView = {
                         var dates = data.json();
                         for (var i = 0; i < dates.length; i++) {
                             var tempDate = new Date(dates[i].day);
-                            //tempDate.setHours(00, 00, 00);
-                            tempDate.setHours(0,0,0,0);
+                            tempDate.setHours(0, 0, 0, 0);
                             collectiveVacationDays[i] = tempDate.getTime();
                             scheduler.blockTime(tempDate, "fullday");
                         }
@@ -438,7 +416,6 @@ var calendarView = {
         });
 
 
-        //Dohvatanje ograničenja kompanije /hub/constraints
         webix.ajax("hub/constraints/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -453,7 +430,6 @@ var calendarView = {
                 }
             }
         });
-        //Da li može ići na godišnji
         webix.ajax("hub/user/canGoOnVacation/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -462,7 +438,7 @@ var calendarView = {
             },
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
-                    if(text == "false")
+                    if (text == "false")
                         calendarView.canGoOnVacation = false;
                     else
                         calendarView.canGoOnVacation = true;
@@ -472,13 +448,8 @@ var calendarView = {
 
         scheduler.config.multi_day = true;
         scheduler.config.full_day = true;
-
-        //Mogućnost promjene vec izabranih intervala
         scheduler.config.resize_month_events = true;
-
         scheduler.config.xml_date = "%Y-%m-%d %H:%i";
-
-        //Boja neradnih dana i današnjeg dana
         scheduler.templates.month_date_class = function (date, today) {
             //Današnji dan
             if (date.getTime() == today.getTime())
@@ -512,7 +483,6 @@ var calendarView = {
                 return "religion_day_off";
             return "";
         }
-        //skrivanje lightboxa
         schedulerEvents.push(scheduler.attachEvent("onBeforeLightbox", function (id) {
             return false;
         }));
@@ -523,11 +493,6 @@ var calendarView = {
         scheduler.config.drag_create = false;
         schedulerEvents.push(scheduler.attachEvent("onEmptyClick", function (selectedDate, e) {
             if (
-                // leaveRequestWaiting.includes(selectedDate.getTime()) ||
-            // sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
-            // sickLeaveDaysApproved.includes(selectedDate.getTime())  ||
-            // vacationRequestWaiting.includes(selectedDate.getTime()) ||
-            // vacationRequestApproved.includes(selectedDate.getTime()) ||
                 calendarView.sickLeaveDaysApproved.includes(selectedDate.getTime()) ||
                 calendarView.sickLeaveDaysWaiting.includes(selectedDate.getTime()) ||
                 leaveRequestWaiting.includes(selectedDate.getTime()) ||
@@ -538,39 +503,32 @@ var calendarView = {
                 religionLeaveDaysApproved.includes(selectedDate.getTime()) ||
                 religionLeaveDaysWaiting.includes(selectedDate.getTime())
             ) {
-
-                console.log("sick approved" + calendarView.sickLeaveDaysApproved);
-                console.log("sick waiting" + calendarView.sickLeaveDaysWaiting);
-                console.log("leave waiting" + calendarView.leaveRequestWaiting);
-                console.log("vacation approved" + calendarView.vacationRequestApproved);
-                console.log("vacation waiting" + calendarView.vacationRequestWaiting);
-
                 return false;
 
             }
 
             if (selectedDays.includes(selectedDate.getTime())) {
                 var index = selectedDays.indexOf(selectedDate.getTime());
-                if (selectedButton === buttons.SICK)           // Since sick leave must be continuous, erase all after this point.
+                if (selectedButton === buttons.SICK)
                     selectedDays.splice(index);
                 else
                     selectedDays.splice(index, 1);
             } else if ([buttons.SICK].includes(selectedButton) &&
                 calendarView.ruleset.doesNotStartInFuture(selectedDate)) {
                 util.messages.showErrorMessage("Dan ne smije biti u budućnosti");
-            }  else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
-                !calendarView.ruleset.isNotInPast(selectedDate.getTime())) { // Apply not in past rule to vacation and paid leave
+            } else if ([buttons.VACATION, buttons.PAID, buttons.RELIGIOUS].includes(selectedButton) &&
+                !calendarView.ruleset.isNotInPast(selectedDate.getTime())) {
                 util.messages.showErrorMessage("Dan ne smije biti u prošlosti")
-            }else if ([buttons.VACATION].includes(selectedButton) &&
-                !calendarView.canGoOnVacation) { // Apply not in past rule to vacation and paid leave
+            } else if ([buttons.VACATION].includes(selectedButton) &&
+                !calendarView.canGoOnVacation) {
                 util.messages.showErrorMessage("Nemate još pravo na godišnji!")
-            } else if(([buttons.VACATION].includes(selectedButton) || [buttons.PAID].includes(selectedButton) || [buttons.RELIGIOUS].includes(selectedButton)) && !calendarView.ruleset.isNextYear(selectedDate)){
+            } else if (([buttons.VACATION].includes(selectedButton) || [buttons.PAID].includes(selectedButton) || [buttons.RELIGIOUS].includes(selectedButton)) && !calendarView.ruleset.isNextYear(selectedDate)) {
                 util.messages.showErrorMessage("Možete tražiti odsustvo samo za ovu godinu!");
-            }else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
+            } else if ([buttons.SICK].includes(selectedButton) && (new Date()).getTime() > selectedDate.getTime() &&
                 days_between(selectedDate, new Date()) > calendarView.sickLeaveJustificationPeriodLength
             ) {
                 util.messages.showErrorMessage("Istekao je period za validaciju");
-            }else if (selectedButton === buttons.SICK &&
+            } else if (selectedButton === buttons.SICK &&
                 nonWorkingDaysInWeek.indexOf(selectedDate.getDay()) === -1 &&
                 nonWorkingDays.indexOf(selectedDate.getTime()) === -1) {
                 if (selectedDays.length === 0) {
@@ -579,8 +537,7 @@ var calendarView = {
                     var day = 60 * 60 * 24 * 1000;
                     var dayDifference = (selectedDate.getTime() - selectedDays[selectedDays.length - 1]) / day;
                     var newDay = selectedDays[selectedDays.length - 1];
-                    if (dayDifference < 0) // if the user selects in the opposite direction, just quickly correct the range.
-                    {
+                    if (dayDifference < 0) {
                         dayDifference = (selectedDays[0] - selectedDate.getTime()) / day;
                         newDay = selectedDate.getTime();
                     }
@@ -623,34 +580,8 @@ var calendarView = {
             });
             $$("periodsDT").parse(tableData);
         }));
-        // 1. custom
-        /* scheduler.config.lightbox.sections=[
-             {name:"time", height:50, type:"time", map_to:"auto", time_format:[ "%d", "%m", "%Y"]}
-         ]*/
-        //Provjera da li ima godišnjeg
-        /* scheduler.attachEvent("onBeforeEventCreated", function (e){
-             if($$("periodsDT").count() < calendarView.freeDays)
-                 return true;
-             util.messages.showErrorMessage("Nemate pravo na više dana");
-             return false;
-         });*/
-        /* scheduler.attachEvent("onEventCreated", function(id,e){
-             var event = scheduler.getEvent(id);
-             var dates = getDates(event.start_date, event.end_date);
-             //console.log("dates " + event.start_date.toDateString() + " | " + event.end_date.toDateString());
-             //dates.forEach(function (value) { console.log("date " + value.toDateString()); });
-             var tableData = {
-                 id: id,
-                 date: event.start_date.toDateString()
-             }
-             $$("periodsDT").parse(tableData);
-         });*/
-        //2. started working...
-
-
-        //Inicijalizacija i postavljanje na trenutni datum
         var date = new Date();
-        scheduler.locale = locale_sr_latin; // Change the locale to Serbian Latin.
+        scheduler.locale = locale_sr_latin;
 
         scheduler.init('scheduler_here', new Date(date.getFullYear(), date.getMonth(), date.getDate()), "month");
 
@@ -679,7 +610,6 @@ var calendarView = {
         calendarView.refreshCounter();
     },
     refreshCounter: function () {
-        //Dohvatanje dana godišnjeg odmora
         webix.ajax("hub/vacation_days/byUserIdOld/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -690,7 +620,6 @@ var calendarView = {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
                         var vacationDays = data.json();
-                        console.log("DANI " + vacationDays.totalDays );
                         calendarView.freeDays += vacationDays.totalDays - vacationDays.usedDays;
                         if (vacationDays.totalDays - vacationDays.usedDays > 0) {
                             animateValue($$("t2"), 0, calendarView.freeDays, 700);
@@ -728,7 +657,6 @@ var calendarView = {
                 }
             }
         });
-        //Dohvatanje slobodnih dana za religijske praznike
         webix.ajax("hub/religion_leave/byUserId/" + userData.id, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -751,7 +679,6 @@ var calendarView = {
                 }
             }
         });
-        //Dohvatanje kolektivnog godišnjeg
         webix.ajax("hub/colectiveVacation/getByCompanyId/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -780,8 +707,6 @@ var calendarView = {
         $$("sendRequestButton").disable();
         if (selectedButton == buttons.VACATION)
             calendarView.sendVacationLeaveRequest();
-        //else if(selectedButton == buttons.PAID)
-        //Leave
         else if (selectedButton == buttons.SICK) {
             calendarView.sendSickLeaveRequest();
         } else if (selectedButton == buttons.PAID) {
@@ -789,23 +714,6 @@ var calendarView = {
         } else if (selectedButton == buttons.RELIGIOUS) {
             calendarView.sendReligionLeaveRequest();
         }
-
-        /*
-                if (form.validate()) {
-                    var newRequest = {
-                        category: chosenCategory,
-                         sender_comment: form.getValues().comment,
-                         sender_user_id:userData.id,
-                        //approver_user_id: //todo: find out id from sector managager if this user has sector - or id from director from his company
-                        //
-                        //
-                        companyId: companyData.id,
-                    };
-                    console.log(newUser);
-                    //TODO: POST...
-            }
-
-         */
     },
 
     deleteCurrentRequest: function () {
@@ -831,15 +739,16 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Godišnji"
         }
-        var leaveRequestsExtended=[];
+        var leaveRequestsExtended = [];
         var temp = $$("periodsDT").serialize();
-        for(var i=0;i<temp.length;i++){
-            console.log("temp "+temp[i].date);
-        }
         var dates = [];
-        var datesGetTime=[];
-        temp.forEach(function (value) { dates.push(format(value.date));});
-        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
+        var datesGetTime = [];
+        temp.forEach(function (value) {
+            dates.push(format(value.date));
+        });
+        dates.forEach(function (value) {
+            datesGetTime.push(value.getTime())
+        });
         webix.ajax("hub/leave_request/canGoOnVacationByDates/" + dates.toString(), {
             error: function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
@@ -848,29 +757,27 @@ var calendarView = {
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
 
-                    var datesForWrite=[];
-                    var datesForWriteCopy=[];
+                    var datesForWrite = [];
+                    var datesForWriteCopy = [];
                     var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
                     var day = 1000 * 60 * 60 * 24;
 
-                    var m=0;
-                    var br=0;
-                    var i=0;
+                    var m = 0;
+                    var br = 0;
+                    var i = 0;
 
                     for (; i < datesGetTimeCopy.length - 1; i++) {
-                        console.log("i= "+i);
                         if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
                             var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
                             for (var j = 1; j < daysDifference; j++) {
                                 var nextDay = datesGetTimeCopy[i] + day * j;
                                 var nextDayInWeek = (new Date(nextDay).getDay());
-                                if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+                                if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1) {
 
-                                     datesForWrite=[];
-                                     datesForWriteCopy=[];
-                                    for(var k=m; k<(i+1);k++){
+                                    datesForWrite = [];
+                                    datesForWriteCopy = [];
+                                    for (var k = m; k < (i + 1); k++) {
                                         datesForWrite.push(temp[k]);
-                                        console.log("datesForWrite[k]= "+datesForWrite[k].date);
                                     }
 
                                     datesForWrite.forEach(function (value) {
@@ -881,15 +788,15 @@ var calendarView = {
                                         }
                                         datesForWriteCopy.push(date);
                                     });
-                                    var leaveRequestExtended={
+                                    var leaveRequestExtended = {
                                         leaveRequest: leaveRequest,
                                         dates: datesForWriteCopy
                                     }
 
                                     leaveRequestsExtended.push(leaveRequestExtended);
 
-                                    m=i+1;
-                                    j=daysDifference;
+                                    m = i + 1;
+                                    j = daysDifference;
                                 }
 
                             }
@@ -897,11 +804,11 @@ var calendarView = {
                         }
                     }
 
-                    if(i == (datesGetTimeCopy.length-1)){
+                    if (i == (datesGetTimeCopy.length - 1)) {
 
-                        datesForWrite=[];
-                        datesForWriteCopy=[];
-                        for(var k=m; k<datesGetTimeCopy.length;k++){
+                        datesForWrite = [];
+                        datesForWriteCopy = [];
+                        for (var k = m; k < datesGetTimeCopy.length; k++) {
                             datesForWrite.push(temp[k]);
                         }
 
@@ -914,7 +821,7 @@ var calendarView = {
                             datesForWriteCopy.push(date);
                         });
 
-                        var leaveRequestExtended={
+                        var leaveRequestExtended = {
                             leaveRequest: leaveRequest,
                             dates: datesForWriteCopy,
                         }
@@ -936,13 +843,12 @@ var calendarView = {
                             $$("sendRequestButton").enable();
                         }, function (text, data, xhr) {
                             util.messages.showErrorMessage(text);
-                            console.log(text);
                             $$("sendRequestButton").enable();
                         }, leaveRequestsExtended);
 
 
                 }
-                else{
+                else {
                     util.messages.showErrorMessage("Dani odabrani u godišnjem su prezauzeti.");
                     $$("sendRequestButton").enable();
                 }
@@ -961,40 +867,40 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Praznik"
         }
-        var leaveRequestsExtended=[];
+        var leaveRequestsExtended = [];
         var temp = $$("periodsDT").serialize();
-        for(var i=0;i<temp.length;i++){
-            console.log("temp "+temp[i].date);
-        }
+
         var dates = [];
-        var datesGetTime=[];
-        temp.forEach(function (value) { dates.push(format(value.date));});
-        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
+        var datesGetTime = [];
+        temp.forEach(function (value) {
+            dates.push(format(value.date));
+        });
+        dates.forEach(function (value) {
+            datesGetTime.push(value.getTime())
+        });
 
 
-        var datesForWrite=[];
-        var datesForWriteCopy=[];
+        var datesForWrite = [];
+        var datesForWriteCopy = [];
         var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
         var day = 1000 * 60 * 60 * 24;
 
-        var m=0;
-        var br=0;
-        var i=0;
+        var m = 0;
+        var br = 0;
+        var i = 0;
 
         for (; i < datesGetTimeCopy.length - 1; i++) {
-            console.log("i= "+i);
             if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
                 var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
                 for (var j = 1; j < daysDifference; j++) {
                     var nextDay = datesGetTimeCopy[i] + day * j;
                     var nextDayInWeek = (new Date(nextDay).getDay());
-                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1) {
 
-                        datesForWrite=[];
-                        datesForWriteCopy=[];
-                        for(var k=m; k<(i+1);k++){
+                        datesForWrite = [];
+                        datesForWriteCopy = [];
+                        for (var k = m; k < (i + 1); k++) {
                             datesForWrite.push(temp[k]);
-                            console.log("datesForWrite[k]= "+datesForWrite[k].date);
                         }
 
                         datesForWrite.forEach(function (value) {
@@ -1005,15 +911,15 @@ var calendarView = {
                             }
                             datesForWriteCopy.push(date);
                         });
-                        var leaveRequestExtended={
+                        var leaveRequestExtended = {
                             leaveRequest: leaveRequest,
                             dates: datesForWriteCopy
                         }
 
                         leaveRequestsExtended.push(leaveRequestExtended);
 
-                        m=i+1;
-                        j=daysDifference;
+                        m = i + 1;
+                        j = daysDifference;
                     }
 
                 }
@@ -1021,11 +927,11 @@ var calendarView = {
             }
         }
 
-        if(i == (datesGetTimeCopy.length-1)){
+        if (i == (datesGetTimeCopy.length - 1)) {
 
-            datesForWrite=[];
-            datesForWriteCopy=[];
-            for(var k=m; k<datesGetTimeCopy.length;k++){
+            datesForWrite = [];
+            datesForWriteCopy = [];
+            for (var k = m; k < datesGetTimeCopy.length; k++) {
                 datesForWrite.push(temp[k]);
             }
 
@@ -1038,7 +944,7 @@ var calendarView = {
                 datesForWriteCopy.push(date);
             });
 
-            var leaveRequestExtended={
+            var leaveRequestExtended = {
                 leaveRequest: leaveRequest,
                 dates: datesForWriteCopy,
             }
@@ -1060,7 +966,6 @@ var calendarView = {
                 $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
-                console.log(text);
                 $$("sendRequestButton").enable();
             }, leaveRequestsExtended);
 
@@ -1076,40 +981,39 @@ var calendarView = {
             senderComment: $$("comment").getValue(),
             category: "Odsustvo"
         }
-        var leaveRequestsExtended=[];
+        var leaveRequestsExtended = [];
         var temp = $$("periodsDT").serialize();
-        for(var i=0;i<temp.length;i++){
-            console.log("temp "+temp[i].date);
-        }
         var dates = [];
-        var datesGetTime=[];
-        temp.forEach(function (value) { dates.push(format(value.date));});
-        dates.forEach(function (value) {datesGetTime.push(value.getTime())});
+        var datesGetTime = [];
+        temp.forEach(function (value) {
+            dates.push(format(value.date));
+        });
+        dates.forEach(function (value) {
+            datesGetTime.push(value.getTime())
+        });
 
 
-        var datesForWrite=[];
-        var datesForWriteCopy=[];
+        var datesForWrite = [];
+        var datesForWriteCopy = [];
         var datesGetTimeCopy = JSON.parse(JSON.stringify(datesGetTime));
         var day = 1000 * 60 * 60 * 24;
 
-        var m=0;
-        var br=0;
-        var i=0;
+        var m = 0;
+        var br = 0;
+        var i = 0;
 
         for (; i < datesGetTimeCopy.length - 1; i++) {
-            console.log("i= "+i);
             if (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i] > day) {
                 var daysDifference = (datesGetTimeCopy[i + 1] - datesGetTimeCopy[i]) / (day);
                 for (var j = 1; j < daysDifference; j++) {
                     var nextDay = datesGetTimeCopy[i] + day * j;
                     var nextDayInWeek = (new Date(nextDay).getDay());
-                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1 ){
+                    if (calendarView.nonWorkingdDaysInWeek.indexOf(nextDayInWeek) == -1 && calendarView.nonWorkingDays.indexOf(nextDay) == -1 && calendarView.collectiveVacationDays.indexOf(nextDay) == -1) {
 
-                        datesForWrite=[];
-                        datesForWriteCopy=[];
-                        for(var k=m; k<(i+1);k++){
+                        datesForWrite = [];
+                        datesForWriteCopy = [];
+                        for (var k = m; k < (i + 1); k++) {
                             datesForWrite.push(temp[k]);
-                            console.log("datesForWrite[k]= "+datesForWrite[k].date);
                         }
 
                         datesForWrite.forEach(function (value) {
@@ -1120,15 +1024,15 @@ var calendarView = {
                             }
                             datesForWriteCopy.push(date);
                         });
-                        var leaveRequestExtended={
+                        var leaveRequestExtended = {
                             leaveRequest: leaveRequest,
                             dates: datesForWriteCopy
                         }
 
                         leaveRequestsExtended.push(leaveRequestExtended);
 
-                        m=i+1;
-                        j=daysDifference;
+                        m = i + 1;
+                        j = daysDifference;
                     }
 
                 }
@@ -1136,11 +1040,11 @@ var calendarView = {
             }
         }
 
-        if(i == (datesGetTimeCopy.length-1)){
+        if (i == (datesGetTimeCopy.length - 1)) {
 
-            datesForWrite=[];
-            datesForWriteCopy=[];
-            for(var k=m; k<datesGetTimeCopy.length;k++){
+            datesForWrite = [];
+            datesForWriteCopy = [];
+            for (var k = m; k < datesGetTimeCopy.length; k++) {
                 datesForWrite.push(temp[k]);
             }
 
@@ -1153,7 +1057,7 @@ var calendarView = {
                 datesForWriteCopy.push(date);
             });
 
-            var leaveRequestExtended={
+            var leaveRequestExtended = {
                 leaveRequest: leaveRequest,
                 dates: datesForWriteCopy,
             }
@@ -1175,20 +1079,18 @@ var calendarView = {
                 $$("sendRequestButton").enable();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
-                console.log(text);
                 $$("sendRequestButton").enable();
             }, leaveRequestsExtended);
-        
+
     },
 
     sendSickLeaveRequest: function () {
-        var datesArr = []; //saljem samo dane koji nisu bili cekirani ili dane u sedmici koji su otcekirani pri pokretanju aplikacije
+        var datesArr = [];
         var dates = $$("periodsDT").serialize();
         var format = webix.Date.strToDate("%d.%m.%Y");
 
         for (var i = 0; i < dates.length; i++) {
             var date = format(dates[i].date);
-            console.log(date);
             datesArr.push(date);
         }
 
@@ -1205,7 +1107,6 @@ var calendarView = {
     },
     ruleset:
         {
-            // Check if all of the selected dates are neighboring each other (ignoring non working days)
             isContinuous: function (dateToAdd) {
                 var selectedDaysCopy = JSON.parse(JSON.stringify(selectedDays));
                 var day = 1000 * 60 * 60 * 24;
@@ -1237,7 +1138,7 @@ var calendarView = {
                 return true;
             },
             doesNotStartInFuture: function (date) {
-                if(date.getTime() == getToday().getTime())
+                if (date.getTime() == getToday().getTime())
                     return false;
                 var temp = $$("periodsDT").serialize()[0];
                 if (temp == null)
@@ -1247,8 +1148,8 @@ var calendarView = {
                     return false;
                 return true;
             },
-            isNextYear:function (date) {
-                if(date.getFullYear()> getToday().getFullYear())
+            isNextYear: function (date) {
+                if (date.getFullYear() > getToday().getFullYear())
                     return false;
                 return true;
             }
@@ -1287,7 +1188,6 @@ var calendarView = {
         $$("commentLabel").show();
 
     },
-    //Dohvatanje godišnjeg
     getVacationDays: function () {
         webix.ajax("hub/leave_request/leaveRequestByUserId/" + userData.id, {
                 error: function (text, data, xhr) {
@@ -1303,27 +1203,22 @@ var calendarView = {
                                 if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje")) { //TODO: ne prepoznaje ovaj atribut!
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestApproved.push(day.getTime());
-                                        // console.log(vacationRequestApproved);
                                     })
-                                } else if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") &&  leaves[i].statusName == "Na čekanju") {
+                                } else if ((leaves[i].category == "Godišnji" || leaves[i].category == "Godisnji") && leaves[i].statusName == "Na čekanju") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         vacationRequestWaiting.push(day.getTime());
-                                        console.log(vacationRequestWaiting);
                                     })
                                 } else if (leaves[i].category == "Odsustvo" && leaves[i].statusName == "Na čekanju") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestWaiting.push(day.getTime());
-                                        console.log(vacationRequestWaiting);
                                     })
-                                } else if (leaves[i].category == "Odsustvo" && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje")&& leaves[i].typeName == "Plaćeno") { //
+                                } else if (leaves[i].category == "Odsustvo" && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje") && leaves[i].typeName == "Plaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedPaid.push(day.getTime());
-                                        console.log(leaveRequestApprovedPaid);
                                     })
                                 } else if (leaves[i].category == "Odsustvo" && (leaves[i].statusName == "Odobreno" || leaves[i].statusName == "Otkazivanje") && leaves[i].typeName == "Neplaćeno") { //
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
                                         leaveRequestApprovedUnpaid.push(day.getTime());
-                                        console.log(leaveRequestApprovedUnpaid);
                                     })
                                 } else if (leaves[i].category == "Praznik" && leaves[i].statusName == "Odobreno") {
                                     getDates(new Date(leaves[i].dateFrom), new Date(leaves[i].dateTo)).forEach(function (day) {
@@ -1350,7 +1245,6 @@ var calendarView = {
             }
         );
     },
-    //Dohvatanje bolovanja
     getSickDays: function () {
         webix.ajax("hub/sickLeave/getSickLeaveFilteredByUserId/" + userData.id, {
             error: function (text, data, xhr) {
@@ -1362,14 +1256,11 @@ var calendarView = {
                 if (xhr.status === 200 && data.json() != null) {
                     var sickLeave = data.json();
                     sickLeave.forEach(function (value) {
-                        //Dodavanje dana na čekanju
                         if (value.statusName == "Na čekanju") {
-                            console.log("FROM " + value.dateFrom + " TO " + value.dateTo);
                             getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
                                 calendarView.sickLeaveDaysWaiting.push(day.getTime());
                             })
                         }
-                        //Dodavanje odobrenih dana
                         else if (value.statusName == "Opravdano") {
                             getDates(new Date(value.dateFrom), new Date(value.dateTo)).forEach(function (day) {
                                 calendarView.sickLeaveDaysApproved.push(day.getTime());
@@ -1393,7 +1284,7 @@ Date.prototype.addDays = function (days) {
     return date;
 }
 
-function roundToDayStart(timeStamp) { // Rounds timestamp to midnight of that day
+function roundToDayStart(timeStamp) {
     var d = new Date(timeStamp);
     return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0)
 }

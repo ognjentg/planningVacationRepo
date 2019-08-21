@@ -5,11 +5,9 @@ var MENU_STATES = {
 };
 var menuState = MENU_STATES.COLLAPSED;
 
-//menu configuration - EDITABLE
 var settingsMenu = [];
 var notifications = [];
 var numberOfUnreadNotifications = 0;
-var notificationsMenu = [];
 var localMenuData = [
     {id: "template", value: "Template", icon: "code"},
     {id: "sector", value: "Sektor", icon: "code"},
@@ -49,7 +47,6 @@ var menuActions = function (id) {
             sectorInfoView.showSectorDialog();
             break;
         case "constraints":
-            //constraints.selectPanel();
             break;
         case "admins":
             adminsView.selectPanel();
@@ -76,13 +73,7 @@ var menuActions = function (id) {
 
 };
 
-var menuSuperAdmin = [
-    /* {
-         id: "company",
-         value: "Kompanije",
-         icon: "briefcase"
-     }*/
-];
+var menuSuperAdmin = [];
 
 
 var menuAdmin = [
@@ -322,7 +313,7 @@ var init = function () {
                                 if (company != null) {
                                     companyData = company;
                                     if (userData.firstLogin !== 0) {
-                                        showFirstLogin(); //uspjesan login, prikaz layout-a za to...
+                                        showFirstLogin();
                                     } else {
                                         showApp();
                                     }
@@ -335,8 +326,6 @@ var init = function () {
                             }
                         });
                     }
-                    //showApp();
-                    // showLogin();
                 }
             }
         }
@@ -527,8 +516,6 @@ var passwordTab = {
                                 on: {
                                     'onTimedKeyPress': function () {
                                         var typed = $$("newPassword").getValue();
-                                        console.log("A" + typed);
-                                        console.log(typed == "");
                                         if (typed == "") {
                                             $$("securePasswordBar").hide();
                                             $$("securePasswordBar").refresh();
@@ -555,44 +542,26 @@ var passwordTab = {
                                                 $$("securePasswordBar").show();
                                                 $$("securePasswordBar").refresh();
                                                 $$("securePasswordLabel").setValue("Jačina lozinke: slabo");
-                                                //$$("strength").setValue("Jačina lozinke: slabo");
-                                                //$$("strength").show();
+
                                                 break;
                                             case 3:
                                                 percentageSecurePassword = 50;
                                                 $$("securePasswordBar").show();
                                                 $$("securePasswordBar").refresh();
                                                 $$("securePasswordLabel").setValue("Jačina lozinke: srednje");
-                                                //$$("strength").setValue("Jačina lozinke: srednje");
-                                                //$$("strength").show();
+
                                                 break;
                                             case 4:
                                                 percentageSecurePassword = 100;
                                                 $$("securePasswordBar").show();
                                                 $$("securePasswordBar").refresh();
                                                 $$("securePasswordLabel").setValue("Jačina lozinke: jako");
-                                                //$$("strength").setValue("Jačina lozinke: jako");
-                                                //$$("strength").show();
+
                                                 break;
                                         }
                                     }
                                 }
                             },
-                            // {
-                            //     //    cols: [
-                            //     //        {},
-                            //     //        {
-                            //     view: "label",
-                            //     id:"strength",
-                            //     name:"strength",
-                            //     hidden:true,
-                            //     align:"right",
-                            //     labelWidth: 200,
-                            //     height: 35,
-                            //     //        },
-                            //     //       {}
-                            //     //    ]
-                            // },
                             {
                                 cols: [
                                     {},
@@ -620,7 +589,6 @@ var passwordTab = {
                     {}
                 ]
             },
-            // {width: 50},
             {
                 cols: [
                     {},
@@ -722,9 +690,6 @@ var companyTab = {
                 ]
             },
             {
-                //   cols: [
-                //      {},
-                //      {
                 view: "text",
                 label: "PIN:",
                 id: "companyPin",
@@ -732,9 +697,6 @@ var companyTab = {
                 hidden: true,
                 labelWidth: 200,
                 height: 35
-                //    },
-                //    {}
-                // ]
             },
             {
                 cols: [
@@ -750,7 +712,6 @@ var companyTab = {
                         on: {
                             onBeforeFileAdd: function (upload) {
                                 var type = upload.type.toLowerCase();
-                                console.log(type);
                                 if (type === "jpg" || type === "png" || type === "jpeg") {
                                     var file = upload.file;
                                     if (file.size > 1048576) {
@@ -835,7 +796,6 @@ var companyTab = {
                 ]
             }, {}
         ]
-        // list config
     }
 };
 
@@ -856,12 +816,9 @@ var constraintsTab = {
     body: {
         view: "scrollview",
         id: "scrollConstraintsInformation",
-        scroll: "y", // vertical scrolling
-        //height: 600,//"auto",
-        //width: 150,
+        scroll: "y",
         body: {
 
-            ///////////////////////////////////
             cols: [
                 {gravity: 0.1},
                 {
@@ -874,283 +831,281 @@ var constraintsTab = {
                     },
                     elements: [{
                         rows: [{
-                        cols: [{
-                            // {///
-                            // width: 300,
-                            rows: [
-                                {
-                                    view: "form",
-                                    id: "companyInfoForm",
-                                    name: "companyInfoForm",
-                                    borderless: true,
-                                    elementsConfig: {
-                                        labelWidth: 200,
-                                        bottomPadding: 18
-                                    },
-                                    elements: [
-                                        {
-                                            view: "text",
-                                            name: "vacationDays",
-                                            label: "Broj dana godišnjeg:",
-                                            id: "vacationDays",
-                                            required: true,
-                                            invalidMessage: "Niste unijeli broj"
-                                        },
-                                        {
-                                            view: "text",
-                                            name: "maxVacDaysPeriod",
-                                            label: "Maksimalni period godišnjeg:",
-                                            id: "maxVacDaysPeriod",
-                                            required: true,
-                                            invalidMessage: "Niste unijeli period"
-                                        },
-                                        {
-                                            view: "text",
-                                            name: "maxOldVacationPeriod",
-                                            label: "Period starog godišnjeg:",
-                                            id: "maxOldVacationPeriod",
-                                            required: true,
-                                            invalidMessage: "Niste unijeli period",
-                                        },
-                                        {
-                                            view: "text",
-                                            name: "sickDays",
-                                            label: "Period opravdanja bolovanja:",
-                                            id: "sickDays",
-                                            required: true,
-                                            invalidMessage: "Niste unijeli period",
-                                        },
-                                        {
-                                            view: "multicombo",
-                                            id: "nonWorkingDaysInWeek",
-                                            name: "nonWorkingDaysInWeek",
-                                            value: "",
-                                            label: "Sedmični neradni dani:",
-                                            placeholder: "Neradni dani u sedmici",
-                                            required: true,
-                                            invalidMessage: "Niste unijeli neradne dane u sedmici",
-                                            newValues: true,
-                                            suggest: days,
-                                            on: {}
-                                        }]
-                                },
-
-                            ]
-                        },
-                            {
-                                borderless: true,
+                            cols: [{
                                 rows: [
                                     {
-                                        view: "toolbar",
-                                        type: "MainBar",
+                                        view: "form",
+                                        id: "companyInfoForm",
+                                        name: "companyInfoForm",
+                                        borderless: true,
+                                        elementsConfig: {
+                                            labelWidth: 200,
+                                            bottomPadding: 18
+                                        },
                                         elements: [
                                             {
-                                                view: "datepicker",
-                                                id: "nonWorkingDaysDTP",
-                                                name: "nonWorkingDaysDTP",
-                                                stringResult: true,
-                                                format: "%d.%m.%Y.",
-                                                label: 'Odaberite neradni dan',
-                                                labelWidth: 200,
+                                                view: "text",
+                                                name: "vacationDays",
+                                                label: "Broj dana godišnjeg:",
+                                                id: "vacationDays",
                                                 required: true,
-                                                invalidMessage: "Niste unijeli neradne dane"
-                                            }
-                                        ]
-                                    },
-                                    {
-                                        view: "datatable",
-                                        id: "nonWorkingDaysDT",
-                                        adjust: true,
-                                        select: "row",
-                                        height: 120,
-                                        navigation: true,
-                                        tooltip: {
-                                            dx: -35, //20 by default
-                                            dy: 20
-                                        },
-                                        columns: [
-                                            {
-                                                id: "#",
-                                                hidden: true,
-                                                header: "",
+                                                invalidMessage: "Niste unijeli broj"
                                             },
                                             {
-                                                id: "day",
-                                                header: "Neradni dani",
-                                                width: 310
-                                            },
-                                            {
-                                                id: "delete",
-                                                header: "&nbsp;",
-                                                tooltip: "Brisanje",
-                                                fillspace: true,
-                                                width: 35,
-                                                cssFormat: "checkBoxStatus",
-                                                template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
-
-                                            },
-                                        ],
-
-                                        onClick: {
-                                            webix_icon: function (e, id) {
-
-                                                var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
-                                                var day = dataTableValue.day;
-                                                var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
-                                                delBox.callback = function (result) {
-                                                    if (result == 1) {
-                                                        var format = webix.Date.strToDate("%d.%m.%Y.");
-                                                        var string = format(day);
-                                                        var newFormat = webix.Date.dateToStr("%Y-%m-%d");
-                                                        var newDate = newFormat(string); //datum u formatu kakav je potreban za backend stranu
-                                                        dataTableValue.day = newDate;
-                                                        if (updatedDays.includes(dataTableValue))
-                                                            updatedDays = updatedDays.filter(function (element) {
-                                                                return element.day !== dataTableValue.day
-                                                            });
-                                                        else {
-                                                            updatedDays.push(dataTableValue);
-                                                        }
-                                                        $$("nonWorkingDaysDT").remove(id);
-                                                    }
-                                                };
-                                                webix.confirm(delBox);
-                                            }
-                                        }
-                                    },
-                                    {
-                                      height: 20,
-                                    },
-                                    {
-                                        view: "label",
-                                        label: "Kolektivni godišnji odmori:",
-                                        align: "left"
-                                    },
-                                    {
-                                        cols: [
-                                            {
-
-                                                view: "datepicker",
-                                                id: "collectiveVacationFromDTP",
-                                                name: "collectiveVacationFromDTP",
-                                                stringResult: true,
-                                                format: "%d.%m.%Y.",
-                                                label: 'Od:',
-                                                labelWidth: 40,
+                                                view: "text",
+                                                name: "maxVacDaysPeriod",
+                                                label: "Maksimalni period godišnjeg:",
+                                                id: "maxVacDaysPeriod",
                                                 required: true,
-                                                invalidMessage: "Niste unijeli datum početka kolektivnog godišnjeg odmora"
-
+                                                invalidMessage: "Niste unijeli period"
                                             },
                                             {
-                                                view: "datepicker",
-                                                id: "collectiveVacationToDTP",
-                                                name: "collectiveVacationToDTP",
-                                                stringResult: true,
-                                                format: "%d.%m.%Y.",
-                                                label: 'Do:',
-                                                labelWidth: 40,
+                                                view: "text",
+                                                name: "maxOldVacationPeriod",
+                                                label: "Period starog godišnjeg:",
+                                                id: "maxOldVacationPeriod",
                                                 required: true,
-                                                invalidMessage: "Niste unijeli datum kraja kolektivnog godišnjeg odmora"
+                                                invalidMessage: "Niste unijeli period",
                                             },
                                             {
-                                                id: "addCollectiveVacationBtn",
-                                                view: "button",
-                                                type: "iconButton",
-                                                icon: "plus-circle",
-                                                css: "companyButton",
-                                                view: "button",
-                                                click: "companyInfoView.addCollectiveVacation",
-                                                width: 40,
-                                                align: "center",
-                                                hotkey: "enter"
-                                            }
-                                        ]
+                                                view: "text",
+                                                name: "sickDays",
+                                                label: "Period opravdanja bolovanja:",
+                                                id: "sickDays",
+                                                required: true,
+                                                invalidMessage: "Niste unijeli period",
+                                            },
+                                            {
+                                                view: "multicombo",
+                                                id: "nonWorkingDaysInWeek",
+                                                name: "nonWorkingDaysInWeek",
+                                                value: "",
+                                                label: "Sedmični neradni dani:",
+                                                placeholder: "Neradni dani u sedmici",
+                                                required: true,
+                                                invalidMessage: "Niste unijeli neradne dane u sedmici",
+                                                newValues: true,
+                                                suggest: days,
+                                                on: {}
+                                            }]
                                     },
-                                    {
-                                        view: "datatable",
-                                        id: "collectiveVacationDT",
-                                        label: "Kolektivni godišnji odmor:",
-                                        adjust: true,
-                                        select: "row",
-                                        height: 120,
-                                        tooltip: {
-                                            dx: -35, //20 by default
-                                            dy: 20
-                                        },
-                                        navigation: true,
-                                        columns: [
-                                            {
-                                                id: "#",
-                                                hidden: true,
-                                                header: "",
-                                            },
-                                            {
-                                                id: "dateFrom",
-                                                header: "Od",
-                                                width: 156
-                                            },
-                                            {
-                                                id: "dateTo",
-                                                header: "Do",
-                                                width: 156
-                                            },
-                                            {
-                                                id: "delete",
-                                                header: "&nbsp;",
-                                                tooltip: "Brisanje",
-                                                fillspace: true,
-                                                cssFormat: "checkBoxStatus",
-                                                template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
 
-                                            },
-                                        ],
-
-                                        onClick: {
-                                            webix_icon: function (e, id) {
-                                                var dataTableValue = $$("collectiveVacationDT").getItem(id);
-                                                var dateFrom = dataTableValue.dateFrom;
-                                                var dateTo = dataTableValue.dateTo;
-                                                var delBox = (webix.copy(commonViews.deleteConfirm("kolektivnog godišnjeg odmora", "period " + dateFrom + " - " + dateTo + " iz liste kolektivnih godišnjih odmora")));
-                                                delBox.callback = function (result) {
-                                                    if (result == 1) {
-                                                        var format = webix.Date.strToDate("%d.%m.%Y.");
-                                                        var stringDateFrom = format(dateFrom);
-                                                        var stringDateTo = format(dateTo);
-                                                        var newFormat = webix.Date.dateToStr("%Y-%m-%d");
-                                                        var newDateFrom = newFormat(stringDateFrom); //datum u formatu kakav je potreban za backend stranu
-                                                        var newDateTo = newFormat(stringDateTo);
-                                                        dataTableValue.dateFrom = newDateFrom;
-                                                        dataTableValue.dateTo = newDateTo;
-
-                                                        if (updatedDays.includes(dataTableValue)) {
-                                                            updatedCollectiveVacations = updatedCollectiveVacations.filter(function (element) {
-                                                                return element.dateFrom !== dateFrom && element.dateTo !== dateTo;
-                                                            });
-                                                        } else {
-                                                            updatedCollectiveVacations.push(dataTableValue);
-                                                        }
-                                                        $$("collectiveVacationDT").remove(id);
-                                                    }
-                                                };
-                                                webix.confirm(delBox);
-                                            }
-                                        }
-                                    },
-                                    {
-                                        height: 20
-                                    }
                                 ]
-                            }]},
+                            },
+                                {
+                                    borderless: true,
+                                    rows: [
+                                        {
+                                            view: "toolbar",
+                                            type: "MainBar",
+                                            elements: [
+                                                {
+                                                    view: "datepicker",
+                                                    id: "nonWorkingDaysDTP",
+                                                    name: "nonWorkingDaysDTP",
+                                                    stringResult: true,
+                                                    format: "%d.%m.%Y.",
+                                                    label: 'Odaberite neradni dan',
+                                                    labelWidth: 200,
+                                                    required: true,
+                                                    invalidMessage: "Niste unijeli neradne dane"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            view: "datatable",
+                                            id: "nonWorkingDaysDT",
+                                            adjust: true,
+                                            select: "row",
+                                            height: 120,
+                                            navigation: true,
+                                            tooltip: {
+                                                dx: -35, //20 by default
+                                                dy: 20
+                                            },
+                                            columns: [
+                                                {
+                                                    id: "#",
+                                                    hidden: true,
+                                                    header: "",
+                                                },
+                                                {
+                                                    id: "day",
+                                                    header: "Neradni dani",
+                                                    width: 310
+                                                },
+                                                {
+                                                    id: "delete",
+                                                    header: "&nbsp;",
+                                                    tooltip: "Brisanje",
+                                                    fillspace: true,
+                                                    width: 35,
+                                                    cssFormat: "checkBoxStatus",
+                                                    template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                                },
+                                            ],
+
+                                            onClick: {
+                                                webix_icon: function (e, id) {
+
+                                                    var dataTableValue = $$("nonWorkingDaysDT").getItem(id);
+                                                    var day = dataTableValue.day;
+                                                    var delBox = (webix.copy(commonViews.deleteConfirm("Uklanjanje dana iz liste neradnih dana", day + " iz neradnih dana")));
+                                                    delBox.callback = function (result) {
+                                                        if (result == 1) {
+                                                            var format = webix.Date.strToDate("%d.%m.%Y.");
+                                                            var string = format(day);
+                                                            var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                                            var newDate = newFormat(string);
+                                                            dataTableValue.day = newDate;
+                                                            if (updatedDays.includes(dataTableValue))
+                                                                updatedDays = updatedDays.filter(function (element) {
+                                                                    return element.day !== dataTableValue.day
+                                                                });
+                                                            else {
+                                                                updatedDays.push(dataTableValue);
+                                                            }
+                                                            $$("nonWorkingDaysDT").remove(id);
+                                                        }
+                                                    };
+                                                    webix.confirm(delBox);
+                                                }
+                                            }
+                                        },
+                                        {
+                                            height: 20,
+                                        },
+                                        {
+                                            view: "label",
+                                            label: "Kolektivni godišnji odmori:",
+                                            align: "left"
+                                        },
+                                        {
+                                            cols: [
+                                                {
+
+                                                    view: "datepicker",
+                                                    id: "collectiveVacationFromDTP",
+                                                    name: "collectiveVacationFromDTP",
+                                                    stringResult: true,
+                                                    format: "%d.%m.%Y.",
+                                                    label: 'Od:',
+                                                    labelWidth: 40,
+                                                    required: true,
+                                                    invalidMessage: "Niste unijeli datum početka kolektivnog godišnjeg odmora"
+
+                                                },
+                                                {
+                                                    view: "datepicker",
+                                                    id: "collectiveVacationToDTP",
+                                                    name: "collectiveVacationToDTP",
+                                                    stringResult: true,
+                                                    format: "%d.%m.%Y.",
+                                                    label: 'Do:',
+                                                    labelWidth: 40,
+                                                    required: true,
+                                                    invalidMessage: "Niste unijeli datum kraja kolektivnog godišnjeg odmora"
+                                                },
+                                                {
+                                                    id: "addCollectiveVacationBtn",
+                                                    view: "button",
+                                                    type: "iconButton",
+                                                    icon: "plus-circle",
+                                                    css: "companyButton",
+                                                    view: "button",
+                                                    click: "companyInfoView.addCollectiveVacation",
+                                                    width: 40,
+                                                    align: "center",
+                                                    hotkey: "enter"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            view: "datatable",
+                                            id: "collectiveVacationDT",
+                                            label: "Kolektivni godišnji odmor:",
+                                            adjust: true,
+                                            select: "row",
+                                            height: 120,
+                                            tooltip: {
+                                                dx: -35, //20 by default
+                                                dy: 20
+                                            },
+                                            navigation: true,
+                                            columns: [
+                                                {
+                                                    id: "#",
+                                                    hidden: true,
+                                                    header: "",
+                                                },
+                                                {
+                                                    id: "dateFrom",
+                                                    header: "Od",
+                                                    width: 156
+                                                },
+                                                {
+                                                    id: "dateTo",
+                                                    header: "Do",
+                                                    width: 156
+                                                },
+                                                {
+                                                    id: "delete",
+                                                    header: "&nbsp;",
+                                                    tooltip: "Brisanje",
+                                                    fillspace: true,
+                                                    cssFormat: "checkBoxStatus",
+                                                    template: "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-trash-o'></span>",
+
+                                                },
+                                            ],
+
+                                            onClick: {
+                                                webix_icon: function (e, id) {
+                                                    var dataTableValue = $$("collectiveVacationDT").getItem(id);
+                                                    var dateFrom = dataTableValue.dateFrom;
+                                                    var dateTo = dataTableValue.dateTo;
+                                                    var delBox = (webix.copy(commonViews.deleteConfirm("kolektivnog godišnjeg odmora", "period " + dateFrom + " - " + dateTo + " iz liste kolektivnih godišnjih odmora")));
+                                                    delBox.callback = function (result) {
+                                                        if (result == 1) {
+                                                            var format = webix.Date.strToDate("%d.%m.%Y.");
+                                                            var stringDateFrom = format(dateFrom);
+                                                            var stringDateTo = format(dateTo);
+                                                            var newFormat = webix.Date.dateToStr("%Y-%m-%d");
+                                                            var newDateFrom = newFormat(stringDateFrom);
+                                                            var newDateTo = newFormat(stringDateTo);
+                                                            dataTableValue.dateFrom = newDateFrom;
+                                                            dataTableValue.dateTo = newDateTo;
+
+                                                            if (updatedDays.includes(dataTableValue)) {
+                                                                updatedCollectiveVacations = updatedCollectiveVacations.filter(function (element) {
+                                                                    return element.dateFrom !== dateFrom && element.dateTo !== dateTo;
+                                                                });
+                                                            } else {
+                                                                updatedCollectiveVacations.push(dataTableValue);
+                                                            }
+                                                            $$("collectiveVacationDT").remove(id);
+                                                        }
+                                                    };
+                                                    webix.confirm(delBox);
+                                                }
+                                            }
+                                        },
+                                        {
+                                            height: 20
+                                        }
+                                    ]
+                                }]
+                        },
                             {
-                                cols: [{},{
+                                cols: [{}, {
                                     id: "saveInformation",
                                     view: "button",
                                     label: "Sačuvajte i pređite na aplikaciju",
                                     type: "iconButton",
                                     icon: "save",
                                     type: "iconButton",
-                                    //icon: "sign-in",   //firstLoginLayout.saveCompany
-                                    click: "firstLoginLayout.saveConstrains",  //dodati poziv showApp
+                                    click: "firstLoginLayout.saveConstrains",
                                     align: "center",
                                     hotkey: "enter",
                                     width: 300,
@@ -1170,10 +1125,8 @@ var constraintsTab = {
 
                 },
                 {gravity: 0.1, height: 200}]
-/////////////////////////////////////////
         }
     }
-    //,
 };
 
 var sectorTab = {
@@ -1266,7 +1219,7 @@ var scrollTab = {
     }
 }
 firstLoginTabs.push(profileTab, passwordTab);
-var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo za admina
+var firstLoginLayout = {
     id: "firstLoginPanel",
     width: "auto",
     height: "auto",
@@ -1299,14 +1252,12 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
             id: "firstLoginWizard",
 
             margin: 5,
-            //height:900,  //AKO OVO UKLJUCIM, POVECA SE TABELA< ALI SE SKLONI button "Reload with Progress Bar"
             rows: [
-                {type: "header", template: "Unesite Vaše podatke"}, //todo: nek ne bude bjelo na plavom, vec plavo na bijelom
+                {type: "header", template: "Unesite Vaše podatke"},
                 {
                     view: "template",
                     width: 400,
                     height: 70,
-                    // css: "progressNodes",
                     template: '<br><section>\n' +
                         '\n' +
                         '  <ol id="progressBar" class="progress-bar">\n' +
@@ -1318,17 +1269,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     view: "tabview",
                     tabbar: {
                         on: {
-                            onChange: function () {
-                                // if(this.getValue()=="formProfileInformation") {
-
-                                //   }else if
-                                //util.messages.showMessage("you have clicked on an item with id="+this.getValue());
-                            },
                             onBeforeTabClick: function (id) {
-                                // if(id=="formChangePassword"   /*&& tabCompleted[0])  ||*/    )
-                                //    return false;
-                                // else return true;
-                                //todo: ovo zavrsiti, kad se napravi za progressBar
                                 var tabbar = $$("firstLoginTabs").getTabbar();
                                 var oldIndex = tabbar.optionIndex(this.getValue());
                                 var newIndex = tabbar.optionIndex(id);
@@ -1356,7 +1297,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
     save: function () {
         var profileForm = $$("formProfileInformation");
         if (profileForm.validate()) {
-            //$$("saveProfileButton").disable();
             var dataToSend = $$("formProfileInformation").getValues();
             var objectToSend = {
                 firstName: dataToSend.firstName,
@@ -1377,7 +1317,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     userData.lastName = dataToSend.lastName;
                     userData.receiveMail = dataToSend.receiveMail;
                     userData.photo = objectToSend.photo;
-                    //util.dismissDialog("profileDialog");
                     util.messages.showMessage("Izmjene uspješno sačuvane.");
                     let ownTabId = profileTab.body.id;
                     firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
@@ -1391,9 +1330,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
     savePassword: function () {
         var changePasswordForm = $$("formChangePassword");
         if (changePasswordForm.validate()) {
-            console.log("AAAAAAAAAAAAa");
-            //$$("changePasswordBtn").disable();
-            console.log("BBBBBBBBBBBB");
             var passwordInformation = {
                 oldPassword: $$("oldPassword").getValue(),
                 newPassword: $$("newPassword").getValue(),
@@ -1408,7 +1344,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                         $$("changePasswordBtn").enable();
                         let ownTabId = passwordTab.body.id;
                         firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
-                        // Prebacivanje na sljedeci panel
                         var tabbar = $$("firstLoginTabs").getTabbar();
                         var tlength = tabbar.config.options.length;
                         var pindex = firstLoginLayout.progressBar.getTabIndex("formChangePassword");
@@ -1423,7 +1358,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                         } else {
                             firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
                             $$("firstLoginTabs").getTabbar().setValue(companyTab.body.id);
-                           firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
+                            firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                             firstLoginLayout.progressBar.updateNode(companyTab.body.id, "is-active");
                         }
                     } else {
@@ -1459,7 +1394,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     $$("firstLoginTabs").getTabbar().setValue(constraintsTab.body.id);
                     firstLoginLayout.progressBar.updateNode(constraintsTab.body.id, "is-active");
                 }, function (text, data, xhr) {
-                    //alert(text);
                     util.messages.showErrorMessage(text);
                 }, company);
         }
@@ -1472,7 +1406,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
             function (text, data, xhr) {
                 util.messages.showMessage("Izmjene uspješno sačuvane.");
                 let ownTabId = sectorTab.body.id;
-                //firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
                 firstLoginLayout.progressBar.unsetIndex(firstLoginLayout.progressBar.getTabIndex(ownTabId), "is-active");
                 $$("firstLoginTabs").getTabbar().setValue(profileTab.body.id);
                 firstLoginLayout.progressBar.updateNode(ownTabId, "is-complete");
@@ -1490,46 +1423,28 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
         var numberOfSickDays = $$("sickDays").getValue();
         var companyPin = $$("companyPin").getValue();
         var maxOldVacationPeriod = $$("maxOldVacationPeriod").getValue();
-        //webix.message(maxOldVacationPeriod.toString());
 
         var validation = $$("companyInfoForm").validate();
         if (validation) {
-            // var  company= {
-            //     id: companyId,
-            //     name: companyName,
-            //     pin: companyPin,
-            //     active: 1,
-            //     logo: logo.getItem(logo.getLastId()).content
-            // };
-            //
-            // connection.sendAjax("PUT", "hub/company/" + companyId,
-            //     function (text, data, xhr) {
-            //     }, function (text, data, xhr) {
-            //         //alert(text);
-            //         util.messages.showErrorMessage(text);
-            //     }, company);
-
             var selectedDays = $$("nonWorkingDaysInWeek").getValue().split(",").filter(function (s) {
                 return s;
             }).map(function (s) {
                 return parseInt(s)
             })
-            //svi dani u sedmici koji su selektovani u multicombo-u
-
             var daysId = [];
 
 
             for (var i = 0; i < selectedDays.length; i++) {
                 if (!startedSelectedValues.includes(selectedDays[i]))
-                    daysId.push(selectedDays[i]); //svi dani koji su sada selektovani
+                    daysId.push(selectedDays[i]);
             }
 
             for (var i = 0; i < startedSelectedValues.length; i++) {
                 if (!selectedDays.includes(startedSelectedValues[i]))
-                    daysId.push(startedSelectedValues[i]); //svi dani koji su bili selektovani, a sada nisu
+                    daysId.push(startedSelectedValues[i]);
             }
 
-            var nonWorkingDaysInWeek = []; //saljem samo dane koji nisu bili cekirani ili dane u sedmici koji su otcekirani pri pokretanju aplikacije
+            var nonWorkingDaysInWeek = [];
             var dayId;
             var nonWorkingDayInWeek;
 
@@ -1545,14 +1460,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                 nonWorkingDaysInWeek.push(nonWorkingDayInWeek);
             }
 
-            // connection.sendAjax("POST", "/hub/nonWorkingDayInWeek/addNonWorkingDaysInWeek/",
-            //     function (text, data, xhr) {
-            //     }, function (text, data, xhr) {
-            //         //alert(text);
-            //         util.messages.showErrorMessage(text);
-            //     }, nonWorkingDaysInWeek);
-
-            var nonWorkingDaysInYear = []; //saljem samo dane koji nisu bili cekirani ili dane koji su otcekirani pri pokretanju aplikacije
+            var nonWorkingDaysInYear = [];
 
             for (var i = 0; i < updatedDays.length; i++) {
                 var nonWorkingDayInYear = {
@@ -1563,12 +1471,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                 nonWorkingDaysInYear.push(nonWorkingDayInYear);
             }
             updatedDays = [];
-            // connection.sendAjax("POST", "/hub/nonWorkingDay/addNonWorkingDays/",
-            //     function (text, data, xhr) {
-            //     }, function (text, data, xhr) {
-            //         util.messages.showErrorMessage(text);
-            //         //alert(text);
-            //     }, nonWorkingDaysInYear);
 
             var constraints = {
                 companyId: companyId,
@@ -1578,33 +1480,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                 maxOldVacationPeriodLength: maxOldVacationPeriod,
             }
 
-            // connection.sendAjax("POST", "/hub/constraints",
-            //     function (text, data, xhr) {
-            //         if (text) {
-            //         } else {
-            //             util.messages.showErrorMessage("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
-            //             //alert("Greška u izmjeni broja dana godišnjeg ili bolovanja.");
-            //         }
-            //     }, function (text, data, xhr) {
-            //         util.messages.showErrorMessage(text);
-            //         //alert(text);
-            //     }, constraints);
-
             var collectiveVacations = [];
-
-            /* for(var i = 0; i < updatedDays.length; i++) {
-                 var collectiveVacation = {
-                     dateTo:
-                     dateFrom: updatedDays[i].day,
-                     companyId: companyId,
-                     }
-                 collectiveVacations.push(collectiveVacation);
-             }*/
-
-            /* var dateFromValue = $$("collectiveVacationFromDTP").getValue();
-             var dateToValue = $$("collectiveVacationToDTP").getValue();
-             var dateFrom = webix.Date.dateToStr("%Y-%m-%d")(dateFromValue);
-             var dateTo = webix.Date.dateToStr("%Y-%m-%d")(dateToValue);*/
 
             for (var i = 0; i < updatedCollectiveVacations.length; i++) {
 
@@ -1616,12 +1492,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                 collectiveVacations.push(collectiveVacation);
             }
             updatedCollectiveVacations = [];
-            // connection.sendAjax("POST", " /hub/colectiveVacation/addColectiveVacations",
-            //     function (text, data, xhr) {
-            //     }, function (text, data, xhr) {
-            //         util.messages.showErrorMessage(text);
-            //         // alert(text);
-            //     }, collectiveVacations);
+
             let requests = [
                 {method: "POST", url: "/hub/colectiveVacation/addColectiveVacations", item: collectiveVacations},
                 {method: "POST", url: "/hub/constraints", item: constraints},
@@ -1654,10 +1525,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     showApp();
                 }
             });
-            //util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
-            // alert("Uspješno izvršena izmjena podataka o kompaniji");
-            //util.dismissDialog('companyInfoDialog');
-            //showApp();
+
         }
     },
     progressBar: {
@@ -1666,7 +1534,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
         setIndex: function (index, style) {
             var progNode = document.getElementById("progNode" + (index + 1).toString());
             if (progNode == null) {
-                console.log(`progNode${index} doesn't exist`);
                 return;
             }
             if (!progNode.className.includes(style.trim()))
@@ -1675,7 +1542,6 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
         unsetIndex: function (index, style) {
             var progNode = document.getElementById("progNode" + (index + 1).toString());
             if (progNode == null) {
-                console.log(`progNode${index} doesn't exist`);
                 return;
             }
             progNode.className = progNode.className.replace(style.trim(), '').trim();
@@ -1844,11 +1710,7 @@ var mainLayout = {
                         break;
                 }
 
-                // $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName +
-                //     ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
                 $$("usernameHolder").refresh();
-
-                console.log(newUser.id);
                 connection.sendAjax("PUT", "hub/user/" + newUser.id,
                     function (text, data, xhr) {
                         if (text) {
@@ -1926,9 +1788,6 @@ var mainLayout = {
 };
 
 var menuEvents = {
-// onMenuItemClick: function (id) {
-//     menuActions(id);
-// }
     onItemClick: function (item) {
         menuActions(item);
     }
@@ -1936,9 +1795,6 @@ var menuEvents = {
 
 var firstLogin;
 var showFirstLogin = function () {
-
-    console.log("Usao u showFirstLogin");
-    //Ako je admin i ako je ulogovan 1. put na sistem:
     if (userData != null && userData.firstLogin != 0) {
         switch (userData.userGroupKey) {
             case "admin":
@@ -1948,19 +1804,14 @@ var showFirstLogin = function () {
                 firstLoginTabs.unshift(sectorTab);
                 break;
         }
-        //todo: switch
-        console.log("Usao u if showFirstLogin");
-
         var main = webix.copy(firstLoginLayout);
         firstLogin = webix.ui(main, panel);
-        panel = $$("firstLoginPanel"); //firstLoginPanel je id za firstLoginLayout
+        panel = $$("firstLoginPanel");
 
         if (userData.userGroupKey == "admin") {
             $$("changePasswordBtn").data.label = "Sačuvajte";
             $$("changePasswordBtn").refresh();
         }
-        // $$("changePasswordBtn").setValue("Sacuvajte");
-
         var companyId = userData.companyId;
         if (firstLoginTabs.includes(companyTab)) {
             connection.sendAjax("GET",
@@ -1978,22 +1829,20 @@ var showFirstLogin = function () {
                 });
         }
         firstLoginLayout.progressBar.init();
-//adding ProgressBar functionality to layout
-        //webix.extend($$("firstLoginWizard"), webix.ProgressBar);
+
         if ($$("nonWorkingDaysDTP"))
             $$("nonWorkingDaysDTP").attachEvent("onChange", function (newValue) {
 
                 var date = webix.Date.dateToStr("%Y-%m-%d")(newValue);
-                var dateInDTFormat = webix.Date.dateToStr("%d.%m.%Y.")(newValue); // sluzi kao pomoc za provjeru da li se datum nalazi u tabeli, jer je datum u tabeli u tom formatu
+                var dateInDTFormat = webix.Date.dateToStr("%d.%m.%Y.")(newValue);
                 var isDaySelected = 0;
                 $$("nonWorkingDaysDT").eachRow(function (row) {
                     var record = $$("nonWorkingDaysDT").getItem(row);
-                    if (dateInDTFormat == record.day) //provjeravamo da li se dan vec nalazi u tabeli
+                    if (dateInDTFormat == record.day)
                         isDaySelected = 1;
                 });
 
                 if (isDaySelected == 1)
-                //alert("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
                     util.messages.showMessage("Dan " + dateInDTFormat + " je već označen kao neradni dan.");
                 else {
                     var editBox = (webix.copy(commonViews.confirm("Dodavanje neradnog dana", "Da li ste sigurni da želite da označite " + dateInDTFormat + " kao neradni dan?")));
@@ -2038,8 +1887,8 @@ var showFirstLogin = function () {
                     util.messages.showErrorMessage(text);
                 });
         }
-        if(companyData.logo != null) {
-            $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
+        if (companyData.logo != null) {
+            $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
         }
         else {
             $$("companyLogoImage").setValues({src: "img/noLogo.png"});
@@ -2067,8 +1916,7 @@ var showApp = function () {
         {id: "4", value: "Odjava", icon: "sign-out"}
     ]
 
-    if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") //nema mogucnost promjene ogranicenja o kompaniji ako nije direktor ili admin
-    {
+    if (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor") {
         for (var i = 0; i < companyInfoItems.length; i++)
             settingsMenu.push(companyInfoItems[i]);
     }
@@ -2076,18 +1924,15 @@ var showApp = function () {
     for (var i = 0; i < subMenuItems.length; i++)
         settingsMenu.push(subMenuItems[i]);
 
-    console.log("Company data: ");
-    console.log(companyData);
     var main = webix.copy(mainLayout);
     mainApp = webix.ui(main, panel);
     panel = $$("app");
-//$$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.ime + ' ' + userData.prezime + ' (' + rolaNameSerbian[userData.rolaNivo] + ')' + '</span><br /><span class="usernameHolderUsername">' + userData.korisnickoIme + '</span>');
-//**************
+
     var localMenuData = null;
 
     if (userData != null) {
         if (userData.userGroupKey !== "superadmin") {
-            if(companyData.logo == null)
+            if (companyData.logo == null)
                 $$("companyLogoImage").setValues({src: "img/noLogo.png"});
             else
                 $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
@@ -2100,71 +1945,36 @@ var showApp = function () {
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Superadmin</span>');
                 $$("mainMenu").define("width", 1);
                 $$("sidebarBelow").define("width", 1);
-                //$$("sidebarBelow").disable();
-                // if (userData.firstLogin === 1) {
-                //     showAddFirstAndLastNameDialog();
-                // }
+
                 break;
             case "admin":
                 localMenuData = webix.copy(menuAdmin);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Admin</span>');
-                /*<<<<<<< HEAD
-                                if (userData.firstLogin === 1) {
-                                    showAddFirstAndLastNameDialog();
-                                } else if(userData.firstLogin === 2) {
-                                    showChangePasswordDialog();
-                                } else if(userData.firstLogin === 3) {
-                                    // Ovde treba dodati prikaz dijaloga za unos podataka o kompaniji za admina
-                                }
-                =======*/
-                /* if (userData.firstName == null || userData.lastName == null) {
-                     showAddFirstAndLastNameDialog();
-                 }*/
-//>>>>>>> Wizard for first admin's login
+
                 break;
             case "direktor":
                 localMenuData = webix.copy(menuDirector);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Direktor</span>');
-                // if (userData.firstLogin === 1) {
-                //     showAddFirstAndLastNameDialog();
-                // } else if(userData.firstLogin === 2) {
-                //     showChangePasswordDialog();
-                // }
+
                 break;
             case "sekretar":
                 localMenuData = webix.copy(menuSecretary);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Sekretar</span>');
-                // if (userData.firstLogin === 1) {
-                //     showAddFirstAndLastNameDialog();
-                // } else if(userData.firstLogin === 2) {
-                //     showChangePasswordDialog();
-                // }
+
                 break;
             case "menadzer":
                 localMenuData = webix.copy(menuSectorManager);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
-                // if (userData.firstLogin === 1) {
-                //     showAddFirstAndLastNameDialog();
-                // } else if(userData.firstLogin === 2) {
-                //     showChangePasswordDialog();
-                // } else if(userData.firstLogin === 3) {
-                //     // Ovde treba dodati prikaz dijaloga za unos maksimalnog procenta odsustva za menadzerov sektor
-                // }
+
                 break;
             case "zaposleni":
                 localMenuData = webix.copy(menuWorker);
                 $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Zaposleni</span>');
-                console.log("AAAA: " + userData.firstLogin);
-                // if (userData.firstLogin === 1) {
-                //     showAddFirstAndLastNameDialog();
-                // } else if(userData.firstLogin === 2) {
-                //     showChangePasswordDialog();
-                // }
+
                 break;
         }
     }
 
-//***************
 
     webix.ui({
         id: "menu-collapse",
@@ -2192,14 +2002,11 @@ var showApp = function () {
         }
     });
 
-//Sakrivanje notifikacija kod superadmina
     if (userData.userGroupKey == "superadmin")
         $$("notificationBtn").hide();
 
-//if(userData.userGroupKey != "superadmin" && userData.userGroupKey != "zaposleni"){
     $$("mainMenu").define("data", localMenuData);
     $$("mainMenu").define("on", menuEvents);
-//}
 
 
     $$("usernameHolder").refresh();
@@ -2232,7 +2039,6 @@ var showApp = function () {
             $$("mainMenu").select("calendar");
             break;
     }
-//templateView.selectPanel();
 
     if (userData.userGroupKey != "superadmin") {
         getNotifications();
@@ -2240,8 +2046,6 @@ var showApp = function () {
     }
 
 };
-
-//login and logout
 
 
 var localize = function () {
@@ -2297,7 +2101,6 @@ var localize = function () {
     webix.i18n.setLocale("sr-BA");
 }
 
-//about dialog
 
 var getAboutDialog = function () {
 
@@ -2332,10 +2135,10 @@ var getAboutDialog = function () {
                     type: "clean",
                     template: '<img style="margin-top: 29px; margin-bottom: 29px;" src="img/telegroup-logo.png" onclick="gameView.showGameDialog()" /><div id="aboutRibbon"></div>',
                     onEnter: "gameView.gameDialog",
-                    on:{
-                        'onItemClick':function(id){
+                    on: {
+                        'onItemClick': function (id) {
                             gameView.showGameDialog();
-                        } // the default click behavior
+                        }
                     },
 
                 },
@@ -2345,10 +2148,10 @@ var getAboutDialog = function () {
                     css: "aboutLine",
                     template: '<b>Verzija:</b> ' + appVersion,
 
-                    on:{
-                        "onItemClick":function(){
+                    on: {
+                        "onItemClick": function () {
                             gameView.gameDialog();
-                        } // the default click behavior
+                        }
                     },
                 },
                 {
@@ -2386,7 +2189,7 @@ var loginLayout = {
         height: 110
     }, {
         cols: [{}
-            , //1st column
+            ,
             {
                 rows: [{
                     view: "label",
@@ -2451,81 +2254,15 @@ var loginLayout = {
                     }]
 
             },
-            //2nd column
+
             {}
         ]
     }, {}, {}]
-    /*  css:"backgroundImage",
-    cols:[
-        {},
-        {
-            rows:[{
-                height:130
-            },
-                {
-                    height:130,
-                    template: '<img src="img/user.png"/>',
-                    css:"loginLogo",
-                    align:"center"
-                },{
-                    view: "form",
-                    id: "loginForm",
-                    css:"loginForm",
-                    width: 600,
-                    elements: [{
-                        view: "text",
-                        type:"email",
-                        placeholder:"E-mail",
-                        required:true,
-                        id: "email",
-                        name: "email",
-                        invalidMessage:"Niste unijeli e-mail adresu.",
-                        width: 600,
-                        height:40
-                    }, {
-                        view: "text",
-                        placeholder:"Lozinka",
-                        name: "lozinka",
-                        id:"password",
-                        required:true,
-                        type: "password",
-                        invalidMessage:"Niste unijeli lozinku.",
-                        width: 600,
-                        height:40
-                    },  {
-                        view: "text",
-                        placeholder:"Kompanija",
-                        css:"textS",
-                        id:"company",
-                        name: "kompanija",
-                        width: 600,
-                        height:40
-                    }, {
-                        id: "login",
-                        view: "button",
-                        label: "Prijavi se",
-                        type: "iconButton",
-                        icon: "sign-in",
-                        click: "login",
-                        align:"left",
-                        hotkey:"enter",
-                        width: 580,
-                        height:40
-                    },
-                        {
-                            height:20
-                        }]
-                }]
-        },{
-            height:722
-        }
-        ]*/
+
 };
 
 
 var login = function () {
-    console.log($$("loginForm").getValues());
-
     var data = $$("loginForm").getValues();
 
     var objectToSend = {
@@ -2539,9 +2276,6 @@ var login = function () {
             "Content-type": "application/json"
         }).post("hub/user/login", JSON.stringify(objectToSend), {
             error: function (text, data, xhr) {
-                // showApp();
-                //return;
-                // TODO praksa obrisati 2 prethodne linije koda kad se napravi login na backendu,
                 util.messages.showErrorMessage("Prijavljivanje nije uspjelo!")
             },
             success: function (text, data, xhr) {
@@ -2550,8 +2284,6 @@ var login = function () {
                 // util.messages.showErrorMessage("2");
                 if (data.json() != null && data.json().id != null) {
                     userData = data.json();
-                    console.log(userData.userGroupKey);
-
                     if (userData.userGroupKey == "superadmin") {
                         if (objectToSend.companyPin.length == 0) {
                             companyData = null;
@@ -2565,8 +2297,8 @@ var login = function () {
                                 var company = data.json();
                                 if (company != null) {
                                     companyData = company;
-                                    if (userData.firstLogin != 0 /*userData.firstLogin === 1*/) {
-                                        showFirstLogin(); //uspjesan login, prikaz layout-a za to...
+                                    if (userData.firstLogin != 0) {
+                                        showFirstLogin();
                                     } else {
                                         showApp();
                                     }
@@ -2689,7 +2421,6 @@ showNotifications = function () {
                     template: function (obj) {
                         var format = webix.Date.dateToStr("%d.%m.%Y. %H:%i");
                         var date = "" + obj.created;
-                        //var pom=""+format(new Date(obj.created));
                         var pom = "" + date.slice(8, 10) + "." + date.slice(6, 7) + "." + date.slice(0, 4) + ". " + date.slice(11, 19);
 
                         if (obj.seen) {
@@ -2705,11 +2436,10 @@ showNotifications = function () {
                     width: 300,
                     type: {
                         height: 90,
-                        width: 350 /* BEWARE needs to be more than specified in extended-orange.css for contactName and message_text */
+                        width: 350
                     },
                     on: {
                         "onItemClick": function (id, e, node) {
-                            //if (e.target.type != "checkbox") {
                             var item = this.getItem(id);
                             if ("Bolovanje" == item.title) {
                                 if (userData.userGroupKey == "zaposleni") {
@@ -2728,9 +2458,6 @@ showNotifications = function () {
                                     leaveRequestsView.selectPanel();
                                 }
                             }
-
-                            //}
-
 
                             if (item.seen == 0) {
                                 numberOfUnreadNotifications--;
@@ -2758,34 +2485,9 @@ showNotifications = function () {
     });
     var list = $$("notificationList");
     list.parse(notifications);
-    // window.setTimeout(updateNotifications, 15000);
 };
-updateNotifications = function () {
 
-
-    /*for(var i=0;i<notifications.length;i++){
-        var notification = notifications.filter(
-            function (element) {
-                return element.id == i;
-            });
-        if(notification.seen == 0){
-            notification.seen = 1;
-            numberOfUnreadNotifications--;
-            var updatedNotifications = [];
-            updatedNotifications.push(notification);
-            connection.sendAjax("PUT", "/hub/notification/updateNotifications/",
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                    alert(text)
-                }, updatedNotifications);
-
-        }
-        $$("notificationBtn").config.badge = numberOfUnreadNotifications;
-        $$("notificationBtn").refresh();
-    }*/
-};
 getNotifications = function () {
-    console.log("USLO U GET");
     notifications = [];
     webix.ajax().get("/hub/notification/getAllNotificationByUser/" + userData.id, {
         success: function (text, data, xhr) {
@@ -2796,7 +2498,7 @@ getNotifications = function () {
             if (userNotifications != null) {
                 for (var i = 0; i < userNotifications.length; i++) {
                     if (userNotifications[i].seen == 0) {
-                        numberOfUnreadNotifications++; //broj neprocitanih poruka, za badge se uvecava brojac
+                        numberOfUnreadNotifications++;
                         notification = {
                             id: userNotifications[i].id,
                             title: userNotifications[i].title,
@@ -2848,8 +2550,6 @@ getNotifications = function () {
         }
     });
 };
-
-//main call
 window.onload = function () {
     init();
 };

@@ -3,14 +3,11 @@
 var usergroupView;
 var user = null; //logged in user
 var sectorID = null; // if there is sector manager
-//int numberOfSectors; //when sector is changed
 var selectedItems = [];
-var selectedManager = [];
 var choosenSectorId = 0;
 
 usergroupView = {
     getPanel: function () {
-        console.log("uslo u usergroupview");
         switch (userData.userGroupKey) {
             case "admin":
                 user = "admin";
@@ -24,7 +21,6 @@ usergroupView = {
             case "menadzer":
                 user = "manager";
                 sectorID = userData.sectorId;
-                console.log(sectorID);
                 break;
         }
         ;
@@ -101,14 +97,12 @@ usergroupView = {
                         id: "addUserButton",
                         view: "button",
                         type: "iconButton",
-                        //hotkey: "enter",
                         icon: "plus-circle",
                         label: "Dodaj korisnika",
                         width: 200,
                         height: 40,
                         css: "companyButton",
                         align: "left",
-                        //disabled: true,
                         click: 'usergroupView.showAddUserDialog'
                     }, {
                         id: "deleteSelectedButton",
@@ -126,7 +120,6 @@ usergroupView = {
                         id: "changeSectorOfSelectedButton",
                         view: "button",
                         type: "iconButton",
-                        // hotkey: "enter",
                         icon: "users",
                         label: "Promijeni sektor",
                         width: 200,
@@ -160,46 +153,41 @@ usergroupView = {
                             align: "left",
                             css: "companyButton",
                             click: 'usergroupView.showPercentDialog'
-                        },{
-                        view: "label",
-                        id: "izaberiLabel",
-                        label: "Izaberi sektor:",
-                        align: "right"
-                    }, {
-                        view: "combo",
-                        id: "choseSectorCombo",
-                        align: "left",
-                        width: 400,
-                        tooltip: "Izaberite sektor u kome želite vidjeti zaposlene",
-                        value: "Svi sektori",
-                        placeholder: "Svi sektori",
-                        on: {
-                            // var input= $$("choseSectorCombo").getInputNode().value;
-                            onChange(id) {
-                                //'onItemClick': function(id){
-                                sectorID = id;
-                                if (sectorID == -1) {
-                                    $$("addUserButton").enable();
+                        }, {
+                            view: "label",
+                            id: "izaberiLabel",
+                            label: "Izaberi sektor:",
+                            align: "right"
+                        }, {
+                            view: "combo",
+                            id: "choseSectorCombo",
+                            align: "left",
+                            width: 400,
+                            tooltip: "Izaberite sektor u kome želite vidjeti zaposlene",
+                            value: "Svi sektori",
+                            placeholder: "Svi sektori",
+                            on: {
+                                onChange(id) {
+                                    sectorID = id;
+                                    if (sectorID == -1) {
+                                        $$("addUserButton").enable();
+                                    }
+
+                                    if (sectorID == -2 || sectorID == -1) {
+                                        $$("changeManagerBtn").disable();
+                                    } else $$("changeManagerBtn").enable()
+                                    $$("usergroupDT").clearAll();
+                                    $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
+                                    $$("usergroupDT").detachEvent("onBeforeDelete");
+
+
+                                    if (sectorID == -2 || sectorID == -1) {
+                                        $$("changeManagerBtn").disable();
+                                    } else $$("changeManagerBtn").enable();
+
                                 }
-
-                                if (sectorID == -2 || sectorID == -1) {
-                                    $$("changeManagerBtn").disable();
-                                } else $$("changeManagerBtn").enable()
-                                console.log("id sektora je" + id);
-                                //webix.message("Prikazaće Vam se svi zaposleni u izabranom sektoru. "/*+ this.getValue()*/);
-                                $$("usergroupDT").clearAll();
-                                //connection.attachAjaxEvents("usergroupDT", "hub/user/custom/bySector/"+id);
-                                $$("usergroupDT").define("url", "hub/user/custom/bySector/" + id);
-                                $$("usergroupDT").detachEvent("onBeforeDelete");
-
-
-                                if (sectorID == -2 || sectorID == -1) {
-                                    $$("changeManagerBtn").disable();
-                                } else $$("changeManagerBtn").enable();
-
                             }
                         }
-                    }
                     ]
                 },
                 {
@@ -208,18 +196,10 @@ usergroupView = {
                     id: "usergroupDT",
                     margin: 10,
                     tooltip: {
-                        dx:-35, //20 by default
-                        dy:20
+                        dx: -35, //20 by default
+                        dy: 20
                     },
-                    //fillspace: true,
-                    //editaction: "dblclick",
-                    // multiselect: false,
-                    //  resizeColumn: true,
-                    // resizeRow: true,
-                    //checkboxRefresh: true,
-                    //onContext: {},
                     pager: "pagerB",
-                    //data:users, Kako uzeti podatke o users
                     url: "hub/user",
                     columns: [
                         {
@@ -239,18 +219,16 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            //width:210,
-                            header: ["Ime",  //<span class='webix_icon fa fa-user'/>
+                            header: ["Ime",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
                         }, {
                             id: "lastName",
-                            fillspace: true, // ovo siri kolonu
+                            fillspace: true,
                             editable: false,
                             sort: "string",
-                            //width:210,
-                            header: ["Prezime", //<span class='webix_icon fa fa-user'/>
+                            header: ["Prezime",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -260,8 +238,7 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "text",
-                            //width:220,
-                            header: ["E-mail", //<span class='webix_icon fa fa-user'/>
+                            header: ["E-mail",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -271,7 +248,7 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            header: ["Pozicija", //<span class='webix_icon fas fa-briefcase'/>
+                            header: ["Pozicija",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -281,8 +258,7 @@ usergroupView = {
                             fillspace: true,
                             editable: false,
                             sort: "string",
-                            //width:220,
-                            header: ["Sektor", //<span class='webix_icon fas fa-briefcase'/>
+                            header: ["Sektor",
                                 {
                                     content: "textFilter", value: "", icon: "wxi-search"
                                 }]
@@ -301,7 +277,7 @@ usergroupView = {
                             width: 35,
                             template: "<span  style='color:#777777; cursor:pointer;' class='webix_icon fa fa-eye'></span>"
                         }, {
-                            id: "sector", //mijenjanje sektora, od strane direktora i admina
+                            id: "sector",
                             header: "&nbsp;",
                             tooltip: "Ažuriranje",
                             width: 35,
@@ -350,26 +326,21 @@ usergroupView = {
                     onClick: {
                         webix_icon: function (e, id) {
                             $$("usergroupDT").select(id);
-                            console.log(id["column"]);
                             var action = id["column"];
                             if ((action === "delete" || action === "sector") && (user === "secretary" || user === "menager")) {
-                                //alert("Niste autorizovani da izvršite ovu radnju!");
                                 util.messages.showErrorMessage("Niste autorizovani da izvršite ovu radnju!");
                             }
                             if (action === "edit" && user === "secretary") {
                                 util.messages.showErrorMessage("Niste autorizovani da izvršite ovu radnju!");
-                                //alert("Niste autorizovani da izvršite ovu radnju!");
                             }
                             if (action === "view") {
                                 usergroupView.employeeInfo(id);
                             }
                             if (action == "delete") {
-                                if ($$("usergroupDT").getItem(id).position != "menadzer"){
-
-                                   // var id = $$("usergroupDT").getSelectedId();
-                                    if($$("usergroupDT").getSelectedId() == userData.id){
+                                if ($$("usergroupDT").getItem(id).position != "menadzer") {
+                                    if ($$("usergroupDT").getSelectedId() == userData.id) {
                                         util.messages.showErrorMessage("Ne možete obrisati sami sebe.");
-                                    }else{
+                                    } else {
                                         usergroupView.deleteEmployee();
                                     }
                                 }
@@ -414,13 +385,12 @@ usergroupView = {
     },
 
 
-
-    percentDialog:{
-        view:"fadeInWindow",
-        id:"percentDialog",
+    percentDialog: {
+        view: "fadeInWindow",
+        id: "percentDialog",
         position: "center",
-        body:{
-            rows:[
+        body: {
+            rows: [
                 {
                     view: "toolbar",
                     cols: [{
@@ -439,38 +409,38 @@ usergroupView = {
                     }]
                 },
                 {
-                    view:"form",
-                    width:350,
+                    view: "form",
+                    width: 350,
                     id: "abscentFormID",
                     name: "abscentFormID",
-                    css:"abscentForm",
-                    elements:[
+                    css: "abscentForm",
+                    elements: [
                         {
-                            cols:[
+                            cols: [
                                 {
                                     id: "percentText",
                                     view: "text",
                                     label: "Maksimalno odsustvo:",
                                     labelWidth: 150,
                                     required: true,
-                                    width:200,
+                                    width: 200,
                                     invalidMessage: "Potrebno je unijeti određenu vrijednost."
                                 },
                                 {
                                     view: "label",
                                     label: "%",
-                                    css:"percentOKbutton"
+                                    css: "percentOKbutton"
                                 },
                                 {
-                                    view:"button",
-                                    label:"OK",
-                                    align:"right",
+                                    view: "button",
+                                    label: "OK",
+                                    align: "right",
                                     hotkey: "enter",
-                                    width:100,
+                                    width: 100,
                                     click: function () {
-                                        if($$("percentText").getValue().length===0){
+                                        if ($$("percentText").getValue().length === 0) {
                                             util.messages.showErrorMessage("Potrebno je unijeti vrijednost.");
-                                        }else {
+                                        } else {
                                             var temp = {
                                                 percent: $$("percentText").getValue(),
                                                 id: userData.sectorId
@@ -503,14 +473,14 @@ usergroupView = {
         }
     },
 
-    showPercentDialog : function(){
+    showPercentDialog: function () {
         webix.ui(webix.copy(usergroupView.percentDialog)).show();
-        connection.sendAjax("GET","hub/sector/getMaxAbscentBySector/"+userData.sectorId,function (text,data,xhr) {
-            if(text!="105.0") {
+        connection.sendAjax("GET", "hub/sector/getMaxAbscentBySector/" + userData.sectorId, function (text, data, xhr) {
+            if (text != "105.0") {
                 $$("percentText").define("placeholder", text);
                 $$("percentText").refresh();
             }
-        },function (text,data,xhr) {
+        }, function (text, data, xhr) {
             util.messages.showErrorMessage("Greška.");
         });
     },
@@ -542,12 +512,11 @@ usergroupView = {
                     }]
                 }, {
                     view: "form",
-                    // rules: {},
                     id: "addUserForm",
                     elements: [{
                         view: "text",
                         id: "email",
-                        name: "email", //bez ovog name, nece da izbaci gresku ako nedostaje prlikom odavanja!!!!
+                        name: "email",
                         label: "E-mail:",
                         invalidMessage: "Obavezan je unos e-mail adrese zaposlenog.",
                         required: true
@@ -563,20 +532,7 @@ usergroupView = {
                             id: "choseUserGroupCombo",
                             name: "choseUserGroupCombo",
                             invalidMessage: "Obavezan je izbor radne pozicije.",
-                            required: true,
-                            // on: {
-                            //     onChange: function (newId, oldId) {
-                            //
-                            //         if (this.getList().getItem(newId).disabled) {
-                            //
-                            //             util.messages.showErrorMessage("Nije moguće izabrati menadžera.");
-                            //             this.blockEvent();
-                            //             oldId ? this.setValue("") : this.setValue(oldId);
-                            //             this.unblockEvent();
-                            //         }
-                            //     }
-                            // },
-                            //options:usergroupView.userGroups
+                            required: true
                         }]
                     }, {
                         cols: [{
@@ -643,7 +599,7 @@ usergroupView = {
                                 return false;
                             }
                             return true;
-                        },  //
+                        },
                         "choseUserGroupCombo": function (value) {
                             if (!value) {
                                 $$('addUserForm').elements.choseUserGroupCombo.config.invalidMessage = 'Obavezno je izabrati poziciju.';
@@ -691,15 +647,14 @@ usergroupView = {
                     height: 250,
                     width: 600,
                     tooltip: {
-                        dx:-35, //20 by default
-                        dy:20
+                        dx: -35, //20 by default
+                        dy: 20
                     },
                     select: "row",
                     multiselect: false,
                     checkboxRefresh: true,
                     onContext: {},
                     navigation: true,
-                    //url:"hub/user/custom/bySector/-1",
                     on: {
                         onAfterContextMenu: function (item) {
                             this.select(item.row);
@@ -731,9 +686,9 @@ usergroupView = {
                         }
 
                     ],
-                    scheme:{
+                    scheme: {
                         $change: function (item) {
-                            if(item.position == "menadzer" || item.position == "menadžer")
+                            if (item.position == "menadzer" || item.position == "menadžer")
                                 item.$css = "current_manager_style";
                         }
                     },
@@ -746,7 +701,7 @@ usergroupView = {
                     label: "Promijeni",
                     id: "changeManagerButton",
                     align: "right",
-                    click: function() {
+                    click: function () {
                         usergroupView.changeManager();
                     },
                     width: 200
@@ -780,7 +735,6 @@ usergroupView = {
                     }]
                 }, {
                     view: "form",
-                    // rules: {},
                     id: "changeSectorForm",
                     elementsConfig: {
                         bottomPadding: 18
@@ -845,7 +799,6 @@ usergroupView = {
                     }]
                 }, {
                     view: "form",
-                    // rules: {},
                     id: "changeSectorForm",
                     elementsConfig: {
                         bottomPadding: 18
@@ -918,7 +871,6 @@ usergroupView = {
                         width: 200,
                         align: "right",
                         id: "choseUserGroupCombo1"//,
-                        //options: usergroupView.userGroups
                     }]
 
                 }, {
@@ -996,13 +948,13 @@ usergroupView = {
                         {
                             view: "label",
                             label: "Godišnji",
-                            css:  "vacation_label"
+                            css: "vacation_label"
 
                         },
                         {
                             view: "label",
                             label: "Slobodno",
-                            css:  "day_off_label"
+                            css: "day_off_label"
                         },
                         {
                             view: "label",
@@ -1032,7 +984,7 @@ usergroupView = {
         } else {
             var id;
             usergroupView.sectors.forEach(function (sec) {
-                if(sec.id===sector){
+                if (sec.id === sector) {
                     id = sec.id;
                 }
             });
@@ -1042,17 +994,17 @@ usergroupView = {
         }
     },
 
-    changeManager:function(){
-    if($$("changeManagerTable").getSelectedItem().id==="undefined"){
-        util.messages.showErrorMessage("Moguće je odabrati samo jednog menadžera.");
-    } else {
-        var employe;
-        $$("changeManagerTable").eachRow(
-            function(row) {
-                if ($$("changeManagerTable").getItem(row).position === "menadzer") {
-                    employe = row;
+    changeManager: function () {
+        if ($$("changeManagerTable").getSelectedItem().id === "undefined") {
+            util.messages.showErrorMessage("Moguće je odabrati samo jednog menadžera.");
+        } else {
+            var employe;
+            $$("changeManagerTable").eachRow(
+                function (row) {
+                    if ($$("changeManagerTable").getItem(row).position === "menadzer") {
+                        employe = row;
+                    }
                 }
-            }
             );
             var changeManagerInformation = {
                 newManager: $$("changeManagerTable").getSelectedItem().id,
@@ -1088,46 +1040,33 @@ usergroupView = {
 
     selectPanel: function () {
         util.selectPanel(this.getPanel());
-        if(user == "secretary" || user == "manager"){
+        if (user == "secretary" || user == "manager") {
             usergroupView.createDatatableContextMenuSecretary();
         } else {
             usergroupView.createDatatableContextMenu();
         }
-        if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
+        if (user === "secretary" || user === "manager") {
             $$("addUserButton").hide();
             $$("deleteSelectedButton").hide();
             $$("changeSectorOfSelectedButton").hide();
             $$("changeManagerBtn").hide();
-            // $$("delete").hide(); //OVO SKONTATI KAKO SAKRITI !!!
             $$("usergroupDT").hideColumn("delete");
             $$("usergroupDT").hideColumn("sector");
             $$("usergroupDT").hideColumn("checkboxRow");
-            // var columns = webix.toArray($$("companyDT").config.columns);  just adjust to your needs, for super admin in company section this is solution
-            // columns.removeAt(4);
-            // $$("companyDT").refreshColumns();
         }
-        if(user != "manager"){
+        if (user != "manager") {
             $$("percent").hide();
         }
-        if (user === "manager") {// rukovodioc ne moze gledati ostale sektore
+        if (user === "manager") {
             $$("choseSectorCombo").hide();
             $$("izaberiLabel").hide();
         }
-        //animateValue($$("t3"), 0, 25 * 150, 100);
-
-        console.log("u selectPanel");
-
-
         usergroupView.sectors = [];
         usergroupView.changeSectors = [];
         usergroupView.abscentSectors = [];
 
         webix.ajax().get("hub/sector").then(function (data) {
-            //response text
-            console.log("hub/sector");
-            console.log(data.text());
             if (data.json() != null) {
-                console.log("loaded data with success");
                 var sectors = data.json();
                 usergroupView.sectors.push({
                     id: -2,
@@ -1152,7 +1091,7 @@ usergroupView = {
                     });
                 });
                 $$("choseSectorCombo").define("options", usergroupView.sectors);
-                if(userData.userGroupKey == "menadzer")
+                if (userData.userGroupKey == "menadzer")
                     $$("choseSectorCombo").setValue(userData.sectorId);
                 else
                     $$("choseSectorCombo").setValue(-1);
@@ -1163,15 +1102,6 @@ usergroupView = {
             }
 
         });
-        //  $$("choseSectorCombo").attachEvent("onAfterRender", webix.once(function(){
-        //                         console.log('called once after first rendering:');
-        //                   });
-
-
-
-        //$$("usergroupDT").define("url", "hub/user/custom/bySector/" + -1);
-
-
         webix.protoUI({
             name: "fadeInWindow",
             $init: function () {
@@ -1188,37 +1118,27 @@ usergroupView = {
         }, webix.ui.window);
     },
 
-    selectPanelWithSector: function(sector){
-        console.log("select panel with sector "+ sector.id);
+    selectPanelWithSector: function (sector) {
         $$("mainMenu").select("usergroup");
-
         util.selectPanel(this.getPanel());
         usergroupView.createDatatableContextMenu();
-        if (user === "secretary" || user === "manager") {//sekretarica i rukovodioc ne mozgu dodavati novog zaposlenog, niti brisati nekoga
+        if (user === "secretary" || user === "manager") {
             $$("addUserButton").hide();
             $$("usergroupDT").hideColumn("delete");
             $$("usergroupDT").hideColumn("sector");
         }
-        if (user === "manager") {// rukovodioc ne moze gledati ostale sektore
+        if (user === "manager") {
             $$("choseSectorCombo").hide();
             $$("izaberiLabel").hide();
 
         }
-        if(user!="manager"){
+        if (user != "manager") {
             $$("percent").hide();
         }
-
-        console.log("u selectPanel");
-
-
         usergroupView.sectors = [];
 
         webix.ajax().get("hub/sector").then(function (data) {
-            //response text
-            console.log("hub/sector");
-            console.log(data.text());
             if (data.json() != null) {
-                console.log("loaded data with success");
                 var sectors = data.json();
                 usergroupView.sectors.push({
                     id: -2,
@@ -1235,7 +1155,6 @@ usergroupView = {
 
                     });
                 });
-                console.log(data.text());
                 $$("choseSectorCombo").define("options", usergroupView.sectors);
 
             } else {
@@ -1244,7 +1163,7 @@ usergroupView = {
 
         });
 
-        sectorID=sector.id;
+        sectorID = sector.id;
         $$("choseSectorCombo").setValue(sector.name);
         $$("choseSectorCombo").refresh();
 
@@ -1255,7 +1174,7 @@ usergroupView = {
             function (text, data, xhr) {
                 var numOfAbsentPeople = data.json();
                 var percent = Math.round(numOfAbsentPeople / $$("usergroupDT").count() * 100);
-                animatePercentage($$("t1"), 0,  percent, 1000);
+                animatePercentage($$("t1"), 0, percent, 1000);
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             });
@@ -1282,24 +1201,11 @@ usergroupView = {
 
 
         }
-        /*
-        if (user !== "superadmin") { //ako nije upitanju superadmin
-            $$("check").hide();
-            $$("startdate").hide();
-            $$("labelStartDate").hide();
-            $$("labelPauseFlag").hide();
-        }*/
-
-
         usergroupView.userGroups = [];
 
         webix.ajax().get("hub/user_group").then(function (data) {
-            //response text
-            console.log(data.text());
             if (data.json() != null) {
-                console.log("loaded data with success");
                 var userGroups = data.json();
-
                 userGroups.forEach(function (userGroup) {
                     usergroupView.userGroups.push({
                         id: userGroup.id,
@@ -1325,13 +1231,12 @@ usergroupView = {
     }
     ,
 
-//! ovo se poziva kad se klikne na dugme
-    addNewUser: function () { //dodavanje novog zaposlenog
+    addNewUser: function () {
         var form = $$("addUserForm");
         if (form.validate()) {
             $$("save").disable();
             var userGroupId = $$("choseUserGroupCombo").getValue();
-            if(!userGroupId)
+            if (!userGroupId)
                 userGroupId = 6;
             var newUser = {
                 email: form.getValues().email,
@@ -1350,62 +1255,37 @@ usergroupView = {
                 newUser.userGroupId = $$("choseUserGroupCombo").getValue();
                 newUser.sectorId = null;
             }
-            console.log(newUser);
-
             connection.sendAjax("POST", "/hub/user",
                 function (text, data, xhr) {
-                    console.log(text);
                     if (text) {
                         util.messages.showMessage("Zaposleni uspješno dodan.");
                         $$("addUserButton").enable();
                         util.dismissDialog('addUserDialog');
-                        //$$("usergroupDT").add(newUser);
-                       // $$("usergroupDT").refresh();
                         var user = JSON.parse(text);
-                        if(sectorID > 0)
+                        if (sectorID > 0)
                             user.sector_name = $$("choseSectorCombo").getValue();
-                        if(user.userGroupId == 6)
+                        if (user.userGroupId == 6)
                             user.position = "zaposleni";
                         $$("usergroupDT").parse(user);
-                        //usergroupView.refreshDatatable();
                         usergroupView.refreshCouner();
                     } else
                         util.messages.showErrorMessage("Greška u dodavanju zaposlenog.");
-                        //alert("Greška u dodavanju zaposlenog.");
                 }, function (text, data, xhr) {
                     $$("save").enable();
                     util.messages.showErrorMessage(text);
                 }, newUser);
 
-            /*
-                    var emailText = $$("email");
-                    var comboSelect=$$("choseUserGroupCombo");
-                    var startDateText=$$("startDate");
-                    var pauseFlagSelect=$$("checkPauseFlag");
-
-                    if (emailText.validate() && comboSelect.validate()) {
-                        util.messages.showMessage("Podaci o novom zaposlenom u sektoru uspješno sačuvani.");
-                    }  /*else {
-                        webix.alert({
-                            title:"Neuspješno dodavanje zaposlenog! ",
-                            text:"Podaci nisu korektno uneseni!",
-                            type:"alert-error"}).then(function () {
-                            alert(2);
-                        });
-                    }*/
-
-            //util.dismissDialog('addUserDialog');
         }
     }
     ,
-    refreshCouner: function() {
+    refreshCouner: function () {
         animateValue($$("t3"), 0, $$("usergroupDT").count(), 1000);
-        if($$("choseSectorCombo").getValue() > 0){
+        if ($$("choseSectorCombo").getValue() > 0) {
             connection.sendAjax("GET", "hub/leave_request/numOfAbsentPeople/" + $$("choseSectorCombo").getValue(),
                 function (text, data, xhr) {
-                var numOfAbsentPeople = data.json();
-                var percent = Math.round(numOfAbsentPeople / $$("usergroupDT").count() * 100);
-                animatePercentage($$("t1"), 0,  percent, 1000);
+                    var numOfAbsentPeople = data.json();
+                    var percent = Math.round(numOfAbsentPeople / $$("usergroupDT").count() * 100);
+                    animatePercentage($$("t1"), 0, percent, 1000);
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 });
@@ -1415,7 +1295,6 @@ usergroupView = {
 
     },
     changeSector: function () {
-        console.log("method change sector");
         var user = $$("usergroupDT").getSelectedItem();
         var sectorId = $$("cuCombo").getValue();
         choosenSectorId = sectorId;
@@ -1431,7 +1310,6 @@ usergroupView = {
                     function (text, data, xhr) {
                         if (text) {
                             util.messages.showMessage("Uspješna promjena sektora.");
-                            //usergroupView.refreshDatatable();
                             if ($$("choseSectorCombo").getValue() == (-1)) {
                                 var user = $$("usergroupDT").getSelectedItem();
                                 var sectorName;
@@ -1443,11 +1321,11 @@ usergroupView = {
                                 user.sector_name = sectorName;
                                 $$("usergroupDT").updateItem($$("usergroupDT").getSelectedItem().id, user);
                             } else {
-                                $$("usergroupDT").eachRow(function(row){
-                                    if ($$("usergroupDT").getItem(row).sectorId === sectorId )
-                                        console.log($$("usergroupDT").getItem(row));
+                                $$("usergroupDT").eachRow(function (row) {
+                                    if ($$("usergroupDT").getItem(row).sectorId === sectorId) {
+
+                                    }
                                     else {
-                                        console.log($$("usergroupDT").getItem(row));
                                         $$("usergroupDT").remove($$("usergroupDT").getSelectedId());
                                     }
                                 });
@@ -1491,11 +1369,10 @@ usergroupView = {
                                     user.sector_name = sectorName;
                                     $$("usergroupDT").updateItem(element, user);
                                 } else {
-                                    $$("usergroupDT").eachRow(function(row){
-                                        if ($$("usergroupDT").getItem(row).sectorId === sectorId )
-                                            console.log($$("usergroupDT").getItem(row));
-                                        else {
-                                            console.log($$("usergroupDT").getItem(row));
+                                    $$("usergroupDT").eachRow(function (row) {
+                                        if ($$("usergroupDT").getItem(row).sectorId === sectorId) {
+
+                                        } else {
                                             $$("usergroupDT").remove(element);
                                         }
                                     });
@@ -1505,7 +1382,6 @@ usergroupView = {
                                 util.messages.showErrorMessage("Neuspješna promjena sektora.");
                         }, function (text, data, xhr) {
                             util.messages.showErrorMessage(text);
-                            //alert(text);
                         }, changeSectorInformation);
                 });
                 util.dismissDialog('changeMultipleUsersSectorDialog');
@@ -1518,7 +1394,7 @@ usergroupView = {
 
     createDatatableContextMenu: function () {
         webix.ui({
-            view: "contextmenu",  //na desni klik opcije
+            view: "contextmenu",
             id: "usergroupCntMenu",
             width: 205,
             data: [
@@ -1536,11 +1412,6 @@ usergroupView = {
                     value: "Informacije o zaposlenom",
                     icon: "eye"
                 },
-                /*{
-                    id: "3",
-                    value: "Promijeni grupu",
-                    icon: "pencil"
-                },*/
                 {
                     id: "4",
                     value: "Promijeni sektor",
@@ -1592,7 +1463,7 @@ usergroupView = {
 
     createDatatableContextMenuSecretary: function () {
         webix.ui({
-            view: "contextmenu",  //na desni klik opcije
+            view: "contextmenu",
             id: "usergroupCntMenu",
             width: 205,
             data: [
@@ -1645,20 +1516,6 @@ usergroupView = {
         });
     },
 
-    /*
-        filter:function(){
-        //funkcija koja ce na osnovu selektovanog sektora izlistati zaposlene iz liste
-        /*on:function(id){
-                    webix.message("Prikazaće Vam se zaposleni u sektoru: "+this.getItem(id).value);
-        //numberOfSectors=
-        }*/
-//function select_first(){
-//    $$("list").select($$("list").getFirstId();)
-//};
-
-//   },*/
-
-//nakon klika na desni dio misa, pa kad se iyabere "Promijeni grupu"
     showChangeUserGroupDialog: function () {
         webix.ui(webix.copy(usergroupView.changeUserGroupDialog)).show();
     }
@@ -1824,23 +1681,19 @@ usergroupView = {
             if (result == 1) {
                 var id = $$("usergroupDT").getSelectedId();
                 var user = $$("usergroupDT").getItem(id);
-
-                console.log("USR ID: " + id + "USER " + user.email);
                 connection.sendAjax("PUT", "hub/user/deleteUser/" + id,
                     function (text, data, xhr) {
                         util.messages.showMessage("Zaposleni uspješno izbrisan iz sektora.");
                         $$("usergroupDT").remove(id);
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
-                        //alert(text);
                     }, id);
-                var numberOfEmployees = $$("usergroupDT").count()-1;
-                if(numberOfEmployees>0){
+                var numberOfEmployees = $$("usergroupDT").count() - 1;
+                if (numberOfEmployees > 0) {
                     animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                }else{
+                } else {
                     animateValue($$("t3"), 0, 0, 1000);
                 }
-                //usergroupView.refreshCouner();
 
             }
         };
@@ -1849,7 +1702,6 @@ usergroupView = {
     }
     ,
 
-//brise oznacene korisnike iz tabele
     deleteSelected: function () {
         var validate = true;
         selectedItems.forEach(function (value) {
@@ -1870,14 +1722,13 @@ usergroupView = {
                                 $$("usergroupDT").remove(element);
                             }, function (text, data, xhr) {
                                 util.messages.showErrorMessage(text);
-                                //alert(text);
                             }, element);
                     });
                     util.messages.showMessage("Zaposleni uspješno izbrisani iz sektora.");
-                    var numberOfEmployees = $$("usergroupDT").count()-selectedItems.length;
-                    if(numberOfEmployees>0){
+                    var numberOfEmployees = $$("usergroupDT").count() - selectedItems.length;
+                    if (numberOfEmployees > 0) {
                         animateValue($$("t3"), 0, numberOfEmployees, 1000);
-                    }else{
+                    } else {
                         animateValue($$("t3"), 0, 0, 1000);
                     }
                     selectedItems = [];
@@ -1888,12 +1739,10 @@ usergroupView = {
             webix.confirm(delBox);
             $$("deleteSelectedButton").disable();
             $$("changeSectorOfSelectedButton").disable();
-            //selectedItems = [];
         }
     }
     ,
 
-////mijenja sektor oznacenim korisnicima iz tabele
     showChangeSectorOfSelectedDialog: function () {
         webix.ui(webix.copy(usergroupView.changeSectorDialog)).show();
         $$("cuCombo").define("options", usergroupView.changeSectors);
@@ -1912,30 +1761,17 @@ usergroupView = {
             $$("cmuCombo").refresh();
         } else
             util.messages.showErrorMessage("Sektor je moguće promijeniti samo zaposlenom");
-    }
-    ,
-
+    },
     sectors: [],
-    userGroups:
-        [],
+    userGroups: [],
+    refreshDatatable: function () {
+        var table1 = $$("usergroupDT");
+        webix.extend(table1, webix.ProgressBar);
+        table1.showProgress();
+        table1.clearAll();
+        table1.define("url", "url", "hub/user/custom/bySector/" + sectorID);
+    },
 
-    refreshDatatable:
-
-        function () {
-            var table1 = $$("usergroupDT");
-            console.log("usao u refreshdatatable");
-            webix.extend(table1, webix.ProgressBar);
-
-            table1.showProgress();
-
-
-            table1.clearAll();
-
-            console.log(sectorID);
-            table1.define("url", "url", "hub/user/custom/bySector/" + sectorID);
-        }
-
-    ,
     showEmployeeVacationInfoDialog: function (id) {
         webix.ui(webix.copy(usergroupView.employeeVacationInfoDialog));
         var vacationDays = [];
@@ -1978,10 +1814,9 @@ usergroupView = {
             if (has == true)
                 return "sick_day";
         };
-        scheduler.attachEvent("onEmptyClick", function (selectedDate, s){
+        scheduler.attachEvent("onEmptyClick", function (selectedDate, s) {
 
-        } );
-            //connection.sendAjax("GET", "hub/vacation_days/byUserId/" + employee.id,
+        });
         connection.sendAjax("GET", "hub/vacation_days/byUserId/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var days = data.json();
@@ -1998,7 +1833,6 @@ usergroupView = {
         var startDate;
         var endDate;
 
-        //Dohvatanje kolektivnog godišnjeg
         webix.ajax("hub/colectiveVacation/getByCompanyId/" + userData.companyId, {
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -2023,8 +1857,6 @@ usergroupView = {
             }
         });
 
-
-        //connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + employee.id,
         connection.sendAjax("GET", "hub/leave_request/leaveRequestFilteredByLeaveRequestStatus/2/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var leaves = data.json();
@@ -2049,7 +1881,6 @@ usergroupView = {
                                 daysOff.push(value);
                             });
                     } else if (element.typeName === "Neplaćeno") {
-                        console.log("neplaćeno: " + startDate + " - " + endDate);
                         dates.forEach(function (value) {
 
                             unpaidDaysOff.push(value);
@@ -2086,9 +1917,7 @@ usergroupView = {
                                 daysOff.push(value);
                             });
                     } else if (element.typeName === "Neplaćeno") {
-                        console.log("neplaćeno: " + startDate + " - " + endDate);
                         dates.forEach(function (value) {
-
                             unpaidDaysOff.push(value);
                         });
                     }
@@ -2100,7 +1929,6 @@ usergroupView = {
                 util.messages.showErrorMessage(text);
             });
         var stat = "Opravdano";
-       // connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + employee.id,
         connection.sendAjax("GET", "hub/sickLeave/sickLeaveFilteredBySickLeaveStatus/" + stat + "/" + $$("usergroupDT").getSelectedItem().id,
             function (text, data, xhr) {
                 var sickLeaves = data.json();
@@ -2123,7 +1951,7 @@ usergroupView = {
         var date = new Date();
         scheduler.config.xml_date = "%Y-%m-%d %H:%i";
         scheduler.locale = locale_sr_latin;
-        scheduler.init('employeeCalendar', null,"month");
+        scheduler.init('employeeCalendar', null, "month");
         scheduler.setCurrentView();
 
     }
@@ -2131,16 +1959,10 @@ usergroupView = {
 
 function getUserGroups() {
     usergroupView.userGroups = [];
-    //pokupim sve moguce user grupe:
-
     webix.ajax("hub/user_group", {
-
         error: function (text, data, xhr) {
-
             if (xhr.status != 200) {
-                //alert("No data to load! Check your internet connection and try again.");
                 util.messages.showErrorMessage("No data to load! Check your internet connection and try again.");
-                // table.hideProgress();
             }
 
         },
@@ -2149,10 +1971,8 @@ function getUserGroups() {
 
             if (xhr.status === 200) {
                 if (data.json() != null) {
-                    console.log("loaded data with success");
                     var companies = data.json();
-                    // numberOfCompanies = companies.length;
-                    $$("choseUserGroupCombo").define("options", /*usergroupView.userGroups*/ companies);
+                    $$("choseUserGroupCombo").define("options", companies);
                     $$("choseUserGroupCombo").refresh();
                 } else {
                     util.messages.showErrorMessage("Prijavljivanje nije uspjelo!");
@@ -2161,21 +1981,6 @@ function getUserGroups() {
         }
     });
 }
-
-/*function animateValue(id, start, end, duration) {
-    console.log("counter start");
-    var range = end - start;
-    var current = start;
-    var increment = end > start ? 1 : -1;
-    var stepTime = Math.abs(Math.floor(duration / range));
-    var timer = setInterval(function () {
-        current += increment;
-        id.setHTML(`<p>${current}</p>`);
-        if (current === end) {
-            clearInterval(timer);
-        }
-    }, stepTime);
-}*/
 
 function getDatesFromRange(startDate, stopDate) {
     var dateArray = new Array();
@@ -2188,30 +1993,23 @@ function getDatesFromRange(startDate, stopDate) {
     return dateArray;
 }
 
-function animatePercentage(id, start, end, duration)
-{
-    console.log("counter start");
+function animatePercentage(id, start, end, duration) {
 
     if (end === null) {
-
         end = 0;
-
         id.setHTML(`<p>${end}%</p>`);
-
         return;
     }
 
     if (end === 0) {
-
         id.setHTML(`<p>${end}%</p>`);
-
         return;
     }
 
     var range = end - start;
     var current = start;
     var increment = end > start ? 1 : -1;
-    increment = end == start ? 0: increment;
+    increment = end == start ? 0 : increment;
     var stepTime = Math.abs(Math.floor(duration / range));
     var timer = setInterval(function () {
         current += increment;

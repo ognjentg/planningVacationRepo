@@ -4,7 +4,6 @@ absenceHistoryView = {
     selectPanel: function () {
         $$("main").removeView(rightPanel);
         rightPanel = "absenceHistoryPanel";
-
         var panelCopy = webix.copy(this.getPanel());
         $$("main").addView(panelCopy);
         webix.protoUI({
@@ -140,13 +139,9 @@ absenceHistoryView = {
                     },
                     onClick: {
                         webix_icon: function (e, id) {
-
-                            console.log(id["column"]);
                             var action = id["column"];
-
-                            if (action === "reject" ) {
+                            if (action === "reject") {
                                 webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
-
                                 connection.sendAjax("GET",
                                     "/hub/leave_request/leaveRequestInfo/" + id,
                                     function (text, data, xhr) {
@@ -171,7 +166,7 @@ absenceHistoryView = {
                                                 }
 
                                                 if (statusNameTMP == "Odobreno") {
-                                                    if(userData.userGroupKey == "direktor"){
+                                                    if (userData.userGroupKey == "direktor") {
                                                         var item = $$("absence_historyDT").getItem(id);
                                                         $$("absence_historyDT").detachEvent("onBeforeDelete");
                                                         connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
@@ -179,7 +174,7 @@ absenceHistoryView = {
                                                         }, function (text, data, xhr) {
                                                             util.messages.showErrorMessage(text);
                                                         }, item);
-                                                    }else {
+                                                    } else {
                                                         connection.sendAjax("POST", "hub/leave_request/",
                                                             function (text, data, xhr) {
                                                                 if (text) {
@@ -217,7 +212,7 @@ absenceHistoryView = {
                                     }, function (text, data, xhr) {
                                         util.messages.showErrorMessage(text);
                                     });
-                            } else if (action === "view" ) {
+                            } else if (action === "view") {
                                 var viewAbsenceCommentInfoBox = (webix.copy(absenceHistoryView.showApproverSenderCommentInfo(id)));
 
                             }
@@ -275,7 +270,6 @@ absenceHistoryView = {
     approverSenderCommentInfo: {
 
         view: "fadeInWindow",
-        //view: "popup",
         id: "approverSenderCommentInfoId",
         position: "center",
         modal: true,
@@ -419,11 +413,7 @@ absenceHistoryView = {
 
 
 function refreshOnAbsenceData() {
-    console.log("refresh data");
-
-
     webix.extend($$("absence_historyDT"), webix.ProgressBar);
-
     var table = webix.$$("absence_historyDT");
     var URLCurrentUrl = "/hub/leave_request/getAbsenceHistoryUserInfo/" + userData.id.toString();
 
@@ -438,8 +428,6 @@ function refreshOnAbsenceData() {
         success: function (text, data, xhr) {
             if (xhr.status === 200) {
                 if (data.json() != null) {
-                    console.log("loaded data with success");
-
                     table.clearAll();
                     table.load(URLCurrentUrl);
                     table.refresh();

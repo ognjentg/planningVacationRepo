@@ -123,7 +123,6 @@ var adminsView = {
                                             if (text) {
                                                 var userTemp = JSON.parse(text);
                                                 $$("adminsDT").remove(id);
-                                                //$$("chooseAdminDT").parse(userTemp);
                                                 util.messages.showMessage("Admin je uspješno uklonjen.");
                                                 numberOfAdmins = numberOfAdmins - 1;
                                                 animateValue($$("t2"), 0, numberOfAdmins, 100);

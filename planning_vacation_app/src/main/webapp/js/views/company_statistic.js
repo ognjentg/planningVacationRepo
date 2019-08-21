@@ -1,7 +1,7 @@
 var companyStatisticView;
 var byMonthCart = {
-    type:"clean",
-    rows:[
+    type: "clean",
+    rows: [
         {
             template: "<div style='width:100%;text-align:center'>Odsustva po mjesecu</div>",
             height: 30
@@ -34,8 +34,8 @@ var byMonthCart = {
     ]
 };
 var byMonthAndTypeChart = {
-    type:"clean",
-    rows:[
+    type: "clean",
+    rows: [
         {
             template: "<div style='width:100%;text-align:center'>Odsustva po mjesecu i tipu</div>",
             height: 30
@@ -156,29 +156,11 @@ companyStatisticView = {
                             icon: "external-link",
                             label: "Export podataka u tabele",
                             css: {"background": "#268fd5 !important"},
-                            width:200,
+                            width: 200,
 
                             on: {
                                 onItemClick: function () {
                                     $$("archiveBtn").disable();
-                                    // webix.toPDF("chartPIE", {
-                                    //         docHeader: {
-                                    //             text: "Statistika kompanije",
-                                    //             textAlign: "center"
-                                    //
-                                    //         },
-                                    //         columns: {
-                                    //             "number": {header: "Broj odsutnih"},
-                                    //             "month": {header: "Mjesec"},
-                                    //             "vacation": {header: "Kategorija - godišnji odmor"},
-                                    //             "leave": {header: "Kategorija - odsustvo"},
-                                    //             "religion": {header: "Kategorija - praznik"}
-                                    //
-                                    //         },
-                                    //         autowidth: true
-                                    //     }
-                                    // );
-
                                     $$("archiveBtn").enable();
                                     alert("TODO");
                                 }
@@ -192,7 +174,7 @@ companyStatisticView = {
                             icon: "external-link",
                             label: "Export podataka u slike",
                             css: {"background": "#268fd5 !important"},
-                            width:200,
+                            width: 200,
 
                             on: {
                                 onItemClick: function () {

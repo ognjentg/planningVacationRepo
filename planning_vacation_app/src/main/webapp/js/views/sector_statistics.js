@@ -1,8 +1,8 @@
 var sectorStatisticsView;
 
-var byMonthChart ={
-    type:"clean",
-    rows:[
+var byMonthChart = {
+    type: "clean",
+    rows: [
         {
             template: "<div style='width:100%;text-align:center'>Odsustva po mjesecu</div>",
             height: 30
@@ -36,8 +36,8 @@ var byMonthChart ={
 };
 
 var pieChart = {
-    type:"clean",
-    rows:[
+    type: "clean",
+    rows: [
         {
             template: "<div style='width:100%;text-align:center'>Procenat odsustva po tipu</div>",
             height: 30
@@ -212,12 +212,6 @@ sectorStatisticsView = {
 
                                             },
                                             columns: {
-                                                // "sectorName" : {header: "Ime setora"},
-                                                // "number": {header: "Broj odsutnih"},
-                                                // "month": {header: "Mjesec"},
-                                                //  "vacation": {header: "Kategorija - godišnji odmor"},
-                                                // "leave": {header: "Kategorija - odsustvo"},
-                                                // "religion": {header: "Kategorija - praznik"}
                                                 "procentage": {header: "Procenat"},
                                                 "category": {header: "Kategorija"}
 
@@ -330,7 +324,6 @@ sectorStatisticsView = {
                             },
                             onSelectChange: function () {
                                 var pom = $$("sector_statisticsDT").getSelectedId();
-                                // console.log(pom.id);
                                 connection.sendAjax("GET",
                                     "/hub/sector/statistics/sector/" + pom.id,
                                     function (text, data, xhr) {
@@ -371,7 +364,6 @@ sectorStatisticsView = {
                         onClick: {
                             webix_icon: function (e, id) {
                                 $$("sector_statisticsDT").select(id);
-                                console.log(id["column"]);
                                 var action = id["column"];
                                 if (action === "view") {
                                     userStatisticsView.selectPanelWithSector($$("sector_statisticsDT").getItem(id.row));

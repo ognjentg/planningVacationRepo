@@ -1,4 +1,3 @@
-var URLAllSickLeave = "/hub/sickLeave/sickLeaveInfo";
 var URLBySickLeaveStatus = "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/";
 var sickRequestsView = {
 
@@ -6,7 +5,7 @@ var sickRequestsView = {
         $$("main").removeView(rightPanel);
         rightPanel = "requestPanel";
 
-        var panelCopy = webix.copy(this.getPanel()); // webix.copy -> duboka kopija
+        var panelCopy = webix.copy(this.getPanel());
         $$("main").addView(panelCopy);
     },
     getPanel: function () {
@@ -40,26 +39,26 @@ var sickRequestsView = {
                                     if (name === 4) {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo/"+userData.companyId);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo/"+userData.companyId);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveInfo/" + userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveInfo/" + userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 3) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/"+userData.companyId);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+ "/"+userData.companyId);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else if (name === 2) {
                                         $$("secretary_requestDT").hideColumn("accept");
                                         $$("secretary_requestDT").hideColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     } else {
                                         $$("secretary_requestDT").showColumn("accept");
                                         $$("secretary_requestDT").showColumn("reject");
-                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
-                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name+"/"+userData.companyId);
+                                        connection.attachAjaxEvents("secretary_requestDT", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
+                                        $$("secretary_requestDT").define("url", "/hub/sickLeave/sickLeaveFilteredBySickLeaveStatusStatus/" + name + "/" + userData.companyId);
                                         $$("secretary_requestDT").detachEvent("onBeforeDelete");
                                     }
                                 }
@@ -104,86 +103,85 @@ var sickRequestsView = {
                         id: "id",
                         header: "#",
                         width: 50,
-                        hidden: "true",
-                    },{
+                        hidden: "true"
+                    }, {
                         id: "companyId",
-                        header: "ID kompanije",
-                      //  hidden: "true",
+                        header: "ID kompanije"
                     },
                         {
-                        id: "statusName",
-                        sort: "string",
-                        header: "Status",
-                        sort: "string"
-                    }, {
-                        id: "firstName",
-                        fillspace: true,
-                        editor: "text",
-                        sort: "string",
-                        header: [
-                            "Ime", {
-                                content: "textFilter", value: ""
+                            id: "statusName",
+                            sort: "string",
+                            header: "Status",
+                            sort: "string"
+                        }, {
+                            id: "firstName",
+                            fillspace: true,
+                            editor: "text",
+                            sort: "string",
+                            header: [
+                                "Ime", {
+                                    content: "textFilter", value: ""
+                                }
+                            ]
+                        }, {
+                            id: "lastName",
+                            fillspace: true,
+                            editor: "text",
+                            sort: "string",
+                            header: [
+                                "Prezime", {
+                                    content: "textFilter", value: ""
+                                }
+                            ]
+                        }, {
+                            id: "dateFrom",
+                            fillspace: true,
+                            sort: "date",
+                            header: [
+                                "Datum od", {
+                                    content: "dateFilter"
+                                }
+                            ],
+                            format: webix.Date.dateToStr("%d.%m.%Y.")
+                        }, {
+                            id: "dateTo",
+                            fillspace: true,
+                            sort: "date",
+                            header: [
+                                "Datum do", {
+                                    content: "dateFilter"
+                                }
+                            ],
+                            format: webix.Date.dateToStr("%d.%m.%Y.")
+                        }, {
+                            id: "accept",
+                            header: "&nbsp;",
+                            width: 35,
+                            tooltip: "Prihvati",
+                            template: function (obj) {
+                                var pom = obj.statusName;
+                                if ((pom != "Opravdano") && (pom != "Neopravdano")) {
+                                    return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
+                                } else return "";
+                            },
+
+                        }, {
+                            id: "reject",
+                            header: "&nbsp;",
+                            tooltip: "Odbij",
+                            width: 35,
+                            template: function (obj) {
+                                var pom = obj.statusName;
+                                if ((pom != "Opravdano") && (pom != "Neopravdano"))
+                                    return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
+                                else return "";
                             }
-                        ]
-                    }, {
-                        id: "lastName",
-                        fillspace: true,
-                        editor: "text",
-                        sort: "string",
-                        header: [
-                            "Prezime", {
-                                content: "textFilter", value: ""
-                            }
-                        ]
-                    }, {
-                        id: "dateFrom",
-                        fillspace: true,
-                        sort: "date",
-                        header: [
-                            "Datum od", {
-                                content: "dateFilter"
-                            }
-                        ],
-                        format: webix.Date.dateToStr("%d.%m.%Y.")
-                    }, {
-                        id: "dateTo",
-                        fillspace: true,
-                        sort: "date",
-                        header: [
-                            "Datum do", {
-                                content: "dateFilter"
-                            }
-                        ],
-                        format: webix.Date.dateToStr("%d.%m.%Y.")
-                    }, {
-                        id: "accept",
-                        header: "&nbsp;",
-                        width: 35,
-                        tooltip: "Prihvati",
-                        template: function (obj) {
-                            var pom = obj.statusName;
-                            if ((pom != "Opravdano") && (pom != "Neopravdano")) {
-                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-check'></span>";
-                            } else return "";
+
                         },
-
-                    }, {
-                        id: "reject",
-                        header: "&nbsp;",
-                        tooltip: "Odbij",
-                        width: 35,
-                        template: function (obj) {
-                            var pom = obj.statusName;
-                            if ((pom != "Opravdano") && (pom != "Neopravdano"))
-                                return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
-                            else return "";
-                        }
-
-                    },
                     ],
                     select: "row",
                     navigation: true,
-                    url: "/hub/sickLeave/sickLeaveInfoWait/"+userData.companyId,
+                    url: "/hub/sickLeave/sickLeaveInfoWait/" + userData.companyId,
                     on: {
 
                         onAfterContextMenu: function (item) {
@@ -193,8 +191,6 @@ var sickRequestsView = {
                     },
                     onClick: {
                         webix_icon: function (e, id) {
-
-                            console.log(id["column"]);
                             var action = id["column"];
 
                             if (action === "reject" && userData.userGroupKey == "sekretar") {
@@ -284,9 +280,6 @@ var sickRequestsView = {
 };
 
 function refreshOnThisData() {
-    console.log("refresh data");
-
-
     webix.extend($$("secretary_requestDT"), webix.ProgressBar);
 
     var table = webix.$$("secretary_requestDT");
@@ -295,8 +288,7 @@ function refreshOnThisData() {
 
 
     if (comboItemId == 4) {
-        //URLCurrentUrl = URLAllSickLeave;
-        URLCurrentUrl = "/hub/sickLeave/sickLeaveInfoWait/"+userData.companyId
+        URLCurrentUrl = "/hub/sickLeave/sickLeaveInfoWait/" + userData.companyId
     } else {
         URLCurrentUrl = URLBySickLeaveStatus;
     }
@@ -313,8 +305,6 @@ function refreshOnThisData() {
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
-                        console.log("loaded data with success");
-
                         table.clearAll();
                         table.load(URLCurrentUrl);
                         table.refresh();
@@ -323,7 +313,7 @@ function refreshOnThisData() {
             }
         });
     } else {
-        webix.ajax(URLCurrentUrl + comboItemId +"/"+ userData.companyId, {
+        webix.ajax(URLCurrentUrl + comboItemId + "/" + userData.companyId, {
 
             error: function (text, data, xhr) {
                 if (xhr.status != 200) {
@@ -334,10 +324,8 @@ function refreshOnThisData() {
             success: function (text, data, xhr) {
                 if (xhr.status === 200) {
                     if (data.json() != null) {
-                        console.log("loaded data with success");
-
                         table.clearAll();
-                        table.load(URLCurrentUrl + comboItemId +"/"+ userData.companyId);
+                        table.load(URLCurrentUrl + comboItemId + "/" + userData.companyId);
                         table.refresh();
                     }
                 }

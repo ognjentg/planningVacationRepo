@@ -90,9 +90,9 @@ var sectorInfoView = {
         }
     },
 
-    showSectorDialog: function() {
+    showSectorDialog: function () {
         webix.ui(webix.copy(sectorInfoView.sectorInfoDialog));
-        setTimeout(function() {
+        setTimeout(function () {
             connection.sendAjax("GET",
                 "hub/sector/" + userData.companyId + "/" + userData.id,
                 function (text, data, xhr) {

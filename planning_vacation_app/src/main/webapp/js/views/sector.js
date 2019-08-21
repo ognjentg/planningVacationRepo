@@ -1,18 +1,16 @@
-var sectorName = {};
 var sectors = {};
-var sectorsNumber={};
-var sectorForChange=null;
-var sectorEmployees = {};
+var sectorsNumber = {};
+var sectorForChange = null;
 
 var selectedItems = [];
 
 var sectorView = {
-    panel:{
+    panel: {
         type: "space",
         id: "sectorPanel",
         css: "companyPanelToolbar",
         adjust: true,
-        rows:[
+        rows: [
             {
                 view: "toolbar",
                 padding: 10,
@@ -66,7 +64,7 @@ var sectorView = {
                 paddingX: 5,
                 paddingY: 5,
                 height: 60,
-                cols:[
+                cols: [
                     {
                         id: "addSectorBtn",
                         view: "button",
@@ -83,7 +81,7 @@ var sectorView = {
                         type: "iconButton",
                         label: "Izbrišite sektore",
                         icon: "fa fa-trash",
-                        click:"sectorView.deleteSectors",
+                        click: "sectorView.deleteSectors",
                         css: "companyButton",
                         autowidth: true
                     }
@@ -93,8 +91,8 @@ var sectorView = {
                 id: "sectorDT",
                 view: "datatable",
                 tooltip: {
-                    dx:-35, //20 by default
-                    dy:20
+                    dx: -35, //20 by default
+                    dy: 20
                 },
                 css: "companyDatatable",
                 margin: 10,
@@ -106,7 +104,7 @@ var sectorView = {
                 checkboxRefresh: true,
                 onContext: {},
                 pager: "pagerA",
-                columns:[
+                columns: [
                     {
                         id: "status",
                         header: "",
@@ -210,7 +208,7 @@ var sectorView = {
                 ],
                 select: "row",
                 navigation: true,
-                url:"hub/sector/sectorInfo",
+                url: "hub/sector/sectorInfo",
                 on: {
 
                     onAfterContextMenu: function (item) {
@@ -218,7 +216,6 @@ var sectorView = {
                     },
 
                     onCheck: function (rowId, colId, state) {
-                        console.log(state);
                         if (state === "on") {
                             $$("deleteSectorsBtn").enable();
                             selectedItems.push(rowId);
@@ -227,7 +224,7 @@ var sectorView = {
                             if (index > -1) {
                                 selectedItems.splice(index, 1);
                             }
-                            if(selectedItems.length ==0){
+                            if (selectedItems.length == 0) {
                                 $$("deleteSectorsBtn").disable();
                             }
                         }
@@ -238,30 +235,26 @@ var sectorView = {
                 onClick: {
                     webix_icon: function (e, id) {
                         $$("sectorDT").select(id);
-                        console.log(id["column"]);
                         var action = id["column"];
                         if (action === "delete" && userData.userGroupKey == "sekretar") {
                             util.messages.showMessage("Niste autorizovani da izbrišete sektor!");
-                            //alert("Niste autorizovani da izbrišete sektor!");
                         }
-                        if (action === "delete" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" )) {
-                            console.log("delete");
+                        if (action === "delete" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor")) {
                             var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
-                            console.log($$("sectorDT").getItem(id));
                             delBox.callback = function (result) {
                                 if (result == 1) {
                                     var item = $$("sectorDT").getItem(id);
                                     $$("sectorDT").detachEvent("onBeforeDelete");
-                                    var managerId= item.sectorManagerId;
+                                    var managerId = item.sectorManagerId;
 
                                     connection.sendAjax("DELETE", "hub/sector/" + id, function (text, data, xhr) {
                                         if (text) {
                                             $$("sectorDT").remove(id);
                                             util.messages.showMessage("Uspješno uklanjanje");
-                                            sectorsNumber=sectorsNumber-1;
-                                            if(sectorsNumber >0 ){
+                                            sectorsNumber = sectorsNumber - 1;
+                                            if (sectorsNumber > 0) {
                                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
-                                            }else{
+                                            } else {
                                                 animateValue($$("t1"), 0, 0, 1000);
                                             }
                                         }
@@ -275,7 +268,7 @@ var sectorView = {
                                             }
                                         }, function (text, data, xhr) {
 
-                                        },item);
+                                        }, item);
 
                                     connection.sendAjax("PUT", "hub/user/changeToWorker/" + managerId,
                                         function (text, data, xhr) {
@@ -283,11 +276,7 @@ var sectorView = {
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
-                                            //alert(text);
                                         }, managerId);
-
-
-
 
 
                                 }
@@ -295,14 +284,10 @@ var sectorView = {
                             webix.confirm(delBox);
                         }
                         if (action === "edit" && userData.userGroupKey == "sekretar") {
-                            //alert("Niste autorizovani da mijenjate sektor!");
                             util.messages.showMessage("Niste autorizovani da mijenjate sektor!");
                         }
-
-                        if (action === "edit" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" )) {
-
+                        if (action === "edit" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor")) {
                             sectorView.showEditDialog($$("sectorDT").getItem(id.row));
-
                         }
                         if (action === "view") {
                             usergroupView.selectPanelWithSector($$("sectorDT").getItem(id.row));
@@ -333,9 +318,7 @@ var sectorView = {
         ]
     },
 
-    deleteSectors: function(){
-        console.log("delete sector selected");
-
+    deleteSectors: function () {
         var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
         delBox.callback = function (result) {
             if (result == 1) {
@@ -343,25 +326,22 @@ var sectorView = {
                 $$("sectorDT").detachEvent("onBeforeDelete");
 
                 selectedItems.forEach(function (item) {
-
-                    console.log("=================================  " + item);
-                    var sector=$$("sectorDT").getItem(item);
+                    var sector = $$("sectorDT").getItem(item);
                     connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
                         function (text, data, xhr) {
                             if (text) {
                             }
                         }, function (text, data, xhr) {
                             util.messages.showErrorMessage(text);
-                           // alert(text);
                         }, sector.sectorManagerId);
 
-                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
+                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/" + item,
                         function (text, data, xhr) {
                             if (text) {
                             }
                         }, function (text, data, xhr) {
 
-                        },item);
+                        }, item);
 
                     connection.sendAjax("DELETE", "hub/sector/" + item, function (text, data, xhr) {
                         if (text) {
@@ -375,9 +355,9 @@ var sectorView = {
                 });
                 util.messages.showMessage("Uspješno uklanjanje");
                 sectorsNumber = sectorsNumber - selectedItems.length;
-                if(sectorsNumber>0){
+                if (sectorsNumber > 0) {
                     animateValue($$("t1"), 0, sectorsNumber, 1000);
-                }else{
+                } else {
                     animateValue($$("t1"), 0, 0, 1000);
                 }
                 selectedItems = [];
@@ -388,11 +368,9 @@ var sectorView = {
         $$("deleteSectorsBtn").disable();
     },
 
-    selectPanel: function(){
-        console.log(userData.userGroupKey == "admin" || userData.userGroupKey == "direktor" || userData.userGroupKey=="menadzer");
+    selectPanel: function () {
 
         selectedItems = [];
-        console.log("------------------------ " + selectedItems);
         $$("main").removeView(rightPanel);
         rightPanel = "sectorPanel";
         var panelCopy = webix.copy(this.panel);
@@ -400,7 +378,7 @@ var sectorView = {
         $$("main").addView(webix.copy(panelCopy));
 
         $$("deleteSectorsBtn").disable();
-        if(userData.userGroupKey == "sekretar"){
+        if (userData.userGroupKey == "sekretar") {
             $$("sectorDT").hideColumn("delete");
             $$("sectorDT").hideColumn("edit");
             $$("sectorDT").hideColumn("status");
@@ -439,7 +417,7 @@ var sectorView = {
                 id: "2",
                 value: "Obrišite",
                 icon: "trash"
-            },{
+            }, {
                 id: "3",
                 value: "Pregledajte",
                 icon: "eye"
@@ -455,7 +433,6 @@ var sectorView = {
                         case "2":
                             if (userData.userGroupKey == "sekretar") {
                                 util.messages.showMessage("Niste autorizovani da izbrišete sektor!");
-                               // alert("Niste autorizovani da izbrišete sektor!");
                                 break;
                             }
                             var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
@@ -464,32 +441,31 @@ var sectorView = {
                                     var item = $$("sectorDT").getItem(context.id.row);
                                     $$("sectorDT").detachEvent("onBeforeDelete");
 
-                                    var sector=$$("sectorDT").getItem(item);
+                                    var sector = $$("sectorDT").getItem(item);
                                     connection.sendAjax("PUT", "hub/user/changeToWorker/" + sector.sectorManagerId,
                                         function (text, data, xhr) {
                                             if (text) {
                                             }
                                         }, function (text, data, xhr) {
                                             util.messages.showErrorMessage(text);
-                                           // alert(text);
                                         }, sector.sectorManagerId);
 
-                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/"+item,
+                                    connection.sendAjax("PUT", "/hub/sector/updateUsersFromSector/" + item,
                                         function (text, data, xhr) {
                                             if (text) {
                                             }
                                         }, function (text, data, xhr) {
 
-                                        },item);
+                                        }, item);
 
                                     connection.sendAjax("DELETE", "hub/sector/" + item.id, function (text, data, xhr) {
                                         if (text) {
                                             $$("sectorDT").remove(context.id.row);
                                             util.messages.showMessage("Uspješno uklanjanje");
-                                            sectorsNumber=sectorsNumber-1;
-                                            if(sectorsNumber>0){
+                                            sectorsNumber = sectorsNumber - 1;
+                                            if (sectorsNumber > 0) {
                                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
-                                            }else{
+                                            } else {
                                                 animateValue($$("t1"), 0, 0, 1000);
                                             }
                                         }
@@ -512,7 +488,7 @@ var sectorView = {
     },
 
 
-    addDialog:{
+    addDialog: {
         view: "fadeInWindow",
         id: "addSectorDialog",
         move: true,
@@ -548,34 +524,34 @@ var sectorView = {
                         labelWidth: 200,
                         bottomPadding: 20
                     },
-                    elements:[
+                    elements: [
                         {
                             view: "text",
                             id: "name",
                             name: "name",
                             label: "Naziv:",
-                            labelWidth:100,
+                            labelWidth: 100,
                             invalidMessage: "Naziv je obavezno unijeti.",
                             required: true
                         },
                         {
                             view: "combo",
-                            id:"managerCombo",
-                            name:"managerCombo",
-                            label:"Rukovodilac:",
-                            labelWidth:100,
-                            options:{
-                                filter:function(item,value){
-                                    var firstName,lastName,email=false;
-                                    if(item.firstName!=null && item.firstName.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                            id: "managerCombo",
+                            name: "managerCombo",
+                            label: "Rukovodilac:",
+                            labelWidth: 100,
+                            options: {
+                                filter: function (item, value) {
+                                    var firstName, lastName, email = false;
+                                    if (item.firstName != null && item.firstName.toString().toLowerCase().indexOf(value.toLowerCase()) === 0)
                                         return true;
-                                    if(item.lastName!=null && item.lastName.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                                    if (item.lastName != null && item.lastName.toString().toLowerCase().indexOf(value.toLowerCase()) === 0)
                                         return true;
-                                    if(item.email!=null && item.email.toString().toLowerCase().indexOf(value.toLowerCase())===0)
+                                    if (item.email != null && item.email.toString().toLowerCase().indexOf(value.toLowerCase()) === 0)
                                         return true;
-                                    return false ;
+                                    return false;
                                 },
-                                body:{
+                                body: {
                                     template: "#firstName# #lastName# (#email#)",
                                     url: "hub/user/getAllUsersWithoutSector",
                                 }
@@ -611,7 +587,7 @@ var sectorView = {
                         "managerCombo": function (value) {
                             if (!value) {
                                 return false;
-                            }else {
+                            } else {
                                 return true;
                             }
 
@@ -623,81 +599,66 @@ var sectorView = {
     },
 
 
-    save: function(){
+    save: function () {
         var form = $$("addSectorForm");
-        if(!isThereInternetConnection()){
+        if (!isThereInternetConnection()) {
             util.messages.showErrorMessage("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
-           // alert("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo.");
-        }else{
+        } else {
             var validation = form.validate();
-            if(validation){
+            if (validation) {
 
 
                 $$("saveSector").disable();
 
-                connection.sendAjax("PUT", "hub/user/changeToManager/" +$$("managerCombo").getValue(),
+                connection.sendAjax("PUT", "hub/user/changeToManager/" + $$("managerCombo").getValue(),
                     function (text, data, xhr) {
                         if (text) {
                         }
                     }, function (text, data, xhr) {
                         util.messages.showErrorMessage(text);
-                       // alert(text);
                     }, $$("managerCombo").getValue());
 
 
-                var newSector={
-                    id:null,
+                var newSector = {
+                    id: null,
                     name: form.getValues().name,
                     maxAbsentPeople: null,
                     maxPercentageAbsentPeople: null,
                     sectorManagerId: $$("managerCombo").getValue(),
                     companyId: userData.companyId,
-                    active:1
+                    active: 1
                 }
-
-
-
-                console.log(newSector.id);
-               connection.sendAjax("POST", "/hub/sector",
+                connection.sendAjax("POST", "/hub/sector",
                     function (text, data, xhr) {
                         if (text) {
-                            var sector=data.json();
+                            var sector = data.json();
                             var changeSectorInformation = {
                                 id: $$("managerCombo").getValue(),
                                 sectorId: sector.id
                             };
                             connection.sendAjax("POST", "hub/user/changeSector",
                                 function (text, data, xhr) {
-                                    if(text){}
+                                    if (text) {
+                                    }
                                 }, function (text, data, xhr) {
                                     util.messages.showErrorMessage(text);
                                 }, changeSectorInformation);
-                            /*var temp={
-                                id:sector.id,
-                                name:sector.name,
-                                max_percentage_absent_people:null,
-                                sectorManagerId: $$("managerCombo").getValue(),
-                                first_name:
-                                last_name:
-                            }*/
                             $$("sectorDT").add(sector);
                             util.dismissDialog('addSectorDialog');
                             util.messages.showMessage("Sektor uspješno dodan.");
                             $$("addSectorBtn").enable();
-                            //alert("Sektor uspješno dodat.");
                             refreshSectorData();
-                            if(sectorsNumber<0){
-                                sectorsNumber=1;
+                            if (sectorsNumber < 0) {
+                                sectorsNumber = 1;
                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
-                            }else{
-                                sectorsNumber=sectorsNumber+1;
+                            } else {
+                                sectorsNumber = sectorsNumber + 1;
                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
                             }
                         }
                     }, function (text, data, xhr) {
                         if (text.includes("name_UNIQUE")) {
                             util.messages.showMessage("Izabrani naziv već postoji. Unesite drugi naziv.");
-                            //alert("Izabrani naziv već postoji. Unesite drugi naziv.");
                         }
                     }, newSector);
 
@@ -713,14 +674,14 @@ var sectorView = {
 
     },
 
-    editDialog: function(sector) {
-        return  {
+    editDialog: function (sector) {
+        return {
             view: "fadeInWindow",
             id: "editSectorDialog",
             move: true,
             position: "center",
             modal: true,
-            height:220,
+            height: 220,
             body: {
                 id: "editSectorInside",
                 rows: [
@@ -750,7 +711,7 @@ var sectorView = {
                             labelWidth: 200,
                             bottomPadding: 20
                         },
-                        elements:[
+                        elements: [
                             {
                                 view: "text",
                                 id: "id",
@@ -767,16 +728,16 @@ var sectorView = {
                             },
                             {
                                 view: "combo",
-                                id:"managerCombo",
-                                name:"managerCombo",
-                                label:"Rukovodilac",
-                                options:{
+                                id: "managerCombo",
+                                name: "managerCombo",
+                                label: "Rukovodilac",
+                                options: {
                                     body: {
                                         template: "#firstName# #lastName# (#email#)",
-                                        url: "/hub/user/getAllUsersFromSectorByUserGroupId/"+sector.id,
+                                        url: "/hub/user/getAllUsersFromSectorByUserGroupId/" + sector.id,
                                     }
                                 },
-                                required:true
+                                required: true
                             },
                             {
                                 id: "saveSector",
@@ -784,7 +745,7 @@ var sectorView = {
                                 value: "Sačuvajte izmjene",
                                 type: "form",
                                 align: "right",
-                                click:"sectorView.saveUpdate",
+                                click: "sectorView.saveUpdate",
                                 hotkey: "enter",
                                 width: 150
 
@@ -804,9 +765,8 @@ var sectorView = {
                             },
                             "managerCombo": function (value) {
                                 if (!value) {
-                                    //$$('addSectorForm').elements.managerCombo.config.invalidMessage = 'Rukovodioca je obavezno odabrati.';
                                     return false;
-                                }else {
+                                } else {
                                     return true;
                                 }
 
@@ -815,10 +775,11 @@ var sectorView = {
                     }
                 ]
             }
-        }  },
+        }
+    },
 
     showEditDialog: function (sector) {
-        sectorForChange=sector;
+        sectorForChange = sector;
         webix.ui(webix.copy(sectorView.editDialog(sector))).show();
         webix.UIManager.setFocus("name");
         var form = $$("editSectorForm");
@@ -828,55 +789,48 @@ var sectorView = {
 
     },
 
-    saveUpdate: function(){
+    saveUpdate: function () {
 
         var form = $$("editSectorForm");
         var validation = form.validate();
-        if(validation){
+        if (validation) {
             connection.sendAjax("PUT", "hub/user/changeToWorker/" + sectorForChange.sectorManagerId,
                 function (text, data, xhr) {
                     if (text) {
                     }
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    //alert(text);
                 }, sectorForChange.sectorManagerId);
 
 
-
-            connection.sendAjax("PUT", "hub/user/changeToManager/" +$$("managerCombo").getValue(),
+            connection.sendAjax("PUT", "hub/user/changeToManager/" + $$("managerCombo").getValue(),
                 function (text, data, xhr) {
                     if (text) {
                     }
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                    //alert(text);
                 }, $$("managerCombo").getValue());
 
-            var newSector={
-                id:form.getValues().id,
+            var newSector = {
+                id: form.getValues().id,
                 name: form.getValues().name,
                 sectorManagerId: $$("managerCombo").getValue(),
                 maxAbsentPeople: null,
                 maxPercentageAbsentPeople: $$("sectorDT").getSelectedItem().max_percentage_absent_people,
                 companyId: userData.companyId,
-                active:1
+                active: 1
             }
-
-            console.log(newSector.id);
             connection.sendAjax("PUT", "hub/sector/" + newSector.id,
                 function (text, data, xhr) {
                     if (text) {
-                        $$("sectorDT").updateItem(newSector.id,newSector);
+                        $$("sectorDT").updateItem(newSector.id, newSector);
                         refreshSectorData();
                         util.dismissDialog('editSectorDialog');
                         util.messages.showMessage("Sektor uspješno izmijenjen.");
-                       // alert("Sektor uspješno izmjenjen.");
                     } else
                         util.messages.showErrorMessage("Neuspješna izmjena.");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
-                   // alert(text);
                 }, newSector);
 
 
@@ -886,35 +840,8 @@ var sectorView = {
 
 };
 
-
-/*function animateValue(id, start, end, duration){
-    console.log("counter start");
-
-    if (end === 0) {
-
-        id.setHTML(`<p>${end}</p>`);
-
-        return;
-    }
-
-    var range = end - start;
-    var current = start;
-    var increment = end > start ? 1 : -1;
-    increment = end == start ? 0: increment;
-    var stepTime = Math.abs(Math.floor(duration / range));
-    var timer = setInterval(function () {
-        current += increment;
-        id.setHTML(`<p>${current}</p>`);
-        if (current === end) {
-            clearInterval(timer);
-        }
-    }, stepTime);
-}*/
-
 function refreshSectorData() {
     $$("t1").setHTML(`<p>${0}</p>`);
-    console.log("refresh sector data");
-
 
     webix.extend($$("sectorDT"), webix.ProgressBar);
 
@@ -929,7 +856,6 @@ function refreshSectorData() {
 
             if (xhr.status != 200) {
                 util.messages.showErrorMessage(("Nemate pristup internetu. Provjerite konekciju i pokušajte ponovo."));
-               // alert("No data to load! Check your internet connection and try again.");
                 table.hideProgress();
             }
 
@@ -939,17 +865,16 @@ function refreshSectorData() {
 
             if (xhr.status === 200) {
                 if (data.json() != null) {
-                    console.log("loaded data with success");
                     sectors = data.json();
-                    if(sectors.length>0){
-                        sectorsNumber= sectors.length;
+                    if (sectors.length > 0) {
+                        sectorsNumber = sectors.length;
                         animateValue($$("t1"), 0, sectorsNumber, 100);
-                    }else{
+                    } else {
                         animateValue($$("t1"), 0, 0, 100);
                     }
                     table.hideProgress();
 
-                    if(userData.userGroupKey == "sekretar"){
+                    if (userData.userGroupKey == "sekretar") {
                         $$("sectorDT").hideColumn("delete");
                         $$("sectorDT").hideColumn("edit");
                         $$("sectorDT").hideColumn("status");
