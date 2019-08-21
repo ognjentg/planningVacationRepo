@@ -106,7 +106,8 @@ var sickRequestsView = {
                         hidden: "true"
                     }, {
                         id: "companyId",
-                        header: "ID kompanije"
+                        header: "ID kompanije",
+                        hidden: "true"
                     },
                         {
                             id: "statusName",
