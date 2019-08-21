@@ -863,17 +863,18 @@ var constraintsTab = {
 
             ///////////////////////////////////
             cols: [
-                {gravity: 0.1, height: 800},
+                {gravity: 0.1},
                 {
                     id: "formConstraintsInformation",
                     view: "form",
-                    width: 800,
+                    borderless: true,
                     elementsConfig: {
                         labelWidth: 90,
                         bottomPadding: 16
                     },
                     elements: [{
                         rows: [{
+                        cols: [{
                             // {///
                             // width: 300,
                             rows: [
@@ -881,7 +882,7 @@ var constraintsTab = {
                                     view: "form",
                                     id: "companyInfoForm",
                                     name: "companyInfoForm",
-                                    width: 140,
+                                    borderless: true,
                                     elementsConfig: {
                                         labelWidth: 200,
                                         bottomPadding: 18
@@ -937,7 +938,7 @@ var constraintsTab = {
                             ]
                         },
                             {
-                                width: 350,
+                                borderless: true,
                                 rows: [
                                     {
                                         view: "toolbar",
@@ -961,6 +962,7 @@ var constraintsTab = {
                                         id: "nonWorkingDaysDT",
                                         adjust: true,
                                         select: "row",
+                                        height: 120,
                                         navigation: true,
                                         tooltip: {
                                             dx: -35, //20 by default
@@ -1017,6 +1019,9 @@ var constraintsTab = {
                                         }
                                     },
                                     {
+                                      height: 20,
+                                    },
+                                    {
                                         view: "label",
                                         label: "Kolektivni godišnji odmori:",
                                         align: "left"
@@ -1067,6 +1072,7 @@ var constraintsTab = {
                                         label: "Kolektivni godišnji odmor:",
                                         adjust: true,
                                         select: "row",
+                                        height: 120,
                                         tooltip: {
                                             dx: -35, //20 by default
                                             dy: 20
@@ -1129,22 +1135,28 @@ var constraintsTab = {
                                                 webix.confirm(delBox);
                                             }
                                         }
+                                    },
+                                    {
+                                        height: 20
                                     }
                                 ]
-                            },
+                            }]},
                             {
-                                id: "saveInformation",
-                                view: "button",
-                                label: "Sačuvajte i pređite na aplikaciju",
-                                type: "iconButton",
-                                icon: "save",
-                                type: "iconButton",
-                                //icon: "sign-in",   //firstLoginLayout.saveCompany
-                                click: "firstLoginLayout.saveConstrains",  //dodati poziv showApp
-                                align: "center",
-                                hotkey: "enter",
-                                width: 580,
-                                height: 40
+                                cols: [{},{
+                                    id: "saveInformation",
+                                    view: "button",
+                                    label: "Sačuvajte i pređite na aplikaciju",
+                                    type: "iconButton",
+                                    icon: "save",
+                                    type: "iconButton",
+                                    //icon: "sign-in",   //firstLoginLayout.saveCompany
+                                    click: "firstLoginLayout.saveConstrains",  //dodati poziv showApp
+                                    align: "center",
+                                    hotkey: "enter",
+                                    width: 300,
+                                    height: 40
+                                }, {}
+                                ]
                             }
                         ]
                     }],
@@ -1282,7 +1294,7 @@ var firstLoginLayout = {    //firstLoginPanel je id za firstLoginLayout //todo z
                     }
                 ]
             }]
-        }, {height: 20},
+        }, {height: 5},
         {
             id: "firstLoginWizard",
 
@@ -2026,9 +2038,12 @@ var showFirstLogin = function () {
                     util.messages.showErrorMessage(text);
                 });
         }
-        $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
-
-
+        if(companyData.logo != null) {
+            $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo}); //da se prikaze dobar logo gore
+        }
+        else {
+            $$("companyLogoImage").setValues({src: "img/noLogo.png"});
+        }
     } else {
         showApp();
     }
@@ -2072,7 +2087,10 @@ var showApp = function () {
 
     if (userData != null) {
         if (userData.userGroupKey !== "superadmin") {
-            $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
+            if(companyData.logo == null)
+                $$("companyLogoImage").setValues({src: "img/noLogo.png"});
+            else
+                $$("companyLogoImage").setValues({src: "data:image/png;base64," + companyData.logo});
         } else {
             $$("companyLogoImage").setValues({src: "img/telegroup-logo-inside.png"});
         }
