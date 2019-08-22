@@ -72,15 +72,11 @@ var radarChart = {
             view: "chart",
             id: "radarChart",
             type: "radar",
-            preset: "area",
             xAxis: {
                 template: "#month#"
             },
-            yAxis: {
-                lineShape: "arc",
-                start: 0,
-                step: 1,
-                end: 5,
+            yAxis:{
+                lineShape:"arc"
             },
             legend: {
                 layout: "y",
@@ -88,7 +84,7 @@ var radarChart = {
                 align: "right",
                 valign: "middle",
                 marker: {
-                    type: "item"
+                    type:"item"
                 },
                 values: [
                     {text: "Godišnji", color: "#58dccd"},
@@ -349,7 +345,8 @@ sectorStatisticsView = {
 
                                         $$("byMonthChartID").clearAll();
                                         $$("byMonthChartID").parse(temp);
-
+                                        $$("radarChart").clearAll();
+                                        $$("radarChart").parse(temp);
                                         if (!$$("byMonthChartID").count()) { //if no data is available
                                             webix.extend($$("byMonthChartID"), webix.OverlayBox);
                                             $$("byMonthChartID").showOverlay("<div style='...'>Nema podataka</div>");

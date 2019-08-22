@@ -205,7 +205,8 @@ userStatisticsView = {
 
                                         $$("byMonthChartID").clearAll();
                                         $$("byMonthChartID").parse(temp);
-
+                                        $$("radarChart").clearAll();
+                                        $$("radarChart").parse(temp);
                                         if (!$$("byMonthChartID").count()) { //if no data is available
                                             webix.extend($$("byMonthChartID"), webix.OverlayBox);
                                             $$("byMonthChartID").showOverlay("<div style='...'>Nema podataka</div>");
