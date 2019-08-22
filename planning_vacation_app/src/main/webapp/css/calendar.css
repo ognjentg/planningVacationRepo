@@ -1,18 +1,18 @@
-/* Boja za neradne dane */
+
 .good_day .dhx_month_body{
-    background-color: #DDDDDD; //#b8b2a6;    //
+    background-color: #DDDDDD;
 }
 .good_day .dhx_month_head{
     background-color: #DDDDDD;
 }
-/* Boja danjašnjeg dana */
+
 .today .dhx_month_head{
     background-color: #25a652 !important;
 }
 .today .dhx_month_body{
     background-color: #25a652 !important;
 }
-/* Boja za selektovane dane */
+
 .selected_day .dhx_month_head {
     background-color: #0d8bf2;
 }
@@ -20,55 +20,55 @@
     background-color: #0d8bf2;
 }
 
-/* Boja za dane godisnjeg odmora */
+
 .vacation_day .dhx_month_head{
-    background-color: #f2c057; /*#2ecb70;*/
+    background-color: #f2c057;
 }
 .vacation_day .dhx_month_body{
-    background-color: #f2c057; /*#2ecb70;*/
+    background-color: #f2c057;
 }
-/* Boja za labelu godisnji u legendi */
+
 .vacation_label {
-    color: #f2c057; /*#2ecb70;*/
+    color: #f2c057;
 }
-/*Boja za dane godisnjeg odmora na cekanju:*/
+
 .vacation_day_waiting .dhx_month_head{
-    background-color: #FFEB94;  /*#77e0a3;*/
+    background-color: #FFEB94;
 }
 .vacation_day_waiting .dhx_month_body{
-    background-color: #FFEB94;  /*#77e0a3;*/
+    background-color: #FFEB94;
 }
 .vacation_day_waiting_label{
-    background-color: #FFEB94;  /*#77e0a3;*/
+    background-color: #FFEB94;
 }
-/*godisnji odobren-labela:*/
+
 .vacation_day_approved_label{
-    background-color: #f2c057; /*#2ecb70;*/
+    background-color: #f2c057;
 }
-/* Boja za placene slobodne dane  */
+
 .day_off .dhx_month_head{
     background-color: #1CA1C1;
 }
 .day_off .dhx_month_body{
     background-color: #1CA1C1;
 }
-/* Boja za labelu slobodni dani u legendi */
+
 .day_off_label {
     color: #1CA1C1;
 }
-/* Boja za neplacene slobodne dane  */
+
 .unpaid_day_off .dhx_month_head{
-    background-color: #BBBF95; /*#edc13e;*/
+    background-color: #BBBF95;
 }
 .unpaid_day_off .dhx_month_body{
-    background-color: #BBBF95; /*#edc13e;*/
+    background-color: #BBBF95;
 }
 
-/* Boja za labelu neplaceni dani u legendi */
+
 .unpaid_day_label {
-    color: #BBBF95; /*#edc13e;*/
+    color: #BBBF95;
 }
-/* Boja za dane bolovanja */
+
 .sick_day .dhx_month_head{
     background-color: #e36688;
 }
@@ -81,24 +81,13 @@
 .sick_day_waiting .dhx_month_body{
     background-color: #e99cb2;
 }
-/* Boja za labelu bolovanje u legendi */
+
 .sick_day_label {
     color: #e36688;
 }
 .sick_day_waiting_label{
     background-color: #e99cb2;
 }
-
-/*
-.vacation_day_denied .dhx_month_head{
-    background-color: #069140;
-}
-.vacation_day_denied .dhx_month_body{
-    background-color: #069140;
-}
-.vacation_day_denied_label{
-    background-color: #069140;
-}*/
 .sick_day_approved_label{
     background-color: #e36688;
 }
@@ -112,7 +101,7 @@
     background-color: #d42857;
 }
 .day_off_waiting .dhx_month_head{
-     background-color: #60b7cc;
+    background-color: #60b7cc;
 }
 .day_off_waiting .dhx_month_body{
     background-color: #60b7cc;
@@ -127,7 +116,7 @@
     background-color: #03748f;
 }
 .unpaid_day_off_approved_label{
-    background-color: #BBBF95; /*#edc13e;*/
+    background-color: #BBBF95;
 }
 .day_off_denied .dhx_month_head{
     background-color: #03748f;
@@ -216,15 +205,3 @@
     font-size: 13px;
     padding: auto 6px;
 }
-
-/*.dhx_cal_date{
-    background-color: #e1e1e1;
-    background-position:-30px 0;
-    width:50px;
-    height:17px;
-    left:21px;
-    display: inline-block;
-    cursor:pointer;
-    text-align:center;
-    color: gray;
-}*/

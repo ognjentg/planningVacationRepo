@@ -2,7 +2,7 @@ package com.telegroupltd.planning_vacation_app.util;
 
 public class ChangeSectorInformation {
 
-   private Integer id, sectorId;
+    private Integer id, sectorId;
 
     public ChangeSectorInformation(Integer id, Integer sectorId) {
         this.id = id;

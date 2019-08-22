@@ -1,8 +1,5 @@
 package com.telegroupltd.planning_vacation_app.model;
 
-import com.telegroupltd.planning_vacation_app.common.HasActive;
-import com.telegroupltd.planning_vacation_app.repository.genericRepository.HasActiveRepository;
-
 import javax.persistence.*;
 import java.util.Objects;
 

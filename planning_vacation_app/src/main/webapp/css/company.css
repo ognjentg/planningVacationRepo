@@ -1,14 +1,10 @@
 
-/*style for modal addCompany*/
 .webix_win_head {
     height: 0;
 }
-
 .addCompanyDialog {
     height: 150px;
 }
-
-/*datatable*/
 .webix_column > div.webix_cell_select, .webix_column > div.webix_column_select, .webix_column > div.webix_row_select {
     color: #fff;
     background: #27ae60;
@@ -49,14 +45,9 @@
 .myButton {
     background-color: #268fd5;
 }
-/*.webix_img_btn_abs{*/
-/*color: #871414;*/
-/*background-color: #268fd5 !important;*/
-/*}*/
 .webix_view{
     color: black;
 }
-
 .companyButton {
     background-color: #268fd5  !important;
     border-radius: 6px;
@@ -66,27 +57,21 @@
     color: #fff;
     font-size: 13px;
     padding: auto 6px;
-    /*font-family: 'Open Sans',Tahoma;*/
 
 }
 .floatMeRight {
     float:right;
 }
 .webix_img_btn_abs  {
-
     border: 1px solid #268fd5  !important;
-
 }
-
-/*companies section counters */
-
 .companies-counter{
     font-size:30px !important;
     align-items: center !important;
     text-align: center;
     justify-content: center !important;
     color: white !important;
-    background-color: #E989A3 !important;   /* #268fd5*/
+    background-color: #E989A3 !important;
     border: 1px solid #E989A3;
     width: 225px !important;
     float: right;
@@ -117,12 +102,11 @@
 
 .admin-counter{
     font-size:30px !important;
-    /*display: grid !important;*/
     align-items: center !important;
     text-align: center;
     justify-content: center !important;
     color: white !important;
-    background-color: #B289EF  !important;     /* #268fd5*/
+    background-color: #B289EF  !important;
     border: 1px solid #B289EF;
     width: 200px !important;
     float: right;
@@ -151,12 +135,11 @@
 
 .employee-counter{
     font-size:30px !important;
-    /*display: grid !important;*/
     align-items: center !important;
     text-align: center;
     justify-content: center !important;
     color: white !important;
-    background-color: #9AD2CD  !important;      /* #268fd5*/
+    background-color: #9AD2CD  !important;
     border: 1px solid #9AD2CD;
     width: 200px !important;
     float: right;
@@ -184,8 +167,6 @@
 .companyDatatable .webix_cell {
     height: 30px !important;
 }
-
-/* on hover animation*/
 .fa-refresh {
     -webkit-transform: rotate(0deg);
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
@@ -245,15 +226,6 @@
     -webkit-transform: rotate(360deg);
     -webkit-transition: -webkit-transform 0.25s ease-in-out;
 }
-
-
-/*.webix_column > div.webix_cell_select, .webix_column > div.webix_column_select, .webix_column > div.webix_row_select,*/
-/*.webix_column > span.webix_icon fa-trash-o, .webix_column > span.webix_cell_select {*/
-/*color: #fff;*/
-/*background: #27ae60;*/
-/*}*/
-
-/*logo upload section*/
 .upload-logo {
     border: 1px dashed grey !important;
     border-radius: 4px !important;
@@ -262,8 +234,6 @@
     margin-left: 210px !important;
     margin-bottom: 15px !important;
 }
-
-/*logo upload section in companyInfo.js*/
 .upload-logo-company {
     border: 1px dashed grey !important;
     border-radius: 4px !important;
@@ -277,25 +247,20 @@
     margin: 0 auto;
 }
 .largeText {
-     font-size:15px !important;
-     text-align: center;
- }
+    font-size:15px !important;
+    text-align: center;
+}
 
 .my_style {
     font-weight:bold;
     color: #000000;
 }
 
-
-/* dstyle for disable manager in combo */
-
 .webix_list_item.disabled{
     background: #eee;
     color: #aaa;
     display: none;
 }
-
-
 @-webkit-keyframes fadeInDownBigConfirmDialog {
     from {
         opacity: 0;
@@ -348,9 +313,6 @@
     border-width: 0px !important;
     box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
-
-
-/* animation f*/
 
 .fadeInAnimation, .companyPanelToolbar  {
 

@@ -3,8 +3,6 @@ package com.telegroupltd.planning_vacation_app.model;
 import com.telegroupltd.planning_vacation_app.common.HasActive;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Objects;
 

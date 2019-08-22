@@ -1,8 +1,10 @@
 package com.telegroupltd.planning_vacation_app.model;
 
 
-import javax.persistence.*;
-
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.SqlResultSetMapping;
 import java.sql.Timestamp;
 import java.util.Date;
 

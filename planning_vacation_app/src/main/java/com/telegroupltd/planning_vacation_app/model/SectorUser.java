@@ -10,7 +10,6 @@ import javax.persistence.SqlResultSetMapping;
         classes = @ConstructorResult(
                 targetClass = SectorUser.class,
                 columns = {
-                        //@ColumnResult(name = "id", type = Integer.class),
                         @ColumnResult(name = "id", type = Integer.class),
                         @ColumnResult(name = "name", type = String.class),
                         @ColumnResult(name="max_percentage_absent_people", type=Double.class),

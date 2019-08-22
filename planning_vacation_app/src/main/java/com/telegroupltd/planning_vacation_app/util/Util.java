@@ -1,12 +1,9 @@
 package com.telegroupltd.planning_vacation_app.util;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.spec.KeySpec;
 import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +12,6 @@ public class Util {
 
     static SecureRandom rnd = new SecureRandom();
 
-    //Generate random salt value
     public static String randomSalt() {
 
         byte[] s = new byte[16];
@@ -25,7 +21,6 @@ public class Util {
 
     }
 
-    //Generate random password of 8 characters with letters and numbers
     public static String randomPassword() {
 
         String password = "";
@@ -38,7 +33,6 @@ public class Util {
         return password;
     }
 
-    //Generate username by taking a substring from email till '@' character
     public static String generateUsername(String email) {
 
         String addition = "";
@@ -51,7 +45,6 @@ public class Util {
         return username;
     }
 
-    //Validate email construction, return true if valid
     public static Boolean validateEmail(String email) {
 
         String p = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -63,8 +56,6 @@ public class Util {
             return false;
     }
 
-
-    //Hash passwordToHash with given salt
     public static String hashPasswordSalt(String passwordToHash, String salt) {
         String generatedPassword = null;
         try {
@@ -84,10 +75,8 @@ public class Util {
         return generatedPassword;
     }
 
-    //Calculate password strength. Returns 0 (invalid) and 1-3 for weak,medium and strong.
     public static Integer passwordStrength(String password) {
         Integer strength = 0;
-        //TODO: expand the pattern to include non punctuation symbols, emojis, control characters,etc.
         String p = "(?:([\\p{Punct}\\p{Space}])|(\\p{L})|(\\p{Digit})){8,}";
         Pattern pattern = Pattern.compile(p);
         Matcher m = pattern.matcher(password);

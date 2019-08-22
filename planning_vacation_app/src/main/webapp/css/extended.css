@@ -1,72 +1,71 @@
 @CHARSET "ISO-8859-1";
 
-
 #preloader {
-	display: none;
-	position: fixed;
-	bottom: 0px;
-	left: 20px;
-	transform: translate(-50%, -50%);
-	width: 25px;
-	height: 25px;
-	background-color: #3498DB;
-	border-radius: 50%;
+    display: none;
+    position: fixed;
+    bottom: 0px;
+    left: 20px;
+    transform: translate(-50%, -50%);
+    width: 25px;
+    height: 25px;
+    background-color: #3498DB;
+    border-radius: 50%;
 }
 
 #preloader:after {
-	content: '';
-	position: absolute;
-	border-radius: 50%;
-	top: 50%;
-	left: 50%;
-	border: 0px solid white;
-	transform: translate(-50%, -50%);
-	animation: loading 1000ms ease-out forwards infinite;
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    border: 0px solid white;
+    transform: translate(-50%, -50%);
+    animation: loading 1000ms ease-out forwards infinite;
 }
 
 @keyframes loading {
-	0% {
-		border: 0px solid white;
-	}
+    0% {
+        border: 0px solid white;
+    }
 
-	20% {
-		border: 8px solid white;
-		width: 0%;
-		height: 0%;
-	}
+    20% {
+        border: 8px solid white;
+        width: 0%;
+        height: 0%;
+    }
 
-	100% {
-		border: 8px solid white;
-		width: 100%;
-		height: 100%;
-	}
+    100% {
+        border: 8px solid white;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .white{
-	background: white !important;
+    background: white !important;
 }
 
 .white .webix_el_button, .white .webix_el_label, .white .webix_inp_label, .white .webix_img_btn_abs, .white .webix_img_btn_abs .webix_icon{
-	color:#666 !important;
+    color:#666 !important;
 }
 
 .loginLogo{
-	border:none;
-	text-align:center;
-	background-color: white;
+    border:none;
+    text-align:center;
+    background-color: white;
 }
 
 .loginBar{
-	background: linear-gradient(25deg,#29ced4,#3498db) !important;
+    background: linear-gradient(25deg,#29ced4,#3498db) !important;
 }
 
 .loginLayoutBackground{
-	border:none;
-	text-align:center;
+    border:none;
+    text-align:center;
 }
 
 .loginForm{
-	border:none;
+    border:none;
     background-color: #0d8bf2;
 }
 
@@ -78,86 +77,86 @@
 }
 
 .welcomeLabel{
-	font-size: 39px;
+    font-size: 39px;
     background-color: white;
 }
 
 .buttonShape{
-	border-radius: 80px;
+    border-radius: 80px;
 }
 
 .logoInside{
-	background: linear-gradient(#FFF,#F8F8F8);
-	text-align:center;
-	padding-top:6px;
+    background: linear-gradient(#FFF,#F8F8F8);
+    text-align:center;
+    padding-top:6px;
 }
 
 .mainToolbar{
 
-	box-shadow: 2px 2px 2px black;
+    box-shadow: 2px 2px 2px black;
 }
 
 
 element.style {
-	border-width: 1px;
-	white-space: nowrap;
-	margin-left: 0px;
-	margin-top: 0px;
-	width: 995px;
-	height: 34px;
+    border-width: 1px;
+    white-space: nowrap;
+    margin-left: 0px;
+    margin-top: 0px;
+    width: 995px;
+    height: 34px;
 }
 
 .customToolbar{
-	background:	#7dafd2 !important;
+    background:	#7dafd2 !important;
 }
 
 .usernameHolder{
-	background: transparent !important;
+    background: transparent !important;
     border: none;
     color: white;
     text-align: right;
 }
 .usernameHolderName{
-	font-weight: bold;
-	color:white;
+    font-weight: bold;
+    color:white;
 }
 .usernameHolderRole{
-	font-size:10pt;
-	color:white;
+    font-size:10pt;
+    color:white;
 }
 .webix_pager_item {
-	width: auto;
+    width: auto;
 }
 .webix_cell:nth-child(odd){
-	background: #f1f1f1;
+    background: #f1f1f1;
 }
 .settingsMenu{
-	
+
 }
 
 .settingsMenu .webix_list_item{
-	height: 50px !important;
-	padding: 10px;
-	overflow: none !important;
+    height: 50px !important;
+    padding: 10px;
+    overflow: none !important;
 }
 
 .settingsMenu .webix_icon{
-	font-size: 22px;
+    font-size: 22px;
     padding: 2px;
 }
 
 .mainMenu{
-	background: #f1f1f1 !important;
-	font-size:11pt;
+    background: #f1f1f1 !important;
+    font-size:11pt;
 }
 
 .mainMenu .webix_list_item{
-	padding: 10px 10px;
-	background: #f1f1f1;
+    padding: 10px 10px;
+    background: #f1f1f1;
 }
 
 .mainMenu .webix_list_item:hover{
-	background: #f9f9f9!important;
+    background: #f9f9f9!important;
 }
 
 .mainMenu .webix_selected,.mainMenu .webix_selected:hover {
@@ -170,20 +169,20 @@ element.style {
 }
 
 .panelToolbar .webix_el_button, .panelToolbar .webix_el_label, .panelToolbar .webix_inp_label, .panelToolbar .webix_img_btn_abs, .panelToolbar .webix_img_btn_abs .webix_icon{
-	color:#666 !important;
+    color:#666 !important;
 }
 
 .panelToolbar .webix_img_btn_abs, .panelToolbar .webix_img_btn_abs .webix_icon{
-	font-size:13px !important;
+    font-size:13px !important;
 }
 
 .panelToolbar .webix_img_btn_abs:hover, .panelToolbar .webix_img_btn_abs:hover .webix_icon{
-	color:#FFF !important;
+    color:#FFF !important;
 }
 
 .panelActionBar .webix_pressed .webix_img_btn_abs, .panelActionBar .webix_pressed .webix_img_btn_abs .webix_icon,
 .panelToolbar .webix_pressed .webix_img_btn_abs, .panelToolbar .webix_pressed .webix_img_btn_abs .webix_icon{
-	color: white !important;
+    color: white !important;
 }
 
 .webix_column>div.webix_cell_select, .webix_column>div.webix_column_select, .webix_column>div.webix_row_select {
@@ -192,7 +191,7 @@ element.style {
 }
 
 .webix_invalid .webix_inp_bottom_label{
-	padding-left:5px;
+    padding-left:5px;
 }
 
 .webix_info div,  .webix_error div{
@@ -200,145 +199,141 @@ element.style {
 }
 
 .addButton:before{
-	content: "\f055";
+    content: "\f055";
 }
 
 .approveButton:before{
-	content: "\f164";
+    content: "\f164";
 }
 
 .viewButton:before{
-	content: "\f06e";
+    content: "\f06e";
 }
 
 .moreButton{
-	color:#666;
+    color:#666;
 }
 
 .moreButton:before{
-	font-family: FontAwesome;
-	padding-right:5px;
+    font-family: FontAwesome;
+    padding-right:5px;
 }
 
 .moreButton:hover{
-	color:#3498DB;
+    color:#3498DB;
 }
 
 .webix_column>div.webix_cell_select .moreButton, .webix_column>div.webix_column_select .moreButton, .webix_column>div.webix_row_select .moreButton{
-	color:#DDD !important;
+    color:#DDD !important;
 }
 
 .webix_column>div.webix_cell_select .moreButton:hover, .webix_column>div.webix_column_select .moreButton:hover, .webix_column>div.webix_row_select .moreButton:hover{
-	color:#FFF !important;
+    color:#FFF !important;
 }
 
 .lockedRow {
-	/*background-color: #fea5a8;*/
-	background-color: #fee !important;
+    background-color: #fee !important;
 }
 
 .unlockedRow {
-	background-color: #90EE90 !important;
+    background-color: #90EE90 !important;
 }
 
 .aboutDialog{
-	border-radius: 10px;
-	border: none;
-	box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.23);
+    border-radius: 10px;
+    border: none;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.23);
 }
 
 .closeAbout{
-	position: absolute;
-	z-index: 500;
-	height: 35px !important;
-	left: 208px;
+    position: absolute;
+    z-index: 500;
+    height: 35px !important;
+    left: 208px;
 }
 
 .closeAbout .webix_icon{
-	color: #b50002;
+    color: #b50002;
 }
 
 .aboutLogo{
-	/*background: linear-gradient(#3498DB,#D2E3EF);*/
-	background: white;
-	text-align: center;
-	vertical-align: middle;
+    background: white;
+    text-align: center;
+    vertical-align: middle;
 }
 
 .aboutLine a{
-	color: #246895;
-	text-decoration: none;
+    color: #246895;
+    text-decoration: none;
 }
 
 .aboutLine a:hover{
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
 .aboutLine{
-	border: none;
-	text-align: center;
-	line-height: 28px;
-	font-size: 14px;
+    border: none;
+    text-align: center;
+    line-height: 28px;
+    font-size: 14px;
 }
 
 #aboutRibbon {
-	background: linear-gradient(25deg,#29ced4,#3498db) !important;
-	height: 7px;
-	margin-left: -5px;
-	width: 450px;
-	margin-top: -4px;
+    background: linear-gradient(25deg,#29ced4,#3498db) !important;
+    height: 7px;
+    margin-left: -5px;
+    width: 450px;
+    margin-top: -4px;
 }
 
 .pagingArea {
-	background-color: #e2e2e2 !important;
-	text-align:right;
+    background-color: #e2e2e2 !important;
+    text-align:right;
 }
 .webix_pager_item {
-	background-color: #F0F0F0 !important;
+    background-color: #F0F0F0 !important;
 }
 
 .dataTableImageOutside {
-	width: 143px;
-	height: 25px;
-	background-size: cover;
-	background-position: center;
-	margin-top: 12px;
-	background-repeat: no-repeat;
+    width: 143px;
+    height: 25px;
+    background-size: cover;
+    background-position: center;
+    margin-top: 12px;
+    background-repeat: no-repeat;
 }
 
 .imageDataGrid.webix_column:nth-child(1) .webix_cell {
-	background: white !important;
-	cursor: pointer;
+    background: white !important;
+    cursor: pointer;
 }
 
 .webix_img_btn, .webix_img_btn_abs {
-	text-align: center;
+    text-align: center;
 }
 
 .webix_dtable .webix_ss_footer td {
-	border-left: 0;
-	border-right: 0;
+    border-left: 0;
+    border-right: 0;
 }
-
-/* notifications */
 
 .notifications .webix_list_item{
-	line-height:20px;
-	padding:10px;
+    line-height:20px;
+    padding:10px;
 }
 .notifications .webix_list_item.webix_selected{
-	line-height:20px;
-	padding:10px;
-	background-color: #7f8c8d;
+    line-height:20px;
+    padding:10px;
+    background-color: #7f8c8d;
 }
 
 .notifications .webix_list_item .m_title{
-	font-weight:bold;
-	color:#313131;
+    font-weight:bold;
+    color:#313131;
 }
 .notifications .webix_list_item .message{
-	display:block;
-	color:#475466;
+    display:block;
+    color:#475466;
 }
 
 .notifications .webix_list_item .cbx{
@@ -347,34 +342,33 @@ element.style {
     font-size: 18px;
 }
 
-/*list items in notifications*/
 ul.list {
-	background-color: red;
+    background-color: red;
 }
 
 
 .current_manager_style{
-	 font-weight:bold;
-	 color:#B51454;
- }
+    font-weight:bold;
+    color:#B51454;
+}
 
 .progress_result {
-	height: 100%;
-	float: left;
-	box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
-	background: #eb6e1a;
+    height: 100%;
+    float: left;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+    background: #eb6e1a;
 }
 
 .progress_bar_element {
-	background-color: #f5f5f5;
-	border-radius: 4px;
-	width: 95%;
-	height: 6px;
-	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-	box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
-	margin-top: 9px;
-	float: left;
-	overflow: hidden;
-	cursor: pointer;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    width: 95%;
+    height: 6px;
+    -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-top: 9px;
+    float: left;
+    overflow: hidden;
+    cursor: pointer;
 }
 

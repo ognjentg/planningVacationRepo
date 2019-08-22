@@ -5,9 +5,6 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-/**
- * Created by drstjepanovic on 8/18/2017.
- */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Table(name = "logger")

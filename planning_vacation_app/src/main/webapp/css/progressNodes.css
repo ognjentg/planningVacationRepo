@@ -39,13 +39,12 @@ section {
     justify-content: space-between;
     list-style: none;
     padding: 0;
-    /*margin: 0 0 1rem 0;*/
     margin:auto;
 }
 .progress-bar li {
     flex: 2;
     position: relative;
-    padding: 0 0 15px 0; /*koliko su slova podignuta*/
+    padding: 0 0 15px 0;
     font-size: var(--font-size-default);
     line-height: 3;
     color: var(--color-blue);
@@ -66,7 +65,7 @@ section {
 .progress-bar li:before {
     content: "";
     display: block;
-    width: 40px; /*velicina kruga*/
+    width: 40px;
     height: 40px;
     background-color: var(--color-gray-disabled);
     border-radius: 50%;
@@ -119,25 +118,10 @@ section {
 }
 
 .progress-bar .is-active:before
-/*.progress-bar li:hover:before,
-.progress-bar .is-hovered:before */{
+{
     background-color: var(--color-white);
     border-color: var(--color-blue);
-}/*
-.progress-bar li:hover:before,
-.progress-bar .is-hovered:before {
-    transform: scale(1.33);
 }
-
-.progress-bar li:hover span,
-.progress-bar li.is-hovered span {
-    opacity: 1;
-}
-
-.progress-bar:hover li:not(:hover) span {
-    opacity: 0;
-}
-*/
 .x-ray .progress-bar,
 .x-ray .progress-bar li {
     border: 1px dashed red;
