@@ -1058,6 +1058,7 @@ usergroupView = {
             $$("percent").hide();
         }
         if (user === "manager") {
+            $$("btn").hide();
             $$("choseSectorCombo").hide();
             $$("izaberiLabel").hide();
         }
@@ -1183,7 +1184,6 @@ usergroupView = {
     showAddUserDialog: function () {
         var options = [];
         $$("addUserButton").disable();
-        $$("btn").hide();
         webix.ui(webix.copy(usergroupView.addUserDialog)).show();
         webix.UIManager.setFocus("email");
         if (sectorID !== -2) {

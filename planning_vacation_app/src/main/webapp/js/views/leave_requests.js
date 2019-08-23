@@ -632,6 +632,7 @@ leaveRequestsView = {
                     elements: [
                         {
                             view: "textarea",
+                            readonly: true,
                             id: "senderCommentLabel"
                         }
                     ]
@@ -680,9 +681,16 @@ leaveRequestsView = {
     },
 
     showSenderComment: function () {
-        webix.ui(webix.copy(leaveRequestsView.senderCommentDialog));
-        $$("senderCommentDialog").show();
-        $$("senderCommentLabel").setValue(tempComment);
+        if(tempComment==""){
+            webix.ui(webix.copy(leaveRequestsView.senderCommentDialog));
+            $$("senderCommentDialog").show();
+            $$("senderCommentLabel").setValue("Nema komentara.");
+        }else{
+            webix.ui(webix.copy(leaveRequestsView.senderCommentDialog));
+            $$("senderCommentDialog").show();
+            $$("senderCommentLabel").setValue(tempComment);
+        }
+
 
     },
     showRejectComment: function () {

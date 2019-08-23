@@ -373,8 +373,15 @@ public class UserController extends GenericController<User, Integer> {
                 vacationDays.setActive((byte) 1);
                 if (constraints != null)
                     vacationDays.setTotalDays(constraints.getMaxVacationDays());
-                else
-                    vacationDays.setTotalDays(20);
+                else{
+                    if(constraintsRepository.getByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1)!=null){
+                        int tempDays = constraintsRepository.getByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte)1).getMaxVacationDays();
+                        vacationDays.setTotalDays(tempDays);
+                    }else{
+                        vacationDays.setTotalDays(0);
+                    }
+                }
+
                 vacationDays.setUserId(newUser.getId());
                 vacationDays.setYear(Calendar.getInstance().get(Calendar.YEAR));
                 vacationDaysRepository.saveAndFlush(vacationDays);

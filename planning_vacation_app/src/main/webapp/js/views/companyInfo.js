@@ -73,21 +73,29 @@ var companyInfoView = {
                                                 view: "text",
                                                 label: "Broj dana godišnjeg:",
                                                 id: "vacationDays",
+                                                required: true
+
                                             },
                                             {
                                                 view: "text",
                                                 label: "Maksimalni period godišnjeg:",
                                                 id: "maxVacDaysPeriod",
+                                                required: true
+
                                             },
                                             {
                                                 view: "text",
                                                 label: "Period starog godišnjeg:",
                                                 id: "maxOldVacationPeriod",
+                                                required: true
+
                                             },
                                             {
                                                 view: "text",
                                                 label: "Period opravdanja bolovanja:",
                                                 id: "sickDays",
+                                                required: true
+
                                             },
                                             {
                                                 view: "multicombo",
