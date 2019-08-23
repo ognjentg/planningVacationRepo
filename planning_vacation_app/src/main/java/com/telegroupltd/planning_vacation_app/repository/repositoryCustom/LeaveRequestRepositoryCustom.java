@@ -30,7 +30,6 @@ public interface LeaveRequestRepositoryCustom {
 
     List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(Integer id, Integer key);
 
-    //void updateLeaveRequestStatusToCancel(Integer leaveRequestId, Integer leaveRequestTypeId, Byte paid, Integer approverId);
     void updateLeaveRequestStatusToCancel(Integer leaveRequestId);
 
     void updateLeaveRequestStatusToCancellation(Integer leaveRequestId);
