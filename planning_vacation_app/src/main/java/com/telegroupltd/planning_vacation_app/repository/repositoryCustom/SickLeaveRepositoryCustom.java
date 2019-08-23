@@ -5,10 +5,15 @@ import com.telegroupltd.planning_vacation_app.model.SickLeaveUserSickLeaveStatus
 import java.util.List;
 
 public interface SickLeaveRepositoryCustom {
-    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id,Integer key);
-    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id,Integer key,Integer companyId);
-    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredByUserId(Integer id,Integer key);
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformation(Integer id, Integer key);
+
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredBySickLeaveStatus(Integer id, Integer key, Integer companyId);
+
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveFilteredByUserId(Integer id, Integer key);
+
     void updateSickLeaveStatusUnjustified(Integer sickLeaveId);
+
     void updateSickLeaveStatusJustified(Integer sickLeaveId);
-    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(Integer id,Integer key);
+
+    List<SickLeaveUserSickLeaveStatus> getSickLeaveUserSickLeaveStatusInformationForWait(Integer id, Integer key);
 }

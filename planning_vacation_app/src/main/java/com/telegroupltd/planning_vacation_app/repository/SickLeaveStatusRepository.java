@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SickLeaveStatusRepository extends JpaRepository<SickLeaveStatus,Integer>, HasActiveRepository<SickLeaveStatus,Integer> {
+public interface SickLeaveStatusRepository extends JpaRepository<SickLeaveStatus, Integer>, HasActiveRepository<SickLeaveStatus, Integer> {
     List<SickLeaveStatus> getAllByActiveIs(byte i);
 }

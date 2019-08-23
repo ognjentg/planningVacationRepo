@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LeaveRequestStatusRepository extends JpaRepository<LeaveRequestStatus,Integer>, HasActiveRepository<LeaveRequestStatus,Integer> {
+public interface LeaveRequestStatusRepository extends JpaRepository<LeaveRequestStatus, Integer>, HasActiveRepository<LeaveRequestStatus, Integer> {
     List<LeaveRequestStatus> getAllByActiveIs(byte i);
 
 }

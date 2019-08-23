@@ -8,5 +8,4 @@ import java.util.List;
 
 public interface ColectiveVacationRepository extends JpaRepository<ColectiveVacation, Integer>, HasActiveRepository<ColectiveVacation, Integer> {
     List<ColectiveVacation> getAllByCompanyIdAndActive(Integer companyId, byte active);
-
 }

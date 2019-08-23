@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LeaveRequestDateRepository extends JpaRepository<LeaveRequestDate,Integer>, HasActiveRepository<LeaveRequestDate,Integer> {
+public interface LeaveRequestDateRepository extends JpaRepository<LeaveRequestDate, Integer>, HasActiveRepository<LeaveRequestDate, Integer> {
     List<LeaveRequestDate> getAllByLeaveRequestIdAndActive(Integer leaveRequestId, byte active);
 }

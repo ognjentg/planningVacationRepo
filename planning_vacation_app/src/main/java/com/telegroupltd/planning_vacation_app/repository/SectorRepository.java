@@ -7,7 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SectorRepository extends JpaRepository<Sector, Integer>, HasActiveRepository<Sector,Integer>, SectorRepositoryCustom {
+public interface SectorRepository extends JpaRepository<Sector, Integer>, HasActiveRepository<Sector, Integer>, SectorRepositoryCustom {
     List<Sector> getAllByCompanyIdAndActive(Integer companyId, byte b);
+
     Sector getBySectorManagerIdAndCompanyId(Integer managerId, Integer companyId);
 }

@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface NonWorkingDayRepository extends JpaRepository<NonWorkingDay, Integer>, HasActiveRepository<NonWorkingDay,Integer> {
+public interface NonWorkingDayRepository extends JpaRepository<NonWorkingDay, Integer>, HasActiveRepository<NonWorkingDay, Integer> {
     List<NonWorkingDay> getAllByActiveAndCompanyId(Byte active, Integer companyID);
 }

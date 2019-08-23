@@ -1,7 +1,6 @@
 package com.telegroupltd.planning_vacation_app.repository.repositoryCustom.repositoryImpl;
 
 import com.telegroupltd.planning_vacation_app.model.AbsenceHistoryUser;
-import com.telegroupltd.planning_vacation_app.model.LeaveRequestDate;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestLeaveRequestDays;
 import com.telegroupltd.planning_vacation_app.model.LeaveRequestUserLeaveRequestStatus;
 import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.LeaveRequestRepositoryCustom;

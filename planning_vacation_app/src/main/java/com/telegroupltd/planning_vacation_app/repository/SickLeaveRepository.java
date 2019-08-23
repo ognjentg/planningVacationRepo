@@ -5,8 +5,6 @@ import com.telegroupltd.planning_vacation_app.repository.genericRepository.HasAc
 import com.telegroupltd.planning_vacation_app.repository.repositoryCustom.SickLeaveRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface SickLeaveRepository extends JpaRepository<SickLeave,Integer>, HasActiveRepository<SickLeave,Integer>, SickLeaveRepositoryCustom {
+public interface SickLeaveRepository extends JpaRepository<SickLeave, Integer>, HasActiveRepository<SickLeave, Integer>, SickLeaveRepositoryCustom {
 
 }
