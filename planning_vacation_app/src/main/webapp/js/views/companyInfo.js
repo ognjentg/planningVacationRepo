@@ -18,7 +18,7 @@ var companyInfoView = {
         position: "center",
         modal: true,
         width: 1100,
-        height: 580,
+        height: 610,
         body:
             {
                 rows: [

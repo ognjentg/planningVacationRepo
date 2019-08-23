@@ -5,7 +5,12 @@ import com.telegroupltd.planning_vacation_app.common.exceptions.BadRequestExcept
 import com.telegroupltd.planning_vacation_app.common.exceptions.ForbiddenException;
 import com.telegroupltd.planning_vacation_app.controller.genericController.GenericHasActiveController;
 import com.telegroupltd.planning_vacation_app.model.Constraints;
+import com.telegroupltd.planning_vacation_app.model.User;
+import com.telegroupltd.planning_vacation_app.model.VacationDays;
 import com.telegroupltd.planning_vacation_app.repository.ConstraintsRepository;
+import com.telegroupltd.planning_vacation_app.repository.UserRepository;
+import com.telegroupltd.planning_vacation_app.repository.VacationDaysRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
@@ -14,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.Calendar;
 import java.util.List;
 
 @RequestMapping(value = "/hub/constraints")
@@ -22,6 +29,13 @@ import java.util.List;
 public class ConstraintsController extends GenericHasActiveController<Constraints, Integer> {
 
     private final ConstraintsRepository constraintsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private VacationDaysRepository vacationDaysRepository;
+    @Autowired
+    private VacationDaysController vacationDaysController;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -66,20 +80,22 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
 
         Constraints baseConstraints = findById(constraints.getCompanyId());
 
-        if (baseConstraints != null) {
-
-            if (baseConstraints.getMaxVacationDays() == constraints.getMaxVacationDays() &&
-                    baseConstraints.getSickLeaveJustificationPeriodLength() == constraints.getSickLeaveJustificationPeriodLength() &&
-                    baseConstraints.getVacationPeriodLength() == constraints.getVacationPeriodLength()
-                    && baseConstraints.getMaxOldVacationPeriodLength() == constraints.getMaxOldVacationPeriodLength()) {
-                return constraints;
-            } else {
-                update(constraints.getCompanyId(), baseConstraints);
-                if (repo.saveAndFlush(newConstraints) != null) {
-                    entityManager.refresh(newConstraints);
-                    return newConstraints;
+        List<User> companyUsers= userRepository.getAllByCompanyIdAndActive(newConstraints.getCompanyId(),(byte)1);
+        if(companyUsers!=null){
+            for(User u:companyUsers){
+                VacationDays vacationDays= vacationDaysRepository.getByUserIdAndYearAndActive(u.getId(), Calendar.getInstance().get(Calendar.YEAR),(byte)1);
+                if(vacationDays!=null){
+                    VacationDays newVacationDays=vacationDays;
+                    newVacationDays.setTotalDays(newConstraints.getMaxVacationDays());
+                    vacationDaysController.update(vacationDays.getId(),newVacationDays);
                 }
             }
+        }
+
+        if (baseConstraints != null) {
+            newConstraints.setId(baseConstraints.getId());
+            update(baseConstraints.getId(),newConstraints);
+            return baseConstraints;
         } else {
             if (repo.saveAndFlush(newConstraints) != null) {
                 entityManager.refresh(newConstraints);
@@ -90,20 +106,19 @@ public class ConstraintsController extends GenericHasActiveController<Constraint
         throw new BadRequestException(badRequestInsert);
     }
 
-    @Override
+    /*@Override
     @Transactional
     @RequestMapping(method = RequestMethod.PUT)
     public String update(Integer companyId, @RequestBody Constraints newConstraints) throws BadRequestException, ForbiddenException {
         Constraints constraints = constraintsRepository.getByCompanyIdAndActive(companyId, (byte) 1);
         if (constraints != null) {
-            newConstraints.setActive((byte) 0);
             if (repo.saveAndFlush(newConstraints) != null)
                 return "uspjesno";
         } else {
             insert(newConstraints);
         }
         throw new BadRequestException("Bad Request");
-    }
+    }*/
 
 
     @Override

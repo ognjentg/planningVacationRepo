@@ -25,6 +25,8 @@ userStatisticsView = {
         }, webix.ui.window);
     },
     selectPanelWithSector: function (id) {
+        console.log("sectorId: "+id.id);
+        $$("mainMenu").select("user_statistics");
         $$("main").removeView(rightPanel);
         rightPanel = "userStatisticsPanel";
 
@@ -46,7 +48,7 @@ userStatisticsView = {
         }, webix.ui.window);
 
         $$("user_statisticsDT").clearAll();
-        $$("user_statisticsDT").define("url", "/hub/user/getUsers/sector/" + id);
+        $$("user_statisticsDT").define("url", "/hub/user/getUsers/sector/" + id.id);
         $$("user_statisticsDT").detachEvent("onBeforeDelete");
     },
     getPanel: function () {
@@ -160,7 +162,7 @@ userStatisticsView = {
                                 this.hideOverlay();
                                 if (!this.count())
                                     this.showOverlay("Izvinite, nema podataka.");
-                                var id = this.getbyMonthChartId();
+                                var id = this.getFirstId();
                                 $$("user_statisticsDT").select(id);
 
 

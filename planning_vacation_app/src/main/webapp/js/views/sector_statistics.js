@@ -315,7 +315,7 @@ sectorStatisticsView = {
                                 this.hideOverlay();
                                 if (!this.count())
                                     this.showOverlay("Izvinite, nema podataka.");
-                                var id = this.getbyMonthChartId();
+                                var id = this.getFirstId();
                                 this.select(id);
                             },
                             onSelectChange: function () {

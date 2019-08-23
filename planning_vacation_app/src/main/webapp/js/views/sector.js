@@ -648,7 +648,7 @@ var sectorView = {
                             util.messages.showMessage("Sektor uspješno dodan.");
                             $$("addSectorBtn").enable();
                             refreshSectorData();
-                            if (sectorsNumber < 0) {
+                            if (sectorsNumber <= 0) {
                                 sectorsNumber = 1;
                                 animateValue($$("t1"), 0, sectorsNumber, 1000);
                             } else {

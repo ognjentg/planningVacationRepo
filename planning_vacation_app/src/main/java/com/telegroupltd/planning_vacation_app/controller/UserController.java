@@ -533,12 +533,13 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     String changeUserGroupToManager(@PathVariable("id") Integer id) throws BadRequestException {
         User oldUser = userRepository.findById(id).orElse(null);
+        User newUser = userRepository.findById(id).orElse(null);
         if (oldUser == null)
             throw new BadRequestException(badRequestNoUser);
-        User userTemp = cloner.deepClone(oldUser);
-        userTemp.setUserGroupId(sectorManager);
-        if (repo.saveAndFlush(userTemp) != null) {
-            logUpdateAction(userTemp, oldUser);
+        //User userTemp = cloner.deepClone(oldUser);
+        newUser.setUserGroupId(sectorManager);
+        if (repo.saveAndFlush(newUser) != null) {
+            logUpdateAction(newUser, oldUser);
             return "Success";
         } else
             throw new BadRequestException(badRequestUpdate);
@@ -548,13 +549,14 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     String changeUserGroupToWorker(@PathVariable("id") Integer id) throws BadRequestException {
         User oldUser = userRepository.findById(id).orElse(null);
+        User newUser = userRepository.findById(id).orElse(null);
         if (oldUser == null)
             throw new BadRequestException(badRequestNoUser);
-        User userTemp = cloner.deepClone(oldUser);
-        userTemp.setUserGroupId(worker);
-        userTemp.setSectorId(null);
-        if (repo.saveAndFlush(userTemp) != null) {
-            logUpdateAction(userTemp, oldUser);
+       // User userTemp = cloner.deepClone(oldUser);
+        newUser.setUserGroupId(worker);
+        newUser.setSectorId(null);
+        if (repo.saveAndFlush(newUser) != null) {
+            logUpdateAction(newUser, oldUser);
             return "Success";
         } else
             throw new BadRequestException(badRequestUpdate);
@@ -574,8 +576,14 @@ public class UserController extends GenericController<User, Integer> {
 
     @RequestMapping(value = "/getUsers/sector/{sectorId}", method = RequestMethod.GET)
     public @ResponseBody
-    List<User> getAllUsersFromSector(@PathVariable Integer sectorId) {
-        return userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), sectorId, (byte) 1);
+    List<ValueCustom> getAllUsersFromSector(@PathVariable Integer sectorId) throws ForbiddenException{
+        List<ValueCustom> retValList = new ArrayList<>();
+        List<User> userList = userRepository.getAllUsersFromSectorByUserGroupId(userBean.getUserUserGroupKey().getCompanyId(),sectorId);
+        for (User user : userList) {
+            retValList.add(new ValueCustom(user.getId(), user.getFirstName() + " " + user.getLastName() + " (" + user.getEmail() + ")"));
+        }
+        return retValList;
+        //return userRepository.getAllByCompanyIdAndSectorIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), sectorId, (byte) 1);
     }
 
     @RequestMapping(value = "/deleteUser/{id}", method = RequestMethod.PUT)
@@ -587,6 +595,9 @@ public class UserController extends GenericController<User, Integer> {
         if (user == userBean.getUserUserGroupKey()) {
             throw new BadRequestException(badRequestDelete);
         } else {
+
+
+
             User userTemp = cloner.deepClone(user);
             userTemp.setActive((byte) 0);
             if (repo.saveAndFlush(userTemp) != null) {
@@ -680,7 +691,7 @@ public class UserController extends GenericController<User, Integer> {
     public @ResponseBody
     List<ValueCustom> getAllUsersName() throws ForbiddenException {
         List<ValueCustom> retValList = new ArrayList<>();
-        List<User> userList = getAll();
+        List<User> userList = userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(),(byte)1);
         for (User user : userList) {
             retValList.add(new ValueCustom(user.getId(), user.getFirstName() + " " + user.getLastName() + " (" + user.getEmail() + ")"));
         }
