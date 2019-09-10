@@ -469,6 +469,7 @@ leaveRequestsView = {
                     required: true,
                     label: "Komentar:",
                     height: 150,
+                    labelWidth: 150,
                     attributes: {
                         maxlength: 128
                     }
