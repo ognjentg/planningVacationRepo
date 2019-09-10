@@ -812,7 +812,7 @@ var updatedCollectiveVacations = [];
 var startedSelectedValues = [];
 
 var constraintsTab = {
-    header: "Ogranicenja",
+    header: "Ograničenja",
     body: {
         view: "scrollview",
         id: "scrollConstraintsInformation",

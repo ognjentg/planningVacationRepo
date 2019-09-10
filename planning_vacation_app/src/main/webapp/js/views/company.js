@@ -347,7 +347,7 @@ var companyView = {
                         util.messages.showMessage("Niste autorizovani da izbrišete kompaniju!");
                     }
                     if (action === "delete" && userData.userGroupKey == "superadmin") {
-                        var delBox = (webix.copy(commonViews.deleteConfirm("company")));
+                        var delBox = (webix.copy(commonViews.deleteConfirm("kompaniju")));
                         delBox.callback = function (result) {
                             if (result == 1) {
                                 var item = $$("companyDT").getItem(id);

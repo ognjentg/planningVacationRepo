@@ -1413,9 +1413,15 @@ usergroupView = {
                     icon: "eye"
                 },
                 {
+                    $template: "Separator"
+                },
+                {
                     id: "4",
                     value: "Promijeni sektor",
                     icon: "users"
+                },
+                {
+                    $template: "Separator"
                 },
                 {
                     id: "5",

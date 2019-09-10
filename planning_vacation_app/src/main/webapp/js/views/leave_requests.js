@@ -380,7 +380,7 @@ leaveRequestsView = {
             $$("leave_requestDT").detachEvent("onBeforeDelete");
             connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
                 util.messages.showMessage("Zahtjev postavljen na otkazivanje");
-
+                $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                 if (requestType == 1) {
                     $$("leave_requestDT").remove(id);
                     $$("leave_requestDT").refresh();
@@ -390,7 +390,6 @@ leaveRequestsView = {
                     $$("leave_requestDT").refresh();
                 }
 
-                //refreshOnThisData();
             }, function (text, data, xhr) {
                 util.messages.showErrorMessage(text);
             }, item);
@@ -398,6 +397,7 @@ leaveRequestsView = {
         } else {
             connection.sendAjax("GET", "/hub/leave_request/updateLeaveRequestStatusApproved/" + id + "/" + type + "/" + paid, function (text, data, xhr) {
                 util.messages.showMessage("Zahtjev odobren");
+                $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
 
                 if (requestType == 1) {
                     $$("leave_requestDT").remove(id);
@@ -756,7 +756,8 @@ leaveRequestsView = {
                         $$("leave_requestDT").remove(id);
                         $$("leave_requestDT").refresh();
                     }
-
+                    util.messages.showMessage("Zahtjev otkazan");
+                    $$("leave_requestDT").define("url", "/hub/leave_request/leaveRequestInfo");
                 }, function (text, data, xhr) {
                     util.messages.showErrorMessage(text);
                 }, item);

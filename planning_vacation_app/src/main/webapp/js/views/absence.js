@@ -320,7 +320,8 @@ absenceHistoryView = {
                 {
                     cols: [{
                         view: "label",
-                        label: "Komentar pošiljaoca:"
+                        label: "Komentar pošiljaoca:",
+                        width: 150
                     }, {}, {
                         view: "textarea",
                         id: "comment",
@@ -333,13 +334,15 @@ absenceHistoryView = {
                         view: "label",
                         id: "commentApproverLabel",
                         label: "Komentar odbijanja:",
-                        hidden: true
+                        hidden: true,
+                        width: 150
                     }, {}, {
                         view: "textarea",
                         id: "approverComment",
                         height: 100,
                         width: 200,
                         readonly: true,
+                        hidden: true
                     }]
 
                 }, {

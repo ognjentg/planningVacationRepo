@@ -240,7 +240,7 @@ var sectorView = {
                             util.messages.showMessage("Niste autorizovani da izbrišete sektor!");
                         }
                         if (action === "delete" && (userData.userGroupKey == "admin" || userData.userGroupKey == "direktor")) {
-                            var delBox = (webix.copy(commonViews.deleteConfirm("sector")));
+                            var delBox = (webix.copy(commonViews.deleteConfirm("sektor")));
                             delBox.callback = function (result) {
                                 if (result == 1) {
                                     var item = $$("sectorDT").getItem(id);
@@ -418,6 +418,8 @@ var sectorView = {
                 value: "Obrišite",
                 icon: "trash"
             }, {
+                $template: "Separator"
+            },{
                 id: "3",
                 value: "Pregledajte",
                 icon: "eye"
