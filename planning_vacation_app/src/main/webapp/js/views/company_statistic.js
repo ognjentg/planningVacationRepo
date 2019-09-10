@@ -161,8 +161,30 @@ companyStatisticView = {
                             on: {
                                 onItemClick: function () {
                                     $$("archiveBtn").disable();
+                                    webix.toPDF($$("byMonthCart"), {
+                                        docHeader: {
+                                            text: "Pregled statistike kompanije - broj odsutnih po mjesecu",
+                                            textAlign: "center",
+                                        },
+                                        columns:{
+                                            "month":{ header:"Mjesec", width:250 },
+                                            "number" : {header:"Broj odsutnih"},
+                                        }
+                                    });
+                                    webix.toPDF($$("byMonthAndTypeChart"), {
+                                        docHeader: {
+                                            text: "Pregled statistike kompanije - broj odsutnih po mjesecu i tipu odsustva",
+                                            textAlign: "center",
+                                        },
+                                        columns:{
+                                            "month":{ header:"Mjesec", width:100 },
+                                            "number" : {header:"Broj odsutnih", width:100},
+                                            "vacation": {header: "Godišnji odmor", width:100},
+                                            "religion":{header:"Religijski praznik", width:100},
+                                            "leave": {header:"Odsustvo", width:100}
+                                        }
+                                    });
                                     $$("archiveBtn").enable();
-                                    alert("TODO");
                                 }
                             }
                         },

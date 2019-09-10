@@ -185,7 +185,7 @@ sectorStatisticsView = {
                             template: "<span class='webix_icon fas fa-line-chart'><\/span> Statistika zaposlenih u kompaniji na nivou sektora",
                             view: "label",
                             css: {"color": "black !important"},
-                            width: 400
+                            width: 550
                         },
                         {},
                         {
@@ -329,8 +329,7 @@ sectorStatisticsView = {
                                         $$("chartDonutId").parse(pie);
                                         if (!$$("chartDonutId").count()) { //if no data is available
                                             webix.extend($$("chartDonutId"), webix.OverlayBox);
-                                            $$("chartDonutId").showOverlay("<div><img src='https://loading.io/spinners/coffee/index.coffee-cup-drink-loader.svg'></img></div><div style='margin:75px; font-size:20px;'>Nema podataka</div>");
-
+                                            $$("chartDonutId").showOverlay("<div style='...'>Nema podataka</div>");
                                         } else {
                                             $$("chartDonutId").hideOverlay();
                                         }

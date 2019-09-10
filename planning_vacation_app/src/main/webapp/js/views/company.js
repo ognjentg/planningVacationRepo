@@ -150,11 +150,8 @@ var companyView = {
                                     docHeader: {
                                         text: "Pregled kompanija",
                                         textAlign: "center",
-
                                     },
-
                                     columns: {
-                                        "id": {header: "id", width: 60},
                                         "name": {header: "Naziv", width: 400},
                                         "pin": {header: "PIN", width: 50}
                                     }

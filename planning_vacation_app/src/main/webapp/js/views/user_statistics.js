@@ -179,7 +179,7 @@ userStatisticsView = {
 
                                         if (!$$("chartDonutId").count()) { //if no data is available
                                             webix.extend($$("chartDonutId"), webix.OverlayBox);
-                                            $$("chartDonutId").showOverlay("<div><img src='https://loading.io/spinners/coffee/index.coffee-cup-drink-loader.svg'></img></div><div style='margin:75px; font-size:20px;'>Nema podataka</div>");
+                                            $$("chartDonutId").showOverlay("<div style='...'>Nema podataka</div>");
 
                                         } else {
                                             $$("chartDonutId").hideOverlay();
