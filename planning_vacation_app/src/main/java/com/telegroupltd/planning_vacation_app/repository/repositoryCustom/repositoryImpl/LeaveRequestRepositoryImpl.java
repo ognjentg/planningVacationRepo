@@ -69,7 +69,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
             "JOIN leave_request_date lrd ON lrd.leave_request_id=lr.id " +
             "JOIN leave_request_type lrt ON lr.leave_type_id=lrt.id " +
             "JOIN user au ON lr.approver_user_id=au.id OR lr.approver_user_id IS NULL " +
-            "WHERE lr.active = 1 AND lrs.key=? " +
+            "WHERE lr.active = 1 AND lrs.key=? AND  sender_user_id=? " +
             "GROUP BY lr.id ";
 
     private static final String GET_NUM_OF_SICK_ABSENT_FILTERED_BY_SECTOR_ID_AND_DATE = "SELECT COUNT(DISTINCT user.id) FROM user " +
@@ -180,7 +180,7 @@ public class LeaveRequestRepositoryImpl implements LeaveRequestRepositoryCustom 
 
     @Override
     public List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(Integer id, String key) {
-        return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS, "LeaveRequestUserLeaveRequestStatusMapping").setParameter(1, key).getResultList();
+        return entityManager.createNativeQuery(SQL_GET_LEAVE_REQUEST_FILTERED_BY_STATUS, "LeaveRequestUserLeaveRequestStatusMapping").setParameter(1, key).setParameter(2,id).getResultList();
     }
 
 

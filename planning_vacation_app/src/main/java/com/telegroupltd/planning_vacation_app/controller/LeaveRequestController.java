@@ -296,7 +296,12 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
     public @ResponseBody
     List<LeaveRequestUserLeaveRequestStatus> getLeaveRequestFilteredByLeaveRequestStatus(@PathVariable String key) {
-        List<LeaveRequestUserLeaveRequestStatus> list = leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(userBean.getUserUserGroupKey().getId(), key);
+        List<User> users = userRepository.getAllByCompanyIdAndActive(userBean.getUserUserGroupKey().getCompanyId(), (byte) 1);
+        List<LeaveRequestUserLeaveRequestStatus> list =new ArrayList<>();
+        for(User u : users){
+                List<LeaveRequestUserLeaveRequestStatus> pom = leaveRequestRepository.getLeaveRequestFilteredByLeaveRequestStatus(u.getId(), key);
+                list.addAll(pom);
+        }
         for (LeaveRequestUserLeaveRequestStatus s : list) {
             List<LeaveRequestDate> dates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(s.getId(), (byte) 1);
             s.setNumberOfDays(dates.size());
@@ -312,8 +317,32 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
     @RequestMapping(value = "/updateLeaveRequestStatusToApproved/{leaveRequestId}/comment/{approverComment}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) {
+    void updateLeaveRequestStatusToApproved(@PathVariable Integer leaveRequestId, @PathVariable String approverComment) throws BadRequestException{
         leaveRequestRepository.updateLeaveRequestStatusToApproved(leaveRequestId, approverComment);
+        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
+        User user = userRepository.getByIdAndActive(lrs.getSenderUserId(), (byte) 1);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
+        Date dateFrom = new Date(lrs.getDateFrom().getTime());
+        Date dateTo = new Date(lrs.getDateTo().getTime());
+        String date1 = formatter.format(dateFrom.getTime());
+        String date2 = formatter.format(dateTo.getTime());
+        String notificationTitle = "";
+        String notificationText = "";
+        if ("Godišnji".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za otkazivanje godišnjeg odmora";
+            notificationText = "Godišnji odmor u periodu od " + date1 + " do "
+                    + date2 + " nije otkazan.";
+        } else if ("Odsustvo".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za otkazivanje odsustva";
+            notificationText = "Odsustvo u periodu od " + date1 + " do "
+                    + date2 + " nije otkazano.";
+        } else if ("Praznik".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za otkazivanje praznika";
+            notificationText = "Praznik u periodu od " + date1 + " do "
+                    + date2 + " nije otkazan.";
+        }
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
 
     }
 
@@ -332,19 +361,20 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         String notificationTitle = "";
         String notificationText = "";
         if ("Godišnji".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za godišnji odmor";
+            notificationTitle = "Obrađen zahtjev za godišnji odmor";
             notificationText = "Godišnji odmor u periodu od " + date1 + " do "
                     + date2 + " je odbijen.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za odsustvo";
+            notificationTitle = "Obrađen zahtjev za odsustvo";
             notificationText = "Odsustvo u periodu od " + date1 + " do "
                     + date2 + " je odbijeno.";
         } else if ("Praznik".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za praznik";
+            notificationTitle = "Obrađen zahtjev za praznik";
             notificationText = "Praznik u periodu od " + date1 + " do "
                     + date2 + " je odbijen.";
         }
         emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
+
     }
 
     @RequestMapping(value = "/updateLeaveRequestStatusApproved/{leaveRequestId}/{leaveRequestTypeId}/{paid}", method = RequestMethod.GET)
@@ -412,25 +442,26 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         String notificationTitle = "";
         String notificationText = "";
         if ("Godišnji".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za godišnji odmor";
+            notificationTitle = "Obrađen zahtjev za godišnji odmor";
             notificationText = "Godišnji odmor u periodu od " + date1 + " do "
                     + date2 + " je odobren.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za odsustvo";
+            notificationTitle = "Obrađen zahtjev za odsustvo";
             notificationText = "Odsustvo u periodu od " + date1 + " do "
                     + date2 + " je odobreno.";
         } else if ("Praznik".equals(lrs.getCategory())) {
-            notificationTitle = "Zahtjev za praznik";
+            notificationTitle = "Obrađen zahtjev za praznik";
             notificationText = "Praznik u periodu od " + date1 + " do "
                     + date2 + " je odobreno.";
         }
         emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
+
     }
 
 
     @RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}", method = RequestMethod.PUT)
     public @ResponseBody
-    void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId) {
+    void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId)  throws BadRequestException {
         leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
         List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
@@ -478,6 +509,31 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
 
 
         }
+        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+        //lrs.setLeaveTypeId(leaveRequestTypeId);
+
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
+        Date dateFrom = new Date(lrs.getDateFrom().getTime());
+        Date dateTo = new Date(lrs.getDateTo().getTime());
+        String date1 = formatter.format(dateFrom.getTime());
+        String date2 = formatter.format(dateTo.getTime());
+        String notificationTitle = "";
+        String notificationText = "";
+        if ("Godišnji".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za godišnji odmor";
+            notificationText = "Godišnji odmor u periodu od " + date1 + " do "
+                    + date2 + " je odobren.";
+        } else if ("Odsustvo".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za odsustvo";
+            notificationText = "Odsustvo u periodu od " + date1 + " do "
+                    + date2 + " je odobreno.";
+        } else if ("Praznik".equals(lrs.getCategory())) {
+            notificationTitle = "Obrađen zahtjev za praznik";
+            notificationText = "Praznik u periodu od " + date1 + " do "
+                    + date2 + " je odobreno.";
+        }
+        User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+        emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
 
     }
 

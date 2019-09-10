@@ -2449,14 +2449,13 @@ showNotifications = function () {
                                     $$("mainMenu").select("secretary_sick_request");
                                     sickRequestsView.selectPanel();
                                 }
-                            } else if ("Kolektivni godišnji odmor" != item.title) {
-                                if (userData.userGroupKey == "zaposleni") {
-                                    $$("mainMenu").select("absence_history");
-                                    absenceHistoryView.selectPanel();
-                                } else {
-                                    $$("mainMenu").select("leave_requests");
-                                    leaveRequestsView.selectPanel();
-                                }
+                            } else if("Obrađen zahtjev za godišnji odmor" == item.title || "Obrađen zahtjev za odsustvo" == item.title || "Obrađen zahtjev za praznik" == item.title
+                                        || "Obrađen zahtjev za otkazivanje godišnjeg odmora" == item.title ||  "Obrađen zahtjev za otkazivanje odsustva" == item.title || "Obrađen zahtjev za otkazivanje praznika" == item.title){
+                                $$("mainMenu").select("absence_history");
+                                absenceHistoryView.selectPanel();
+                            }else{
+                                $$("mainMenu").select("leave_requests");
+                                leaveRequestsView.selectPanel();
                             }
 
                             if (item.seen == 0) {
