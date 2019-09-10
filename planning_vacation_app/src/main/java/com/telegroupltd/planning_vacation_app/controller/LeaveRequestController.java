@@ -462,79 +462,82 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/updateLeaveRequestStatusToCancel/{leaveRequestId}", method = RequestMethod.PUT)
     public @ResponseBody
     void updateLeaveRequestStatusToCancel(@PathVariable Integer leaveRequestId)  throws BadRequestException {
-        leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
         LeaveRequest leaveRequest = leaveRequestRepository.getByIdAndActive(leaveRequestId, (byte) 1);
-        List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
-        if (leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())) {
-            ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
-            Integer numOfDays = leaveRequestDates.size();
-            if (religionLeave == null) {
-                religionLeave = new ReligionLeave();
-                religionLeave.setActive((byte) 1);
-                religionLeave.setUserId(leaveRequest.getSenderUserId());
-                religionLeave.setYear(Calendar.getInstance().get(Calendar.YEAR));
+        if(leaveRequest.getLeaveRequestStatusId()!=1){
+            List<LeaveRequestDate> leaveRequestDates = leaveRequestDateRepository.getAllByLeaveRequestIdAndActive(leaveRequest.getId(), (byte) 1);
+            if (leaveRequest.getCategory().equals(LeaveRequestCategory.Praznik.toString())) {
+                ReligionLeave religionLeave = religionLeaveRepository.getByUserIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+                Integer numOfDays = leaveRequestDates.size();
+                if (religionLeave == null) {
+                    religionLeave = new ReligionLeave();
+                    religionLeave.setActive((byte) 1);
+                    religionLeave.setUserId(leaveRequest.getSenderUserId());
+                    religionLeave.setYear(Calendar.getInstance().get(Calendar.YEAR));
+                }
+                religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() - numOfDays);
+                religionLeaveRepository.saveAndFlush(religionLeave);
             }
-            religionLeave.setNumberOfDaysUsed(religionLeave.getNumberOfDaysUsed() - numOfDays);
-            religionLeaveRepository.saveAndFlush(religionLeave);
-        }
 
-        if (leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())) {
-            Integer numOfVacationDays = leaveRequestDates.size();
-            VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte) 1);
-            VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
-            Integer oldVacationDaysToAdd = 0;
-            Integer vacationDaysToAdd = 0;
+            if (leaveRequest.getCategory().equals(LeaveRequestCategory.Godišnji.toString())) {
+                Integer numOfVacationDays = leaveRequestDates.size();
+                VacationDays oldVacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR) - 1, (byte) 1);
+                VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(leaveRequest.getSenderUserId(), Calendar.getInstance().get(Calendar.YEAR), (byte) 1);
+                Integer oldVacationDaysToAdd = 0;
+                Integer vacationDaysToAdd = 0;
 
 
-            if (vacationDays.getUsedDays() != 0) {
-                if (numOfVacationDays > vacationDays.getUsedDays()) {
-                    vacationDaysToAdd = vacationDays.getUsedDays();
-                    if (oldVacationDays != null) {
-                        oldVacationDaysToAdd = numOfVacationDays - (vacationDays.getUsedDays());
+                if (vacationDays.getUsedDays() != 0) {
+                    if (numOfVacationDays > vacationDays.getUsedDays()) {
+                        vacationDaysToAdd = vacationDays.getUsedDays();
+                        if (oldVacationDays != null) {
+                            oldVacationDaysToAdd = numOfVacationDays - (vacationDays.getUsedDays());
+                        }
+                    } else {
+                        vacationDaysToAdd = numOfVacationDays;
                     }
                 } else {
-                    vacationDaysToAdd = numOfVacationDays;
+                    if (oldVacationDays != null) {
+                        oldVacationDaysToAdd = numOfVacationDays;
+                    }
                 }
-            } else {
                 if (oldVacationDays != null) {
-                    oldVacationDaysToAdd = numOfVacationDays;
+                    oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() - oldVacationDaysToAdd);
+                    vacationDaysRepository.saveAndFlush(oldVacationDays);
                 }
-            }
-            if (oldVacationDays != null) {
-                oldVacationDays.setUsedDays(oldVacationDays.getUsedDays() - oldVacationDaysToAdd);
-                vacationDaysRepository.saveAndFlush(oldVacationDays);
-            }
-            vacationDays.setUsedDays(vacationDays.getUsedDays() - vacationDaysToAdd);
-            vacationDaysRepository.saveAndFlush(vacationDays);
+                vacationDays.setUsedDays(vacationDays.getUsedDays() - vacationDaysToAdd);
+                vacationDaysRepository.saveAndFlush(vacationDays);
 
+
+            }
+            LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
+            //lrs.setLeaveTypeId(leaveRequestTypeId);
+
+            SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
+            Date dateFrom = new Date(lrs.getDateFrom().getTime());
+            Date dateTo = new Date(lrs.getDateTo().getTime());
+            String date1 = formatter.format(dateFrom.getTime());
+            String date2 = formatter.format(dateTo.getTime());
+            String notificationTitle = "";
+            String notificationText = "";
+            if ("Godišnji".equals(lrs.getCategory())) {
+                notificationTitle = "Obrađen zahtjev za otkazivanje godišnjeg odmora";
+                notificationText = "Godišnji odmor u periodu od " + date1 + " do "
+                        + date2 + " je otkazan.";
+            } else if ("Odsustvo".equals(lrs.getCategory())) {
+                notificationTitle = "Obrađen zahtjev za otkzivaje odsustva";
+                notificationText = "Odsustvo u periodu od " + date1 + " do "
+                        + date2 + " je otkazano.";
+            } else if ("Praznik".equals(lrs.getCategory())) {
+                notificationTitle = "Obrađen zahtjev za otkazivanje praznika";
+                notificationText = "Praznik u periodu od " + date1 + " do "
+                        + date2 + " je otkazan.";
+            }
+            User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
+            emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
 
         }
-        LeaveRequestUserLeaveRequestStatus lrs = leaveRequestRepository.getLeaveRequestUserLeaveRequestStatusInformationById(leaveRequestId).get(0);
-        //lrs.setLeaveTypeId(leaveRequestTypeId);
 
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy.");
-        Date dateFrom = new Date(lrs.getDateFrom().getTime());
-        Date dateTo = new Date(lrs.getDateTo().getTime());
-        String date1 = formatter.format(dateFrom.getTime());
-        String date2 = formatter.format(dateTo.getTime());
-        String notificationTitle = "";
-        String notificationText = "";
-        if ("Godišnji".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za otkazivanje godišnjeg odmora";
-            notificationText = "Godišnji odmor u periodu od " + date1 + " do "
-                    + date2 + " je otkazan.";
-        } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za otkzivaje odsustva";
-            notificationText = "Odsustvo u periodu od " + date1 + " do "
-                    + date2 + " je otkazano.";
-        } else if ("Praznik".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za otkazivanje praznika";
-            notificationText = "Praznik u periodu od " + date1 + " do "
-                    + date2 + " je otkazan.";
-        }
-        User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
-        emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
-
+        leaveRequestRepository.updateLeaveRequestStatusToCancel(leaveRequestId);
     }
 
 
