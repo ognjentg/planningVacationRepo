@@ -486,7 +486,7 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
             Integer vacationDaysToAdd = 0;
 
 
-            if (vacationDays.getUsedDays() == 0) {
+            if (vacationDays.getUsedDays() != 0) {
                 if (numOfVacationDays > vacationDays.getUsedDays()) {
                     vacationDaysToAdd = vacationDays.getUsedDays();
                     if (oldVacationDays != null) {
@@ -520,17 +520,17 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
         String notificationTitle = "";
         String notificationText = "";
         if ("Godišnji".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za godišnji odmor";
+            notificationTitle = "Obrađen zahtjev za otkazivanje godišnjeg odmora";
             notificationText = "Godišnji odmor u periodu od " + date1 + " do "
-                    + date2 + " je odobren.";
+                    + date2 + " je otkazan.";
         } else if ("Odsustvo".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za odsustvo";
+            notificationTitle = "Obrađen zahtjev za otkzivaje odsustva";
             notificationText = "Odsustvo u periodu od " + date1 + " do "
-                    + date2 + " je odobreno.";
+                    + date2 + " je otkazano.";
         } else if ("Praznik".equals(lrs.getCategory())) {
-            notificationTitle = "Obrađen zahtjev za praznik";
+            notificationTitle = "Obrađen zahtjev za otkazivanje praznika";
             notificationText = "Praznik u periodu od " + date1 + " do "
-                    + date2 + " je odobreno.";
+                    + date2 + " je otkazan.";
         }
         User user = userRepository.getByIdAndActive(leaveRequest.getSenderUserId(), (byte) 1);
         emailNotification.createNotification(user, notificationTitle, notificationText, (byte) (int) leaveRequest.getLeaveTypeId());
