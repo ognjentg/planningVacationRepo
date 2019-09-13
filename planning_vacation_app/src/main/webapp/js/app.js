@@ -1,4 +1,4 @@
-var appVersion = 0.1;
+var appVersion = "1.0.0-RELEASE";
 var MENU_STATES = {
     COLLAPSED: 0,
     EXPANDED: 1
@@ -1477,6 +1477,16 @@ var firstLoginLayout = {
                     showApp();
                 }
             });
+            var collectiveVacations = $$("collectiveVacationDT").serialize();
+            var numOfDays = 0;
+            collectiveVacations.forEach(function (value) {
+                numOfDays += getDatesFromRange(new Date(value.dateFrom), new Date(value.dateTo)).length;
+            })
+            var vacationDays = $$("vacationDays").getValue();
+            connection.sendAjax("PUT", "hub/user/setVacation/" + vacationDays + "/" + numOfDays,
+                function (text, data, xhr) {
+                }, function (text, data, xhr) {
+                });
 
         }
     },

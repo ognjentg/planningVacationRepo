@@ -303,6 +303,18 @@ public class UserController extends GenericController<User, Integer> {
     }
 
 
+    @RequestMapping(value = "/setVacation/{vacationDays}/{numOfDays}", method = RequestMethod.PUT)
+    public @ResponseBody
+    void setVacation(@PathVariable("vacationDays") Integer numOfVacationDays, @PathVariable("numOfDays") Integer numOfDays){
+        VacationDays vacationDays = vacationDaysRepository.getByUserIdAndYearAndActive(userBean.getUserUserGroupKey().getId(), Calendar.getInstance().get(Calendar.YEAR), (byte)1);
+        vacationDays.setTotalDays(numOfVacationDays);
+        if(numOfVacationDays - numOfDays < 0)
+            vacationDays.setUsedDays(numOfVacationDays);
+        else
+            vacationDays.setUsedDays(numOfDays);
+        vacationDaysRepository.saveAndFlush(vacationDays);
+    }
+
     @Override
     @RequestMapping(method = RequestMethod.POST)
     @Transactional
