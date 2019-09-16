@@ -837,6 +837,7 @@ var constraintsTab = {
                     elements: [{
                         rows: [{
                             cols: [{
+                               // {},
                                 rows: [
                                     {
                                         view: "form",
@@ -844,7 +845,7 @@ var constraintsTab = {
                                         name: "companyInfoForm",
                                         borderless: true,
                                         elementsConfig: {
-                                            labelWidth: 200,
+                                            labelWidth: 210,
                                             bottomPadding: 18
                                         },
                                         elements: [
@@ -859,7 +860,7 @@ var constraintsTab = {
                                             {
                                                 view: "text",
                                                 name: "maxVacDaysPeriod",
-                                                label: "Maksimalni period godišnjeg:",
+                                                label: "Maksimalni broj dana godišnjeg:",
                                                 id: "maxVacDaysPeriod",
                                                 required: true,
                                                 invalidMessage: "Niste unijeli period"
@@ -867,7 +868,7 @@ var constraintsTab = {
                                             {
                                                 view: "text",
                                                 name: "maxOldVacationPeriod",
-                                                label: "Period starog godišnjeg:",
+                                                label: "Broj dana starog godišnjeg:",
                                                 id: "maxOldVacationPeriod",
                                                 required: true,
                                                 invalidMessage: "Niste unijeli period",
@@ -875,7 +876,7 @@ var constraintsTab = {
                                             {
                                                 view: "text",
                                                 name: "sickDays",
-                                                label: "Period opravdanja bolovanja:",
+                                                label: "Broj dana opravdanja bolovanja:",
                                                 id: "sickDays",
                                                 required: true,
                                                 invalidMessage: "Niste unijeli period",
@@ -896,8 +897,9 @@ var constraintsTab = {
                                     },
 
                                 ]
-                            },
+                            },{width:100},
                                 {
+
                                     borderless: true,
                                     rows: [
                                         {
@@ -911,7 +913,7 @@ var constraintsTab = {
                                                     stringResult: true,
                                                     format: "%d.%m.%Y.",
                                                     label: 'Odaberite neradni dan',
-                                                    labelWidth: 200,
+                                                    labelWidth: 240,
                                                     required: true,
                                                     invalidMessage: "Niste unijeli neradne dane"
                                                 }
@@ -937,6 +939,7 @@ var constraintsTab = {
                                                 {
                                                     id: "day",
                                                     header: "Neradni dani",
+                                                    fillspace: true,
                                                     width: 310
                                                 },
                                                 {
@@ -1020,7 +1023,9 @@ var constraintsTab = {
                                                     css: "companyButton",
                                                     view: "button",
                                                     click: "companyInfoView.addCollectiveVacation",
-                                                    width: 40,
+                                                    width: 35,
+                                                    height:20,
+                                                    maxHeight:20,
                                                     align: "center",
                                                     hotkey: "enter"
                                                 }
@@ -1047,11 +1052,13 @@ var constraintsTab = {
                                                 {
                                                     id: "dateFrom",
                                                     header: "Od",
+                                                    fillspace: true,
                                                     width: 156
                                                 },
                                                 {
                                                     id: "dateTo",
                                                     header: "Do",
+                                                    fillspace: true,
                                                     width: 156
                                                 },
                                                 {
