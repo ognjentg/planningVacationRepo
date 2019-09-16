@@ -82,6 +82,8 @@ usergroupView = {
                         autowidth: true,
                         click: function () {
                             userStatisticsView.selectPanel();
+                            $$("mainMenu").select("user_statistics");
+
 
                         }
                     }
@@ -1263,7 +1265,7 @@ usergroupView = {
                         util.dismissDialog('addUserDialog');
                         var user = JSON.parse(text);
                         if (sectorID > 0)
-                            user.sector_name = $$("choseSectorCombo").getValue();
+                            user.sector_name = $$("choseSectorCombo").getText();
                         if (user.userGroupId == 6)
                             user.position = "zaposleni";
                         $$("usergroupDT").parse(user);
