@@ -225,8 +225,8 @@ var menuSectorManager = [
         icon: "list"
     },
     {
-        id: "company_statistic",
-        value: "Statistika kompanije",
+        id: "sector_statistics",
+        value: "Statistika sektora",
         icon: "fas fa-line-chart"
     }, {
         id: "user_statistics",
@@ -1989,7 +1989,7 @@ var showApp = function () {
                 break;
             case "menadzer":
                 localMenuData = webix.copy(menuSectorManager);
-                $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Menadzer</span>');
+                $$("usernameHolder").define("template", '<span class="usernameHolderName">' + userData.firstName + ' ' + userData.lastName + '</span><br /><span class="usernameHolderRole">Rukovodilac sektora</span>');
 
                 break;
             case "zaposleni":
