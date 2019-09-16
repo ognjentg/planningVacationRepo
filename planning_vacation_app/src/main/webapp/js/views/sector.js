@@ -52,7 +52,7 @@ var sectorView = {
                         autowidth: true,
                         click: function () {
                             sectorStatisticsView.selectPanel();
-
+                            $$("mainMenu").select("sector_statistics");
                         }
 
                     }
