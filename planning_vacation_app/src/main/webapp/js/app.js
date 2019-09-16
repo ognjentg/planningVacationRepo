@@ -1528,19 +1528,21 @@ var firstLoginLayout = {
                             util.messages.showErrorMessage(text);
                         }, 0);
                     util.messages.showMessage("Uspješno izvršena izmjena podataka o kompaniji");
+                    var collectiveVacations = $$("collectiveVacationDT").serialize();
+                    var numOfDays = 0;
+                    collectiveVacations.forEach(function (value) {
+                        numOfDays += getDatesFromRange(new Date(value.dateFrom), new Date(value.dateTo)).length;
+                    })
+                    var vacationDays = $$("vacationDays").getValue();
+                    connection.sendAjax("PUT", "hub/user/setVacation/" + vacationDays + "/" + numOfDays,
+                        function (text, data, xhr) {
+                        }, function (text, data, xhr) {
+                        });
                     showApp();
+
                 }
             });
-            var collectiveVacations = $$("collectiveVacationDT").serialize();
-            var numOfDays = 0;
-            collectiveVacations.forEach(function (value) {
-                numOfDays += getDatesFromRange(new Date(value.dateFrom), new Date(value.dateTo)).length;
-            })
-            var vacationDays = $$("vacationDays").getValue();
-            connection.sendAjax("PUT", "hub/user/setVacation/" + vacationDays + "/" + numOfDays,
-                function (text, data, xhr) {
-                }, function (text, data, xhr) {
-                });
+
 
         }
     },
