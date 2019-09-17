@@ -115,7 +115,8 @@ absenceHistoryView = {
                             template: function (obj) {
                                 var pom = obj.dateFrom;
                                 var secondPom = obj.statusName;
-                                if ((pom > new Date()) && (secondPom == "Odobreno" || secondPom == "Na čekanju")) {
+                                var thirdPom=obj.category;
+                                if (((pom > new Date()) && (secondPom == "Odobreno" || secondPom == "Na čekanju") ) || (thirdPom == "Bolovanje" && secondPom == "Na čekanju") ) {
                                     return "<span  style='color:#777777; 0; cursor:pointer;' class='webix_icon fa-times'></span>";
                                 } else return "";
                             }
@@ -142,31 +143,68 @@ absenceHistoryView = {
                             var action = id["column"];
                             if (action === "reject") {
                                 webix.ui(webix.copy(absenceHistoryView.approverSenderCommentInfo));
-                                connection.sendAjax("GET",
-                                    "/hub/leave_request/leaveRequestInfo/" + id,
-                                    function (text, data, xhr) {
-                                        user = data.json();
-                                        statusNameTMP = user.statusName;
-                                        if (statusNameTMP == "Odobreno") {
-                                            var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveApprovedConfirm(" odsustva")));
-                                        } else {
-                                            var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveRequestConfirm(" odsustva")));
-                                        }
-                                        paidLeaveBox.callback = function (result) {
-                                            if (result == 1) {
+                                var category=$$("absence_historyDT").getSelectedItem().category;
+                                if(category == "Bolovanje"){
+                                    connection.sendAjax("DELETE", "/hub/sickLeave/"+ id,
+                                        function(text, data, xhr){
 
-                                                var format = webix.Date.strToDate("%d.%m.%Y");
-                                                var leaveRequest = {
-                                                    senderUserId: userData.id,
-                                                    leaveTypeId: 1,
-                                                    leaveRequestStatusId: 5,
-                                                    companyId: userData.companyId,
-                                                    senderComment: "",//$$("comment").getValue(),
-                                                    category: $$("absence_historyDT").getSelectedItem().category,
-                                                }
+                                        },function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        })
+                                }else{
+                                    connection.sendAjax("GET",
+                                        "/hub/leave_request/leaveRequestInfo/" + id,
+                                        function (text, data, xhr) {
+                                            user = data.json();
+                                            statusNameTMP = user.statusName;
+                                            if (statusNameTMP == "Odobreno") {
+                                                var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveApprovedConfirm(" odsustva")));
+                                            } else {
+                                                var paidLeaveBox = (webix.copy(absenceHistoryView.paidLeaveRequestConfirm(" odsustva")));
+                                            }
+                                            paidLeaveBox.callback = function (result) {
+                                                if (result == 1) {
 
-                                                if (statusNameTMP == "Odobreno") {
-                                                    if (userData.userGroupKey == "direktor") {
+                                                    var format = webix.Date.strToDate("%d.%m.%Y");
+                                                    var leaveRequest = {
+                                                        senderUserId: userData.id,
+                                                        leaveTypeId: 1,
+                                                        leaveRequestStatusId: 5,
+                                                        companyId: userData.companyId,
+                                                        senderComment: "",//$$("comment").getValue(),
+                                                        category: $$("absence_historyDT").getSelectedItem().category,
+                                                    }
+
+                                                    if (statusNameTMP == "Odobreno") {
+                                                        if (userData.userGroupKey == "direktor") {
+                                                            var item = $$("absence_historyDT").getItem(id);
+                                                            $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                            connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
+                                                                refreshOnAbsenceData();
+                                                            }, function (text, data, xhr) {
+                                                                util.messages.showErrorMessage(text);
+                                                            }, item);
+                                                        } else {
+                                                            connection.sendAjax("POST", "hub/leave_request/",
+                                                                function (text, data, xhr) {
+                                                                    if (text) {
+
+                                                                        var item = $$("absence_historyDT").getItem(id);
+                                                                        $$("absence_historyDT").detachEvent("onBeforeDelete");
+                                                                        connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
+                                                                            util.messages.showMessage("Zahtjev postavljen na otkazivanje.");
+                                                                            refreshOnAbsenceData();
+                                                                        }, function (text, data, xhr) {
+                                                                            util.messages.showErrorMessage(text);
+                                                                        }, item);
+                                                                        refreshOnAbsenceData();
+                                                                    } else
+                                                                        util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
+                                                                }, function (text, data, xhr) {
+                                                                    util.messages.showErrorMessage(text);
+                                                                }, leaveRequest);
+                                                        }
+                                                    } else {
                                                         var item = $$("absence_historyDT").getItem(id);
                                                         $$("absence_historyDT").detachEvent("onBeforeDelete");
                                                         connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
@@ -174,44 +212,17 @@ absenceHistoryView = {
                                                         }, function (text, data, xhr) {
                                                             util.messages.showErrorMessage(text);
                                                         }, item);
-                                                    } else {
-                                                        connection.sendAjax("POST", "hub/leave_request/",
-                                                            function (text, data, xhr) {
-                                                                if (text) {
-
-                                                                    var item = $$("absence_historyDT").getItem(id);
-                                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancellation/" + id, function (text, data, xhr) {
-                                                                        util.messages.showMessage("Zahtjev postavljen na otkazivanje.");
-                                                                        refreshOnAbsenceData();
-                                                                    }, function (text, data, xhr) {
-                                                                        util.messages.showErrorMessage(text);
-                                                                    }, item);
-                                                                    refreshOnAbsenceData();
-                                                                } else
-                                                                    util.messages.showErrorMessage("Neuspješno slanje zahtjeva.");
-                                                            }, function (text, data, xhr) {
-                                                                util.messages.showErrorMessage(text);
-                                                            }, leaveRequest);
                                                     }
-                                                } else {
-                                                    var item = $$("absence_historyDT").getItem(id);
-                                                    $$("absence_historyDT").detachEvent("onBeforeDelete");
-                                                    connection.sendAjax("PUT", "/hub/leave_request/updateLeaveRequestStatusToCancel/" + id, function (text, data, xhr) {
-                                                        refreshOnAbsenceData();
-                                                    }, function (text, data, xhr) {
-                                                        util.messages.showErrorMessage(text);
-                                                    }, item);
-                                                }
 
-                                            }
-                                        };
-                                        webix.confirm(paidLeaveBox);
-                                        setTimeout(function () {
-                                        }, 0);
-                                    }, function (text, data, xhr) {
-                                        util.messages.showErrorMessage(text);
-                                    });
+                                                }
+                                            };
+                                            webix.confirm(paidLeaveBox);
+                                            setTimeout(function () {
+                                            }, 0);
+                                        }, function (text, data, xhr) {
+                                            util.messages.showErrorMessage(text);
+                                        });
+                                }
                             } else if (action === "view") {
                                 var viewAbsenceCommentInfoBox = (webix.copy(absenceHistoryView.showApproverSenderCommentInfo(id)));
 

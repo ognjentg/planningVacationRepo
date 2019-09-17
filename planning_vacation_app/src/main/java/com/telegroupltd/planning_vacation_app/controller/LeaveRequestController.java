@@ -35,6 +35,8 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @Autowired
     private SectorRepository sectorRepository;
     @Autowired
+    private SickLeaveRepository sickLeaveRepository;
+    @Autowired
     com.telegroupltd.planning_vacation_app.util.Notification emailNotification;
 
     @Value("Dodavanje nije moguće")
@@ -290,7 +292,13 @@ public class LeaveRequestController extends GenericHasActiveController<LeaveRequ
     @RequestMapping(value = "/getAbsenceHistoryUserInfo/{id}", method = RequestMethod.GET)
     public @ResponseBody
     List<AbsenceHistoryUser> getAbsenceHistoryUserInfo(@PathVariable Integer id) {
-        return leaveRequestRepository.getAbsenceHistoryUserInfo(userBean.getUserUserGroupKey().getId(), id);
+        List<AbsenceHistoryUser> odsustva= leaveRequestRepository.getAbsenceHistoryUserInfo(userBean.getUserUserGroupKey().getId(), id);
+        List<SickLeaveUserSickLeaveStatus> bolovanje= sickLeaveRepository.getSickLeaveFilteredByUserId(userBean.getUserUserGroupKey().getId(),id);
+        for(SickLeaveUserSickLeaveStatus b: bolovanje){
+            AbsenceHistoryUser a=new AbsenceHistoryUser(b.getId(),b.getStatusName(),"Bolovanje",b.getDateFrom(),b.getDateTo());
+            odsustva.add(a);
+        }
+        return odsustva;
     }
 
     @RequestMapping(value = "/leaveRequestFilteredByLeaveRequestStatus/{key}", method = RequestMethod.GET)
